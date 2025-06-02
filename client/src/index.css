@@ -3,6 +3,48 @@
 @tailwind utilities;
 
 :root {
+  /* Dark theme as default for admin panel */
+  --background: 12 15 23; /* Dark blue-gray #0c0f17 */
+  --foreground: 248 250 252; /* Light gray text #f8fafc */
+  --card: 20 25 35; /* Dark card background #14192b */
+  --card-foreground: 248 250 252; /* Light text on cards #f8fafc */
+  --popover: 20 25 35; /* Dark popover #14192b */
+  --popover-foreground: 248 250 252; /* Light popover text #f8fafc */
+  --primary: 99 146 255; /* Bright blue accent #639aff */
+  --primary-foreground: 12 15 23; /* Dark text on primary #0c0f17 */
+  --secondary: 30 37 54; /* Muted dark blue #1e2536 */
+  --secondary-foreground: 203 213 225; /* Light secondary text #cbd5e1 */
+  --muted: 30 37 54; /* Muted background #1e2536 */
+  --muted-foreground: 148 163 184; /* Muted text #94a3b8 */
+  --accent: 30 37 54; /* Accent background #1e2536 */
+  --accent-foreground: 203 213 225; /* Accent text #cbd5e1 */
+  --destructive: 225 77 77; /* Red for destructive actions #e14d4d */
+  --destructive-foreground: 248 250 252; /* Light text on destructive #f8fafc */
+  --border: 39 47 65; /* Subtle border color #272f41 */
+  --input: 30 37 54; /* Input background #1e2536 */
+  --ring: 99 146 255; /* Focus ring color #639aff */
+  --radius: 0.5rem;
+  
+  /* Sidebar colors - Dark theme */
+  --sidebar-background: 16 20 30; /* Darker sidebar #10141e */
+  --sidebar-foreground: 248 250 252; /* Light sidebar text #f8fafc */
+  --sidebar-primary: 99 146 255; /* Primary sidebar accent #639aff */
+  --sidebar-primary-foreground: 12 15 23; /* Dark text on primary #0c0f17 */
+  --sidebar-accent: 30 37 54; /* Sidebar accent background #1e2536 */
+  --sidebar-accent-foreground: 203 213 225; /* Sidebar accent text #cbd5e1 */
+  --sidebar-border: 39 47 65; /* Sidebar border #272f41 */
+  --sidebar-ring: 99 146 255; /* Sidebar focus ring #639aff */
+  
+  /* Chart colors - Adjusted for dark theme */
+  --chart-1: 99 146 255; /* Blue #639aff */
+  --chart-2: 52 211 153; /* Emerald #34d399 */
+  --chart-3: 251 191 36; /* Amber #fbbf24 */
+  --chart-4: 167 139 250; /* Violet #a78bfa */
+  --chart-5: 244 114 182; /* Pink #f472b6 */
+}
+
+.light {
+  /* Light theme for fallback/alternative */
   --background: 255 255 255; /* white #ffffff */
   --foreground: 15 23 42; /* slate-900 #0f172a */
   --card: 248 250 252; /* slate-50 #f8fafc */
@@ -22,9 +64,8 @@
   --border: 226 232 240; /* slate-200 #e2e8f0 */
   --input: 255 255 255; /* white #ffffff */
   --ring: 59 130 246; /* blue-500 #3b82f6 */
-  --radius: 0.5rem;
   
-  /* Sidebar colors */
+  /* Sidebar colors - light mode */
   --sidebar-background: 248 250 252; /* slate-50 #f8fafc */
   --sidebar-foreground: 15 23 42; /* slate-900 #0f172a */
   --sidebar-primary: 59 130 246; /* blue-500 #3b82f6 */
@@ -32,45 +73,6 @@
   --sidebar-accent: 241 245 249; /* slate-100 #f1f5f9 */
   --sidebar-accent-foreground: 15 23 42; /* slate-900 #0f172a */
   --sidebar-border: 226 232 240; /* slate-200 #e2e8f0 */
-  --sidebar-ring: 59 130 246; /* blue-500 #3b82f6 */
-  
-  /* Chart colors */
-  --chart-1: 59 130 246; /* blue-500 #3b82f6 */
-  --chart-2: 16 185 129; /* emerald-500 #10b981 */
-  --chart-3: 245 158 11; /* amber-500 #f59e0b */
-  --chart-4: 139 92 246; /* violet-500 #8b5cf6 */
-  --chart-5: 236 72 153; /* pink-500 #ec4899 */
-}
-
-.dark {
-  --background: 15 23 42; /* slate-900 #0f172a */
-  --foreground: 248 250 252; /* slate-50 #f8fafc */
-  --card: 30 41 59; /* slate-800 #1e293b */
-  --card-foreground: 248 250 252; /* slate-50 #f8fafc */
-  --popover: 30 41 59; /* slate-800 #1e293b */
-  --popover-foreground: 248 250 252; /* slate-50 #f8fafc */
-  --primary: 59 130 246; /* blue-500 #3b82f6 */
-  --primary-foreground: 248 250 252; /* slate-50 #f8fafc */
-  --secondary: 51 65 85; /* slate-700 #334155 */
-  --secondary-foreground: 248 250 252; /* slate-50 #f8fafc */
-  --muted: 51 65 85; /* slate-700 #334155 */
-  --muted-foreground: 148 163 184; /* slate-400 #94a3b8 */
-  --accent: 51 65 85; /* slate-700 #334155 */
-  --accent-foreground: 248 250 252; /* slate-50 #f8fafc */
-  --destructive: 220 38 38; /* red-600 #dc2626 */
-  --destructive-foreground: 248 250 252; /* slate-50 #f8fafc */
-  --border: 51 65 85; /* slate-700 #334155 */
-  --input: 51 65 85; /* slate-700 #334155 */
-  --ring: 59 130 246; /* blue-500 #3b82f6 */
-  
-  /* Sidebar colors - dark mode */
-  --sidebar-background: 30 41 59; /* slate-800 #1e293b */
-  --sidebar-foreground: 248 250 252; /* slate-50 #f8fafc */
-  --sidebar-primary: 59 130 246; /* blue-500 #3b82f6 */
-  --sidebar-primary-foreground: 248 250 252; /* slate-50 #f8fafc */
-  --sidebar-accent: 51 65 85; /* slate-700 #334155 */
-  --sidebar-accent-foreground: 248 250 252; /* slate-50 #f8fafc */
-  --sidebar-border: 51 65 85; /* slate-700 #334155 */
   --sidebar-ring: 59 130 246; /* blue-500 #3b82f6 */
 }
 
@@ -123,30 +125,34 @@
     @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:ring-2 focus:ring-secondary focus:ring-offset-2 px-4 py-2 rounded-lg font-medium transition-colors;
   }
   
-  /* Status badges */
+  /* Status badges - Optimized for dark theme */
   .status-todo {
-    @apply bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400;
+    @apply bg-blue-900/30 text-blue-300 border border-blue-700/50;
   }
   
   .status-in-progress {
-    @apply bg-amber-100 dark:bg-amber-900/20 text-amber-800 dark:text-amber-400;
+    @apply bg-amber-900/30 text-amber-300 border border-amber-700/50;
   }
   
   .status-completed {
-    @apply bg-emerald-100 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-400;
+    @apply bg-emerald-900/30 text-emerald-300 border border-emerald-700/50;
   }
   
-  /* Priority badges */
+  /* Priority badges - Optimized for dark theme */
   .priority-low {
-    @apply bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-300;
+    @apply bg-slate-700/50 text-slate-300 border border-slate-600/50;
   }
   
   .priority-medium {
-    @apply bg-amber-100 dark:bg-amber-900/20 text-amber-800 dark:text-amber-400;
+    @apply bg-amber-900/30 text-amber-300 border border-amber-700/50;
   }
   
   .priority-high {
-    @apply bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-400;
+    @apply bg-red-900/30 text-red-300 border border-red-700/50;
+  }
+  
+  .priority-urgent {
+    @apply bg-red-800/40 text-red-200 border border-red-600/60;
   }
 }
 
