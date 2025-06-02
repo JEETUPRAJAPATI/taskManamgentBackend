@@ -22,7 +22,8 @@ import {
   Edit,
   Trash2,
   Tag,
-  X
+  X,
+  FileText
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -167,6 +168,11 @@ export default function Tasks() {
     createTaskMutation.mutate(taskData);
   };
 
+  // Comprehensive task creation handler
+  const handleCreateTask = async (taskData) => {
+    createTaskMutation.mutate(taskData);
+  };
+
   // Fetch task details including comments and audit logs
   const { data: taskDetails } = useQuery({
     queryKey: ["/api/tasks", selectedTask?._id, "details"],
@@ -237,12 +243,23 @@ export default function Tasks() {
         </p>
       </div>
 
-      {/* Smart Task Creation */}
+      {/* Task Creation Options */}
       <div className="mb-6">
-        {showCreateForm ? (
+        <div className="flex gap-2 mb-4">
+          <Button onClick={() => setShowCreateModal(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Create Task
+          </Button>
+          <Button variant="outline" onClick={() => setShowCreateForm(!showCreateForm)}>
+            <Edit className="h-4 w-4 mr-2" />
+            Smart Input
+          </Button>
+        </div>
+
+        {showCreateForm && (
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">Create New Task</h3>
+              <h3 className="text-lg font-semibold">Smart Task Input</h3>
               <Button variant="outline" onClick={() => setShowCreateForm(false)}>
                 <X className="h-4 w-4" />
               </Button>
@@ -253,11 +270,6 @@ export default function Tasks() {
               projects={projects}
             />
           </Card>
-        ) : (
-          <Button onClick={() => setShowCreateForm(true)} className="mb-4">
-            <Plus className="h-4 w-4 mr-2" />
-            Create Task
-          </Button>
         )}
       </div>
 
@@ -499,6 +511,17 @@ export default function Tasks() {
           console.log('Delete comment:', id);
         }}
         currentUser={users[0]} // You can implement proper current user logic
+      />
+
+      {/* Comprehensive Create Task Modal */}
+      <CreateTaskModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onCreateTask={handleCreateTask}
+        users={users}
+        projects={projects}
+        taskStatuses={taskStatuses}
+        existingTasks={tasks}
       />
     </div>
   );
