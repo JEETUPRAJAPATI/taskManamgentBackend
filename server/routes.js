@@ -472,6 +472,9 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Setup email and calendar integration routes
+  await setupEmailCalendarRoutes(app);
+
   const httpServer = createServer(app);
   return httpServer;
 }
@@ -552,4 +555,131 @@ function parseDateString(dateStr) {
       const parsed = new Date(dateStr);
       return isNaN(parsed.getTime()) ? undefined : parsed;
   }
+}
+
+// Email & Calendar Integration
+async function setupEmailCalendarRoutes(app) {
+  const { default: emailService } = await import('./services/emailService.js');
+  const { default: calendarService } = await import('./services/calendarService.js');
+
+  // Email integration setup
+  app.post("/api/integrations/email/setup", authenticateToken, async (req, res) => {
+    try {
+      const { type, credentials } = req.body;
+      
+      if (type === 'gmail') {
+        const success = await emailService.initializeGmail(credentials);
+        if (success) {
+          res.json({ message: "Gmail integration configured successfully" });
+        } else {
+          res.status(400).json({ message: "Failed to configure Gmail integration" });
+        }
+      } else if (type === 'imap') {
+        emailService.initializeIMAP(credentials);
+        res.json({ message: "IMAP integration configured successfully" });
+      } else {
+        res.status(400).json({ message: "Invalid email integration type" });
+      }
+    } catch (error) {
+      console.error("Email setup error:", error);
+      res.status(500).json({ message: "Failed to setup email integration" });
+    }
+  });
+
+  // Manual email sync
+  app.post("/api/integrations/email/sync", authenticateToken, async (req, res) => {
+    try {
+      const { method = 'gmail' } = req.body;
+      const result = await emailService.syncEmails(
+        req.user.organizationId,
+        req.user.id,
+        method
+      );
+      res.json(result);
+    } catch (error) {
+      console.error("Email sync error:", error);
+      res.status(500).json({ message: "Failed to sync emails" });
+    }
+  });
+
+  // Calendar integration setup
+  app.post("/api/integrations/calendar/setup", authenticateToken, async (req, res) => {
+    try {
+      const { type, credentials } = req.body;
+      
+      if (type === 'google') {
+        const success = await calendarService.initializeGoogleCalendar(credentials);
+        if (success) {
+          res.json({ message: "Google Calendar integration configured successfully" });
+        } else {
+          res.status(400).json({ message: "Failed to configure Google Calendar integration" });
+        }
+      } else if (type === 'outlook') {
+        const success = await calendarService.initializeOutlook(credentials);
+        if (success) {
+          res.json({ message: "Outlook Calendar integration configured successfully" });
+        } else {
+          res.status(400).json({ message: "Failed to configure Outlook integration" });
+        }
+      } else {
+        res.status(400).json({ message: "Invalid calendar integration type" });
+      }
+    } catch (error) {
+      console.error("Calendar setup error:", error);
+      res.status(500).json({ message: "Failed to setup calendar integration" });
+    }
+  });
+
+  // Manual calendar sync
+  app.post("/api/integrations/calendar/sync", authenticateToken, async (req, res) => {
+    try {
+      const { sources = ['google'], outlookAccessToken } = req.body;
+      const result = await calendarService.syncCalendars(
+        req.user.organizationId,
+        req.user.id,
+        sources,
+        outlookAccessToken
+      );
+      res.json(result);
+    } catch (error) {
+      console.error("Calendar sync error:", error);
+      res.status(500).json({ message: "Failed to sync calendar events" });
+    }
+  });
+
+  // Get upcoming events
+  app.get("/api/integrations/calendar/events", authenticateToken, async (req, res) => {
+    try {
+      const { sources = ['google'], outlookAccessToken } = req.query;
+      const sourcesArray = typeof sources === 'string' ? [sources] : sources;
+      
+      const events = await calendarService.getUpcomingEvents(
+        req.user.organizationId,
+        req.user.id,
+        sourcesArray,
+        outlookAccessToken
+      );
+      res.json(events);
+    } catch (error) {
+      console.error("Get events error:", error);
+      res.status(500).json({ message: "Failed to fetch calendar events" });
+    }
+  });
+
+  // Get integration status
+  app.get("/api/integrations/status", authenticateToken, async (req, res) => {
+    try {
+      const calendarStatus = calendarService.getIntegrationStatus();
+      res.json({
+        email: {
+          gmail: !!emailService.gmail,
+          imap: !!emailService.imapConfig
+        },
+        calendar: calendarStatus
+      });
+    } catch (error) {
+      console.error("Integration status error:", error);
+      res.status(500).json({ message: "Failed to get integration status" });
+    }
+  });
 }
