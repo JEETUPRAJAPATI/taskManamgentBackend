@@ -20,7 +20,7 @@ export const projects = pgTable("projects", {
   status: text("status").notNull().default("active"), // active, completed, on-hold
   progress: integer("progress").notNull().default(0), // 0-100
   ownerId: integer("owner_id").references(() => users.id),
-  teamMembers: jsonb("team_members").$type<number[]>(),
+  teamMembers: jsonb("team_members").$type<number[] | null>(),
   dueDate: timestamp("due_date"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });

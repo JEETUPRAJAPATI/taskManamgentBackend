@@ -106,7 +106,7 @@
 @layer components {
   /* Navigation active state */
   .nav-item-active {
-    @apply bg-primary/10 text-primary-600 dark:text-primary-400;
+    @apply bg-primary/10 text-primary dark:text-primary;
   }
   
   /* Card hover effects */
