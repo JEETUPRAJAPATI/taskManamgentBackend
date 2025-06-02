@@ -1,5 +1,5 @@
 import { createServer } from "http";
-import { storage } from "./simple-storage.js";
+import { storage } from "./mongodb-storage.js";
 
 export async function registerRoutes(app) {
   // Dashboard routes

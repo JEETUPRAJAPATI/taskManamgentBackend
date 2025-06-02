@@ -50,21 +50,19 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
             {navigation.map((item) => {
               const Icon = item.icon;
               return (
-                <Link key={item.name} href={item.href}>
-                  <a className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
+                <Link key={item.name} href={item.href} className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
+                  isActive(item.href)
+                    ? 'bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-200'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
+                }`}>
+                  <Icon className={`flex-shrink-0 h-5 w-5 ${
                     isActive(item.href)
-                      ? 'bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-200'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
-                  }`}>
-                    <Icon className={`flex-shrink-0 h-5 w-5 ${
-                      isActive(item.href)
-                        ? 'text-blue-500'
-                        : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300'
-                    }`} />
-                    {isOpen && (
-                      <span className="ml-3">{item.name}</span>
-                    )}
-                  </a>
+                      ? 'text-blue-500'
+                      : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300'
+                  }`} />
+                  {isOpen && (
+                    <span className="ml-3">{item.name}</span>
+                  )}
                 </Link>
               );
             })}
@@ -97,22 +95,20 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
               {navigation.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <Link key={item.name} href={item.href}>
-                    <a 
-                      onClick={onMobileToggle}
-                      className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
-                        isActive(item.href)
-                          ? 'bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-200'
-                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
-                      }`}
-                    >
-                      <Icon className={`flex-shrink-0 h-5 w-5 ${
-                        isActive(item.href)
-                          ? 'text-blue-500'
-                          : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300'
-                      }`} />
-                      <span className="ml-3">{item.name}</span>
-                    </a>
+                  <Link key={item.name} href={item.href} 
+                    onClick={onMobileToggle}
+                    className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
+                      isActive(item.href)
+                        ? 'bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-200'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
+                    }`}
+                  >
+                    <Icon className={`flex-shrink-0 h-5 w-5 ${
+                      isActive(item.href)
+                        ? 'text-blue-500'
+                        : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300'
+                    }`} />
+                    <span className="ml-3">{item.name}</span>
                   </Link>
                 );
               })}

@@ -2,6 +2,7 @@ import express from "express";
 import { registerRoutes } from "./simple-routes.js";
 import path from "path";
 import { fileURLToPath } from 'url';
+import mongoose from 'mongoose';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -46,6 +47,21 @@ app.use((req, res, next) => {
 
   next();
 });
+
+// MongoDB connection
+const MONGODB_URI = "mongodb+srv://jeeturadicalloop:Mjvesqnj8gY3t0zP@cluster0.by2xy6x.mongodb.net/TaskSetu";
+
+mongoose.connect(MONGODB_URI)
+  .then(async () => {
+    console.log('Connected to MongoDB TaskSetu database');
+    
+    // Import and initialize sample data
+    const { storage } = await import('./mongodb-storage.js');
+    await storage.initializeSampleData();
+  })
+  .catch((error) => {
+    console.error('MongoDB connection error:', error);
+  });
 
 (async () => {
   const server = await registerRoutes(app);
