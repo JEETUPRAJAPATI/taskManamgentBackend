@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { SmartTaskInput } from "@/components/tasks/SmartTaskInput";
 import { TaskDetailDialog } from "@/components/tasks/TaskDetailDialog";
+import { CreateTaskModal } from "@/components/tasks/CreateTaskModal";
 import { 
   Plus, 
   Filter, 
@@ -32,6 +33,7 @@ import {
 import { format } from "date-fns";
 
 export default function Tasks() {
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [showTaskDetail, setShowTaskDetail] = useState(false);

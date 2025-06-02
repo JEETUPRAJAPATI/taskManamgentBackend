@@ -1,0 +1,85 @@
+ Prompt for "Create Task" Functionality in Admin Panel
+🧩 Context: Implement a robust "Create Task" modal/page that allows users/admins to fully define a task with all key metadata, assignments, dependencies, files, and deadlines.
+
+📝 Form Fields & Features for Creating a Task
+1. Basic Task Info
+Task Title (Required) — short name of the task
+
+Task Description (Rich Text) — detailed explanation of the task
+
+Task Priority (Dropdown) — Low, Medium, High, Urgent
+
+Task Status (Dropdown) — Not Started, In Progress, Completed, Blocked
+
+2. Assignment & Collaboration
+Assign To (Multi-select User Dropdown) — Assign to one or more team members
+
+Created By (Auto-filled / Admin) — person who created the task
+
+Followers / Watchers (Optional Users) — get notified of updates
+
+3. Project & Categorization
+Related Project (Dropdown) — choose which project this task belongs to
+
+Task Type (Dropdown) — Bug, Feature, Enhancement, Research, Other
+
+Tags / Labels (Multi-tag selector) — e.g., Frontend, Backend, Payment, API
+
+4. Subtask Management
+Is this a subtask? (Checkbox)
+
+If checked, Parent Task (Dropdown) should appear to choose parent
+
+Add Subtasks (Dynamic Add Field) — title, assignee, and due date for each
+
+5. Timeline & Deadline
+Start Date (Date Picker)
+
+Due Date / Deadline (Date & Time Picker)
+
+Estimated Duration (Time estimate: e.g., 2h, 1d, 3w)
+
+6. Files & Resources
+Upload Files (Multiple image/file upload) — drag & drop or browse
+
+Add URL / External Link (Text input) — add a reference link or support doc
+
+7. Communication & Notes
+Internal Notes (Textarea) — only visible to admins or assignees
+
+Client Visible Notes (Textarea) — notes visible to client (if applicable)
+
+8. Notifications & Reminders
+Set Reminder (Toggle) — enable date/time reminder for assignee
+
+Notify Assignees on Creation (Checkbox)
+
+9. Recurring Task Options (Optional Feature)
+Make Recurring (Checkbox)
+
+Frequency: Daily, Weekly, Monthly, Custom
+
+End After: [X times] or [End Date]
+
+10. Additional Settings
+Mark as Billable (Checkbox) — for client invoicing
+
+Linked Tasks / Dependencies (Multi-select tasks) — tasks that must be completed first
+
+Task Visibility (Dropdown) — Public, Private, Project Team Only
+
+Color Code / Highlight (Optional Tag)
+
+🧠 Suggested UI/UX Actions
+Button: + Create Task → Opens modal or full-page form.
+
+Tabs or Expandable Sections for better navigation:
+
+Task Info
+
+Subtasks
+
+Files & URLs
+
+Settings & Notifications
+
