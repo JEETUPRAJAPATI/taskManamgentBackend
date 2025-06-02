@@ -12,9 +12,10 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Activity routes
   app.get("/api/activities/recent", async (req, res) => {
     try {
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      const limit = parseInt(req.query.limit) || 10;
       const activities = await storage.getRecentActivities(limit);
       res.json(activities);
     } catch (error) {
@@ -47,40 +48,22 @@ export async function registerRoutes(app) {
 
   app.post("/api/users", async (req, res) => {
     try {
-      const userData = insertUserSchema.parse(req.body);
-      const user = await storage.createUser(userData);
-      
-      // Create activity
-      await storage.createActivity({
-        type: "user_created",
-        description: `New user ${user.fullName} was created`,
-        userId: user.id,
-        entityType: "user",
-        entityId: user.id,
-      });
-      
+      const user = await storage.createUser(req.body);
       res.status(201).json(user);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid user data", errors: error.errors });
-      }
       res.status(500).json({ message: "Failed to create user" });
     }
   });
 
-  app.put("/api/users/:id", async (req, res) => {
+  app.patch("/api/users/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const userData = insertUserSchema.partial().parse(req.body);
-      const user = await storage.updateUser(id, userData);
+      const user = await storage.updateUser(id, req.body);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
       res.json(user);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid user data", errors: error.errors });
-      }
       res.status(500).json({ message: "Failed to update user" });
     }
   });
@@ -123,40 +106,22 @@ export async function registerRoutes(app) {
 
   app.post("/api/projects", async (req, res) => {
     try {
-      const projectData = insertProjectSchema.parse(req.body);
-      const project = await storage.createProject(projectData);
-      
-      // Create activity
-      await storage.createActivity({
-        type: "project_created",
-        description: `New project "${project.name}" was created`,
-        userId: project.ownerId || 1,
-        entityType: "project",
-        entityId: project.id,
-      });
-      
+      const project = await storage.createProject(req.body);
       res.status(201).json(project);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid project data", errors: error.errors });
-      }
       res.status(500).json({ message: "Failed to create project" });
     }
   });
 
-  app.put("/api/projects/:id", async (req, res) => {
+  app.patch("/api/projects/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const projectData = insertProjectSchema.partial().parse(req.body);
-      const project = await storage.updateProject(id, projectData);
+      const project = await storage.updateProject(id, req.body);
       if (!project) {
         return res.status(404).json({ message: "Project not found" });
       }
       res.json(project);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid project data", errors: error.errors });
-      }
       res.status(500).json({ message: "Failed to update project" });
     }
   });
@@ -177,23 +142,7 @@ export async function registerRoutes(app) {
   // Task routes
   app.get("/api/tasks", async (req, res) => {
     try {
-      const { status, priority, assigneeId, projectId } = req.query;
-      let tasks = await storage.getTasks();
-      
-      // Apply filters
-      if (status && status !== "all") {
-        tasks = tasks.filter(task => task.status === status);
-      }
-      if (priority && priority !== "all") {
-        tasks = tasks.filter(task => task.priority === priority);
-      }
-      if (assigneeId && assigneeId !== "all") {
-        tasks = tasks.filter(task => task.assigneeId === parseInt(assigneeId as string));
-      }
-      if (projectId && projectId !== "all") {
-        tasks = tasks.filter(task => task.projectId === parseInt(projectId as string));
-      }
-      
+      const tasks = await storage.getTasks();
       res.json(tasks);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch tasks" });
@@ -215,56 +164,22 @@ export async function registerRoutes(app) {
 
   app.post("/api/tasks", async (req, res) => {
     try {
-      const taskData = insertTaskSchema.parse(req.body);
-      const task = await storage.createTask(taskData);
-      
-      // Create activity
-      const assignee = task.assigneeId ? await storage.getUser(task.assigneeId) : null;
-      await storage.createActivity({
-        type: "task_created",
-        description: `New task "${task.title}" was created${assignee ? ` and assigned to ${assignee.fullName}` : ""}`,
-        userId: task.assigneeId || 1,
-        entityType: "task",
-        entityId: task.id,
-      });
-      
+      const task = await storage.createTask(req.body);
       res.status(201).json(task);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid task data", errors: error.errors });
-      }
       res.status(500).json({ message: "Failed to create task" });
     }
   });
 
-  app.put("/api/tasks/:id", async (req, res) => {
+  app.patch("/api/tasks/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const taskData = insertTaskSchema.partial().parse(req.body);
-      const oldTask = await storage.getTask(id);
-      const task = await storage.updateTask(id, taskData);
-      
+      const task = await storage.updateTask(id, req.body);
       if (!task) {
         return res.status(404).json({ message: "Task not found" });
       }
-      
-      // Create activity for status changes
-      if (oldTask && oldTask.status !== task.status) {
-        const assignee = task.assigneeId ? await storage.getUser(task.assigneeId) : null;
-        await storage.createActivity({
-          type: "task_updated",
-          description: `Task "${task.title}" status changed from ${oldTask.status} to ${task.status}${assignee ? ` by ${assignee.fullName}` : ""}`,
-          userId: task.assigneeId || 1,
-          entityType: "task",
-          entityId: task.id,
-        });
-      }
-      
       res.json(task);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid task data", errors: error.errors });
-      }
       res.status(500).json({ message: "Failed to update task" });
     }
   });
@@ -282,6 +197,6 @@ export async function registerRoutes(app) {
     }
   });
 
-  const httpServer = createServer(app);
-  return httpServer;
+  const server = createServer(app);
+  return server;
 }

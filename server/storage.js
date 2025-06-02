@@ -1,40 +1,11 @@
-import { users, projects, tasks, activities, type User, type InsertUser, type Project, type InsertProject, type Task, type InsertTask, type Activity, type InsertActivity, type TaskWithDetails, type ProjectWithDetails, type DashboardStats } from "@shared/schema";
-import { MongoClient, Db, Collection } from 'mongodb';
+import { MongoClient } from 'mongodb';
 
-export interface IStorage {
-  // Users
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  getUserByEmail(email: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
-  updateUser(id: number, user: Partial<InsertUser>): Promise<User | undefined>;
-  deleteUser(id: number): Promise<boolean>;
-  getUsers(): Promise<User[]>;
-
-  // Projects
-  getProject(id: number): Promise<Project | undefined>;
-  createProject(project: InsertProject): Promise<Project>;
-  updateProject(id: number, project: Partial<InsertProject>): Promise<Project | undefined>;
-  deleteProject(id: number): Promise<boolean>;
-  getProjects(): Promise<ProjectWithDetails[]>;
-  getProjectsByUser(userId: number): Promise<Project[]>;
-
-  // Tasks
-  getTask(id: number): Promise<Task | undefined>;
-  createTask(task: InsertTask): Promise<Task>;
-  updateTask(id: number, task: Partial<InsertTask>): Promise<Task | undefined>;
-  deleteTask(id: number): Promise<boolean>;
-  getTasks(): Promise<TaskWithDetails[]>;
-  getTasksByProject(projectId: number): Promise<TaskWithDetails[]>;
-  getTasksByUser(userId: number): Promise<TaskWithDetails[]>;
-
-  // Activities
-  createActivity(activity: InsertActivity): Promise<Activity>;
-  getRecentActivities(limit?: number): Promise<Activity[]>;
-
-  // Dashboard
-  getDashboardStats(): Promise<DashboardStats>;
-}
+// Storage interface as JavaScript comments for reference
+// Users: getUser, getUserByUsername, getUserByEmail, createUser, updateUser, deleteUser, getUsers
+// Projects: getProject, createProject, updateProject, deleteProject, getProjects, getProjectsByUser
+// Tasks: getTask, createTask, updateTask, deleteTask, getTasks, getTasksByProject, getTasksByUser
+// Activities: createActivity, getRecentActivities
+// Dashboard: getDashboardStats
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
