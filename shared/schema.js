@@ -20,7 +20,7 @@ export const projects = pgTable("projects", {
   status: text("status").notNull().default("active"), // active, completed, on-hold
   progress: integer("progress").notNull().default(0), // 0-100
   ownerId: integer("owner_id").references(() => users.id),
-  teamMembers: jsonb("team_members").$type<number[] | null>(),
+  teamMembers: jsonb("team_members"),
   dueDate: timestamp("due_date"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
@@ -69,35 +69,3 @@ export const insertActivitySchema = createInsertSchema(activities).omit({
   id: true,
   createdAt: true,
 });
-
-// Types
-export type User = typeof users.$inferSelect;
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type Project = typeof projects.$inferSelect;
-export type InsertProject = z.infer<typeof insertProjectSchema>;
-export type Task = typeof tasks.$inferSelect;
-export type InsertTask = z.infer<typeof insertTaskSchema>;
-export type Activity = typeof activities.$inferSelect;
-export type InsertActivity = z.infer<typeof insertActivitySchema>;
-
-// Extended types for API responses
-export type TaskWithDetails = Task & {
-  assignee?: User;
-  project?: Project;
-};
-
-export type ProjectWithDetails = Project & {
-  owner?: User;
-  taskCount?: number;
-  completedTasks?: number;
-};
-
-export type DashboardStats = {
-  totalTasks: number;
-  completedTasks: number;
-  inProgressTasks: number;
-  totalUsers: number;
-  activeUsers: number;
-  totalProjects: number;
-  activeProjects: number;
-};

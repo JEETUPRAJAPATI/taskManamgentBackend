@@ -21,16 +21,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { StatsCard } from "@/components/admin/StatsCard";
-import { DashboardStats, Activity as ActivityType, TaskWithDetails } from "@shared/schema";
+// Note: Schema types removed for JavaScript compatibility
 import { useTasks } from "@/hooks/useTasks";
 import { formatRelativeTime, getInitials, formatDate } from "@/lib/utils";
 
 export default function Analytics() {
-  const { data: stats } = useQuery<DashboardStats>({
+  const { data: stats } = useQuery({
     queryKey: ["/api/dashboard/stats"],
   });
 
-  const { data: activities } = useQuery<ActivityType[]>({
+  const { data: activities } = useQuery({
     queryKey: ["/api/activities/recent"],
     queryFn: async () => {
       const response = await fetch("/api/activities/recent?limit=20", { credentials: "include" });
