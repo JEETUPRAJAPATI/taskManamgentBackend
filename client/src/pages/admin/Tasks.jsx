@@ -1,76 +1,226 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { SmartTaskInput } from "@/components/tasks/SmartTaskInput";
+import { TaskDetailDialog } from "@/components/tasks/TaskDetailDialog";
+import { 
+  Plus, 
+  Filter, 
+  Search, 
+  Calendar, 
+  User, 
+  Flag, 
+  MoreHorizontal,
+  Eye,
+  Edit,
+  Trash2,
+  Tag
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { format } from "date-fns";
 
 export default function Tasks() {
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      title: "Website Redesign",
-      description: "Complete the homepage redesign with new branding",
-      status: "In Progress",
-      priority: "High",
-      assignee: "John Doe",
-      dueDate: "2024-06-15",
-      project: "Website Project"
-    },
-    {
-      id: 2,
-      title: "API Documentation",
-      description: "Write comprehensive API documentation",
-      status: "Todo",
-      priority: "Medium",
-      assignee: "Sarah Wilson",
-      dueDate: "2024-06-20",
-      project: "API Project"
-    },
-    {
-      id: 3,
-      title: "Database Migration",
-      description: "Migrate database to new server infrastructure",
-      status: "Completed",
-      priority: "High",
-      assignee: "Mike Johnson",
-      dueDate: "2024-06-10",
-      project: "Infrastructure"
-    }
-  ]);
-
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [showTaskDetail, setShowTaskDetail] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
-    status: "all",
+    statusId: "all",
     priority: "all",
-    assignee: "all"
+    assignedToId: "all",
+    projectId: "all"
   });
 
-  const filteredTasks = tasks.filter(task => {
-    if (filters.status !== "all" && task.status !== filters.status) return false;
-    if (filters.priority !== "all" && task.priority !== filters.priority) return false;
-    if (filters.assignee !== "all" && task.assignee !== filters.assignee) return false;
-    return true;
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  // Fetch tasks from MongoDB
+  const { data: tasks = [], isLoading: tasksLoading } = useQuery({
+    queryKey: ["/api/tasks", filters, searchTerm],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (filters.statusId !== "all") params.append("statusId", filters.statusId);
+      if (filters.priority !== "all") params.append("priority", filters.priority);
+      if (filters.assignedToId !== "all") params.append("assignedToId", filters.assignedToId);
+      if (filters.projectId !== "all") params.append("projectId", filters.projectId);
+      if (searchTerm) params.append("search", searchTerm);
+      
+      const response = await fetch(`/api/tasks?${params}`);
+      if (!response.ok) throw new Error("Failed to fetch tasks");
+      return response.json();
+    }
   });
 
+  // Fetch users
+  const { data: users = [] } = useQuery({
+    queryKey: ["/api/users"],
+    queryFn: async () => {
+      const response = await fetch("/api/users");
+      if (!response.ok) throw new Error("Failed to fetch users");
+      return response.json();
+    }
+  });
+
+  // Fetch projects
+  const { data: projects = [] } = useQuery({
+    queryKey: ["/api/projects"],
+    queryFn: async () => {
+      const response = await fetch("/api/projects");
+      if (!response.ok) throw new Error("Failed to fetch projects");
+      return response.json();
+    }
+  });
+
+  // Fetch task statuses
+  const { data: taskStatuses = [] } = useQuery({
+    queryKey: ["/api/task-statuses"],
+    queryFn: async () => {
+      const response = await fetch("/api/task-statuses");
+      if (!response.ok) throw new Error("Failed to fetch task statuses");
+      return response.json();
+    }
+  });
+
+  // Create task mutation
+  const createTaskMutation = useMutation({
+    mutationFn: async (taskData) => {
+      const response = await fetch("/api/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(taskData)
+      });
+      if (!response.ok) throw new Error("Failed to create task");
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["/api/tasks"]);
+      setShowCreateForm(false);
+      toast({ title: "Task created successfully" });
+    },
+    onError: (error) => {
+      toast({ title: "Error creating task", description: error.message, variant: "destructive" });
+    }
+  });
+
+  // Update task mutation
+  const updateTaskMutation = useMutation({
+    mutationFn: async ({ id, data }) => {
+      const response = await fetch(`/api/tasks/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error("Failed to update task");
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["/api/tasks"]);
+      toast({ title: "Task updated successfully" });
+    },
+    onError: (error) => {
+      toast({ title: "Error updating task", description: error.message, variant: "destructive" });
+    }
+  });
+
+  // Delete task mutation
+  const deleteTaskMutation = useMutation({
+    mutationFn: async (id) => {
+      const response = await fetch(`/api/tasks/${id}`, { method: "DELETE" });
+      if (!response.ok) throw new Error("Failed to delete task");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["/api/tasks"]);
+      setShowTaskDetail(false);
+      toast({ title: "Task deleted successfully" });
+    },
+    onError: (error) => {
+      toast({ title: "Error deleting task", description: error.message, variant: "destructive" });
+    }
+  });
+
+  // Smart task creation handler
+  const handleSmartTaskCreate = async (parsedData) => {
+    const taskData = {
+      title: parsedData.title,
+      description: parsedData.description || "",
+      dueDate: parsedData.dueDate,
+      priority: parsedData.priority,
+      tags: parsedData.tags,
+      assignedTo: parsedData.assignees.map(user => user._id),
+      mentions: parsedData.mentions.map(user => user._id)
+    };
+    
+    createTaskMutation.mutate(taskData);
+  };
+
+  // Fetch task details including comments and audit logs
+  const { data: taskDetails } = useQuery({
+    queryKey: ["/api/tasks", selectedTask?._id, "details"],
+    queryFn: async () => {
+      if (!selectedTask?._id) return null;
+      
+      const [commentsRes, auditRes] = await Promise.all([
+        fetch(`/api/tasks/${selectedTask._id}/comments`),
+        fetch(`/api/tasks/${selectedTask._id}/audit-logs`)
+      ]);
+      
+      const comments = commentsRes.ok ? await commentsRes.json() : [];
+      const auditLogs = auditRes.ok ? await auditRes.json() : [];
+      
+      return { comments, auditLogs };
+    },
+    enabled: !!selectedTask?._id && showTaskDetail
+  });
+
+  // Helper functions
   const getStatusColor = (status) => {
-    switch (status) {
-      case "Completed":
-        return "bg-green-100 text-green-800";
-      case "In Progress":
-        return "bg-blue-100 text-blue-800";
-      case "Todo":
-        return "bg-yellow-100 text-yellow-800";
+    switch (status?.name?.toLowerCase()) {
+      case "completed":
+        return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400";
+      case "in progress":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400";
+      case "todo":
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400";
     }
   };
 
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case "High":
-        return "bg-red-100 text-red-800";
-      case "Medium":
-        return "bg-orange-100 text-orange-800";
-      case "Low":
-        return "bg-green-100 text-green-800";
+      case "high":
+        return "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400";
+      case "medium":
+        return "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400";
+      case "low":
+        return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400";
     }
+  };
+
+  const handleTaskClick = (task) => {
+    setSelectedTask(task);
+    setShowTaskDetail(true);
+  };
+
+  const handleTaskUpdate = (id, data) => {
+    updateTaskMutation.mutate({ id, data });
+  };
+
+  const handleTaskDelete = (id) => {
+    deleteTaskMutation.mutate(id);
   };
 
   return (
