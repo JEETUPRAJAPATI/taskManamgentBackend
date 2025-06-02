@@ -386,6 +386,234 @@ notificationSchema.index({ user: 1, isRead: 1 });
 usageTrackingSchema.index({ organization: 1, month: 1 }, { unique: true });
 
 // Export models
+// Form Schema
+const formSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  description: String,
+  organization: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Organization',
+    required: true
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  fields: [{
+    id: {
+      type: String,
+      required: true
+    },
+    type: {
+      type: String,
+      required: true,
+      enum: ['text', 'date', 'dropdown', 'multiselect', 'number', 'textarea', 'email', 'phone']
+    },
+    label: {
+      type: String,
+      required: true
+    },
+    placeholder: String,
+    required: {
+      type: Boolean,
+      default: false
+    },
+    options: [String], // For dropdown and multiselect
+    validation: {
+      min: Number,
+      max: Number,
+      pattern: String
+    },
+    order: {
+      type: Number,
+      default: 0
+    }
+  }],
+  isPublished: {
+    type: Boolean,
+    default: false
+  },
+  accessLink: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
+  settings: {
+    allowAnonymous: {
+      type: Boolean,
+      default: true
+    },
+    maxSubmissions: Number,
+    submitMessage: {
+      type: String,
+      default: 'Thank you for your submission!'
+    },
+    redirectUrl: String
+  }
+}, {
+  timestamps: true
+});
+
+// Process Flow Schema
+const processFlowSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  description: String,
+  organization: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Organization',
+    required: true
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  form: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Form',
+    required: true
+  },
+  steps: [{
+    id: {
+      type: String,
+      required: true
+    },
+    title: {
+      type: String,
+      required: true
+    },
+    description: String,
+    type: {
+      type: String,
+      required: true,
+      enum: ['task', 'approval', 'notification', 'conditional']
+    },
+    assignedTo: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }],
+    dueInDays: Number,
+    conditions: [{
+      field: String,
+      operator: {
+        type: String,
+        enum: ['equals', 'not_equals', 'contains', 'greater_than', 'less_than']
+      },
+      value: String
+    }],
+    nextSteps: [String], // Array of step IDs
+    order: {
+      type: Number,
+      default: 0
+    }
+  }],
+  flowType: {
+    type: String,
+    required: true,
+    enum: ['sequential', 'parallel', 'conditional'],
+    default: 'sequential'
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  }
+}, {
+  timestamps: true
+});
+
+// Form Response Schema
+const formResponseSchema = new mongoose.Schema({
+  form: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Form',
+    required: true
+  },
+  processFlow: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ProcessFlow'
+  },
+  submittedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  submitterEmail: String, // For anonymous submissions
+  responses: [{
+    fieldId: {
+      type: String,
+      required: true
+    },
+    fieldLabel: String,
+    value: mongoose.Schema.Types.Mixed
+  }],
+  status: {
+    type: String,
+    enum: ['submitted', 'in_progress', 'completed', 'rejected'],
+    default: 'submitted'
+  },
+  currentStep: String, // Current step ID in process flow
+  stepHistory: [{
+    stepId: String,
+    stepTitle: String,
+    status: {
+      type: String,
+      enum: ['pending', 'completed', 'rejected', 'skipped']
+    },
+    assignedTo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    completedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    comments: String,
+    completedAt: Date
+  }],
+  metadata: {
+    ipAddress: String,
+    userAgent: String,
+    referrer: String
+  }
+}, {
+  timestamps: true
+});
+
+// Process Instance Schema (for tracking workflow execution)
+const processInstanceSchema = new mongoose.Schema({
+  processFlow: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ProcessFlow',
+    required: true
+  },
+  formResponse: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'FormResponse',
+    required: true
+  },
+  status: {
+    type: String,
+    enum: ['active', 'completed', 'terminated', 'paused'],
+    default: 'active'
+  },
+  currentSteps: [String], // Current active step IDs
+  completedSteps: [String], // Completed step IDs
+  variables: {
+    type: Object,
+    default: {}
+  }
+}, {
+  timestamps: true
+});
+
 export const Organization = mongoose.model('Organization', organizationSchema);
 export const User = mongoose.model('User', userSchema);
 export const Project = mongoose.model('Project', projectSchema);
@@ -396,3 +624,7 @@ export const TaskAssignment = mongoose.model('TaskAssignment', taskAssignmentSch
 export const TaskAuditLog = mongoose.model('TaskAuditLog', taskAuditLogSchema);
 export const Notification = mongoose.model('Notification', notificationSchema);
 export const UsageTracking = mongoose.model('UsageTracking', usageTrackingSchema);
+export const Form = mongoose.model('Form', formSchema);
+export const ProcessFlow = mongoose.model('ProcessFlow', processFlowSchema);
+export const FormResponse = mongoose.model('FormResponse', formResponseSchema);
+export const ProcessInstance = mongoose.model('ProcessInstance', processInstanceSchema);

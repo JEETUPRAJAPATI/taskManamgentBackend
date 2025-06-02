@@ -11,7 +11,11 @@ import {
   TaskAssignment, 
   TaskAuditLog, 
   Notification, 
-  UsageTracking 
+  UsageTracking,
+  Form,
+  ProcessFlow,
+  FormResponse,
+  ProcessInstance
 } from './models.js';
 
 export class MongoStorage {
@@ -348,6 +352,222 @@ export class MongoStorage {
     ]);
 
     console.log('Sample data initialized successfully!');
+  }
+
+  // Form operations
+  async getForms(organizationId) {
+    return await Form.find({ organization: organizationId })
+      .populate('createdBy', 'firstName lastName email')
+      .sort({ createdAt: -1 });
+  }
+
+  async getForm(id) {
+    return await Form.findById(id)
+      .populate('createdBy', 'firstName lastName email')
+      .populate('organization', 'name slug');
+  }
+
+  async getFormByAccessLink(accessLink) {
+    return await Form.findOne({ accessLink, isPublished: true })
+      .populate('organization', 'name slug');
+  }
+
+  async createForm(formData) {
+    // Generate unique access link
+    const accessLink = `form-${crypto.randomBytes(8).toString('hex')}`;
+    
+    const form = new Form({
+      ...formData,
+      accessLink
+    });
+    return await form.save();
+  }
+
+  async updateForm(id, formData) {
+    return await Form.findByIdAndUpdate(id, formData, { new: true });
+  }
+
+  async deleteForm(id) {
+    return await Form.findByIdAndDelete(id);
+  }
+
+  async publishForm(id) {
+    return await Form.findByIdAndUpdate(
+      id, 
+      { isPublished: true }, 
+      { new: true }
+    );
+  }
+
+  async unpublishForm(id) {
+    return await Form.findByIdAndUpdate(
+      id, 
+      { isPublished: false }, 
+      { new: true }
+    );
+  }
+
+  // Process Flow operations
+  async getProcessFlows(organizationId) {
+    return await ProcessFlow.find({ organization: organizationId })
+      .populate('createdBy', 'firstName lastName email')
+      .populate('form', 'title')
+      .sort({ createdAt: -1 });
+  }
+
+  async getProcessFlow(id) {
+    return await ProcessFlow.findById(id)
+      .populate('createdBy', 'firstName lastName email')
+      .populate('form', 'title fields')
+      .populate('steps.assignedTo', 'firstName lastName email');
+  }
+
+  async createProcessFlow(flowData) {
+    const processFlow = new ProcessFlow(flowData);
+    return await processFlow.save();
+  }
+
+  async updateProcessFlow(id, flowData) {
+    return await ProcessFlow.findByIdAndUpdate(id, flowData, { new: true });
+  }
+
+  async deleteProcessFlow(id) {
+    return await ProcessFlow.findByIdAndDelete(id);
+  }
+
+  // Form Response operations
+  async getFormResponses(filters = {}) {
+    let query = {};
+    
+    if (filters.formId) {
+      query.form = filters.formId;
+    }
+    
+    if (filters.status) {
+      query.status = filters.status;
+    }
+    
+    if (filters.organizationId) {
+      const forms = await Form.find({ organization: filters.organizationId }).select('_id');
+      const formIds = forms.map(f => f._id);
+      query.form = { $in: formIds };
+    }
+
+    return await FormResponse.find(query)
+      .populate('form', 'title')
+      .populate('submittedBy', 'firstName lastName email')
+      .populate('processFlow', 'title')
+      .sort({ createdAt: -1 });
+  }
+
+  async getFormResponse(id) {
+    return await FormResponse.findById(id)
+      .populate('form', 'title fields')
+      .populate('submittedBy', 'firstName lastName email')
+      .populate('processFlow', 'title steps')
+      .populate('stepHistory.assignedTo', 'firstName lastName email')
+      .populate('stepHistory.completedBy', 'firstName lastName email');
+  }
+
+  async createFormResponse(responseData) {
+    const response = new FormResponse(responseData);
+    const savedResponse = await response.save();
+    
+    // If there's a process flow, create process instance
+    if (responseData.processFlow) {
+      await this.createProcessInstance({
+        processFlow: responseData.processFlow,
+        formResponse: savedResponse._id,
+        currentSteps: ['start']
+      });
+    }
+    
+    return savedResponse;
+  }
+
+  async updateFormResponse(id, responseData) {
+    return await FormResponse.findByIdAndUpdate(id, responseData, { new: true });
+  }
+
+  async updateResponseStep(responseId, stepData) {
+    const response = await FormResponse.findById(responseId);
+    if (!response) return null;
+
+    response.stepHistory.push({
+      stepId: stepData.stepId,
+      stepTitle: stepData.stepTitle,
+      status: stepData.status,
+      assignedTo: stepData.assignedTo,
+      completedBy: stepData.completedBy,
+      comments: stepData.comments,
+      completedAt: stepData.status === 'completed' ? new Date() : undefined
+    });
+
+    response.currentStep = stepData.nextStep || null;
+    
+    if (stepData.status === 'completed' && !stepData.nextStep) {
+      response.status = 'completed';
+    } else if (stepData.status === 'rejected') {
+      response.status = 'rejected';
+    } else {
+      response.status = 'in_progress';
+    }
+
+    return await response.save();
+  }
+
+  // Process Instance operations
+  async getProcessInstance(responseId) {
+    return await ProcessInstance.findOne({ formResponse: responseId })
+      .populate('processFlow')
+      .populate('formResponse');
+  }
+
+  async createProcessInstance(instanceData) {
+    const instance = new ProcessInstance(instanceData);
+    return await instance.save();
+  }
+
+  async updateProcessInstance(id, instanceData) {
+    return await ProcessInstance.findByIdAndUpdate(id, instanceData, { new: true });
+  }
+
+  // Analytics for forms and processes
+  async getFormAnalytics(formId, organizationId) {
+    const matchStage = formId ? 
+      { form: formId } : 
+      { form: { $in: await this.getFormIdsByOrganization(organizationId) } };
+
+    const analytics = await FormResponse.aggregate([
+      { $match: matchStage },
+      {
+        $group: {
+          _id: null,
+          totalSubmissions: { $sum: 1 },
+          completedSubmissions: {
+            $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] }
+          },
+          inProgressSubmissions: {
+            $sum: { $cond: [{ $eq: ['$status', 'in_progress'] }, 1, 0] }
+          },
+          rejectedSubmissions: {
+            $sum: { $cond: [{ $eq: ['$status', 'rejected'] }, 1, 0] }
+          }
+        }
+      }
+    ]);
+
+    return analytics[0] || {
+      totalSubmissions: 0,
+      completedSubmissions: 0,
+      inProgressSubmissions: 0,
+      rejectedSubmissions: 0
+    };
+  }
+
+  async getFormIdsByOrganization(organizationId) {
+    const forms = await Form.find({ organization: organizationId }).select('_id');
+    return forms.map(f => f._id);
   }
 }
 
