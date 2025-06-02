@@ -1,7 +1,7 @@
-const { google } = require('googleapis');
-const { Client } = require('@azure/msal-node');
-const cron = require('node-cron');
-const { storage } = require('../mongodb-storage');
+import { google } from 'googleapis';
+import { Client } from '@azure/msal-node';
+import cron from 'node-cron';
+import { storage } from '../mongodb-storage.js';
 
 class CalendarService {
   constructor() {
@@ -323,4 +323,4 @@ class CalendarService {
   }
 }
 
-module.exports = new CalendarService();
+export default new CalendarService();
