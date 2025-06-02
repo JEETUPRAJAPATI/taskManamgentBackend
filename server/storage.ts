@@ -234,7 +234,7 @@ export class MemStorage implements IStorage {
       progress: insertProject.progress || 0,
       description: insertProject.description || null,
       ownerId: insertProject.ownerId || null,
-      teamMembers: (insertProject.teamMembers as number[]) || null,
+      teamMembers: Array.isArray(insertProject.teamMembers) ? insertProject.teamMembers : null,
       dueDate: insertProject.dueDate || null,
       createdAt: new Date() 
     };
@@ -246,10 +246,10 @@ export class MemStorage implements IStorage {
     const project = this.projects.get(id);
     if (!project) return undefined;
     
-    const updatedProject = { 
+    const updatedProject: Project = { 
       ...project, 
       ...updateProject,
-      teamMembers: updateProject.teamMembers ? updateProject.teamMembers as number[] : project.teamMembers
+      teamMembers: Array.isArray(updateProject.teamMembers) ? updateProject.teamMembers : project.teamMembers
     };
     this.projects.set(id, updatedProject);
     return updatedProject;
