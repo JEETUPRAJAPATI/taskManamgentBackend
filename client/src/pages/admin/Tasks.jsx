@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { SmartTaskInput } from "@/components/tasks/SmartTaskInput";
 import { TaskDetailDialog } from "@/components/tasks/TaskDetailDialog";
 import { CreateTaskModal } from "@/components/tasks/CreateTaskModal";
+import { AdvancedCreateTask } from "@/components/tasks/AdvancedCreateTask";
 import { 
   Plus, 
   Filter, 
@@ -34,6 +35,7 @@ import {
 import { format } from "date-fns";
 
 export default function Tasks() {
+  const [showAdvancedCreate, setShowAdvancedCreate] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -246,9 +248,13 @@ export default function Tasks() {
       {/* Task Creation Options */}
       <div className="mb-6">
         <div className="flex gap-2 mb-4">
-          <Button onClick={() => setShowCreateModal(true)}>
+          <Button onClick={() => setShowAdvancedCreate(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Create Task
+          </Button>
+          <Button variant="outline" onClick={() => setShowCreateModal(true)}>
+            <FileText className="h-4 w-4 mr-2" />
+            Full Form
           </Button>
           <Button variant="outline" onClick={() => setShowCreateForm(!showCreateForm)}>
             <Edit className="h-4 w-4 mr-2" />
@@ -511,6 +517,17 @@ export default function Tasks() {
           console.log('Delete comment:', id);
         }}
         currentUser={users[0]} // You can implement proper current user logic
+      />
+
+      {/* Advanced Create Task Modal */}
+      <AdvancedCreateTask
+        isOpen={showAdvancedCreate}
+        onClose={() => setShowAdvancedCreate(false)}
+        users={users}
+        projects={projects}
+        onTaskCreated={(task) => {
+          queryClient.invalidateQueries(["/api/tasks"]);
+        }}
       />
 
       {/* Comprehensive Create Task Modal */}
