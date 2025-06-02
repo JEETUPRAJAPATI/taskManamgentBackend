@@ -1,0 +1,178 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 248 250 252; /* slate-50 #f8fafc */
+  --foreground: 15 23 42; /* slate-900 #0f172a */
+  --card: 255 255 255; /* white #ffffff */
+  --card-foreground: 15 23 42; /* slate-900 #0f172a */
+  --popover: 255 255 255; /* white #ffffff */
+  --popover-foreground: 15 23 42; /* slate-900 #0f172a */
+  --primary: 59 130 246; /* blue-500 #3b82f6 */
+  --primary-foreground: 248 250 252; /* slate-50 #f8fafc */
+  --secondary: 241 245 249; /* slate-100 #f1f5f9 */
+  --secondary-foreground: 15 23 42; /* slate-900 #0f172a */
+  --muted: 241 245 249; /* slate-100 #f1f5f9 */
+  --muted-foreground: 100 116 139; /* slate-500 #64748b */
+  --accent: 241 245 249; /* slate-100 #f1f5f9 */
+  --accent-foreground: 15 23 42; /* slate-900 #0f172a */
+  --destructive: 239 68 68; /* red-500 #ef4444 */
+  --destructive-foreground: 248 250 252; /* slate-50 #f8fafc */
+  --border: 226 232 240; /* slate-200 #e2e8f0 */
+  --input: 226 232 240; /* slate-200 #e2e8f0 */
+  --ring: 59 130 246; /* blue-500 #3b82f6 */
+  --radius: 0.5rem;
+  
+  /* Sidebar colors */
+  --sidebar-background: 255 255 255; /* white #ffffff */
+  --sidebar-foreground: 15 23 42; /* slate-900 #0f172a */
+  --sidebar-primary: 59 130 246; /* blue-500 #3b82f6 */
+  --sidebar-primary-foreground: 248 250 252; /* slate-50 #f8fafc */
+  --sidebar-accent: 241 245 249; /* slate-100 #f1f5f9 */
+  --sidebar-accent-foreground: 15 23 42; /* slate-900 #0f172a */
+  --sidebar-border: 226 232 240; /* slate-200 #e2e8f0 */
+  --sidebar-ring: 59 130 246; /* blue-500 #3b82f6 */
+  
+  /* Chart colors */
+  --chart-1: 59 130 246; /* blue-500 #3b82f6 */
+  --chart-2: 16 185 129; /* emerald-500 #10b981 */
+  --chart-3: 245 158 11; /* amber-500 #f59e0b */
+  --chart-4: 139 92 246; /* violet-500 #8b5cf6 */
+  --chart-5: 236 72 153; /* pink-500 #ec4899 */
+}
+
+.dark {
+  --background: 15 23 42; /* slate-900 #0f172a */
+  --foreground: 248 250 252; /* slate-50 #f8fafc */
+  --card: 30 41 59; /* slate-800 #1e293b */
+  --card-foreground: 248 250 252; /* slate-50 #f8fafc */
+  --popover: 30 41 59; /* slate-800 #1e293b */
+  --popover-foreground: 248 250 252; /* slate-50 #f8fafc */
+  --primary: 59 130 246; /* blue-500 #3b82f6 */
+  --primary-foreground: 248 250 252; /* slate-50 #f8fafc */
+  --secondary: 51 65 85; /* slate-700 #334155 */
+  --secondary-foreground: 248 250 252; /* slate-50 #f8fafc */
+  --muted: 51 65 85; /* slate-700 #334155 */
+  --muted-foreground: 148 163 184; /* slate-400 #94a3b8 */
+  --accent: 51 65 85; /* slate-700 #334155 */
+  --accent-foreground: 248 250 252; /* slate-50 #f8fafc */
+  --destructive: 220 38 38; /* red-600 #dc2626 */
+  --destructive-foreground: 248 250 252; /* slate-50 #f8fafc */
+  --border: 51 65 85; /* slate-700 #334155 */
+  --input: 51 65 85; /* slate-700 #334155 */
+  --ring: 59 130 246; /* blue-500 #3b82f6 */
+  
+  /* Sidebar colors - dark mode */
+  --sidebar-background: 30 41 59; /* slate-800 #1e293b */
+  --sidebar-foreground: 248 250 252; /* slate-50 #f8fafc */
+  --sidebar-primary: 59 130 246; /* blue-500 #3b82f6 */
+  --sidebar-primary-foreground: 248 250 252; /* slate-50 #f8fafc */
+  --sidebar-accent: 51 65 85; /* slate-700 #334155 */
+  --sidebar-accent-foreground: 248 250 252; /* slate-50 #f8fafc */
+  --sidebar-border: 51 65 85; /* slate-700 #334155 */
+  --sidebar-ring: 59 130 246; /* blue-500 #3b82f6 */
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-slate-100 dark:bg-slate-800;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 dark:bg-slate-600 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400 dark:bg-slate-500;
+  }
+}
+
+@layer components {
+  /* Navigation active state */
+  .nav-item-active {
+    @apply bg-primary/10 text-primary-600 dark:text-primary-400;
+  }
+  
+  /* Card hover effects */
+  .admin-card {
+    @apply bg-card border border-border rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200;
+  }
+  
+  /* Button variants */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 px-4 py-2 rounded-lg font-medium transition-colors;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:ring-2 focus:ring-secondary focus:ring-offset-2 px-4 py-2 rounded-lg font-medium transition-colors;
+  }
+  
+  /* Status badges */
+  .status-todo {
+    @apply bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400;
+  }
+  
+  .status-in-progress {
+    @apply bg-amber-100 dark:bg-amber-900/20 text-amber-800 dark:text-amber-400;
+  }
+  
+  .status-completed {
+    @apply bg-emerald-100 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-400;
+  }
+  
+  /* Priority badges */
+  .priority-low {
+    @apply bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-300;
+  }
+  
+  .priority-medium {
+    @apply bg-amber-100 dark:bg-amber-900/20 text-amber-800 dark:text-amber-400;
+  }
+  
+  .priority-high {
+    @apply bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-400;
+  }
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
