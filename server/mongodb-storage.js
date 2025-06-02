@@ -1,6 +1,71 @@
-import { User, Project, Task, Activity } from './models.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import { 
+  Organization, 
+  User, 
+  Project, 
+  TaskStatus, 
+  Task, 
+  TaskComment, 
+  TaskAssignment, 
+  TaskAuditLog, 
+  Notification, 
+  UsageTracking 
+} from './models.js';
 
 export class MongoStorage {
+  
+  // Token generation methods
+  generateToken(user) {
+    const JWT_SECRET = process.env.JWT_SECRET || "your-jwt-secret-key";
+    return jwt.sign({
+      id: user.id || user._id,
+      email: user.email,
+      organizationId: user.organization ? user.organization.toString() : undefined,
+      role: user.role
+    }, JWT_SECRET, { expiresIn: "7d" });
+  }
+
+  async hashPassword(password) {
+    return await bcrypt.hash(password, 12);
+  }
+
+  async verifyPassword(password, hash) {
+    return await bcrypt.compare(password, hash);
+  }
+
+  generatePasswordResetToken() {
+    return crypto.randomBytes(32).toString('hex');
+  }
+
+  generateEmailVerificationToken() {
+    return crypto.randomBytes(32).toString('hex');
+  }
+
+  // Organization operations
+  async createOrganization(orgData) {
+    const organization = new Organization(orgData);
+    return await organization.save();
+  }
+
+  async getOrganization(id) {
+    return await Organization.findById(id);
+  }
+
+  async getOrganizationBySlug(slug) {
+    return await Organization.findOne({ slug });
+  }
+
+  async updateOrganization(id, orgData) {
+    return await Organization.findByIdAndUpdate(id, orgData, { new: true });
+  }
+
+  async getOrganizationUsers(orgId) {
+    return await User.find({ organization: orgId })
+      .select('-passwordHash')
+      .sort({ firstName: 1, lastName: 1 });
+  }
   // User operations
   async getUsers() {
     return await User.find().sort({ createdAt: -1 });
