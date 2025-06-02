@@ -10,7 +10,11 @@ export default defineConfig({
   plugins: [react()],
   root: "./client",
   server: {
-    allowedHosts: "all",
+    allowedHosts: [
+      "25b3cec7-b6b2-48b7-a8f4-7ee8a9c12574-00-36vzyej2u9kbm.kirk.replit.dev",
+      ".replit.dev",
+      "localhost"
+    ],
     host: "0.0.0.0",
     port: 5173,
   },
