@@ -1,10 +1,13 @@
-import { Outlet } from "wouter";
 import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { cn } from "@/lib/utils";
 
-export function AdminLayout() {
+interface AdminLayoutProps {
+  children: React.ReactNode;
+}
+
+export function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -46,7 +49,7 @@ export function AdminLayout() {
         />
         
         <main className="flex-1 overflow-y-auto bg-background">
-          <Outlet />
+          {children}
         </main>
       </div>
     </div>

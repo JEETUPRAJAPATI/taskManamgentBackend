@@ -17,18 +17,16 @@ import Settings from "@/pages/admin/Settings";
 
 function AdminRouter() {
   return (
-    <AdminLayout>
-      <Switch>
-        <Route path="/" component={Dashboard} />
-        <Route path="/admin" component={Dashboard} />
-        <Route path="/admin/tasks" component={Tasks} />
-        <Route path="/admin/users" component={Users} />
-        <Route path="/admin/projects" component={Projects} />
-        <Route path="/admin/analytics" component={Analytics} />
-        <Route path="/admin/settings" component={Settings} />
-        <Route component={NotFound} />
-      </Switch>
-    </AdminLayout>
+    <Switch>
+      <Route path="/" component={() => <AdminLayout><Dashboard /></AdminLayout>} />
+      <Route path="/admin" component={() => <AdminLayout><Dashboard /></AdminLayout>} />
+      <Route path="/admin/tasks" component={() => <AdminLayout><Tasks /></AdminLayout>} />
+      <Route path="/admin/users" component={() => <AdminLayout><Users /></AdminLayout>} />
+      <Route path="/admin/projects" component={() => <AdminLayout><Projects /></AdminLayout>} />
+      <Route path="/admin/analytics" component={() => <AdminLayout><Analytics /></AdminLayout>} />
+      <Route path="/admin/settings" component={() => <AdminLayout><Settings /></AdminLayout>} />
+      <Route component={NotFound} />
+    </Switch>
   );
 }
 

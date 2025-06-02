@@ -194,6 +194,9 @@ export class MemStorage implements IStorage {
     const user: User = { 
       ...insertUser, 
       id, 
+      role: insertUser.role || "user",
+      avatar: insertUser.avatar || null,
+      isActive: insertUser.isActive !== undefined ? insertUser.isActive : true,
       createdAt: new Date() 
     };
     this.users.set(id, user);
@@ -227,6 +230,12 @@ export class MemStorage implements IStorage {
     const project: Project = { 
       ...insertProject, 
       id, 
+      status: insertProject.status || "active",
+      progress: insertProject.progress || 0,
+      description: insertProject.description || null,
+      ownerId: insertProject.ownerId || null,
+      teamMembers: Array.isArray(insertProject.teamMembers) ? insertProject.teamMembers : null,
+      dueDate: insertProject.dueDate || null,
       createdAt: new Date() 
     };
     this.projects.set(id, project);
@@ -282,6 +291,12 @@ export class MemStorage implements IStorage {
     const task: Task = { 
       ...insertTask, 
       id, 
+      status: insertTask.status || "todo",
+      priority: insertTask.priority || "medium",
+      description: insertTask.description || null,
+      assigneeId: insertTask.assigneeId || null,
+      projectId: insertTask.projectId || null,
+      dueDate: insertTask.dueDate || null,
       createdAt: new Date(),
       completedAt: null,
     };
@@ -340,6 +355,9 @@ export class MemStorage implements IStorage {
     const activity: Activity = { 
       ...insertActivity, 
       id, 
+      userId: insertActivity.userId || null,
+      entityType: insertActivity.entityType || null,
+      entityId: insertActivity.entityId || null,
       createdAt: new Date() 
     };
     this.activities.set(id, activity);
