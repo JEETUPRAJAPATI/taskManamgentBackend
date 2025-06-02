@@ -4,6 +4,7 @@ import {
   CheckSquare, 
   Users, 
   FolderOpen,
+  FileText,
   Menu,
   X
 } from "lucide-react";
@@ -15,6 +16,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Tasks", href: "/tasks", icon: CheckSquare },
     { name: "Projects", href: "/projects", icon: FolderOpen },
+    { name: "Forms", href: "/forms", icon: FileText },
     { name: "Users", href: "/users", icon: Users },
   ];
 

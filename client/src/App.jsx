@@ -27,6 +27,7 @@ function App() {
           <Route path="/tasks" component={Tasks} />
           <Route path="/users" component={Users} />
           <Route path="/projects" component={Projects} />
+          <Route path="/forms" component={FormBuilder} />
           <Route>
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
