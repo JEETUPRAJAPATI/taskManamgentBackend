@@ -20,7 +20,8 @@ import {
   Eye,
   Edit,
   Trash2,
-  Tag
+  Tag,
+  X
 } from "lucide-react";
 import {
   DropdownMenu,
