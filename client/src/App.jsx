@@ -4,6 +4,7 @@ import Dashboard from './pages/admin/Dashboard';
 import Tasks from './pages/admin/Tasks';
 import Users from './pages/admin/Users';
 import Projects from './pages/admin/Projects';
+import FormBuilder from './pages/admin/FormBuilder';
 import { AdminLayout } from './components/admin/AdminLayout';
 import { Toaster } from './components/ui/toaster';
 
