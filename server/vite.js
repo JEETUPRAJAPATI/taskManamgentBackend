@@ -60,13 +60,13 @@ export async function setupVite(app, server) {
       const page = await vite.transformIndexHtml(url, template);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);
     } catch (e) {
-      vite.ssrFixStacktrace(e as Error);
+      vite.ssrFixStacktrace(e);
       next(e);
     }
   });
 }
 
-export function serveStatic(app: Express) {
+export function serveStatic(app) {
   const distPath = path.resolve(import.meta.dirname, "public");
 
   if (!fs.existsSync(distPath)) {
