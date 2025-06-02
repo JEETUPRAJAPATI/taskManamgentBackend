@@ -1,2 +1,4 @@
-// Simple TypeScript wrapper to start the JavaScript server
-import('./index.js');
+// TypeScript entry point that starts the JavaScript server
+(async () => {
+  await import('./index.js');
+})();
