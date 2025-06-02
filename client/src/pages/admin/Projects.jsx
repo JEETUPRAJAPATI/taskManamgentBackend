@@ -21,7 +21,7 @@ export default function Projects() {
   const { data: projects = [], isLoading } = useProjects();
   const deleteProjectMutation = useDeleteProject();
 
-  const handleDeleteProject = async (project: ProjectWithDetails) => {
+  const handleDeleteProject = async (project) => {
     if (!confirm(`Are you sure you want to delete "${project.name}"?`)) return;
     
     try {

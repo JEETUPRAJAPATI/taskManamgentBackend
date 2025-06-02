@@ -1,16 +1,5 @@
-import { LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-
-interface StatsCardProps {
-  title: string;
-  value: string | number;
-  change?: string;
-  trend?: "up" | "down" | "neutral";
-  icon: LucideIcon;
-  iconColor?: string;
-  className?: string;
-}
 
 export function StatsCard({
   title,
@@ -20,7 +9,7 @@ export function StatsCard({
   icon: Icon,
   iconColor = "text-primary",
   className,
-}: StatsCardProps) {
+}) {
   const trendColors = {
     up: "text-emerald-600 dark:text-emerald-400",
     down: "text-red-600 dark:text-red-400", 

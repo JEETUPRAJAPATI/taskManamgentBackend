@@ -10,17 +10,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { TaskWithDetails } from "@shared/schema";
+// Note: Schema types removed for JavaScript compatibility
 import { cn, getStatusColor, getPriorityColor, getInitials } from "@/lib/utils";
 
-interface TaskCardProps {
-  task: TaskWithDetails;
-  onEdit?: (task: TaskWithDetails) => void;
-  onDelete?: (task: TaskWithDetails) => void;
-  className?: string;
-}
-
-export function TaskCard({ task, onEdit, onDelete, className }: TaskCardProps) {
+export function TaskCard({ task, onEdit, onDelete, className }) {
   const statusColor = getStatusColor(task.status);
   const priorityColor = getPriorityColor(task.priority);
 

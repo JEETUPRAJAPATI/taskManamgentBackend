@@ -1,14 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { TaskWithDetails, InsertTask } from "@shared/schema";
+// Note: Schema types removed for JavaScript compatibility
 
-export function useTasks(filters?: {
-  status?: string;
-  priority?: string;
-  assigneeId?: number;
-  projectId?: number;
-}) {
-  return useQuery<TaskWithDetails[]>({
+export function useTasks(filters = {}) {
+  return useQuery({
     queryKey: ["/api/tasks", filters],
     queryFn: async () => {
       const params = new URLSearchParams();

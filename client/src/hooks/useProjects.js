@@ -1,15 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { ProjectWithDetails, InsertProject } from "@shared/schema";
+// Note: Schema types removed for JavaScript compatibility
 
 export function useProjects() {
-  return useQuery<ProjectWithDetails[]>({
+  return useQuery({
     queryKey: ["/api/projects"],
   });
 }
 
-export function useProject(id: number) {
-  return useQuery<ProjectWithDetails>({
+export function useProject(id) {
+  return useQuery({
     queryKey: ["/api/projects", id],
     enabled: !!id,
   });

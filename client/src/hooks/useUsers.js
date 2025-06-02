@@ -1,15 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { User, InsertUser } from "@shared/schema";
+// Note: Schema types removed for JavaScript compatibility
 
 export function useUsers() {
-  return useQuery<User[]>({
+  return useQuery({
     queryKey: ["/api/users"],
   });
 }
 
-export function useUser(id: number) {
-  return useQuery<User>({
+export function useUser(id) {
+  return useQuery({
     queryKey: ["/api/users", id],
     enabled: !!id,
   });

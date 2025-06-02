@@ -16,16 +16,16 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StatsCard } from "@/components/admin/StatsCard";
 import { TaskCard } from "@/components/admin/TaskCard";
-import { DashboardStats, TaskWithDetails, Activity } from "@shared/schema";
+// Note: Schema types removed for JavaScript compatibility
 import { useTasks } from "@/hooks/useTasks";
 import { formatRelativeTime, getInitials } from "@/lib/utils";
 
 export default function Dashboard() {
-  const { data: stats } = useQuery<DashboardStats>({
+  const { data: stats } = useQuery({
     queryKey: ["/api/dashboard/stats"],
   });
 
-  const { data: activities } = useQuery<Activity[]>({
+  const { data: activities } = useQuery({
     queryKey: ["/api/activities/recent"],
   });
 
