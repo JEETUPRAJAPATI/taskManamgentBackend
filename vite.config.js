@@ -9,10 +9,15 @@ const __dirname = path.dirname(__filename);
 export default defineConfig({
   plugins: [react()],
   root: "./client",
+  server: {
+    allowedHosts: "all",
+    host: "0.0.0.0",
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client/src"),
       "@assets": path.resolve(__dirname, "./attached_assets"),
+      "@shared": path.resolve(__dirname, "./shared"),
     },
   },
 });

@@ -1,44 +1,42 @@
-import { Switch, Route } from "wouter";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { ThemeProvider } from "@/components/admin/ThemeProvider";
-import { AdminLayout } from "@/components/admin/AdminLayout";
-import NotFound from "@/pages/not-found";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Route, Switch } from 'wouter';
+import Dashboard from './pages/admin/Dashboard';
+import Tasks from './pages/admin/Tasks';
+import Users from './pages/admin/Users';
+import Projects from './pages/admin/Projects';
+import { AdminLayout } from './components/admin/AdminLayout';
+import { Toaster } from './components/ui/toaster';
 
-// Admin Pages
-import Dashboard from "@/pages/admin/Dashboard";
-import Tasks from "@/pages/admin/Tasks";
-import Users from "@/pages/admin/Users";
-import Projects from "@/pages/admin/Projects";
-import Analytics from "@/pages/admin/Analytics";
-import Settings from "@/pages/admin/Settings";
-
-function AdminRouter() {
-  return (
-    <Switch>
-      <Route path="/" component={() => <AdminLayout><Dashboard /></AdminLayout>} />
-      <Route path="/admin" component={() => <AdminLayout><Dashboard /></AdminLayout>} />
-      <Route path="/admin/tasks" component={() => <AdminLayout><Tasks /></AdminLayout>} />
-      <Route path="/admin/users" component={() => <AdminLayout><Users /></AdminLayout>} />
-      <Route path="/admin/projects" component={() => <AdminLayout><Projects /></AdminLayout>} />
-      <Route path="/admin/analytics" component={() => <AdminLayout><Analytics /></AdminLayout>} />
-      <Route path="/admin/settings" component={() => <AdminLayout><Settings /></AdminLayout>} />
-      <Route component={NotFound} />
-    </Switch>
-  );
-}
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      retry: 1,
+    },
+  },
+});
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <TooltipProvider>
-          <Toaster />
-          <AdminRouter />
-        </TooltipProvider>
-      </ThemeProvider>
+      <AdminLayout>
+        <Switch>
+          <Route path="/" component={Dashboard} />
+          <Route path="/dashboard" component={Dashboard} />
+          <Route path="/tasks" component={Tasks} />
+          <Route path="/users" component={Users} />
+          <Route path="/projects" component={Projects} />
+          <Route>
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Page Not Found</h2>
+                <p className="text-gray-600">The page you're looking for doesn't exist.</p>
+              </div>
+            </div>
+          </Route>
+        </Switch>
+      </AdminLayout>
+      <Toaster />
     </QueryClientProvider>
   );
 }

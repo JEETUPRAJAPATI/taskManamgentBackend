@@ -43,9 +43,9 @@ export default function Tasks() {
     assigneeId: 0,
     projectId: 0,
   });
-  const [selectedTasks, setSelectedTasks] = useState<number[]>([]);
+  const [selectedTasks, setSelectedTasks] = useState([]);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-  const [editingTask, setEditingTask] = useState<TaskWithDetails | undefined>();
+  const [editingTask, setEditingTask] = useState();
 
   const { toast } = useToast();
   const { data: tasks = [], isLoading } = useTasks(filters);
