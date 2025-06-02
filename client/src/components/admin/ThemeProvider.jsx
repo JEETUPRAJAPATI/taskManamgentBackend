@@ -31,7 +31,7 @@ export function ThemeProvider({ children }) {
     setThemeState(prev => prev === "light" ? "dark" : "light");
   };
 
-  const setTheme = (newTheme: Theme) => {
+  const setTheme = (newTheme) => {
     setThemeState(newTheme);
   };
 

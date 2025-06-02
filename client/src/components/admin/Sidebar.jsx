@@ -1,188 +1,125 @@
 import { Link, useLocation } from "wouter";
-import { cn } from "@/lib/utils";
-import {
-  LayoutDashboard,
-  CheckSquare,
-  Users,
+import { 
+  LayoutDashboard, 
+  CheckSquare, 
+  Users, 
   FolderOpen,
-  BarChart3,
-  Settings,
-  LogOut,
-  X,
+  Menu,
+  X
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-interface SidebarProps {
-  isOpen: boolean;
-  isMobileMenuOpen: boolean;
-  onClose: () => void;
-}
-
-const navigation = [
-  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { name: "Tasks", href: "/admin/tasks", icon: CheckSquare },
-  { name: "Users", href: "/admin/users", icon: Users },
-  { name: "Projects", href: "/admin/projects", icon: FolderOpen },
-  { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
-  { name: "Settings", href: "/admin/settings", icon: Settings },
-];
-
-export function Sidebar({ isOpen, isMobileMenuOpen, onClose }: SidebarProps) {
+export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) {
   const [location] = useLocation();
+
+  const navigation = [
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Tasks", href: "/tasks", icon: CheckSquare },
+    { name: "Projects", href: "/projects", icon: FolderOpen },
+    { name: "Users", href: "/users", icon: Users },
+  ];
+
+  const isActive = (href) => {
+    return location === href || (href === "/dashboard" && location === "/");
+  };
 
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside
-        className={cn(
-          "hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 bg-sidebar border-r border-sidebar-border transition-all duration-300 z-50",
-          isOpen ? "lg:w-64" : "lg:w-16"
-        )}
-      >
+      <div className={`fixed inset-y-0 left-0 z-30 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ${
+        isOpen ? 'w-64' : 'w-16'
+      } hidden lg:block`}>
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center justify-center h-16 px-6 border-b border-sidebar-border">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <CheckSquare className="w-4 h-4 text-primary-foreground" />
+          <div className="flex items-center h-16 px-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <CheckSquare className="h-8 w-8 text-blue-600" />
               </div>
               {isOpen && (
-                <span className="text-xl font-bold text-sidebar-foreground">
-                  TaskFlow
-                </span>
+                <div className="ml-3">
+                  <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+                    TaskSetu
+                  </h1>
+                </div>
               )}
             </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
+          <nav className="flex-1 px-2 py-4 space-y-1">
             {navigation.map((item) => {
               const Icon = item.icon;
-              const isActive = location === item.href || 
-                (item.href === "/admin" && location === "/") ||
-                (item.href !== "/admin" && location.startsWith(item.href));
-
               return (
-                <Link key={item.href} href={item.href}>
-                  <Button
-                    variant="ghost"
-                    className={cn(
-                      "w-full justify-start h-10 px-3",
-                      isActive 
-                        ? "bg-sidebar-accent text-sidebar-accent-foreground nav-item-active" 
-                        : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50",
-                      !isOpen && "justify-center px-0"
+                <Link key={item.name} href={item.href}>
+                  <a className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
+                    isActive(item.href)
+                      ? 'bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-200'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
+                  }`}>
+                    <Icon className={`flex-shrink-0 h-5 w-5 ${
+                      isActive(item.href)
+                        ? 'text-blue-500'
+                        : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300'
+                    }`} />
+                    {isOpen && (
+                      <span className="ml-3">{item.name}</span>
                     )}
-                  >
-                    <Icon className={cn("w-5 h-5", isOpen && "mr-3")} />
-                    {isOpen && <span>{item.name}</span>}
-                  </Button>
+                  </a>
                 </Link>
               );
             })}
           </nav>
-
-          {/* User Profile */}
-          <div className="p-4 border-t border-sidebar-border">
-            <div className="flex items-center space-x-3">
-              <Avatar className="w-8 h-8">
-                <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150" />
-                <AvatarFallback>JS</AvatarFallback>
-              </Avatar>
-              {isOpen && (
-                <>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-sidebar-foreground truncate">
-                      John Smith
-                    </p>
-                    <p className="text-xs text-sidebar-foreground/70 truncate">
-                      Administrator
-                    </p>
-                  </div>
-                  <Button variant="ghost" size="sm" className="p-1">
-                    <LogOut className="w-4 h-4" />
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
         </div>
-      </aside>
+      </div>
 
       {/* Mobile Sidebar */}
-      <aside
-        className={cn(
-          "lg:hidden fixed inset-y-0 left-0 z-50 w-64 bg-sidebar border-r border-sidebar-border transform transition-transform duration-300",
-          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-        )}
-      >
-        <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div className="flex items-center justify-between h-16 px-6 border-b border-sidebar-border">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <CheckSquare className="w-4 h-4 text-primary-foreground" />
+      <div className={`fixed inset-0 z-40 lg:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
+        <div className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+          <div className="flex flex-col h-full">
+            {/* Mobile Header */}
+            <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center">
+                <CheckSquare className="h-8 w-8 text-blue-600" />
+                <h1 className="ml-3 text-xl font-bold text-gray-900 dark:text-white">
+                  TaskSetu
+                </h1>
               </div>
-              <span className="text-xl font-bold text-sidebar-foreground">
-                TaskFlow
-              </span>
+              <button
+                onClick={onMobileToggle}
+                className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <X className="h-6 w-6" />
+              </button>
             </div>
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="w-5 h-5" />
-            </Button>
-          </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              const isActive = location === item.href || 
-                (item.href === "/admin" && location === "/") ||
-                (item.href !== "/admin" && location.startsWith(item.href));
-
-              return (
-                <Link key={item.href} href={item.href}>
-                  <Button
-                    variant="ghost"
-                    className={cn(
-                      "w-full justify-start h-10 px-3",
-                      isActive 
-                        ? "bg-sidebar-accent text-sidebar-accent-foreground nav-item-active" 
-                        : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
-                    )}
-                    onClick={onClose}
-                  >
-                    <Icon className="w-5 h-5 mr-3" />
-                    <span>{item.name}</span>
-                  </Button>
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* User Profile */}
-          <div className="p-4 border-t border-sidebar-border">
-            <div className="flex items-center space-x-3">
-              <Avatar className="w-8 h-8">
-                <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150" />
-                <AvatarFallback>JS</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-sidebar-foreground truncate">
-                  John Smith
-                </p>
-                <p className="text-xs text-sidebar-foreground/70 truncate">
-                  Administrator
-                </p>
-              </div>
-              <Button variant="ghost" size="sm" className="p-1">
-                <LogOut className="w-4 h-4" />
-              </Button>
-            </div>
+            {/* Mobile Navigation */}
+            <nav className="flex-1 px-2 py-4 space-y-1">
+              {navigation.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link key={item.name} href={item.href}>
+                    <a 
+                      onClick={onMobileToggle}
+                      className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
+                        isActive(item.href)
+                          ? 'bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-200'
+                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
+                      }`}
+                    >
+                      <Icon className={`flex-shrink-0 h-5 w-5 ${
+                        isActive(item.href)
+                          ? 'text-blue-500'
+                          : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300'
+                      }`} />
+                      <span className="ml-3">{item.name}</span>
+                    </a>
+                  </Link>
+                );
+              })}
+            </nav>
           </div>
         </div>
-      </aside>
+      </div>
     </>
   );
 }

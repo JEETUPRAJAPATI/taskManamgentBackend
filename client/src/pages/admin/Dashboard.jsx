@@ -1,219 +1,206 @@
-import { useQuery } from "@tanstack/react-query";
-import { 
-  CheckSquare, 
-  Users, 
-  FolderOpen, 
-  Clock,
-  TrendingUp,
-  Plus,
-  UserPlus,
-  FileText,
-  BarChart3,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { StatsCard } from "@/components/admin/StatsCard";
-import { TaskCard } from "@/components/admin/TaskCard";
-// Note: Schema types removed for JavaScript compatibility
-import { useTasks } from "@/hooks/useTasks";
-import { formatRelativeTime, getInitials } from "@/lib/utils";
+import { useState, useEffect } from "react";
 
 export default function Dashboard() {
-  const { data: stats } = useQuery({
-    queryKey: ["/api/dashboard/stats"],
+  const [stats, setStats] = useState({
+    totalTasks: 0,
+    completedTasks: 0,
+    pendingTasks: 0,
+    totalUsers: 0,
+    totalProjects: 0
   });
 
-  const { data: activities } = useQuery({
-    queryKey: ["/api/activities/recent"],
-  });
+  const [loading, setLoading] = useState(true);
 
-  const { data: recentTasks } = useTasks();
+  useEffect(() => {
+    // Simulate API call
+    setTimeout(() => {
+      setStats({
+        totalTasks: 24,
+        completedTasks: 18,
+        pendingTasks: 6,
+        totalUsers: 8,
+        totalProjects: 4
+      });
+      setLoading(false);
+    }, 1000);
+  }, []);
 
-  const displayTasks = recentTasks?.slice(0, 6) || [];
+  if (loading) {
+    return (
+      <div className="p-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-white p-6 rounded-lg border">
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-6 space-y-8">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-muted-foreground mt-2">
-          Welcome back! Here's what's happening with your projects today.
+    <div className="p-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Dashboard
+        </h1>
+        <p className="text-gray-600 dark:text-gray-300">
+          Welcome to your task management dashboard
         </p>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard
-          title="Total Tasks"
-          value={stats?.totalTasks || 0}
-          change="+12% from last month"
-          trend="up"
-          icon={CheckSquare}
-          iconColor="text-primary"
-        />
-        <StatsCard
-          title="Completed"
-          value={stats?.completedTasks || 0}
-          change="+8% from last month"
-          trend="up"
-          icon={CheckSquare}
-          iconColor="text-emerald-600"
-        />
-        <StatsCard
-          title="In Progress"
-          value={stats?.inProgressTasks || 0}
-          change="+3% from last month"
-          trend="up"
-          icon={Clock}
-          iconColor="text-amber-600"
-        />
-        <StatsCard
-          title="Active Users"
-          value={stats?.activeUsers || 0}
-          change="+4 new this month"
-          trend="up"
-          icon={Users}
-          iconColor="text-purple-600"
-        />
-      </div>
-
-      {/* Charts and Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Task Completion Chart Placeholder */}
-        <div className="lg:col-span-2">
-          <Card className="admin-card">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-base font-medium">Task Completion Trend</CardTitle>
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm">7D</Button>
-                <Button variant="ghost" size="sm" className="text-muted-foreground">30D</Button>
-                <Button variant="ghost" size="sm" className="text-muted-foreground">90D</Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64 bg-muted/20 rounded-lg flex items-center justify-center">
-                <div className="text-center">
-                  <BarChart3 className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-muted-foreground">Chart visualization would go here</p>
-                  <p className="text-xs text-muted-foreground">Use Recharts or similar library</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Total Tasks
+              </p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {stats.totalTasks}
+              </p>
+            </div>
+            <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-full">
+              <svg className="w-6 h-6 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
+          </div>
         </div>
 
-        {/* Recent Activity */}
-        <Card className="admin-card">
-          <CardHeader>
-            <CardTitle className="text-base font-medium">Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {activities?.map((activity) => (
-                <div key={activity.id} className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-primary rounded-full mt-2" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground">{activity.description}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {formatRelativeTime(activity.createdAt)}
-                    </p>
-                  </div>
-                </div>
-              ))}
-              {(!activities || activities.length === 0) && (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  No recent activity
-                </p>
-              )}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Completed
+              </p>
+              <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                {stats.completedTasks}
+              </p>
             </div>
-          </CardContent>
-        </Card>
+            <div className="p-3 bg-green-100 dark:bg-green-900 rounded-full">
+              <svg className="w-6 h-6 text-green-600 dark:text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Pending
+              </p>
+              <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+                {stats.pendingTasks}
+              </p>
+            </div>
+            <div className="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-full">
+              <svg className="w-6 h-6 text-yellow-600 dark:text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Team Members
+              </p>
+              <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                {stats.totalUsers}
+              </p>
+            </div>
+            <div className="p-3 bg-purple-100 dark:bg-purple-900 rounded-full">
+              <svg className="w-6 h-6 text-purple-600 dark:text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Recent Tasks and Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Tasks */}
-        <Card className="admin-card">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-base font-medium">Recent Tasks</CardTitle>
-            <Button variant="ghost" size="sm" className="text-primary">
-              View all
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {displayTasks.map((task) => (
-                <div key={task.id} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                  <input 
-                    type="checkbox" 
-                    className="w-4 h-4 text-primary rounded" 
-                    defaultChecked={task.status === "completed"}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">
-                      {task.title}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Due: {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "No due date"}
-                    </p>
-                  </div>
-                  <Badge className={`text-xs px-2 py-1 priority-${task.priority}`}>
-                    {task.priority}
-                  </Badge>
-                </div>
-              ))}
-              {displayTasks.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  No tasks found
-                </p>
-              )}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Recent Activity
+          </h2>
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Task "Website Redesign" completed by John Doe
+              </p>
             </div>
-          </CardContent>
-        </Card>
+            <div className="flex items-center space-x-3">
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                New project "Mobile App" created
+              </p>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Task "API Documentation" assigned to Sarah Wilson
+              </p>
+            </div>
+          </div>
+        </div>
 
-        {/* Quick Actions */}
-        <Card className="admin-card">
-          <CardHeader>
-            <CardTitle className="text-base font-medium">Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              <Button 
-                variant="outline" 
-                className="h-auto flex flex-col items-center p-6 border-dashed hover:border-primary hover:bg-primary/5"
-              >
-                <Plus className="w-6 h-6 mb-2" />
-                <span className="text-sm font-medium">Create Task</span>
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                className="h-auto flex flex-col items-center p-6 border-dashed hover:border-primary hover:bg-primary/5"
-              >
-                <FolderOpen className="w-6 h-6 mb-2" />
-                <span className="text-sm font-medium">New Project</span>
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                className="h-auto flex flex-col items-center p-6 border-dashed hover:border-primary hover:bg-primary/5"
-              >
-                <UserPlus className="w-6 h-6 mb-2" />
-                <span className="text-sm font-medium">Invite User</span>
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                className="h-auto flex flex-col items-center p-6 border-dashed hover:border-primary hover:bg-primary/5"
-              >
-                <FileText className="w-6 h-6 mb-2" />
-                <span className="text-sm font-medium">Generate Report</span>
-              </Button>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Project Progress
+          </h2>
+          <div className="space-y-4">
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Website Redesign
+                </span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  85%
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                <div className="bg-blue-600 h-2 rounded-full" style={{ width: '85%' }}></div>
+              </div>
             </div>
-          </CardContent>
-        </Card>
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Mobile App
+                </span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  45%
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                <div className="bg-green-600 h-2 rounded-full" style={{ width: '45%' }}></div>
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  API Development
+                </span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  20%
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                <div className="bg-yellow-600 h-2 rounded-full" style={{ width: '20%' }}></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

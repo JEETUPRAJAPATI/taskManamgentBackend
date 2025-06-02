@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
-import { cn } from "@/lib/utils";
 
 export function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -15,39 +14,35 @@ export function AdminLayout({ children }) {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-  };
-
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
-      {/* Sidebar */}
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar 
-        isOpen={sidebarOpen}
+        isOpen={sidebarOpen} 
         isMobileMenuOpen={isMobileMenuOpen}
-        onClose={closeMobileMenu}
+        onToggle={toggleSidebar}
+        onMobileToggle={toggleMobileMenu}
       />
       
-      {/* Mobile overlay */}
-      {isMobileMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={closeMobileMenu}
-        />
-      )}
-
-      {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className={`transition-all duration-300 ${
+        sidebarOpen ? 'lg:ml-64' : 'lg:ml-16'
+      }`}>
         <Header 
-          onToggleSidebar={toggleSidebar}
-          onToggleMobileMenu={toggleMobileMenu}
+          onMenuClick={toggleMobileMenu}
+          onSidebarToggle={toggleSidebar}
           sidebarOpen={sidebarOpen}
         />
         
-        <main className="flex-1 overflow-y-auto bg-background">
+        <main className="p-6">
           {children}
         </main>
       </div>
+
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden"
+          onClick={toggleMobileMenu}
+        />
+      )}
     </div>
   );
 }

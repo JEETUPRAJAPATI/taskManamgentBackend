@@ -5,113 +5,114 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDate(date: Date | string | null): string {
-  if (!date) return "No date";
+export function formatDate(date) {
+  if (!date) return 'N/A';
   
-  const d = typeof date === "string" ? new Date(date) : date;
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(d);
+  if (typeof date === 'string') {
+    date = new Date(date);
+  }
+  
+  if (!(date instanceof Date) || isNaN(date)) {
+    return 'Invalid Date';
+  }
+  
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
 }
 
-export function formatDateTime(date: Date | string | null): string {
-  if (!date) return "No date";
+export function formatTime(date) {
+  if (!date) return 'N/A';
   
-  const d = typeof date === "string" ? new Date(date) : date;
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  }).format(d);
+  if (typeof date === 'string') {
+    date = new Date(date);
+  }
+  
+  if (!(date instanceof Date) || isNaN(date)) {
+    return 'Invalid Time';
+  }
+  
+  return date.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 }
 
-export function formatRelativeTime(date: Date | string | null): string {
-  if (!date) return "No date";
+export function formatDateTime(date) {
+  if (!date) return 'N/A';
   
-  const d = typeof date === "string" ? new Date(date) : date;
+  if (typeof date === 'string') {
+    date = new Date(date);
+  }
+  
+  if (!(date instanceof Date) || isNaN(date)) {
+    return 'Invalid DateTime';
+  }
+  
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+export function formatRelativeTime(date) {
+  if (!date) return 'N/A';
+  
+  if (typeof date === 'string') {
+    date = new Date(date);
+  }
+  
+  if (!(date instanceof Date) || isNaN(date)) {
+    return 'Invalid Date';
+  }
+  
   const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - d.getTime()) / 1000);
+  const diff = now - date;
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
   
-  if (diffInSeconds < 60) {
-    return "Just now";
-  } else if (diffInSeconds < 3600) {
-    const minutes = Math.floor(diffInSeconds / 60);
-    return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
-  } else if (diffInSeconds < 86400) {
-    const hours = Math.floor(diffInSeconds / 3600);
-    return `${hours} hour${hours === 1 ? "" : "s"} ago`;
-  } else if (diffInSeconds < 604800) {
-    const days = Math.floor(diffInSeconds / 86400);
-    return `${days} day${days === 1 ? "" : "s"} ago`;
-  } else {
-    return formatDate(d);
-  }
+  if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+  if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+  return 'Just now';
 }
 
-export function getStatusColor(status: string): string {
-  switch (status.toLowerCase()) {
-    case "todo":
-      return "status-todo";
-    case "in-progress":
-      return "status-in-progress";
-    case "completed":
-      return "status-completed";
-    default:
-      return "status-todo";
-  }
-}
-
-export function getPriorityColor(priority: string): string {
-  switch (priority.toLowerCase()) {
-    case "low":
-      return "priority-low";
-    case "medium":
-      return "priority-medium";
-    case "high":
-      return "priority-high";
-    default:
-      return "priority-medium";
-  }
-}
-
-export function getInitials(name: string): string {
+export function getInitials(name) {
+  if (!name) return '??';
+  
   return name
-    .split(" ")
-    .map(word => word.charAt(0))
-    .join("")
-    .toUpperCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase())
+    .join('')
     .slice(0, 2);
 }
 
-export function truncateText(text: string, maxLength: number = 100): string {
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength) + "...";
+export function capitalize(str) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
-export function calculateProgress(completed: number, total: number): number {
-  if (total === 0) return 0;
-  return Math.round((completed / total) * 100);
+export function truncate(str, length = 50) {
+  if (!str) return '';
+  if (str.length <= length) return str;
+  return str.slice(0, length) + '...';
 }
 
-export function debounce<T extends (...args: any[]) => any>(
-  func: T,
-  wait: number
-): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout | null = null;
-  
-  return (...args: Parameters<T>) => {
-    if (timeout) {
+export function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
       clearTimeout(timeout);
-    }
-    timeout = setTimeout(() => func(...args), wait);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
   };
-}
-
-export function generateId(): string {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36);
 }

@@ -1,142 +1,161 @@
 import { useState } from "react";
-import { Plus, MoreHorizontal, Edit, Trash2, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useUsers, useDeleteUser } from "@/hooks/useUsers";
-// Note: Schema types removed for JavaScript compatibility
-import { getInitials } from "@/lib/utils";
-import { useToast } from "@/hooks/use-toast";
 
 export default function Users() {
-  const { toast } = useToast();
-  const { data: users = [], isLoading } = useUsers();
-  const deleteUserMutation = useDeleteUser();
-
-  const handleDeleteUser = async (user) => {
-    if (!confirm(`Are you sure you want to delete ${user.fullName}?`)) return;
-    
-    try {
-      await deleteUserMutation.mutateAsync(user.id);
-      toast({
-        title: "Success",
-        description: "User deleted successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete user",
-        variant: "destructive",
-      });
+  const [users, setUsers] = useState([
+    {
+      id: 1,
+      name: "John Doe",
+      email: "john.doe@example.com",
+      role: "Admin",
+      status: "Active",
+      joinDate: "2024-01-15",
+      avatar: null
+    },
+    {
+      id: 2,
+      name: "Sarah Wilson",
+      email: "sarah.wilson@example.com",
+      role: "Manager",
+      status: "Active",
+      joinDate: "2024-02-10",
+      avatar: null
+    },
+    {
+      id: 3,
+      name: "Mike Johnson",
+      email: "mike.johnson@example.com",
+      role: "Developer",
+      status: "Active",
+      joinDate: "2024-03-05",
+      avatar: null
+    },
+    {
+      id: 4,
+      name: "Emily Davis",
+      email: "emily.davis@example.com",
+      role: "Designer",
+      status: "Inactive",
+      joinDate: "2024-01-20",
+      avatar: null
     }
+  ]);
+
+  const getInitials = (name) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase())
+      .join('')
+      .slice(0, 2);
   };
 
   const getRoleColor = (role) => {
     switch (role) {
-      case "admin":
-        return "bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-400";
-      case "manager":
-        return "bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400";
+      case "Admin":
+        return "bg-purple-100 text-purple-800";
+      case "Manager":
+        return "bg-blue-100 text-blue-800";
+      case "Developer":
+        return "bg-green-100 text-green-800";
+      case "Designer":
+        return "bg-pink-100 text-pink-800";
       default:
-        return "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
+  const getStatusColor = (status) => {
+    return status === "Active"
+      ? "bg-green-100 text-green-800"
+      : "bg-red-100 text-red-800";
+  };
+
   return (
-    <div className="p-6 space-y-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Users</h1>
-          <p className="text-muted-foreground mt-2">
-            Manage team members and their permissions
-          </p>
-        </div>
-        <Button>
-          <Plus className="w-4 h-4 mr-2" />
-          Add User
-        </Button>
+    <div className="p-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Users
+        </h1>
+        <p className="text-gray-600 dark:text-gray-300">
+          Manage team members and their permissions
+        </p>
       </div>
 
-      {/* Users Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {isLoading ? (
-          <Card className="admin-card">
-            <CardContent className="p-6">
-              <div className="text-center">Loading users...</div>
-            </CardContent>
-          </Card>
-        ) : users.length === 0 ? (
-          <Card className="admin-card col-span-full">
-            <CardContent className="p-8 text-center">
-              <User className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">No users found</p>
-            </CardContent>
-          </Card>
-        ) : (
-          users.map((user) => (
-            <Card key={user.id} className="admin-card">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <Avatar className="w-12 h-12">
-                    <AvatarImage src={user.avatar || undefined} />
-                    <AvatarFallback>
-                      {getInitials(user.fullName)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
-                        <Edit className="w-4 h-4 mr-2" />
+      <div className="mb-6">
+        <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+          Add New User
+        </button>
+      </div>
+
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-700">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  User
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  Role
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  Join Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              {users.map((user) => (
+                <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-10 w-10">
+                        <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium">
+                          {getInitials(user.name)}
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">
+                          {user.name}
+                        </div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                          {user.email}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRoleColor(user.role)}`}>
+                      {user.role}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(user.status)}`}>
+                      {user.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                    {user.joinDate}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex space-x-2">
+                      <button className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
                         Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleDeleteUser(user)}
-                        className="text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
+                      </button>
+                      <button className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
                         Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-foreground">{user.fullName}</h3>
-                  <p className="text-sm text-muted-foreground">{user.email}</p>
-                  <p className="text-sm text-muted-foreground">@{user.username}</p>
-                </div>
-
-                <div className="flex items-center justify-between mt-4">
-                  <Badge className={getRoleColor(user.role)}>
-                    {user.role}
-                  </Badge>
-                  <Badge 
-                    className={
-                      user.isActive 
-                        ? "bg-emerald-100 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-400"
-                        : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300"
-                    }
-                  >
-                    {user.isActive ? "Active" : "Inactive"}
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

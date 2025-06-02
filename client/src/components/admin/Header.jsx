@@ -1,87 +1,56 @@
-import { useLocation } from "wouter";
-import { Search, Bell, Moon, Sun, Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useTheme } from "./ThemeProvider";
-import { cn } from "@/lib/utils";
+import { Menu, Bell, Search, User } from "lucide-react";
 
-interface HeaderProps {
-  onToggleSidebar: () => void;
-  onToggleMobileMenu: () => void;
-  sidebarOpen: boolean;
-}
-
-const pageNames: Record<string, string> = {
-  "/": "Dashboard",
-  "/admin": "Dashboard", 
-  "/admin/tasks": "Tasks",
-  "/admin/users": "Users",
-  "/admin/projects": "Projects",
-  "/admin/analytics": "Analytics",
-  "/admin/settings": "Settings",
-};
-
-export function Header({ onToggleSidebar, onToggleMobileMenu, sidebarOpen }: HeaderProps) {
-  const [location] = useLocation();
-  const { theme, toggleTheme } = useTheme();
-  
-  const currentPageName = pageNames[location] || "Dashboard";
-
+export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
   return (
-    <header className="bg-card border-b border-border px-6 py-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          {/* Mobile menu toggle */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="lg:hidden"
-            onClick={onToggleMobileMenu}
+    <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 h-16">
+      <div className="flex items-center justify-between h-full px-4">
+        <div className="flex items-center">
+          {/* Mobile menu button */}
+          <button
+            onClick={onMenuClick}
+            className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 lg:hidden"
           >
-            <Menu className="w-5 h-5" />
-          </Button>
+            <Menu className="h-6 w-6" />
+          </button>
 
-          {/* Breadcrumb */}
-          <div className="flex items-center space-x-2">
-            <h1 className="text-2xl font-bold text-foreground">{currentPageName}</h1>
-            <nav className="hidden sm:flex items-center space-x-2 text-sm text-muted-foreground ml-4">
-              <span>Admin</span>
-              <span>/</span>
-              <span className="text-foreground font-medium">{currentPageName}</span>
-            </nav>
+          {/* Desktop sidebar toggle */}
+          <button
+            onClick={onSidebarToggle}
+            className="hidden lg:block p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
+
+          {/* Search */}
+          <div className="ml-4 flex items-center">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white dark:bg-gray-700 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white sm:text-sm"
+                placeholder="Search..."
+                type="search"
+              />
+            </div>
           </div>
         </div>
 
         <div className="flex items-center space-x-4">
-          {/* Search */}
-          <div className="relative hidden md:block">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search..."
-              className="w-64 pl-10 bg-background"
-            />
-          </div>
-
-          {/* Theme toggle */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={toggleTheme}
-            className="relative"
-          >
-            <Sun className="w-5 h-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute w-5 h-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            <span className="sr-only">Toggle theme</span>
-          </Button>
-
           {/* Notifications */}
-          <Button variant="ghost" size="sm" className="relative">
-            <Bell className="w-5 h-5" />
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive text-destructive-foreground text-xs rounded-full flex items-center justify-center">
-              3
-            </span>
-          </Button>
+          <button className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <Bell className="h-6 w-6" />
+          </button>
+
+          {/* Profile */}
+          <div className="flex items-center">
+            <button className="flex items-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+              <User className="h-6 w-6" />
+              <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:block">
+                Admin User
+              </span>
+            </button>
+          </div>
         </div>
       </div>
     </header>
