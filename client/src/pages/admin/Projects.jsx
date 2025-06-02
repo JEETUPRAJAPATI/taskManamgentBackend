@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useProjects, useDeleteProject } from "@/hooks/useProjects";
-import { ProjectWithDetails } from "@shared/schema";
+// Note: Schema types removed for JavaScript compatibility
 import { formatDate, getInitials } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
@@ -39,7 +39,7 @@ export default function Projects() {
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status) => {
     switch (status) {
       case "active":
         return "bg-emerald-100 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-400";

@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUsers, useDeleteUser } from "@/hooks/useUsers";
-import { User as UserType } from "@shared/schema";
+// Note: Schema types removed for JavaScript compatibility
 import { getInitials } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
@@ -20,7 +20,7 @@ export default function Users() {
   const { data: users = [], isLoading } = useUsers();
   const deleteUserMutation = useDeleteUser();
 
-  const handleDeleteUser = async (user: UserType) => {
+  const handleDeleteUser = async (user) => {
     if (!confirm(`Are you sure you want to delete ${user.fullName}?`)) return;
     
     try {
@@ -38,7 +38,7 @@ export default function Users() {
     }
   };
 
-  const getRoleColor = (role: string) => {
+  const getRoleColor = (role) => {
     switch (role) {
       case "admin":
         return "bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-400";
