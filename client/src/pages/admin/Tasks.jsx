@@ -227,123 +227,231 @@ export default function Tasks() {
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Tasks
+          Tasks Management
         </h1>
         <p className="text-gray-600 dark:text-gray-300">
-          Manage and track all your tasks
+          Create, manage and collaborate on tasks with smart parsing and real-time updates
         </p>
       </div>
 
-      {/* Filters */}
-      <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Status
-          </label>
-          <select
-            value={filters.status}
-            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          >
-            <option value="all">All Status</option>
-            <option value="Todo">Todo</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Completed">Completed</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Priority
-          </label>
-          <select
-            value={filters.priority}
-            onChange={(e) => setFilters({ ...filters, priority: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          >
-            <option value="all">All Priorities</option>
-            <option value="High">High</option>
-            <option value="Medium">Medium</option>
-            <option value="Low">Low</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Assignee
-          </label>
-          <select
-            value={filters.assignee}
-            onChange={(e) => setFilters({ ...filters, assignee: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          >
-            <option value="all">All Assignees</option>
-            <option value="John Doe">John Doe</option>
-            <option value="Sarah Wilson">Sarah Wilson</option>
-            <option value="Mike Johnson">Mike Johnson</option>
-          </select>
-        </div>
+      {/* Smart Task Creation */}
+      <div className="mb-6">
+        {showCreateForm ? (
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Create New Task</h3>
+              <Button variant="outline" onClick={() => setShowCreateForm(false)}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <SmartTaskInput 
+              onTaskCreate={handleSmartTaskCreate}
+              users={users}
+              projects={projects}
+            />
+          </Card>
+        ) : (
+          <Button onClick={() => setShowCreateForm(true)} className="mb-4">
+            <Plus className="h-4 w-4 mr-2" />
+            Create Task
+          </Button>
+        )}
       </div>
 
-      {/* Add Task Button */}
-      <div className="mb-6">
-        <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
-          Add New Task
-        </button>
+      {/* Search and Filters */}
+      <div className="mb-6 space-y-4">
+        <div className="flex gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search tasks..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Button variant="outline">
+            <Filter className="h-4 w-4 mr-2" />
+            Filters
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Select value={filters.statusId} onValueChange={(value) => setFilters(prev => ({ ...prev, statusId: value }))}>
+            <SelectTrigger>
+              <SelectValue placeholder="All Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              {taskStatuses.map(status => (
+                <SelectItem key={status._id} value={status._id}>
+                  {status.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={filters.priority} onValueChange={(value) => setFilters(prev => ({ ...prev, priority: value }))}>
+            <SelectTrigger>
+              <SelectValue placeholder="All Priorities" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Priorities</SelectItem>
+              <SelectItem value="high">High</SelectItem>
+              <SelectItem value="medium">Medium</SelectItem>
+              <SelectItem value="low">Low</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={filters.assignedToId} onValueChange={(value) => setFilters(prev => ({ ...prev, assignedToId: value }))}>
+            <SelectTrigger>
+              <SelectValue placeholder="All Assignees" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Assignees</SelectItem>
+              {users.map(user => (
+                <SelectItem key={user._id} value={user._id}>
+                  {user.firstName} {user.lastName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={filters.projectId} onValueChange={(value) => setFilters(prev => ({ ...prev, projectId: value }))}>
+            <SelectTrigger>
+              <SelectValue placeholder="All Projects" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Projects</SelectItem>
+              {projects.map(project => (
+                <SelectItem key={project._id} value={project._id}>
+                  {project.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Tasks Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTasks.map((task) => (
-          <div key={task.id} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-            <div className="flex items-start justify-between mb-3">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {task.title}
-              </h3>
-              <div className="flex space-x-2">
-                <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(task.status)}`}>
-                  {task.status}
-                </span>
-                <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(task.priority)}`}>
-                  {task.priority}
-                </span>
-              </div>
-            </div>
-
-            <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-              {task.description}
-            </p>
-
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">Assignee:</span>
-                <span className="text-gray-900 dark:text-white">{task.assignee}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">Project:</span>
-                <span className="text-gray-900 dark:text-white">{task.project}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">Due Date:</span>
-                <span className="text-gray-900 dark:text-white">{task.dueDate}</span>
-              </div>
-            </div>
-
-            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex space-x-2">
-                <button className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 text-sm font-medium py-2 px-3 rounded-md transition-colors">
-                  Edit
-                </button>
-                <button className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 text-sm font-medium py-2 px-3 rounded-md transition-colors">
-                  Delete
-                </button>
-              </div>
-            </div>
+      {tasksLoading ? (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-500">Loading tasks...</p>
           </div>
-        ))}
-      </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {tasks.map((task) => {
+            const status = taskStatuses.find(s => s._id === task.statusId);
+            const project = projects.find(p => p._id === task.projectId);
+            
+            return (
+              <Card key={task._id} className="p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTaskClick(task)}>
+                <div className="flex items-start justify-between mb-3">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white pr-2">
+                    {task.title}
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={(e) => e.stopPropagation()}>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleTaskClick(task); }}>
+                          <Eye className="h-4 w-4 mr-2" />
+                          View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleTaskDelete(task._id); }}>
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
 
-      {filteredTasks.length === 0 && (
+                <div className="flex gap-2 mb-3">
+                  {status && (
+                    <Badge className={getStatusColor(status)}>
+                      {status.name}
+                    </Badge>
+                  )}
+                  <Badge className={getPriorityColor(task.priority)}>
+                    <Flag className="h-3 w-3 mr-1" />
+                    {task.priority}
+                  </Badge>
+                </div>
+
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">
+                  {task.description || "No description provided"}
+                </p>
+
+                <div className="space-y-2 text-sm">
+                  {task.assignedTo && task.assignedTo.length > 0 && (
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-gray-400" />
+                      <span className="text-gray-500">Assigned to:</span>
+                      <div className="flex -space-x-1">
+                        {task.assignedTo.slice(0, 3).map((user, index) => (
+                          <Avatar key={index} className="h-6 w-6 border-2 border-white">
+                            <AvatarFallback className="text-xs">
+                              {user.firstName?.[0]}{user.lastName?.[0]}
+                            </AvatarFallback>
+                          </Avatar>
+                        ))}
+                        {task.assignedTo.length > 3 && (
+                          <div className="h-6 w-6 rounded-full bg-gray-100 dark:bg-gray-800 border-2 border-white flex items-center justify-center">
+                            <span className="text-xs text-gray-500">+{task.assignedTo.length - 3}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {project && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-500">Project:</span>
+                      <span className="text-gray-900 dark:text-white">{project.name}</span>
+                    </div>
+                  )}
+
+                  {task.dueDate && (
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-gray-400" />
+                      <span className="text-gray-500">Due:</span>
+                      <span className="text-gray-900 dark:text-white">
+                        {format(new Date(task.dueDate), 'MMM d, yyyy')}
+                      </span>
+                    </div>
+                  )}
+
+                  {task.tags && task.tags.length > 0 && (
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Tag className="h-4 w-4 text-gray-400" />
+                      {task.tags.slice(0, 3).map((tag, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                      {task.tags.length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{task.tags.length - 3}
+                        </Badge>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+
+      {!tasksLoading && tasks.length === 0 && (
         <div className="text-center py-12">
           <div className="text-gray-400 dark:text-gray-600 mb-4">
             <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -353,11 +461,42 @@ export default function Tasks() {
           <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
             No tasks found
           </h3>
-          <p className="text-gray-500 dark:text-gray-400">
-            Try adjusting your filters or create a new task.
+          <p className="text-gray-500 dark:text-gray-400 mb-4">
+            Get started by creating your first task with smart parsing.
           </p>
+          <Button onClick={() => setShowCreateForm(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Create Your First Task
+          </Button>
         </div>
       )}
+
+      {/* Task Detail Dialog */}
+      <TaskDetailDialog
+        task={selectedTask}
+        isOpen={showTaskDetail}
+        onClose={() => setShowTaskDetail(false)}
+        onUpdate={handleTaskUpdate}
+        onDelete={handleTaskDelete}
+        users={users}
+        projects={projects}
+        taskStatuses={taskStatuses}
+        comments={taskDetails?.comments || []}
+        auditLogs={taskDetails?.auditLogs || []}
+        onAddComment={async (commentData) => {
+          // Add comment logic here
+          console.log('Add comment:', commentData);
+        }}
+        onEditComment={async (id, data) => {
+          // Edit comment logic here
+          console.log('Edit comment:', id, data);
+        }}
+        onDeleteComment={async (id) => {
+          // Delete comment logic here
+          console.log('Delete comment:', id);
+        }}
+        currentUser={users[0]} // You can implement proper current user logic
+      />
     </div>
   );
 }
