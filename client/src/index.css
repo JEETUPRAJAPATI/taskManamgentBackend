@@ -3,14 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --background: 248 250 252; /* slate-50 #f8fafc */
+  --background: 255 255 255; /* white #ffffff */
   --foreground: 15 23 42; /* slate-900 #0f172a */
-  --card: 255 255 255; /* white #ffffff */
+  --card: 248 250 252; /* slate-50 #f8fafc */
   --card-foreground: 15 23 42; /* slate-900 #0f172a */
   --popover: 255 255 255; /* white #ffffff */
   --popover-foreground: 15 23 42; /* slate-900 #0f172a */
   --primary: 59 130 246; /* blue-500 #3b82f6 */
-  --primary-foreground: 248 250 252; /* slate-50 #f8fafc */
+  --primary-foreground: 255 255 255; /* white #ffffff */
   --secondary: 241 245 249; /* slate-100 #f1f5f9 */
   --secondary-foreground: 15 23 42; /* slate-900 #0f172a */
   --muted: 241 245 249; /* slate-100 #f1f5f9 */
@@ -18,17 +18,17 @@
   --accent: 241 245 249; /* slate-100 #f1f5f9 */
   --accent-foreground: 15 23 42; /* slate-900 #0f172a */
   --destructive: 239 68 68; /* red-500 #ef4444 */
-  --destructive-foreground: 248 250 252; /* slate-50 #f8fafc */
+  --destructive-foreground: 255 255 255; /* white #ffffff */
   --border: 226 232 240; /* slate-200 #e2e8f0 */
-  --input: 226 232 240; /* slate-200 #e2e8f0 */
+  --input: 255 255 255; /* white #ffffff */
   --ring: 59 130 246; /* blue-500 #3b82f6 */
   --radius: 0.5rem;
   
   /* Sidebar colors */
-  --sidebar-background: 255 255 255; /* white #ffffff */
+  --sidebar-background: 248 250 252; /* slate-50 #f8fafc */
   --sidebar-foreground: 15 23 42; /* slate-900 #0f172a */
   --sidebar-primary: 59 130 246; /* blue-500 #3b82f6 */
-  --sidebar-primary-foreground: 248 250 252; /* slate-50 #f8fafc */
+  --sidebar-primary-foreground: 255 255 255; /* white #ffffff */
   --sidebar-accent: 241 245 249; /* slate-100 #f1f5f9 */
   --sidebar-accent-foreground: 15 23 42; /* slate-900 #0f172a */
   --sidebar-border: 226 232 240; /* slate-200 #e2e8f0 */
