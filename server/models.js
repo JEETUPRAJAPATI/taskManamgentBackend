@@ -182,8 +182,9 @@ const taskSchema = new mongoose.Schema({
     ref: 'User'
   },
   status: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'TaskStatus'
+    type: String,
+    enum: ['todo', 'in-progress', 'review', 'completed'],
+    default: 'todo'
   },
   priority: {
     type: String,
