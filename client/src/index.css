@@ -43,6 +43,18 @@
   --chart-3: 234 88 12; /* Orange #ea580c */
   --chart-4: 71 85 105; /* Slate gray #475569 */
   --chart-5: 15 118 110; /* Teal #0f766e */
+  
+  /* Override default yellow colors */
+  --yellow-50: 241 245 249; /* Use slate-50 instead */
+  --yellow-100: 226 232 240; /* Use slate-200 instead */
+  --yellow-200: 203 213 225; /* Use slate-300 instead */
+  --yellow-300: 148 163 184; /* Use slate-400 instead */
+  --yellow-400: 100 116 139; /* Use slate-500 instead */
+  --yellow-500: 234 88 12; /* Use orange-600 instead */
+  --yellow-600: 234 88 12; /* Use orange-600 instead */
+  --yellow-700: 194 65 12; /* Use orange-700 instead */
+  --yellow-800: 154 52 18; /* Use orange-800 instead */
+  --yellow-900: 124 45 18; /* Use orange-900 instead */
 }
 
 .light {
@@ -110,6 +122,30 @@
 }
 
 @layer components {
+  /* Force override all yellow colors globally */
+  * {
+    --tw-text-yellow-50: 241 245 249 !important;
+    --tw-text-yellow-100: 226 232 240 !important;
+    --tw-text-yellow-200: 203 213 225 !important;
+    --tw-text-yellow-300: 148 163 184 !important;
+    --tw-text-yellow-400: 100 116 139 !important;
+    --tw-text-yellow-500: 234 88 12 !important;
+    --tw-text-yellow-600: 234 88 12 !important;
+    --tw-text-yellow-700: 194 65 12 !important;
+    --tw-text-yellow-800: 154 52 18 !important;
+    --tw-text-yellow-900: 124 45 18 !important;
+    --tw-bg-yellow-50: 241 245 249 !important;
+    --tw-bg-yellow-100: 226 232 240 !important;
+    --tw-bg-yellow-200: 203 213 225 !important;
+    --tw-bg-yellow-300: 148 163 184 !important;
+    --tw-bg-yellow-400: 100 116 139 !important;
+    --tw-bg-yellow-500: 234 88 12 !important;
+    --tw-bg-yellow-600: 234 88 12 !important;
+    --tw-bg-yellow-700: 194 65 12 !important;
+    --tw-bg-yellow-800: 154 52 18 !important;
+    --tw-bg-yellow-900: 124 45 18 !important;
+  }
+  
   /* Navigation active state */
   .nav-item-active {
     @apply bg-primary/10 text-primary dark:text-primary;
@@ -227,4 +263,82 @@
 
 .animate-fade-in {
   animation: fadeIn 0.2s ease-out;
+}
+
+/* FORCE REMOVE ALL YELLOW COLORS - CRITICAL OVERRIDE */
+.text-yellow-50,
+.text-yellow-100,
+.text-yellow-200,
+.text-yellow-300,
+.text-yellow-400,
+.text-yellow-500,
+.text-yellow-600,
+.text-yellow-700,
+.text-yellow-800,
+.text-yellow-900 {
+  color: rgb(234 88 12) !important; /* Force orange-600 */
+}
+
+.bg-yellow-50,
+.bg-yellow-100,
+.bg-yellow-200,
+.bg-yellow-300,
+.bg-yellow-400,
+.bg-yellow-500,
+.bg-yellow-600,
+.bg-yellow-700,
+.bg-yellow-800,
+.bg-yellow-900 {
+  background-color: rgb(226 232 240) !important; /* Force slate-200 */
+}
+
+.border-yellow-50,
+.border-yellow-100,
+.border-yellow-200,
+.border-yellow-300,
+.border-yellow-400,
+.border-yellow-500,
+.border-yellow-600,
+.border-yellow-700,
+.border-yellow-800,
+.border-yellow-900 {
+  border-color: rgb(203 213 225) !important; /* Force slate-300 */
+}
+
+/* Override any yellow variants in dark mode */
+.dark .text-yellow-50,
+.dark .text-yellow-100,
+.dark .text-yellow-200,
+.dark .text-yellow-300,
+.dark .text-yellow-400,
+.dark .text-yellow-500,
+.dark .text-yellow-600,
+.dark .text-yellow-700,
+.dark .text-yellow-800,
+.dark .text-yellow-900 {
+  color: rgb(251 146 60) !important; /* Force orange-400 for dark mode */
+}
+
+.dark .bg-yellow-50,
+.dark .bg-yellow-100,
+.dark .bg-yellow-200,
+.dark .bg-yellow-300,
+.dark .bg-yellow-400,
+.dark .bg-yellow-500,
+.dark .bg-yellow-600,
+.dark .bg-yellow-700,
+.dark .bg-yellow-800,
+.dark .bg-yellow-900 {
+  background-color: rgb(51 65 85) !important; /* Force slate-600 for dark mode */
+}
+
+/* Force override inline styles that might use yellow */
+[style*="yellow"],
+[style*="#FFD700"],
+[style*="#FFFF00"],
+[style*="#FFF700"],
+[style*="rgb(255, 255, 0)"],
+[style*="rgb(255, 215, 0)"] {
+  color: rgb(234 88 12) !important;
+  background-color: transparent !important;
 }
