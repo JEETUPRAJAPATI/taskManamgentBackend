@@ -199,66 +199,129 @@ export default function FormBuilder() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Form Builder</h1>
-        <Button onClick={() => setShowPreview(true)} variant="outline">
-          <Eye className="h-4 w-4 mr-2" />
-          Preview
-        </Button>
+    <div className="p-8 space-y-8 bg-slate-50 dark:bg-slate-900 min-h-screen">
+      {/* Enhanced Header */}
+      <div className="flex items-center justify-between bg-white dark:bg-slate-800 p-6 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Form Builder</h1>
+          <p className="text-slate-600 dark:text-slate-300 mt-2">
+            Create and customize dynamic forms with drag-and-drop simplicity
+          </p>
+        </div>
+        <div className="flex items-center space-x-3">
+          <Button 
+            onClick={() => setShowPreview(true)} 
+            variant="outline"
+            className="border-slate-300 text-slate-700 hover:bg-slate-100"
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            Preview
+          </Button>
+          <Button 
+            onClick={handleSave} 
+            disabled={createFormMutation.isPending}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Save className="h-4 w-4 mr-2" />
+            Save Form
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Form Builder */}
         <div className="lg:col-span-2 space-y-6">
           {/* Form Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Form Details</CardTitle>
+          <Card className="border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+            <CardHeader className="pb-4 border-b border-slate-200 dark:border-slate-700">
+              <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
+                <Settings className="h-5 w-5 mr-2 text-blue-600" />
+                Form Details
+              </CardTitle>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Configure your form's basic information and settings
+              </p>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6 p-6">
               <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  Form Title *
+                </label>
                 <Input
-                  placeholder="Form Title"
+                  placeholder="Enter a descriptive title for your form"
                   value={form.title}
                   onChange={(e) => setForm(prev => ({ ...prev, title: e.target.value }))}
+                  className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
                 />
               </div>
               <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  Description
+                </label>
                 <Textarea
-                  placeholder="Form Description (optional)"
+                  placeholder="Provide a brief description of what this form is for (optional)"
                   value={form.description}
                   onChange={(e) => setForm(prev => ({ ...prev, description: e.target.value }))}
                   rows={3}
+                  className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
                 />
               </div>
             </CardContent>
           </Card>
 
           {/* Form Fields */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Form Fields</CardTitle>
+          <Card className="border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+            <CardHeader className="pb-4 border-b border-slate-200 dark:border-slate-700">
+              <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
+                <Plus className="h-5 w-5 mr-2 text-green-600" />
+                Form Fields
+                <span className="ml-2 text-sm font-normal text-slate-500">
+                  ({form.fields.length} fields)
+                </span>
+              </CardTitle>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Drag and drop fields to reorder, click to configure properties
+              </p>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+            <CardContent className="p-6">
+              <div className="space-y-3">
                 {form.fields.map((field, index) => (
                   <div
                     key={field.id}
-                    className={`border rounded-lg p-4 cursor-pointer transition-colors ${
-                      selectedField === field.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                    className={`group border rounded-lg p-4 cursor-pointer transition-all duration-200 hover:shadow-md ${
+                      selectedField === field.id 
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md' 
+                        : 'border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500'
                     }`}
                     onClick={() => setSelectedField(field.id)}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <GripVertical className="h-4 w-4 text-gray-400" />
-                        <div>
-                          <div className="font-medium">{field.label}</div>
-                          <div className="text-sm text-gray-500 capitalize">{field.type}</div>
+                        <div className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 cursor-grab">
+                          <GripVertical className="h-4 w-4 text-slate-400" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2">
+                            <span className="font-medium text-slate-900 dark:text-white">
+                              {field.label}
+                            </span>
+                            {field.required && (
+                              <span className="text-red-500 text-xs">*</span>
+                            )}
+                          </div>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <span className="text-sm text-slate-500 capitalize bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">
+                              {field.type}
+                            </span>
+                            {field.placeholder && (
+                              <span className="text-xs text-slate-400 italic">
+                                "{field.placeholder}"
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Button
                           size="sm"
                           variant="ghost"
@@ -267,6 +330,7 @@ export default function FormBuilder() {
                             moveField(field.id, 'up');
                           }}
                           disabled={index === 0}
+                          className="h-8 w-8 p-0 hover:bg-slate-100 dark:hover:bg-slate-700"
                         >
                           ↑
                         </Button>
@@ -278,6 +342,7 @@ export default function FormBuilder() {
                             moveField(field.id, 'down');
                           }}
                           disabled={index === form.fields.length - 1}
+                          className="h-8 w-8 p-0 hover:bg-slate-100 dark:hover:bg-slate-700"
                         >
                           ↓
                         </Button>
@@ -288,6 +353,7 @@ export default function FormBuilder() {
                             e.stopPropagation();
                             removeField(field.id);
                           }}
+                          className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -297,8 +363,20 @@ export default function FormBuilder() {
                 ))}
                 
                 {form.fields.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">
-                    No fields added yet. Add fields from the panel on the right.
+                  <div className="text-center py-12 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg">
+                    <div className="flex flex-col items-center space-y-3">
+                      <div className="p-3 bg-slate-100 dark:bg-slate-700 rounded-full">
+                        <Plus className="h-6 w-6 text-slate-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-medium text-slate-900 dark:text-white">
+                          No fields added yet
+                        </h3>
+                        <p className="text-slate-500 dark:text-slate-400 mt-1">
+                          Start building your form by adding fields from the panel on the right
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -306,18 +384,33 @@ export default function FormBuilder() {
           </Card>
 
           {/* Actions */}
-          <div className="flex space-x-4">
-            <Button onClick={handleSave} disabled={createFormMutation.isPending}>
-              <Save className="h-4 w-4 mr-2" />
-              Save Form
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => setShowSettings(true)}
-            >
-              <Settings className="h-4 w-4 mr-2" />
-              Settings
-            </Button>
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Form Actions</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Save your form or configure advanced settings
+                </p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowSettings(true)}
+                  className="border-slate-300 text-slate-700 hover:bg-slate-100"
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Settings
+                </Button>
+                <Button 
+                  onClick={handleSave} 
+                  disabled={createFormMutation.isPending || !form.title.trim() || form.fields.length === 0}
+                  className="bg-green-600 hover:bg-green-700 text-white disabled:bg-slate-300"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  {createFormMutation.isPending ? 'Saving...' : 'Save Form'}
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -326,11 +419,17 @@ export default function FormBuilder() {
           <FormFieldTypes onAddField={addField} />
           
           {selectedField && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Field Properties</CardTitle>
+            <Card className="border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+              <CardHeader className="pb-4 border-b border-slate-200 dark:border-slate-700">
+                <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
+                  <Settings className="h-5 w-5 mr-2 text-blue-600" />
+                  Field Properties
+                </CardTitle>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Configure the selected field's behavior and appearance
+                </p>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 <FieldProperties
                   field={form.fields.find(f => f.id === selectedField)}
                   onUpdate={(updates) => updateField(selectedField, updates)}
@@ -342,59 +441,102 @@ export default function FormBuilder() {
       </div>
 
       {/* Existing Forms */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Existing Forms</CardTitle>
+      <Card className="border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+        <CardHeader className="pb-4 border-b border-slate-200 dark:border-slate-700">
+          <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
+            <FileText className="h-5 w-5 mr-2 text-orange-600" />
+            Existing Forms
+            <span className="ml-2 text-sm font-normal text-slate-500">
+              ({forms.length} forms)
+            </span>
+          </CardTitle>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Manage your previously created forms and their settings
+          </p>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {forms.map((form) => (
-              <div key={form._id} className="border rounded-lg p-4">
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <h3 className="font-medium">{form.title}</h3>
-                    <p className="text-sm text-gray-500">{form.description}</p>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    {form.isPublished && (
+        <CardContent className="p-6">
+          {forms.length === 0 ? (
+            <div className="text-center py-12 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg">
+              <div className="flex flex-col items-center space-y-3">
+                <div className="p-3 bg-slate-100 dark:bg-slate-700 rounded-full">
+                  <FileText className="h-6 w-6 text-slate-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium text-slate-900 dark:text-white">
+                    No forms created yet
+                  </h3>
+                  <p className="text-slate-500 dark:text-slate-400 mt-1">
+                    Create your first form using the builder above
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {forms.map((form) => (
+                <div key={form._id} className="group border border-slate-200 dark:border-slate-600 rounded-lg p-4 hover:shadow-md transition-all duration-200 hover:border-slate-300 dark:hover:border-slate-500">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-slate-900 dark:text-white text-base truncate">
+                        {form.title}
+                      </h3>
+                      {form.description && (
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 line-clamp-2">
+                          {form.description}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {form.isPublished && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => copyShareLink(form.accessLink)}
+                          className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20"
+                        >
+                          <Share2 className="h-4 w-4" />
+                        </Button>
+                      )}
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => copyShareLink(form.accessLink)}
+                        onClick={() => handleDelete(form._id)}
+                        className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
                       >
-                        <Share2 className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
-                    )}
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleDelete(form._id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">
-                    {form.fields?.length || 0} fields
-                  </span>
-                  <div className="flex space-x-2">
-                    {form.isPublished ? (
-                      <span className="text-green-600">Published</span>
-                    ) : (
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4 text-sm text-slate-500 dark:text-slate-400">
+                      <span className="flex items-center space-x-1">
+                        <Hash className="h-3 w-3" />
+                        <span>{form.fields?.length || 0} fields</span>
+                      </span>
+                      {form.isPublished && (
+                        <span className="flex items-center space-x-1 text-green-600">
+                          <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                          <span>Published</span>
+                        </span>
+                      )}
+                    </div>
+                    
+                    {!form.isPublished && (
                       <Button
                         size="sm"
                         onClick={() => handlePublish(form._id)}
                         disabled={publishFormMutation.isPending}
+                        className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1"
                       >
                         Publish
                       </Button>
                     )}
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -438,31 +580,41 @@ function FieldProperties({ field, onUpdate }) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div>
-        <label className="block text-sm font-medium mb-1">Label</label>
+        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          Field Label *
+        </label>
         <Input
           value={field.label}
           onChange={(e) => onUpdate({ label: e.target.value })}
+          placeholder="Enter field label"
+          className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
         />
       </div>
       
       <div>
-        <label className="block text-sm font-medium mb-1">Placeholder</label>
+        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          Placeholder Text
+        </label>
         <Input
           value={field.placeholder}
           onChange={(e) => onUpdate({ placeholder: e.target.value })}
+          placeholder="Enter placeholder text"
+          className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
         />
       </div>
       
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-3">
         <input
           type="checkbox"
           checked={field.required}
           onChange={(e) => onUpdate({ required: e.target.checked })}
-          className="rounded"
+          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
         />
-        <label className="text-sm">Required field</label>
+        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+          Required field
+        </label>
       </div>
 
       {(field.type === 'dropdown' || field.type === 'multiselect') && (

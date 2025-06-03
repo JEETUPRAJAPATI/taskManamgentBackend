@@ -55,11 +55,17 @@ const fieldTypes = [
 
 export function FormFieldTypes({ onAddField }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Field Types</CardTitle>
+    <Card className="border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
+      <CardHeader className="pb-4 border-b border-slate-200 dark:border-slate-700">
+        <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
+          <Type className="h-5 w-5 mr-2 text-purple-600" />
+          Field Types
+        </CardTitle>
+        <p className="text-sm text-slate-600 dark:text-slate-400">
+          Click any field type to add it to your form
+        </p>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4">
         <div className="grid grid-cols-1 gap-2">
           {fieldTypes.map((fieldType) => {
             const Icon = fieldType.icon;
@@ -67,14 +73,20 @@ export function FormFieldTypes({ onAddField }) {
               <Button
                 key={fieldType.type}
                 variant="ghost"
-                className="h-auto p-3 justify-start"
+                className="h-auto p-3 justify-start hover:bg-slate-50 dark:hover:bg-slate-700 border border-transparent hover:border-slate-200 dark:hover:border-slate-600 rounded-lg transition-all duration-200"
                 onClick={() => onAddField(fieldType.type)}
               >
                 <div className="flex items-center space-x-3 w-full">
-                  <Icon className="h-4 w-4 text-gray-500" />
-                  <div className="text-left">
-                    <div className="font-medium text-sm">{fieldType.label}</div>
-                    <div className="text-xs text-gray-500">{fieldType.description}</div>
+                  <div className="p-2 bg-slate-100 dark:bg-slate-700 rounded-lg">
+                    <Icon className="h-4 w-4 text-slate-600 dark:text-slate-300" />
+                  </div>
+                  <div className="text-left flex-1">
+                    <div className="font-medium text-sm text-slate-900 dark:text-white">
+                      {fieldType.label}
+                    </div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                      {fieldType.description}
+                    </div>
                   </div>
                 </div>
               </Button>
