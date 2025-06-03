@@ -7,7 +7,8 @@ import {
   FileText,
   Settings,
   Menu,
-  X
+  X,
+  MessageSquare
 } from "lucide-react";
 
 export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) {
@@ -17,6 +18,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Tasks", href: "/tasks", icon: CheckSquare },
     { name: "Projects", href: "/projects", icon: FolderOpen },
+    { name: "Collaboration", href: "/collaboration", icon: MessageSquare },
     { name: "Forms", href: "/forms", icon: FileText },
     { name: "Users", href: "/users", icon: Users },
     { name: "Integrations", href: "/integrations", icon: Settings },

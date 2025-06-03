@@ -6,6 +6,7 @@ import Users from './pages/admin/Users';
 import Projects from './pages/admin/Projects';
 import FormBuilder from './pages/admin/FormBuilder';
 import Integrations from './pages/admin/Integrations';
+import Collaboration from './pages/admin/Collaboration';
 import { AdminLayout } from './components/admin/AdminLayout';
 import { Toaster } from './components/ui/toaster';
 
@@ -30,6 +31,7 @@ function App() {
           <Route path="/projects" component={Projects} />
           <Route path="/forms" component={FormBuilder} />
           <Route path="/integrations" component={Integrations} />
+          <Route path="/collaboration" component={Collaboration} />
           <Route>
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
