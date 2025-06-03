@@ -11,7 +11,8 @@ import {
   MessageSquare,
   Building2,
   CreditCard,
-  Receipt
+  Receipt,
+  Shield
 } from "lucide-react";
 
 export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) {
