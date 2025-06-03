@@ -177,17 +177,17 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] p-0">
-        <DialogHeader className="p-6 pb-4">
+      <DialogContent className="max-w-4xl max-h-[90vh] p-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xl">
+        <DialogHeader className="p-6 pb-4 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
           <DialogTitle className="text-xl font-bold text-slate-900 dark:text-white flex items-center">
             <Shield className="h-6 w-6 mr-2 text-blue-600" />
             {initialData ? "Edit Role" : "Create New Role"}
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="flex flex-col h-full">
-          <ScrollArea className="flex-1 px-6">
-            <div className="space-y-6">
+        <form onSubmit={handleSubmit} className="flex flex-col h-full bg-white dark:bg-slate-800">
+          <ScrollArea className="flex-1 px-6 bg-white dark:bg-slate-800">
+            <div className="space-y-6 py-4">
               <Card className="border-slate-200 dark:border-slate-700">
                 <CardHeader className="pb-4">
                   <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white">
@@ -389,7 +389,7 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
             </div>
           </ScrollArea>
 
-          <div className="flex items-center justify-end space-x-3 p-6 border-t border-slate-200 dark:border-slate-700">
+          <div className="flex items-center justify-end space-x-3 p-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
             <Button 
               type="button" 
               variant="outline" 
