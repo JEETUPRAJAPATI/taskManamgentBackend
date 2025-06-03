@@ -34,7 +34,7 @@ const getActionIcon = (action) => {
     case 'tagged':
       return <Tag className="h-4 w-4 text-pink-600" />;
     case 'due_date_changed':
-      return <Calendar className="h-4 w-4 text-amber-600" />;
+      return <Calendar className="h-4 w-4 text-orange-600" />;
     case 'priority_changed':
       return <Flag className="h-4 w-4 text-red-500" />;
     default:

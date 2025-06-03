@@ -706,7 +706,7 @@ export function AdvancedCreateTask({
               </div>
             )}
             {files.length >= 10 && (
-              <p className="text-xs text-amber-600">Maximum 10 files reached</p>
+              <p className="text-xs text-orange-600">Maximum 10 files reached</p>
             )}
           </div>
 
@@ -725,7 +725,7 @@ export function AdvancedCreateTask({
                 Save Draft
               </Button>
               {isDirty && (
-                <span className="text-xs text-amber-600 flex items-center gap-1">
+                <span className="text-xs text-orange-600 flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   Unsaved changes
                 </span>

@@ -35,7 +35,7 @@ export function StatsCard({
             "w-12 h-12 rounded-lg flex items-center justify-center",
             iconColor === "text-primary" && "bg-primary/10",
             iconColor === "text-emerald-600" && "bg-emerald-100 dark:bg-emerald-900/20",
-            iconColor === "text-amber-600" && "bg-amber-100 dark:bg-amber-900/20",
+            iconColor === "text-orange-600" && "bg-orange-100 dark:bg-orange-900/20",
             iconColor === "text-purple-600" && "bg-purple-100 dark:bg-purple-900/20"
           )}>
             <Icon className={cn("w-6 h-6", iconColor)} />
