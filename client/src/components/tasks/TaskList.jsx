@@ -252,18 +252,18 @@ export function TaskList() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
             Tasks Management
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-slate-600 dark:text-slate-300 font-medium mt-1">
             Create, manage and track all your tasks
           </p>
         </div>
         <Button 
           onClick={() => setShowCreateForm(true)}
-          className="bg-primary text-primary-foreground hover:bg-primary/90"
+          className="bg-blue-600 text-white hover:bg-blue-700 font-semibold px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-200 border border-blue-600"
         >
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="h-5 w-5 mr-2" />
           Create Task
         </Button>
       </div>

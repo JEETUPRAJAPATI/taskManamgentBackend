@@ -96,7 +96,7 @@ export function TaskCard({
       onClick={() => onClick?.(task)}
     >
       <div className="flex items-start justify-between mb-4">
-        <h3 className="text-lg font-semibold text-card-foreground group-hover:text-primary transition-colors">
+        <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors">
           {task.title}
         </h3>
         <div className="flex items-center gap-2">
@@ -152,7 +152,7 @@ export function TaskCard({
 
       {/* Description */}
       {task.description && (
-        <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
+        <p className="text-slate-700 dark:text-slate-300 text-sm mb-4 line-clamp-3 font-medium">
           {task.description}
         </p>
       )}
@@ -162,18 +162,18 @@ export function TaskCard({
         {/* Assignees */}
         {assigneeUsers.length > 0 && (
           <div className="flex items-center gap-2">
-            <User className="h-4 w-4 text-muted-foreground" />
+            <User className="h-4 w-4 text-slate-600 dark:text-slate-400" />
             <div className="flex -space-x-2">
               {assigneeUsers.slice(0, 3).map((user, index) => (
-                <Avatar key={index} className="h-6 w-6 border-2 border-background">
-                  <AvatarFallback className="text-xs bg-secondary text-secondary-foreground">
+                <Avatar key={index} className="h-6 w-6 border-2 border-white dark:border-slate-800">
+                  <AvatarFallback className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 font-semibold">
                     {user.firstName?.[0]}{user.lastName?.[0]}
                   </AvatarFallback>
                 </Avatar>
               ))}
               {assigneeUsers.length > 3 && (
-                <div className="h-6 w-6 rounded-full bg-muted border-2 border-background flex items-center justify-center">
-                  <span className="text-xs text-muted-foreground">+{assigneeUsers.length - 3}</span>
+                <div className="h-6 w-6 rounded-full bg-slate-200 dark:bg-slate-700 border-2 border-white dark:border-slate-800 flex items-center justify-center">
+                  <span className="text-xs text-slate-600 dark:text-slate-300 font-semibold">+{assigneeUsers.length - 3}</span>
                 </div>
               )}
             </div>
@@ -183,8 +183,8 @@ export function TaskCard({
         {/* Due Date */}
         {task.dueDate && (
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">
+            <Calendar className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+            <span className="text-sm text-slate-700 dark:text-slate-300 font-medium">
               Due: {format(new Date(task.dueDate), 'MMM d, yyyy')}
             </span>
           </div>
@@ -193,9 +193,9 @@ export function TaskCard({
         {/* Tags */}
         {task.tags && task.tags.length > 0 && (
           <div className="flex items-center gap-2 flex-wrap">
-            <TagIcon className="h-4 w-4 text-muted-foreground" />
+            <TagIcon className="h-4 w-4 text-slate-600 dark:text-slate-400" />
             {task.tags.slice(0, 3).map((tag, index) => (
-              <Badge key={index} variant="outline" className="text-xs border-border">
+              <Badge key={index} variant="outline" className="text-xs border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800">
                 #{tag}
               </Badge>
             ))}
