@@ -1,15 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { authenticateToken, generateToken, requireRole, requireOrganization, type AuthenticatedRequest } from "./auth";
-import { 
-  loginSchema, 
-  registerSchema, 
-  forgotPasswordSchema, 
-  resetPasswordSchema,
-  createTaskSchema,
-  smartTaskInputSchema
-} from "@shared/schema";
+import { generateToken } from "./auth";
+import { Request } from "express";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -245,10 +238,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Task routes
-  app.get("/api/tasks", authenticateToken, async (req: AuthenticatedRequest, res) => {
+  app.get("/api/tasks", async (req, res) => {
     try {
       const filters = {
-        organizationId: req.user!.organizationId,
         projectId: req.query.projectId as string,
         assignedToId: req.query.assignedToId as string,
         createdById: req.query.createdById as string,
@@ -267,12 +259,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/tasks", authenticateToken, validateBody(createTaskSchema), async (req: AuthenticatedRequest, res) => {
+  app.post("/api/tasks", validateBody(createTaskSchema), async (req, res) => {
     try {
       const taskData = {
         ...req.body,
-        organizationId: req.user!.organizationId,
-        createdById: req.user!.id,
         dueDate: req.body.dueDate ? new Date(req.body.dueDate) : undefined,
       };
 

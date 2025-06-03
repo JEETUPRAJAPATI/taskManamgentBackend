@@ -191,10 +191,9 @@ export async function registerRoutes(app) {
   });
 
   // Task routes
-  app.get("/api/tasks", authenticateToken, async (req, res) => {
+  app.get("/api/tasks", async (req, res) => {
     try {
       const filters = {
-        organizationId: req.user.organizationId,
         projectId: req.query.projectId,
         assignedToId: req.query.assignedToId,
         createdById: req.query.createdById,
