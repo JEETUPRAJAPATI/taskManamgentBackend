@@ -9,6 +9,10 @@ const __dirname = path.dirname(__filename);
 export default defineConfig({
   plugins: [react()],
   root: "./client",
+  build: {
+    outDir: "dist",
+    emptyOutDir: true
+  },
   server: {
     allowedHosts: [
       "25b3cec7-b6b2-48b7-a8f4-7ee8a9c12574-00-36vzyej2u9kbm.kirk.replit.dev",
