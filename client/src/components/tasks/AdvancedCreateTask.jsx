@@ -236,7 +236,7 @@ export function AdvancedCreateTask({
   // Priority levels configuration
   const priorityLevels = [
     { value: "low", label: "Low", color: "bg-green-100 text-green-800 border-green-200", icon: "🟢" },
-    { value: "medium", label: "Medium", color: "bg-yellow-100 text-yellow-800 border-yellow-200", icon: "🟡" },
+    { value: "medium", label: "Medium", color: "bg-blue-100 text-blue-800 border-blue-200", icon: "🔵" },
     { value: "high", label: "High", color: "bg-orange-100 text-orange-800 border-orange-200", icon: "🟠" },
     { value: "urgent", label: "Urgent", color: "bg-red-100 text-red-800 border-red-200", icon: "🔴" }
   ];

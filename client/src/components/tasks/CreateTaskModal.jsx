@@ -210,7 +210,7 @@ export function CreateTaskModal({
 
   const priorities = [
     { value: "low", label: "Low", color: "bg-green-100 text-green-800" },
-    { value: "medium", label: "Medium", color: "bg-yellow-100 text-yellow-800" },
+    { value: "medium", label: "Medium", color: "bg-blue-100 text-blue-800" },
     { value: "high", label: "High", color: "bg-orange-100 text-orange-800" },
     { value: "urgent", label: "Urgent", color: "bg-red-100 text-red-800" }
   ];

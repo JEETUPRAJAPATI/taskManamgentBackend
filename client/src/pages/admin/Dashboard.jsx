@@ -196,7 +196,7 @@ export default function Dashboard() {
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
-                <div className="bg-yellow-600 h-2 rounded-full" style={{ width: '20%' }}></div>
+                <div className="bg-orange-600 h-2 rounded-full" style={{ width: '20%' }}></div>
               </div>
             </div>
           </div>
