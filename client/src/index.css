@@ -28,46 +28,46 @@
 }
 
 :root {
-  /* Professional Corporate Blue Theme */
-  --background: 248 250 252; /* Clean light background #f8fafc */
-  --foreground: 30 41 59; /* Dark blue text #1e293b */
+  /* Professional High-Contrast Theme - WCAG AA/AAA Compliant */
+  --background: 255 255 255; /* Pure white background #ffffff */
+  --foreground: 15 23 42; /* High contrast dark text #0f172a */
   --card: 255 255 255; /* Pure white cards #ffffff */
-  --card-foreground: 30 41 59; /* Dark blue text on cards #1e293b */
+  --card-foreground: 15 23 42; /* High contrast card text #0f172a */
   --popover: 255 255 255; /* White popover #ffffff */
-  --popover-foreground: 30 41 59; /* Dark blue popover text #1e293b */
-  --primary: 30 58 138; /* Professional navy blue-800 #1e3a8a */
+  --popover-foreground: 15 23 42; /* High contrast popover text #0f172a */
+  --primary: 30 64 175; /* Strong navy blue-800 #1e40af */
   --primary-foreground: 255 255 255; /* White text on primary #ffffff */
-  --secondary: 241 245 249; /* Light blue-gray slate-100 #f1f5f9 */
-  --secondary-foreground: 30 58 138; /* Navy blue text #1e3a8a */
-  --muted: 248 250 252; /* Light muted slate-50 #f8fafc */
-  --muted-foreground: 100 116 139; /* Medium gray text slate-500 #64748b */
-  --accent: 37 99 235; /* Clean blue-600 #2563eb */
-  --accent-foreground: 255 255 255; /* White text on blue #ffffff */
-  --destructive: 220 38 38; /* Professional red #dc2626 */
+  --secondary: 248 250 252; /* Very light background #f8fafc */
+  --secondary-foreground: 15 23 42; /* High contrast text #0f172a */
+  --muted: 241 245 249; /* Light muted background #f1f5f9 */
+  --muted-foreground: 51 65 85; /* Strong gray text #334155 */
+  --accent: 234 88 12; /* Professional orange accent #ea580c */
+  --accent-foreground: 255 255 255; /* White text on orange #ffffff */
+  --destructive: 185 28 28; /* Strong red #b91c1c */
   --destructive-foreground: 255 255 255; /* White text on red #ffffff */
-  --success: 21 128 61; /* Professional green #15803d */
+  --success: 22 101 52; /* Strong green #166534 */
   --success-foreground: 255 255 255; /* White text on green #ffffff */
-  --border: 226 232 240; /* Light border slate-200 #e2e8f0 */
+  --border: 203 213 225; /* Clear border #cbd5e1 */
   --input: 255 255 255; /* White input background #ffffff */
-  --ring: 37 99 235; /* Blue focus ring #2563eb */
+  --ring: 30 64 175; /* Strong blue focus ring #1e40af */
   --radius: 0.5rem;
   
-  /* Sidebar colors - Professional Corporate theme */
-  --sidebar-background: 30 58 138; /* Professional navy #1e3a8a */
+  /* Sidebar colors - High Contrast Professional */
+  --sidebar-background: 15 23 42; /* Dark navy sidebar #0f172a */
   --sidebar-foreground: 255 255 255; /* White sidebar text #ffffff */
-  --sidebar-primary: 37 99 235; /* Blue-600 sidebar accent #2563eb */
+  --sidebar-primary: 30 64 175; /* Navy blue accent #1e40af */
   --sidebar-primary-foreground: 255 255 255; /* White text on primary #ffffff */
-  --sidebar-accent: 37 99 235; /* Clean blue accent #2563eb */
-  --sidebar-accent-foreground: 255 255 255; /* White text on blue #ffffff */
-  --sidebar-border: 30 64 175; /* Professional border #1e40af */
-  --sidebar-ring: 37 99 235; /* Blue sidebar focus ring #2563eb */
+  --sidebar-accent: 234 88 12; /* Orange accent #ea580c */
+  --sidebar-accent-foreground: 255 255 255; /* White text on orange #ffffff */
+  --sidebar-border: 30 41 59; /* Dark border #1e293b */
+  --sidebar-ring: 30 64 175; /* Navy focus ring #1e40af */
   
-  /* Chart colors - Professional Corporate palette */
-  --chart-1: 30 58 138; /* Navy blue #1e3a8a */
-  --chart-2: 37 99 235; /* Blue-600 #2563eb */
-  --chart-3: 59 130 246; /* Blue-500 #3b82f6 */
-  --chart-4: 96 165 250; /* Blue-400 #60a5fa */
-  --chart-5: 21 128 61; /* Professional green #15803d */
+  /* Chart colors - High Contrast Professional palette */
+  --chart-1: 30 64 175; /* Navy blue #1e40af */
+  --chart-2: 234 88 12; /* Professional orange #ea580c */
+  --chart-3: 22 101 52; /* Strong green #166534 */
+  --chart-4: 185 28 28; /* Strong red #b91c1c */
+  --chart-5: 51 65 85; /* Strong gray #334155 */
   
   /* Override default yellow colors */
   --yellow-50: 241 245 249; /* Use slate-50 instead */
@@ -83,38 +83,38 @@
 }
 
 .light {
-  /* Professional Corporate Light Theme */
+  /* Professional High-Contrast Light Theme - WCAG AAA */
   --background: 255 255 255; /* Pure white #ffffff */
-  --foreground: 30 41 59; /* Dark blue text #1e293b */
-  --card: 248 250 252; /* Light card background #f8fafc */
-  --card-foreground: 30 41 59; /* Dark blue card text #1e293b */
+  --foreground: 15 23 42; /* High contrast text #0f172a */
+  --card: 255 255 255; /* Pure white cards #ffffff */
+  --card-foreground: 15 23 42; /* High contrast card text #0f172a */
   --popover: 255 255 255; /* White popover #ffffff */
-  --popover-foreground: 30 41 59; /* Dark blue popover text #1e293b */
-  --primary: 30 58 138; /* Professional navy #1e3a8a */
+  --popover-foreground: 15 23 42; /* High contrast popover text #0f172a */
+  --primary: 30 64 175; /* Strong navy #1e40af */
   --primary-foreground: 255 255 255; /* White text on navy #ffffff */
-  --secondary: 248 250 252; /* Light background #f8fafc */
-  --secondary-foreground: 30 58 138; /* Navy text #1e3a8a */
+  --secondary: 248 250 252; /* Very light background #f8fafc */
+  --secondary-foreground: 15 23 42; /* High contrast text #0f172a */
   --muted: 241 245 249; /* Light muted #f1f5f9 */
-  --muted-foreground: 100 116 139; /* Gray muted text #64748b */
-  --accent: 37 99 235; /* Clean blue accent #2563eb */
-  --accent-foreground: 255 255 255; /* White text on blue #ffffff */
-  --destructive: 220 38 38; /* Professional red #dc2626 */
+  --muted-foreground: 51 65 85; /* Strong gray text #334155 */
+  --accent: 234 88 12; /* Professional orange #ea580c */
+  --accent-foreground: 255 255 255; /* White text on orange #ffffff */
+  --destructive: 185 28 28; /* Strong red #b91c1c */
   --destructive-foreground: 255 255 255; /* White text on red #ffffff */
-  --success: 21 128 61; /* Professional green #15803d */
+  --success: 22 101 52; /* Strong green #166534 */
   --success-foreground: 255 255 255; /* White text on green #ffffff */
-  --border: 226 232 240; /* Light border #e2e8f0 */
+  --border: 203 213 225; /* Clear border #cbd5e1 */
   --input: 255 255 255; /* White input #ffffff */
-  --ring: 37 99 235; /* Blue focus ring #2563eb */
+  --ring: 30 64 175; /* Strong blue focus ring #1e40af */
   
-  /* Sidebar colors - Professional light mode */
-  --sidebar-background: 255 255 255; /* White sidebar #ffffff */
-  --sidebar-foreground: 30 58 138; /* Navy sidebar text #1e3a8a */
-  --sidebar-primary: 30 58 138; /* Navy sidebar accent #1e3a8a */
+  /* Sidebar colors - High contrast light mode */
+  --sidebar-background: 248 250 252; /* Light sidebar #f8fafc */
+  --sidebar-foreground: 15 23 42; /* High contrast text #0f172a */
+  --sidebar-primary: 30 64 175; /* Strong navy #1e40af */
   --sidebar-primary-foreground: 255 255 255; /* White text on navy #ffffff */
-  --sidebar-accent: 37 99 235; /* Blue accent #2563eb */
-  --sidebar-accent-foreground: 255 255 255; /* White text on blue #ffffff */
-  --sidebar-border: 226 232 240; /* Light sidebar border #e2e8f0 */
-  --sidebar-ring: 37 99 235; /* Blue sidebar focus ring #2563eb */
+  --sidebar-accent: 234 88 12; /* Orange accent #ea580c */
+  --sidebar-accent-foreground: 255 255 255; /* White text on orange #ffffff */
+  --sidebar-border: 203 213 225; /* Clear border #cbd5e1 */
+  --sidebar-ring: 30 64 175; /* Strong blue focus ring #1e40af */
 }
 
 @layer base {
@@ -181,85 +181,93 @@
     @apply bg-card border border-border rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200;
   }
   
-  /* Button variants */
+  /* Button variants - High Contrast Professional */
   .btn-primary {
-    @apply bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 px-4 py-2 rounded-lg font-medium transition-colors;
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-sm hover:shadow-md border border-primary;
   }
   
   .btn-secondary {
-    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:ring-2 focus:ring-secondary focus:ring-offset-2 px-4 py-2 rounded-lg font-medium transition-colors;
+    @apply bg-white text-foreground hover:bg-secondary focus:ring-2 focus:ring-primary focus:ring-offset-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-md border border-border;
   }
   
-  /* Status badges - Professional Corporate color palette */
+  .btn-accent {
+    @apply bg-accent text-accent-foreground hover:bg-accent/90 focus:ring-2 focus:ring-accent focus:ring-offset-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-sm hover:shadow-md border border-accent;
+  }
+  
+  .btn-outline {
+    @apply bg-transparent text-primary hover:bg-primary hover:text-primary-foreground focus:ring-2 focus:ring-primary focus:ring-offset-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 border-2 border-primary;
+  }
+  
+  /* Status badges - High Contrast Professional WCAG AAA */
   .status-todo {
-    @apply bg-slate-100 text-slate-700 border border-slate-300;
+    @apply bg-slate-100 text-slate-900 border border-slate-400 font-medium;
   }
   
   .status-in-progress {
-    @apply bg-blue-50 text-blue-700 border border-blue-200;
+    @apply bg-blue-600 text-white border border-blue-700 font-medium;
   }
   
   .status-review {
-    @apply bg-blue-100 text-blue-800 border border-blue-300;
+    @apply bg-orange-500 text-white border border-orange-600 font-medium;
   }
   
   .status-completed {
-    @apply bg-green-50 text-green-700 border border-green-200;
+    @apply bg-green-600 text-white border border-green-700 font-medium;
   }
   
   .status-done {
-    @apply bg-green-50 text-green-700 border border-green-200;
+    @apply bg-green-600 text-white border border-green-700 font-medium;
   }
   
-  /* Priority badges - Professional Blue color palette */
+  /* Priority badges - High Contrast Professional WCAG AAA */
   .priority-low {
-    @apply bg-blue-50 text-blue-600 border border-blue-200;
+    @apply bg-slate-200 text-slate-900 border border-slate-400 font-medium;
   }
   
   .priority-medium {
-    @apply bg-blue-100 text-blue-700 border border-blue-300;
+    @apply bg-blue-600 text-white border border-blue-700 font-medium;
   }
   
   .priority-high {
-    @apply bg-blue-600 text-white border border-blue-600;
+    @apply bg-orange-500 text-white border border-orange-600 font-medium;
   }
   
   .priority-urgent {
-    @apply bg-red-600 text-white border border-red-600;
+    @apply bg-red-600 text-white border border-red-700 font-medium;
   }
 
-  /* Light theme variants - Professional Corporate Blue */
+  /* Light theme variants - High Contrast WCAG AAA */
   .light .status-todo {
-    @apply bg-slate-50 text-slate-600 border border-slate-200;
+    @apply bg-slate-100 text-slate-900 border border-slate-400 font-medium;
   }
   
   .light .status-in-progress {
-    @apply bg-blue-50 text-blue-600 border border-blue-200;
+    @apply bg-blue-600 text-white border border-blue-700 font-medium;
   }
   
   .light .status-review {
-    @apply bg-blue-100 text-blue-700 border border-blue-300;
+    @apply bg-orange-500 text-white border border-orange-600 font-medium;
   }
   
   .light .status-completed,
   .light .status-done {
-    @apply bg-green-50 text-green-600 border border-green-200;
+    @apply bg-green-600 text-white border border-green-700 font-medium;
   }
   
   .light .priority-low {
-    @apply bg-blue-50 text-blue-600 border border-blue-200;
+    @apply bg-slate-200 text-slate-900 border border-slate-400 font-medium;
   }
   
   .light .priority-medium {
-    @apply bg-blue-100 text-blue-700 border border-blue-300;
+    @apply bg-blue-600 text-white border border-blue-700 font-medium;
   }
   
   .light .priority-high {
-    @apply bg-blue-600 text-white border border-blue-600;
+    @apply bg-orange-500 text-white border border-orange-600 font-medium;
   }
   
   .light .priority-urgent {
-    @apply bg-red-600 text-white border border-red-600;
+    @apply bg-red-600 text-white border border-red-700 font-medium;
   }
 }
 
@@ -405,6 +413,50 @@ div[style*="color: yellow"], div[style*="color:#FFD700"], div[style*="color: ora
 *[style*="background-color:#FFFF00"], *[style*="background-color:#FF8C00"] {
   background-color: rgb(219 234 254) !important; /* Light blue background */
   border-color: rgb(37 99 235) !important; /* Blue border */
+}
+
+/* High Contrast Form Controls and Inputs */
+.form-input {
+  @apply bg-white border border-slate-300 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-primary rounded-lg px-3 py-2 font-medium transition-all duration-200 shadow-sm;
+}
+
+.form-select {
+  @apply bg-white border border-slate-300 text-foreground focus:ring-2 focus:ring-primary focus:border-primary rounded-lg px-3 py-2 font-medium transition-all duration-200 shadow-sm cursor-pointer;
+}
+
+.form-textarea {
+  @apply bg-white border border-slate-300 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-primary rounded-lg px-3 py-2 font-medium transition-all duration-200 shadow-sm;
+  resize: vertical;
+}
+
+.form-label {
+  @apply text-foreground font-semibold text-sm mb-2 block;
+}
+
+/* Enhanced Card Styles */
+.card-enhanced {
+  @apply bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-6;
+}
+
+.card-header {
+  @apply border-b border-slate-200 pb-4 mb-4;
+}
+
+.card-title {
+  @apply text-xl font-bold text-foreground;
+}
+
+.card-subtitle {
+  @apply text-muted-foreground font-medium;
+}
+
+/* Navigation and Menu Styles */
+.nav-link {
+  @apply text-foreground hover:text-primary hover:bg-secondary/50 px-3 py-2 rounded-lg font-medium transition-all duration-200;
+}
+
+.nav-link-active {
+  @apply bg-primary text-primary-foreground font-semibold;
 }
 
 /* Override any computed yellow styles */
