@@ -881,4 +881,117 @@ async function setupEmailCalendarRoutes(app) {
       res.status(500).json({ message: "Failed to fetch users for role" });
     }
   });
+
+  // Reports API Routes
+  
+  // Get report data
+  app.get("/api/reports", authenticateToken, requireOrganization, requireRole(['admin', 'super_admin', 'manager']), async (req, res) => {
+    try {
+      const { 
+        startDate, 
+        endDate, 
+        userId, 
+        projectId, 
+        status, 
+        department 
+      } = req.query;
+
+      const dateRange = {
+        startDate: startDate ? new Date(startDate) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        endDate: endDate ? new Date(endDate) : new Date()
+      };
+
+      const filters = {
+        organizationId: req.user.organizationId,
+        dateRange,
+        userId: userId || null,
+        projectId: projectId || null,
+        status: status || null,
+        department: department || null
+      };
+
+      const reportData = await storage.generateReportData(filters);
+      res.json(reportData);
+    } catch (error) {
+      console.error("Get reports error:", error);
+      res.status(500).json({ message: "Failed to fetch report data" });
+    }
+  });
+
+  // Get filter options for reports
+  app.get("/api/reports/filters", authenticateToken, requireOrganization, async (req, res) => {
+    try {
+      const users = await storage.getOrganizationUsers(req.user.organizationId);
+      const projects = await storage.getProjects({ organizationId: req.user.organizationId });
+      
+      // Get unique departments from users
+      const departments = [...new Set(users
+        .map(user => user.department)
+        .filter(dept => dept && dept.trim() !== '')
+      )];
+
+      res.json({
+        users: users.map(user => ({
+          _id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email
+        })),
+        projects: projects.map(project => ({
+          _id: project._id,
+          name: project.name
+        })),
+        departments
+      });
+    } catch (error) {
+      console.error("Get report filters error:", error);
+      res.status(500).json({ message: "Failed to fetch filter options" });
+    }
+  });
+
+  // Export reports
+  app.get("/api/reports/export", authenticateToken, requireOrganization, requireRole(['admin', 'super_admin', 'manager']), async (req, res) => {
+    try {
+      const { 
+        format,
+        startDate, 
+        endDate, 
+        userId, 
+        projectId, 
+        status, 
+        department 
+      } = req.query;
+
+      const dateRange = {
+        startDate: startDate ? new Date(startDate) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        endDate: endDate ? new Date(endDate) : new Date()
+      };
+
+      const filters = {
+        organizationId: req.user.organizationId,
+        dateRange,
+        userId: userId || null,
+        projectId: projectId || null,
+        status: status || null,
+        department: department || null
+      };
+
+      const reportData = await storage.generateReportData(filters);
+
+      if (format === 'csv') {
+        const csvData = await storage.generateCSVReport(reportData);
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename="user-reports-${startDate}-to-${endDate}.csv"`);
+        res.send(csvData);
+      } else if (format === 'pdf') {
+        // For now, return a simple message - PDF generation would require additional libraries
+        res.status(501).json({ message: "PDF export functionality is not yet implemented" });
+      } else {
+        res.status(400).json({ message: "Invalid format specified" });
+      }
+    } catch (error) {
+      console.error("Export reports error:", error);
+      res.status(500).json({ message: "Failed to export report" });
+    }
+  });
 }

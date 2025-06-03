@@ -12,7 +12,8 @@ import {
   Building2,
   CreditCard,
   Receipt,
-  Shield
+  Shield,
+  BarChart3
 } from "lucide-react";
 
 export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) {
@@ -26,6 +27,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
     { name: "Forms", href: "/forms", icon: FileText },
     { name: "Users", href: "/users", icon: Users },
     { name: "Role Management", href: "/roles", icon: Shield },
+    { name: "Reports", href: "/reports", icon: BarChart3 },
     { name: "Companies", href: "/companies", icon: Building2 },
     { name: "Subscription Plans", href: "/subscription-plans", icon: CreditCard },
     { name: "Transactions", href: "/transactions", icon: Receipt },
@@ -125,7 +127,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
 
             {/* Management Section */}
             <div className="space-y-1">
-              {navigation.slice(4, 7).map((item, index) => {
+              {navigation.slice(4, 8).map((item, index) => {
                 const Icon = item.icon;
                 return (
                   <div key={item.name}>
@@ -158,7 +160,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                       )}
                     </Link>
                     
-                    {index < 2 && (
+                    {index < 3 && (
                       <div className="my-2 mx-3 border-t border-slate-700/50 dark:border-slate-800/50"></div>
                     )}
                   </div>

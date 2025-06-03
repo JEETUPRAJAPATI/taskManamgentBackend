@@ -743,6 +743,275 @@ export class MongoStorage {
       throw error;
     }
   }
+
+  // Report Generation Operations
+  async generateReportData(filters) {
+    try {
+      const { organizationId, dateRange, userId, projectId, status, department } = filters;
+
+      // Build task query
+      let taskQuery = { organization: organizationId };
+      
+      if (dateRange.startDate && dateRange.endDate) {
+        taskQuery.createdAt = {
+          $gte: dateRange.startDate,
+          $lte: dateRange.endDate
+        };
+      }
+      
+      if (userId) taskQuery.assignedTo = userId;
+      if (projectId) taskQuery.project = projectId;
+      if (status) taskQuery.status = status;
+
+      // Get tasks with populated data
+      const tasks = await Task.find(taskQuery)
+        .populate('assignedTo', 'firstName lastName email department')
+        .populate('project', 'name')
+        .populate('createdBy', 'firstName lastName')
+        .sort({ createdAt: -1 });
+
+      // Filter by department if specified
+      const filteredTasks = department 
+        ? tasks.filter(task => task.assignedTo?.department === department)
+        : tasks;
+
+      // Generate summary statistics
+      const summary = {
+        totalUsers: await User.countDocuments({ organization: organizationId }),
+        totalTasks: filteredTasks.length,
+        avgCompletion: this.calculateAverageCompletion(filteredTasks),
+        overdueTasks: filteredTasks.filter(task => 
+          task.dueDate && new Date(task.dueDate) < new Date() && task.status !== 'completed'
+        ).length
+      };
+
+      // Generate user performance data
+      const userPerformance = await this.generateUserPerformanceData(filteredTasks, organizationId);
+
+      // Generate user task data for charts
+      const userTaskData = await this.generateUserTaskChartData(filteredTasks);
+
+      // Generate status distribution data
+      const statusDistribution = this.generateStatusDistribution(filteredTasks);
+
+      // Generate trend data
+      const trendData = await this.generateTrendData(organizationId, dateRange);
+
+      // Format task details
+      const taskDetails = filteredTasks.map(task => ({
+        _id: task._id,
+        title: task.title,
+        assignedTo: task.assignedTo,
+        project: task.project,
+        status: task.status,
+        priority: task.priority,
+        dueDate: task.dueDate,
+        progress: task.progress || 0,
+        createdAt: task.createdAt
+      }));
+
+      return {
+        summary,
+        userPerformance,
+        userTaskData,
+        statusDistribution,
+        trendData,
+        taskDetails
+      };
+    } catch (error) {
+      console.error('Generate report data error:', error);
+      throw error;
+    }
+  }
+
+  calculateAverageCompletion(tasks) {
+    if (tasks.length === 0) return 0;
+    
+    const totalProgress = tasks.reduce((sum, task) => {
+      if (task.status === 'completed') return sum + 100;
+      return sum + (task.progress || 0);
+    }, 0);
+    
+    return Math.round(totalProgress / tasks.length);
+  }
+
+  async generateUserPerformanceData(tasks, organizationId) {
+    try {
+      // Get all users in the organization
+      const users = await User.find({ organization: organizationId })
+        .select('_id firstName lastName email department');
+
+      const userStats = users.map(user => {
+        const userTasks = tasks.filter(task => 
+          task.assignedTo && task.assignedTo._id.toString() === user._id.toString()
+        );
+
+        const completedTasks = userTasks.filter(task => task.status === 'completed').length;
+        const inProgressTasks = userTasks.filter(task => task.status === 'in-progress').length;
+        const overdueTasks = userTasks.filter(task => 
+          task.dueDate && new Date(task.dueDate) < new Date() && task.status !== 'completed'
+        ).length;
+
+        const progressPercentage = userTasks.length > 0 
+          ? Math.round((completedTasks / userTasks.length) * 100)
+          : 0;
+
+        return {
+          userId: user._id,
+          userName: `${user.firstName} ${user.lastName}`,
+          userEmail: user.email,
+          department: user.department,
+          totalTasks: userTasks.length,
+          completedTasks,
+          inProgressTasks,
+          overdueTasks,
+          progressPercentage,
+          hoursLogged: 0 // Placeholder for time tracking feature
+        };
+      });
+
+      return userStats.sort((a, b) => b.totalTasks - a.totalTasks);
+    } catch (error) {
+      console.error('Generate user performance data error:', error);
+      throw error;
+    }
+  }
+
+  async generateUserTaskChartData(tasks) {
+    try {
+      const userTaskMap = new Map();
+
+      tasks.forEach(task => {
+        if (task.assignedTo) {
+          const userId = task.assignedTo._id.toString();
+          const userName = `${task.assignedTo.firstName} ${task.assignedTo.lastName}`;
+          
+          if (!userTaskMap.has(userId)) {
+            userTaskMap.set(userId, {
+              userName,
+              totalTasks: 0,
+              completedTasks: 0
+            });
+          }
+
+          const userData = userTaskMap.get(userId);
+          userData.totalTasks++;
+          
+          if (task.status === 'completed') {
+            userData.completedTasks++;
+          }
+        }
+      });
+
+      return Array.from(userTaskMap.values())
+        .sort((a, b) => b.totalTasks - a.totalTasks)
+        .slice(0, 10); // Top 10 users
+    } catch (error) {
+      console.error('Generate user task chart data error:', error);
+      throw error;
+    }
+  }
+
+  generateStatusDistribution(tasks) {
+    const statusMap = new Map();
+
+    tasks.forEach(task => {
+      const status = task.status || 'unknown';
+      statusMap.set(status, (statusMap.get(status) || 0) + 1);
+    });
+
+    return Array.from(statusMap.entries()).map(([name, value]) => ({
+      name: name.charAt(0).toUpperCase() + name.slice(1).replace('-', ' '),
+      value
+    }));
+  }
+
+  async generateTrendData(organizationId, dateRange) {
+    try {
+      const days = [];
+      const current = new Date(dateRange.startDate);
+      const end = new Date(dateRange.endDate);
+
+      while (current <= end) {
+        days.push(new Date(current));
+        current.setDate(current.getDate() + 1);
+      }
+
+      const trendData = await Promise.all(days.map(async (day) => {
+        const dayStart = new Date(day);
+        dayStart.setHours(0, 0, 0, 0);
+        const dayEnd = new Date(day);
+        dayEnd.setHours(23, 59, 59, 999);
+
+        const [completed, created, overdue] = await Promise.all([
+          Task.countDocuments({
+            organization: organizationId,
+            status: 'completed',
+            updatedAt: { $gte: dayStart, $lte: dayEnd }
+          }),
+          Task.countDocuments({
+            organization: organizationId,
+            createdAt: { $gte: dayStart, $lte: dayEnd }
+          }),
+          Task.countDocuments({
+            organization: organizationId,
+            dueDate: { $lt: dayStart },
+            status: { $ne: 'completed' }
+          })
+        ]);
+
+        return {
+          date: day.toISOString().split('T')[0],
+          completed,
+          created,
+          overdue
+        };
+      }));
+
+      return trendData;
+    } catch (error) {
+      console.error('Generate trend data error:', error);
+      throw error;
+    }
+  }
+
+  async generateCSVReport(reportData) {
+    try {
+      const headers = [
+        'User Name',
+        'Email',
+        'Department',
+        'Total Tasks',
+        'Completed Tasks',
+        'In Progress Tasks',
+        'Overdue Tasks',
+        'Progress Percentage',
+        'Hours Logged'
+      ];
+
+      const rows = reportData.userPerformance.map(user => [
+        user.userName,
+        user.userEmail,
+        user.department || 'N/A',
+        user.totalTasks,
+        user.completedTasks,
+        user.inProgressTasks,
+        user.overdueTasks,
+        user.progressPercentage + '%',
+        user.hoursLogged + 'h'
+      ]);
+
+      const csvContent = [
+        headers.join(','),
+        ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+      ].join('\n');
+
+      return csvContent;
+    } catch (error) {
+      console.error('Generate CSV report error:', error);
+      throw error;
+    }
+  }
 }
 
 export const storage = new MongoStorage();
