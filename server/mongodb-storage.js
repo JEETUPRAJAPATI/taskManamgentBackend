@@ -569,6 +569,182 @@ export class MongoStorage {
     const forms = await Form.find({ organization: organizationId }).select('_id');
     return forms.map(f => f._id);
   }
+
+  // Role Management Operations
+  async getRoles(organizationId) {
+    try {
+      const roles = await User.distinct('role', { organization: organizationId });
+      
+      // Return predefined roles with metadata
+      const predefinedRoles = [
+        {
+          _id: 'admin',
+          name: 'Administrator',
+          description: 'Full system access with all permissions',
+          permissions: [
+            'users.view', 'users.create', 'users.edit', 'users.delete',
+            'tasks.view', 'tasks.create', 'tasks.edit', 'tasks.delete',
+            'projects.view', 'projects.create', 'projects.edit', 'projects.delete',
+            'roles.view', 'roles.create', 'roles.edit', 'roles.delete',
+            'organizations.view', 'organizations.edit',
+            'reports.view', 'reports.create'
+          ],
+          organizationId,
+          isSystem: true,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        },
+        {
+          _id: 'member',
+          name: 'Member',
+          description: 'Standard user with basic permissions',
+          permissions: [
+            'tasks.view', 'tasks.create', 'tasks.edit',
+            'projects.view',
+            'users.view'
+          ],
+          organizationId,
+          isSystem: true,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        },
+        {
+          _id: 'viewer',
+          name: 'Viewer',
+          description: 'Read-only access to tasks and projects',
+          permissions: [
+            'tasks.view',
+            'projects.view',
+            'users.view'
+          ],
+          organizationId,
+          isSystem: true,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+      ];
+
+      return predefinedRoles;
+    } catch (error) {
+      console.error('Get roles error:', error);
+      throw error;
+    }
+  }
+
+  async getRole(roleId) {
+    try {
+      // Handle predefined system roles
+      const predefinedRoles = {
+        'admin': {
+          _id: 'admin',
+          name: 'Administrator',
+          description: 'Full system access with all permissions',
+          permissions: [
+            'users.view', 'users.create', 'users.edit', 'users.delete',
+            'tasks.view', 'tasks.create', 'tasks.edit', 'tasks.delete',
+            'projects.view', 'projects.create', 'projects.edit', 'projects.delete',
+            'roles.view', 'roles.create', 'roles.edit', 'roles.delete',
+            'organizations.view', 'organizations.edit',
+            'reports.view', 'reports.create'
+          ],
+          isSystem: true,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        },
+        'member': {
+          _id: 'member',
+          name: 'Member',
+          description: 'Standard user with basic permissions',
+          permissions: [
+            'tasks.view', 'tasks.create', 'tasks.edit',
+            'projects.view',
+            'users.view'
+          ],
+          isSystem: true,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        },
+        'viewer': {
+          _id: 'viewer',
+          name: 'Viewer',
+          description: 'Read-only access to tasks and projects',
+          permissions: [
+            'tasks.view',
+            'projects.view',
+            'users.view'
+          ],
+          isSystem: true,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+      };
+
+      return predefinedRoles[roleId] || null;
+    } catch (error) {
+      console.error('Get role error:', error);
+      throw error;
+    }
+  }
+
+  async getRoleByName(name, organizationId) {
+    try {
+      // Check predefined roles
+      const predefinedRoles = ['admin', 'member', 'viewer'];
+      if (predefinedRoles.includes(name.toLowerCase())) {
+        return await this.getRole(name.toLowerCase());
+      }
+      return null;
+    } catch (error) {
+      console.error('Get role by name error:', error);
+      throw error;
+    }
+  }
+
+  async createRole(roleData) {
+    try {
+      // For now, return a success response since we're using predefined roles
+      // In a full implementation, this would create custom roles in the database
+      throw new Error('Creating custom roles is not yet implemented. Please use predefined roles: admin, member, viewer');
+    } catch (error) {
+      console.error('Create role error:', error);
+      throw error;
+    }
+  }
+
+  async updateRole(roleId, updateData) {
+    try {
+      // For now, return a success response since we're using predefined roles
+      // In a full implementation, this would update custom roles in the database
+      throw new Error('Updating system roles is not allowed. Only custom roles can be modified.');
+    } catch (error) {
+      console.error('Update role error:', error);
+      throw error;
+    }
+  }
+
+  async deleteRole(roleId) {
+    try {
+      // For now, return a success response since we're using predefined roles
+      // In a full implementation, this would delete custom roles from the database
+      throw new Error('Deleting system roles is not allowed. Only custom roles can be deleted.');
+    } catch (error) {
+      console.error('Delete role error:', error);
+      throw error;
+    }
+  }
+
+  async getUsersByRole(roleId) {
+    try {
+      const users = await User.find({ 
+        role: roleId 
+      }).select('_id firstName lastName email role createdAt');
+      
+      return users;
+    } catch (error) {
+      console.error('Get users by role error:', error);
+      throw error;
+    }
+  }
 }
 
 export const storage = new MongoStorage();

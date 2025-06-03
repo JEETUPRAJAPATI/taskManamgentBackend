@@ -695,4 +695,190 @@ async function setupEmailCalendarRoutes(app) {
       res.status(500).json({ message: "Failed to get integration status" });
     }
   });
+
+  // Role Management API Routes
+  
+  // Get all roles
+  app.get("/api/roles", authenticateToken, requireOrganization, async (req, res) => {
+    try {
+      const roles = await storage.getRoles(req.user.organizationId);
+      res.json(roles);
+    } catch (error) {
+      console.error("Get roles error:", error);
+      res.status(500).json({ message: "Failed to fetch roles" });
+    }
+  });
+
+  // Create a new role
+  app.post("/api/roles", authenticateToken, requireOrganization, requireRole(['admin', 'super_admin']), async (req, res) => {
+    try {
+      const { name, description, permissions = [] } = req.body;
+      
+      if (!name || name.trim() === '') {
+        return res.status(400).json({ message: "Role name is required" });
+      }
+
+      // Check if role name already exists in the organization
+      const existingRole = await storage.getRoleByName(name.trim(), req.user.organizationId);
+      if (existingRole) {
+        return res.status(400).json({ message: "Role name already exists in your organization" });
+      }
+
+      const role = await storage.createRole({
+        name: name.trim(),
+        description: description?.trim() || '',
+        permissions: Array.isArray(permissions) ? permissions : [],
+        organizationId: req.user.organizationId,
+        createdBy: req.user.id
+      });
+
+      res.status(201).json(role);
+    } catch (error) {
+      console.error("Create role error:", error);
+      res.status(500).json({ message: "Failed to create role" });
+    }
+  });
+
+  // Update a role
+  app.put("/api/roles/:id", authenticateToken, requireOrganization, requireRole(['admin', 'super_admin']), async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, description, permissions } = req.body;
+      
+      if (!name || name.trim() === '') {
+        return res.status(400).json({ message: "Role name is required" });
+      }
+
+      // Check if the role exists and belongs to the organization
+      const existingRole = await storage.getRole(id);
+      if (!existingRole) {
+        return res.status(404).json({ message: "Role not found" });
+      }
+
+      if (existingRole.organizationId !== req.user.organizationId) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      // Check if the new name conflicts with another role
+      if (name.trim() !== existingRole.name) {
+        const conflictingRole = await storage.getRoleByName(name.trim(), req.user.organizationId);
+        if (conflictingRole && conflictingRole._id.toString() !== id) {
+          return res.status(400).json({ message: "Role name already exists in your organization" });
+        }
+      }
+
+      const updatedRole = await storage.updateRole(id, {
+        name: name.trim(),
+        description: description?.trim() || '',
+        permissions: Array.isArray(permissions) ? permissions : existingRole.permissions,
+        updatedBy: req.user.id
+      });
+
+      res.json(updatedRole);
+    } catch (error) {
+      console.error("Update role error:", error);
+      res.status(500).json({ message: "Failed to update role" });
+    }
+  });
+
+  // Delete a role
+  app.delete("/api/roles/:id", authenticateToken, requireOrganization, requireRole(['admin', 'super_admin']), async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      // Check if the role exists and belongs to the organization
+      const existingRole = await storage.getRole(id);
+      if (!existingRole) {
+        return res.status(404).json({ message: "Role not found" });
+      }
+
+      if (existingRole.organizationId !== req.user.organizationId) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      // Check if any users are assigned to this role
+      const usersWithRole = await storage.getUsersByRole(id);
+      if (usersWithRole.length > 0) {
+        return res.status(400).json({ 
+          message: `Cannot delete role. ${usersWithRole.length} user(s) are assigned to this role. Please reassign or remove these users first.` 
+        });
+      }
+
+      await storage.deleteRole(id);
+      res.json({ message: "Role deleted successfully" });
+    } catch (error) {
+      console.error("Delete role error:", error);
+      res.status(500).json({ message: "Failed to delete role" });
+    }
+  });
+
+  // Get role by ID
+  app.get("/api/roles/:id", authenticateToken, requireOrganization, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      const role = await storage.getRole(id);
+      if (!role) {
+        return res.status(404).json({ message: "Role not found" });
+      }
+
+      if (role.organizationId !== req.user.organizationId) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      res.json(role);
+    } catch (error) {
+      console.error("Get role error:", error);
+      res.status(500).json({ message: "Failed to fetch role" });
+    }
+  });
+
+  // Assign role to user
+  app.post("/api/roles/assign", authenticateToken, requireOrganization, requireRole(['admin', 'super_admin']), async (req, res) => {
+    try {
+      const { userId, roleId } = req.body;
+
+      if (!userId || !roleId) {
+        return res.status(400).json({ message: "User ID and Role ID are required" });
+      }
+
+      // Verify role exists and belongs to organization
+      const role = await storage.getRole(roleId);
+      if (!role || role.organizationId !== req.user.organizationId) {
+        return res.status(404).json({ message: "Role not found" });
+      }
+
+      // Verify user exists and belongs to organization
+      const user = await storage.getUser(userId);
+      if (!user || user.organizationId !== req.user.organizationId) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Update user's role
+      const updatedUser = await storage.updateUser(userId, { roleId });
+      res.json({ message: "Role assigned successfully", user: updatedUser });
+    } catch (error) {
+      console.error("Assign role error:", error);
+      res.status(500).json({ message: "Failed to assign role" });
+    }
+  });
+
+  // Get users by role
+  app.get("/api/roles/:id/users", authenticateToken, requireOrganization, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Verify role exists and belongs to organization
+      const role = await storage.getRole(id);
+      if (!role || role.organizationId !== req.user.organizationId) {
+        return res.status(404).json({ message: "Role not found" });
+      }
+
+      const users = await storage.getUsersByRole(id);
+      res.json(users);
+    } catch (error) {
+      console.error("Get users by role error:", error);
+      res.status(500).json({ message: "Failed to fetch users for role" });
+    }
+  });
 }
