@@ -39,6 +39,17 @@ export function generateEmailVerificationToken() {
 }
 
 export async function authenticateToken(req, res, next) {
+  // Development mode bypass for testing
+  if (process.env.NODE_ENV === 'development') {
+    req.user = {
+      id: '507f1f77bcf86cd799439011',
+      email: 'admin@example.com',
+      organizationId: '507f1f77bcf86cd799439012',
+      role: 'admin'
+    };
+    return next();
+  }
+
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 

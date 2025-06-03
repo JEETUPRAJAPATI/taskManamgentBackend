@@ -573,8 +573,6 @@ export class MongoStorage {
   // Role Management Operations
   async getRoles(organizationId) {
     try {
-      const roles = await User.distinct('role', { organization: organizationId });
-      
       // Return predefined roles with metadata
       const predefinedRoles = [
         {
