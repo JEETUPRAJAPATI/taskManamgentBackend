@@ -7,6 +7,9 @@ import Projects from './pages/admin/Projects';
 import FormBuilder from './pages/admin/FormBuilder';
 import Integrations from './pages/admin/Integrations';
 import Collaboration from './pages/admin/Collaboration';
+import Companies from './pages/admin/Companies';
+import SubscriptionPlans from './pages/admin/SubscriptionPlans';
+import Transactions from './pages/admin/Transactions';
 import { AdminLayout } from './components/admin/AdminLayout';
 import { Toaster } from './components/ui/toaster';
 
@@ -32,11 +35,14 @@ function App() {
           <Route path="/forms" component={FormBuilder} />
           <Route path="/integrations" component={Integrations} />
           <Route path="/collaboration" component={Collaboration} />
+          <Route path="/companies" component={Companies} />
+          <Route path="/subscription-plans" component={SubscriptionPlans} />
+          <Route path="/transactions" component={Transactions} />
           <Route>
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Page Not Found</h2>
-                <p className="text-gray-600">The page you're looking for doesn't exist.</p>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Page Not Found</h2>
+                <p className="text-slate-600 dark:text-slate-300">The page you're looking for doesn't exist.</p>
               </div>
             </div>
           </Route>
