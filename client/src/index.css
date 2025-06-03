@@ -3,77 +3,81 @@
 @tailwind utilities;
 
 :root {
-  /* Dark theme as default for admin panel */
-  --background: 12 15 23; /* Dark blue-gray #0c0f17 */
-  --foreground: 248 250 252; /* Light gray text #f8fafc */
-  --card: 20 25 35; /* Dark card background #14192b */
-  --card-foreground: 248 250 252; /* Light text on cards #f8fafc */
-  --popover: 20 25 35; /* Dark popover #14192b */
-  --popover-foreground: 248 250 252; /* Light popover text #f8fafc */
-  --primary: 99 146 255; /* Bright blue accent #639aff */
-  --primary-foreground: 12 15 23; /* Dark text on primary #0c0f17 */
-  --secondary: 30 37 54; /* Muted dark blue #1e2536 */
-  --secondary-foreground: 203 213 225; /* Light secondary text #cbd5e1 */
-  --muted: 30 37 54; /* Muted background #1e2536 */
-  --muted-foreground: 148 163 184; /* Muted text #94a3b8 */
-  --accent: 30 37 54; /* Accent background #1e2536 */
-  --accent-foreground: 203 213 225; /* Accent text #cbd5e1 */
-  --destructive: 225 77 77; /* Red for destructive actions #e14d4d */
-  --destructive-foreground: 248 250 252; /* Light text on destructive #f8fafc */
-  --border: 39 47 65; /* Subtle border color #272f41 */
-  --input: 30 37 54; /* Input background #1e2536 */
-  --ring: 99 146 255; /* Focus ring color #639aff */
+  /* Professional Dark Theme - Navy Blue, Orange, Green palette */
+  --background: 15 23 42; /* Navy slate-900 #0f172a */
+  --foreground: 248 250 252; /* White text #f8fafc */
+  --card: 30 41 59; /* Navy slate-800 #1e293b */
+  --card-foreground: 248 250 252; /* White text on cards #f8fafc */
+  --popover: 30 41 59; /* Navy popover #1e293b */
+  --popover-foreground: 248 250 252; /* White popover text #f8fafc */
+  --primary: 30 58 138; /* Navy blue-800 #1e3a8a */
+  --primary-foreground: 255 255 255; /* White text on primary #ffffff */
+  --secondary: 51 65 85; /* Muted navy slate-600 #334155 */
+  --secondary-foreground: 248 250 252; /* White secondary text #f8fafc */
+  --muted: 51 65 85; /* Muted background slate-600 #334155 */
+  --muted-foreground: 148 163 184; /* Gray text slate-400 #94a3b8 */
+  --accent: 234 88 12; /* Orange orange-600 #ea580c */
+  --accent-foreground: 255 255 255; /* White text on orange #ffffff */
+  --destructive: 220 38 38; /* Red red-600 #dc2626 */
+  --destructive-foreground: 255 255 255; /* White text on red #ffffff */
+  --success: 22 163 74; /* Green green-600 #16a34a */
+  --success-foreground: 255 255 255; /* White text on green #ffffff */
+  --border: 51 65 85; /* Navy border slate-600 #334155 */
+  --input: 30 41 59; /* Navy input background slate-800 #1e293b */
+  --ring: 234 88 12; /* Orange focus ring #ea580c */
   --radius: 0.5rem;
   
-  /* Sidebar colors - Dark theme */
-  --sidebar-background: 16 20 30; /* Darker sidebar #10141e */
-  --sidebar-foreground: 248 250 252; /* Light sidebar text #f8fafc */
-  --sidebar-primary: 99 146 255; /* Primary sidebar accent #639aff */
-  --sidebar-primary-foreground: 12 15 23; /* Dark text on primary #0c0f17 */
-  --sidebar-accent: 30 37 54; /* Sidebar accent background #1e2536 */
-  --sidebar-accent-foreground: 203 213 225; /* Sidebar accent text #cbd5e1 */
-  --sidebar-border: 39 47 65; /* Sidebar border #272f41 */
-  --sidebar-ring: 99 146 255; /* Sidebar focus ring #639aff */
+  /* Sidebar colors - Professional Navy theme */
+  --sidebar-background: 15 23 42; /* Navy sidebar slate-900 #0f172a */
+  --sidebar-foreground: 248 250 252; /* White sidebar text #f8fafc */
+  --sidebar-primary: 30 58 138; /* Navy blue sidebar accent #1e3a8a */
+  --sidebar-primary-foreground: 255 255 255; /* White text on primary #ffffff */
+  --sidebar-accent: 234 88 12; /* Orange sidebar accent #ea580c */
+  --sidebar-accent-foreground: 255 255 255; /* White text on orange #ffffff */
+  --sidebar-border: 51 65 85; /* Navy sidebar border slate-600 #334155 */
+  --sidebar-ring: 234 88 12; /* Orange sidebar focus ring #ea580c */
   
-  /* Chart colors - Adjusted for dark theme */
-  --chart-1: 99 146 255; /* Blue #639aff */
-  --chart-2: 52 211 153; /* Emerald #34d399 */
-  --chart-3: 251 191 36; /* Amber #fbbf24 */
-  --chart-4: 167 139 250; /* Violet #a78bfa */
-  --chart-5: 244 114 182; /* Pink #f472b6 */
+  /* Chart colors - Professional palette (NO YELLOW) */
+  --chart-1: 30 58 138; /* Navy Blue #1e3a8a */
+  --chart-2: 22 163 74; /* Green #16a34a */
+  --chart-3: 234 88 12; /* Orange #ea580c */
+  --chart-4: 71 85 105; /* Slate gray #475569 */
+  --chart-5: 15 118 110; /* Teal #0f766e */
 }
 
 .light {
-  /* Light theme for fallback/alternative */
-  --background: 255 255 255; /* white #ffffff */
-  --foreground: 15 23 42; /* slate-900 #0f172a */
-  --card: 248 250 252; /* slate-50 #f8fafc */
-  --card-foreground: 15 23 42; /* slate-900 #0f172a */
-  --popover: 255 255 255; /* white #ffffff */
-  --popover-foreground: 15 23 42; /* slate-900 #0f172a */
-  --primary: 59 130 246; /* blue-500 #3b82f6 */
-  --primary-foreground: 255 255 255; /* white #ffffff */
-  --secondary: 241 245 249; /* slate-100 #f1f5f9 */
-  --secondary-foreground: 15 23 42; /* slate-900 #0f172a */
-  --muted: 241 245 249; /* slate-100 #f1f5f9 */
-  --muted-foreground: 100 116 139; /* slate-500 #64748b */
-  --accent: 241 245 249; /* slate-100 #f1f5f9 */
-  --accent-foreground: 15 23 42; /* slate-900 #0f172a */
-  --destructive: 239 68 68; /* red-500 #ef4444 */
-  --destructive-foreground: 255 255 255; /* white #ffffff */
-  --border: 226 232 240; /* slate-200 #e2e8f0 */
-  --input: 255 255 255; /* white #ffffff */
-  --ring: 59 130 246; /* blue-500 #3b82f6 */
+  /* Professional Light Theme - Navy Blue, Orange, Green palette */
+  --background: 255 255 255; /* Pure white #ffffff */
+  --foreground: 15 23 42; /* Navy text slate-900 #0f172a */
+  --card: 248 250 252; /* Light gray card slate-50 #f8fafc */
+  --card-foreground: 15 23 42; /* Navy card text slate-900 #0f172a */
+  --popover: 255 255 255; /* White popover #ffffff */
+  --popover-foreground: 15 23 42; /* Navy popover text slate-900 #0f172a */
+  --primary: 30 58 138; /* Navy blue-800 #1e3a8a */
+  --primary-foreground: 255 255 255; /* White text on navy #ffffff */
+  --secondary: 241 245 249; /* Light gray slate-100 #f1f5f9 */
+  --secondary-foreground: 15 23 42; /* Navy secondary text slate-900 #0f172a */
+  --muted: 241 245 249; /* Light muted slate-100 #f1f5f9 */
+  --muted-foreground: 100 116 139; /* Gray muted text slate-500 #64748b */
+  --accent: 234 88 12; /* Orange orange-600 #ea580c */
+  --accent-foreground: 255 255 255; /* White text on orange #ffffff */
+  --destructive: 220 38 38; /* Red red-600 #dc2626 */
+  --destructive-foreground: 255 255 255; /* White text on red #ffffff */
+  --success: 22 163 74; /* Green green-600 #16a34a */
+  --success-foreground: 255 255 255; /* White text on green #ffffff */
+  --border: 226 232 240; /* Light border slate-200 #e2e8f0 */
+  --input: 255 255 255; /* White input #ffffff */
+  --ring: 234 88 12; /* Orange focus ring #ea580c */
   
-  /* Sidebar colors - light mode */
-  --sidebar-background: 248 250 252; /* slate-50 #f8fafc */
-  --sidebar-foreground: 15 23 42; /* slate-900 #0f172a */
-  --sidebar-primary: 59 130 246; /* blue-500 #3b82f6 */
-  --sidebar-primary-foreground: 255 255 255; /* white #ffffff */
-  --sidebar-accent: 241 245 249; /* slate-100 #f1f5f9 */
-  --sidebar-accent-foreground: 15 23 42; /* slate-900 #0f172a */
-  --sidebar-border: 226 232 240; /* slate-200 #e2e8f0 */
-  --sidebar-ring: 59 130 246; /* blue-500 #3b82f6 */
+  /* Sidebar colors - Professional light mode */
+  --sidebar-background: 248 250 252; /* Light sidebar slate-50 #f8fafc */
+  --sidebar-foreground: 15 23 42; /* Navy sidebar text slate-900 #0f172a */
+  --sidebar-primary: 30 58 138; /* Navy blue sidebar accent #1e3a8a */
+  --sidebar-primary-foreground: 255 255 255; /* White text on navy #ffffff */
+  --sidebar-accent: 234 88 12; /* Orange sidebar accent #ea580c */
+  --sidebar-accent-foreground: 255 255 255; /* White text on orange #ffffff */
+  --sidebar-border: 226 232 240; /* Light sidebar border slate-200 #e2e8f0 */
+  --sidebar-ring: 234 88 12; /* Orange sidebar focus ring #ea580c */
 }
 
 @layer base {
@@ -125,34 +129,76 @@
     @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:ring-2 focus:ring-secondary focus:ring-offset-2 px-4 py-2 rounded-lg font-medium transition-colors;
   }
   
-  /* Status badges - Optimized for dark theme */
+  /* Status badges - Professional color palette (NO YELLOW) */
   .status-todo {
-    @apply bg-blue-900/30 text-blue-300 border border-blue-700/50;
+    @apply bg-slate-700/50 text-slate-300 border border-slate-600/50;
   }
   
   .status-in-progress {
-    @apply bg-amber-900/30 text-amber-300 border border-amber-700/50;
+    @apply bg-blue-900/30 text-blue-300 border border-blue-700/50;
+  }
+  
+  .status-review {
+    @apply bg-orange-900/30 text-orange-300 border border-orange-700/50;
   }
   
   .status-completed {
     @apply bg-emerald-900/30 text-emerald-300 border border-emerald-700/50;
   }
   
-  /* Priority badges - Optimized for dark theme */
+  .status-done {
+    @apply bg-emerald-900/30 text-emerald-300 border border-emerald-700/50;
+  }
+  
+  /* Priority badges - Professional color palette (NO YELLOW) */
   .priority-low {
-    @apply bg-slate-700/50 text-slate-300 border border-slate-600/50;
+    @apply bg-emerald-900/30 text-emerald-300 border border-emerald-700/50;
   }
   
   .priority-medium {
-    @apply bg-amber-900/30 text-amber-300 border border-amber-700/50;
+    @apply bg-blue-900/30 text-blue-300 border border-blue-700/50;
   }
   
   .priority-high {
-    @apply bg-red-900/30 text-red-300 border border-red-700/50;
+    @apply bg-orange-900/30 text-orange-300 border border-orange-700/50;
   }
   
   .priority-urgent {
     @apply bg-red-800/40 text-red-200 border border-red-600/60;
+  }
+
+  /* Light theme variants */
+  .light .status-todo {
+    @apply bg-slate-100 text-slate-700 border border-slate-300;
+  }
+  
+  .light .status-in-progress {
+    @apply bg-blue-100 text-blue-700 border border-blue-300;
+  }
+  
+  .light .status-review {
+    @apply bg-orange-100 text-orange-700 border border-orange-300;
+  }
+  
+  .light .status-completed,
+  .light .status-done {
+    @apply bg-emerald-100 text-emerald-700 border border-emerald-300;
+  }
+  
+  .light .priority-low {
+    @apply bg-emerald-100 text-emerald-700 border border-emerald-300;
+  }
+  
+  .light .priority-medium {
+    @apply bg-blue-100 text-blue-700 border border-blue-300;
+  }
+  
+  .light .priority-high {
+    @apply bg-orange-100 text-orange-700 border border-orange-300;
+  }
+  
+  .light .priority-urgent {
+    @apply bg-red-100 text-red-700 border border-red-300;
   }
 }
 

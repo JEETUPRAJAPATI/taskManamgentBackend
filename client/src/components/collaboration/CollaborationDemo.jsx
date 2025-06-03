@@ -51,40 +51,40 @@ export function CollaborationDemo() {
 
   const features = [
     {
-      icon: <MessageSquare className="h-6 w-6 text-purple-500" />,
+      icon: <MessageSquare className="h-6 w-6 text-primary" />,
       title: "Real-time Comments",
       description: "Thread-based commenting with edit, delete, and reply functionality",
-      color: "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
+      color: "bg-primary/10 border-primary/30"
     },
     {
-      icon: <AtSign className="h-6 w-6 text-blue-500" />,
+      icon: <AtSign className="h-6 w-6 text-primary" />,
       title: "Smart Mentions",
       description: "@mention team members with autocomplete and notifications",
-      color: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
+      color: "bg-primary/10 border-primary/30"
     },
     {
-      icon: <Activity className="h-6 w-6 text-green-500" />,
+      icon: <Activity className="h-6 w-6 text-success" />,
       title: "Activity Feed",
       description: "Real-time tracking of all task changes and team interactions",
-      color: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+      color: "bg-success/10 border-success/30"
     },
     {
-      icon: <Users className="h-6 w-6 text-orange-500" />,
+      icon: <Users className="h-6 w-6 text-accent" />,
       title: "Team Management",
       description: "Add/remove members, assign roles, track online status",
-      color: "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800"
+      color: "bg-accent/10 border-accent/30"
     },
     {
-      icon: <Bell className="h-6 w-6 text-red-500" />,
+      icon: <Bell className="h-6 w-6 text-destructive" />,
       title: "Notifications",
       description: "Real-time notifications for mentions, assignments, and updates",
-      color: "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
+      color: "bg-destructive/10 border-destructive/30"
     },
     {
-      icon: <Zap className="h-6 w-6 text-yellow-500" />,
+      icon: <Zap className="h-6 w-6 text-accent" />,
       title: "Live Updates",
       description: "Automatic refresh every 30 seconds for real-time collaboration",
-      color: "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800"
+      color: "bg-accent/10 border-accent/30"
     }
   ];
 

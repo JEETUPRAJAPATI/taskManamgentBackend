@@ -46,54 +46,53 @@ export function ActivityFeed({
   const getActivityIcon = (type) => {
     switch (type) {
       case "task_created":
-        return <FileText className="h-4 w-4 text-blue-400" />;
+        return <FileText className="h-4 w-4 text-primary" />;
       case "task_updated":
-        return <Edit className="h-4 w-4 text-amber-400" />;
+        return <Edit className="h-4 w-4 text-accent" />;
       case "task_completed":
-        return <CheckCircle className="h-4 w-4 text-green-400" />;
+        return <CheckCircle className="h-4 w-4 text-success" />;
       case "comment_added":
-        return <MessageCircle className="h-4 w-4 text-purple-400" />;
+        return <MessageCircle className="h-4 w-4 text-primary" />;
       case "user_assigned":
-        return <UserPlus className="h-4 w-4 text-blue-400" />;
+        return <UserPlus className="h-4 w-4 text-primary" />;
       case "status_changed":
-        return <Flag className="h-4 w-4 text-orange-400" />;
+        return <Flag className="h-4 w-4 text-accent" />;
       case "due_date_changed":
-        return <Calendar className="h-4 w-4 text-red-400" />;
+        return <Calendar className="h-4 w-4 text-destructive" />;
       case "priority_changed":
-        return <Flag className="h-4 w-4 text-yellow-400" />;
+        return <Flag className="h-4 w-4 text-accent" />;
       case "tag_added":
-        return <Tag className="h-4 w-4 text-cyan-400" />;
+        return <Tag className="h-4 w-4 text-muted-foreground" />;
       case "file_attached":
-        return <FileText className="h-4 w-4 text-gray-400" />;
+        return <FileText className="h-4 w-4 text-muted-foreground" />;
       case "team_joined":
-        return <Users className="h-4 w-4 text-green-400" />;
+        return <Users className="h-4 w-4 text-success" />;
       default:
         return <Activity className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
-  // Get activity color based on type
+  // Get activity color based on type - Professional palette
   const getActivityColor = (type) => {
     switch (type) {
       case "task_created":
       case "user_assigned":
-        return "border-l-blue-500 bg-blue-50/50 dark:bg-blue-900/10";
+      case "comment_added":
+        return "border-l-primary bg-primary/5";
       case "task_updated":
       case "status_changed":
-        return "border-l-amber-500 bg-amber-50/50 dark:bg-amber-900/10";
+      case "priority_changed":
+        return "border-l-accent bg-accent/5";
       case "task_completed":
       case "team_joined":
-        return "border-l-green-500 bg-green-50/50 dark:bg-green-900/10";
-      case "comment_added":
-        return "border-l-purple-500 bg-purple-50/50 dark:bg-purple-900/10";
+        return "border-l-success bg-success/5";
       case "due_date_changed":
-        return "border-l-red-500 bg-red-50/50 dark:bg-red-900/10";
-      case "priority_changed":
-        return "border-l-yellow-500 bg-yellow-50/50 dark:bg-yellow-900/10";
+        return "border-l-destructive bg-destructive/5";
       case "tag_added":
-        return "border-l-cyan-500 bg-cyan-50/50 dark:bg-cyan-900/10";
+      case "file_attached":
+        return "border-l-muted-foreground bg-muted/50";
       default:
-        return "border-l-gray-500 bg-gray-50/50 dark:bg-gray-900/10";
+        return "border-l-muted-foreground bg-muted/30";
     }
   };
 
