@@ -2,6 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CRITICAL: Force override ALL yellow color variants at the highest priority */
+:root,
+.light,
+.dark,
+* {
+  /* Force override ALL yellow Tailwind variables */
+  --tw-color-yellow-50: 241 245 249 !important;
+  --tw-color-yellow-100: 226 232 240 !important;
+  --tw-color-yellow-200: 203 213 225 !important;
+  --tw-color-yellow-300: 148 163 184 !important;
+  --tw-color-yellow-400: 100 116 139 !important;
+  --tw-color-yellow-500: 234 88 12 !important;
+  --tw-color-yellow-600: 234 88 12 !important;
+  --tw-color-yellow-700: 194 65 12 !important;
+  --tw-color-yellow-800: 154 52 18 !important;
+  --tw-color-yellow-900: 124 45 18 !important;
+  
+  /* Override any possible yellow variations */
+  --yellow: 234 88 12 !important;
+  --yellow-500: 234 88 12 !important;
+  --amber-500: 234 88 12 !important;
+  --amber-400: 234 88 12 !important;
+  --amber-300: 203 213 225 !important;
+}
+
 :root {
   /* Professional Dark Theme - Navy Blue, Orange, Green palette */
   --background: 15 23 42; /* Navy slate-900 #0f172a */
@@ -341,4 +366,47 @@
 [style*="rgb(255, 215, 0)"] {
   color: rgb(234 88 12) !important;
   background-color: transparent !important;
+}
+
+/* ULTIMATE YELLOW OVERRIDE - Target all possible yellow color sources */
+.text-yellow-50, .text-yellow-100, .text-yellow-200, .text-yellow-300, .text-yellow-400,
+.text-yellow-500, .text-yellow-600, .text-yellow-700, .text-yellow-800, .text-yellow-900,
+.bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400,
+.bg-yellow-500, .bg-yellow-600, .bg-yellow-700, .bg-yellow-800, .bg-yellow-900,
+.border-yellow-50, .border-yellow-100, .border-yellow-200, .border-yellow-300, .border-yellow-400,
+.border-yellow-500, .border-yellow-600, .border-yellow-700, .border-yellow-800, .border-yellow-900,
+[class*="yellow"],
+[class*="amber"],
+h1[style*="color: yellow"],
+h1[style*="color:#FFD700"],
+h2[style*="color: yellow"],
+h2[style*="color:#FFD700"],
+h3[style*="color: yellow"],
+h3[style*="color:#FFD700"],
+p[style*="color: yellow"],
+p[style*="color:#FFD700"],
+span[style*="color: yellow"],
+span[style*="color:#FFD700"],
+div[style*="color: yellow"],
+div[style*="color:#FFD700"],
+*[style*="color: yellow"],
+*[style*="color:#FFD700"],
+*[style*="color:#FFFF00"] {
+  color: rgb(234 88 12) !important;
+  background-color: transparent !important;
+  border-color: rgb(203 213 225) !important;
+}
+
+/* Override any computed yellow styles */
+* {
+  --yellow-50: rgb(241 245 249) !important;
+  --yellow-100: rgb(226 232 240) !important;
+  --yellow-200: rgb(203 213 225) !important;
+  --yellow-300: rgb(148 163 184) !important;
+  --yellow-400: rgb(100 116 139) !important;
+  --yellow-500: rgb(234 88 12) !important;
+  --yellow-600: rgb(234 88 12) !important;
+  --yellow-700: rgb(194 65 12) !important;
+  --yellow-800: rgb(154 52 18) !important;
+  --yellow-900: rgb(124 45 18) !important;
 }
