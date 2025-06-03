@@ -15,7 +15,7 @@ export function AdminLayout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
       <Sidebar 
         isOpen={sidebarOpen} 
         isMobileMenuOpen={isMobileMenuOpen}
@@ -32,8 +32,10 @@ export function AdminLayout({ children }) {
           sidebarOpen={sidebarOpen}
         />
         
-        <main className="p-6">
-          {children}
+        <main className="px-8 py-8 min-h-screen">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
 

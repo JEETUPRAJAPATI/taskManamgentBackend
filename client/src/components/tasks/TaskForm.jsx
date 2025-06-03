@@ -528,23 +528,23 @@ export function TaskForm({
           </div>
 
           {/* Form Actions */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-border">
+          <div className="flex justify-end gap-4 pt-8 mt-8 border-t border-slate-200 dark:border-slate-700">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
-              className="border-border hover:bg-accent"
+              className="border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 px-6 py-3 font-semibold"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={!isValid || isLoading}
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
+              className="bg-blue-600 text-white hover:bg-blue-700 disabled:bg-slate-400 disabled:text-slate-200 px-8 py-3 font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
             >
               {isLoading ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+                <div className="flex items-center gap-3">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   {initialData ? 'Updating...' : 'Creating...'}
                 </div>
               ) : (
