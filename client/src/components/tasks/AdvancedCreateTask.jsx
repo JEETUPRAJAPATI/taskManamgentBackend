@@ -629,7 +629,7 @@ export function AdvancedCreateTask({
               </div>
             )}
             {tags.length >= 10 && (
-              <p className="text-xs text-amber-600">Maximum 10 tags reached</p>
+              <p className="text-xs text-orange-600">Maximum 10 tags reached</p>
             )}
           </div>
 

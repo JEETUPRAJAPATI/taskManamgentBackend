@@ -36,14 +36,14 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
       } hidden lg:block`}>
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center h-16 px-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center h-16 px-4 border-b border-slate-200 dark:border-slate-700">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <CheckSquare className="h-8 w-8 text-blue-600" />
+                <CheckSquare className="h-8 w-8 text-orange-600" />
               </div>
               {isOpen && (
                 <div className="ml-3">
-                  <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+                  <h1 className="text-xl font-bold text-slate-900 dark:text-white">
                     TaskSetu
                   </h1>
                 </div>
@@ -58,13 +58,13 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
               return (
                 <Link key={item.name} href={item.href} className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
                   isActive(item.href)
-                    ? 'bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-200'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
+                    ? 'bg-orange-100 text-orange-900 dark:bg-orange-900/20 dark:text-orange-300'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'
                 }`}>
                   <Icon className={`flex-shrink-0 h-5 w-5 ${
                     isActive(item.href)
-                      ? 'text-blue-500'
-                      : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300'
+                      ? 'text-orange-600'
+                      : 'text-slate-400 group-hover:text-slate-500 dark:group-hover:text-slate-300'
                   }`} />
                   {isOpen && (
                     <span className="ml-3">{item.name}</span>
@@ -78,19 +78,19 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
 
       {/* Mobile Sidebar */}
       <div className={`fixed inset-0 z-40 lg:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
-        <div className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+        <div className="fixed inset-y-0 left-0 w-64 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700">
           <div className="flex flex-col h-full">
             {/* Mobile Header */}
-            <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between h-16 px-4 border-b border-slate-200 dark:border-slate-700">
               <div className="flex items-center">
-                <CheckSquare className="h-8 w-8 text-blue-600" />
-                <h1 className="ml-3 text-xl font-bold text-gray-900 dark:text-white">
+                <CheckSquare className="h-8 w-8 text-orange-600" />
+                <h1 className="ml-3 text-xl font-bold text-slate-900 dark:text-white">
                   TaskSetu
                 </h1>
               </div>
               <button
                 onClick={onMobileToggle}
-                className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="p-2 rounded-md text-slate-400 hover:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -105,14 +105,14 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                     onClick={onMobileToggle}
                     className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
                       isActive(item.href)
-                        ? 'bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-200'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
+                        ? 'bg-orange-100 text-orange-900 dark:bg-orange-900/20 dark:text-orange-300'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'
                     }`}
                   >
                     <Icon className={`flex-shrink-0 h-5 w-5 ${
                       isActive(item.href)
-                        ? 'text-blue-500'
-                        : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300'
+                        ? 'text-orange-600'
+                        : 'text-slate-400 group-hover:text-slate-500 dark:group-hover:text-slate-300'
                     }`} />
                     <span className="ml-3">{item.name}</span>
                   </Link>
