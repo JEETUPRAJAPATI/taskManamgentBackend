@@ -282,19 +282,35 @@ export function CollaborationDemo() {
       </Card>
 
       {/* API Documentation */}
-      <Card className="bg-card border-border">
-        <CardHeader>
-          <CardTitle>Integration Details</CardTitle>
+      <Card className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+        <CardHeader className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700">
+          <CardTitle className="text-slate-900 dark:text-white">Integration Details</CardTitle>
         </CardHeader>
-        <CardContent className="prose prose-sm max-w-none dark:prose-invert">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CardContent className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <h4 className="font-semibold mb-2">Components Created:</h4>
-              <ul className="space-y-1 text-sm">
-                <li>• <code>TaskComments.jsx</code> - Real-time commenting system</li>
-                <li>• <code>ActivityFeed.jsx</code> - Activity tracking and display</li>
-                <li>• <code>TeamCollaboration.jsx</code> - Team management panel</li>
-                <li>• <code>MentionSystem.jsx</code> - Smart mentions and notifications</li>
+              <h4 className="font-semibold mb-4 text-slate-900 dark:text-white">Components Created:</h4>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <code className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded text-slate-800 dark:text-slate-200">TaskComments.jsx</code> 
+                  <span className="text-slate-600 dark:text-slate-400">- Real-time commenting system</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <code className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded text-slate-800 dark:text-slate-200">ActivityFeed.jsx</code>
+                  <span className="text-slate-600 dark:text-slate-400">- Activity tracking and display</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <code className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded text-slate-800 dark:text-slate-200">TeamCollaboration.jsx</code>
+                  <span className="text-slate-600 dark:text-slate-400">- Team management panel</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <code className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded text-slate-800 dark:text-slate-200">MentionSystem.jsx</code>
+                  <span className="text-slate-600 dark:text-slate-400">- Smart mentions and notifications</span>
+                </li>
               </ul>
             </div>
             <div>
