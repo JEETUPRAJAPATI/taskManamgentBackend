@@ -97,12 +97,12 @@ export default function Dashboard() {
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                 Pending
               </p>
-              <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+              <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
                 {stats.pendingTasks}
               </p>
             </div>
-            <div className="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-full">
-              <svg className="w-6 h-6 text-yellow-600 dark:text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="p-3 bg-orange-100 dark:bg-orange-900 rounded-full">
+              <svg className="w-6 h-6 text-orange-600 dark:text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -147,7 +147,7 @@ export default function Dashboard() {
               </p>
             </div>
             <div className="flex items-center space-x-3">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
               <p className="text-sm text-gray-600 dark:text-gray-300">
                 Task "API Documentation" assigned to Sarah Wilson
               </p>

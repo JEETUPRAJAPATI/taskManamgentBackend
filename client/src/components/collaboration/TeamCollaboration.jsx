@@ -189,7 +189,7 @@ export function TeamCollaboration({
   const getRoleColor = (role) => {
     switch (role) {
       case "owner":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400";
+        return "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400";
       case "admin":
         return "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400";
       case "member":
@@ -205,7 +205,7 @@ export function TeamCollaboration({
       case "online":
         return "bg-green-500";
       case "away":
-        return "bg-yellow-500";
+        return "bg-orange-500";
       case "busy":
         return "bg-red-500";
       default:

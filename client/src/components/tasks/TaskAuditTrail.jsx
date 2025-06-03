@@ -61,7 +61,7 @@ const getActionColor = (action) => {
     case 'tagged':
       return 'bg-pink-50 border-pink-200 dark:bg-pink-900/20';
     case 'due_date_changed':
-      return 'bg-amber-50 border-amber-200 dark:bg-amber-900/20';
+      return 'bg-orange-50 border-orange-200 dark:bg-orange-900/20';
     case 'priority_changed':
       return 'bg-red-50 border-red-200 dark:bg-red-900/20';
     default:
