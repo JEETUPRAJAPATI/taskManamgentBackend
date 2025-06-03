@@ -150,23 +150,23 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="p-8 space-y-8 bg-slate-50 dark:bg-slate-900 min-h-screen">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between bg-white dark:bg-slate-800 p-6 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
             Dashboard
           </h1>
           <p className="text-slate-600 dark:text-slate-300 mt-2">
-            Welcome to your task management dashboard
+            Welcome to your task management platform
           </p>
         </div>
         <div className="flex space-x-3">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" className="border-slate-300 text-slate-700 hover:bg-slate-100">
             <BarChart3 className="h-4 w-4 mr-2" />
             Reports
           </Button>
-          <Button size="sm">
+          <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
             <Plus className="h-4 w-4 mr-2" />
             New Task
           </Button>
@@ -174,33 +174,33 @@ export default function Dashboard() {
       </div>
 
       {/* Main Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {statCards.map((card, index) => {
           const IconComponent = card.icon;
           return (
-            <Card key={index} className="border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
+            <Card key={index} className="border-slate-200 dark:border-slate-700 shadow-md hover:shadow-lg transition-all duration-200 bg-white dark:bg-slate-800">
+              <CardContent className="p-8">
                 <div className="flex items-center justify-between">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  <div className="space-y-3">
+                    <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
                       {card.title}
                     </p>
-                    <p className="text-3xl font-bold text-slate-900 dark:text-white">
+                    <p className="text-4xl font-bold text-slate-900 dark:text-white">
                       {card.value}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
                       {card.description}
                     </p>
                   </div>
-                  <div className={`p-3 rounded-lg ${card.bgColor}`}>
-                    <IconComponent className={`h-6 w-6 ${card.color}`} />
+                  <div className={`p-4 rounded-xl ${card.bgColor} shadow-sm`}>
+                    <IconComponent className={`h-7 w-7 ${card.color}`} />
                   </div>
                 </div>
-                <div className="mt-4 flex items-center">
-                  <Badge variant="secondary" className="text-xs">
+                <div className="mt-6 flex items-center justify-between">
+                  <Badge variant="secondary" className="text-xs font-medium bg-slate-100 text-slate-700">
                     {card.change}
                   </Badge>
-                  <span className="text-xs text-slate-500 ml-2">vs last month</span>
+                  <span className="text-xs text-slate-500">vs last month</span>
                 </div>
               </CardContent>
             </Card>
@@ -209,26 +209,26 @@ export default function Dashboard() {
       </div>
 
       {/* Revenue & Subscription Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {revenueCards.map((card, index) => {
           const IconComponent = card.icon;
           return (
-            <Card key={index} className="border-slate-200 dark:border-slate-700 shadow-sm">
-              <CardContent className="p-6">
+            <Card key={index} className="border-slate-200 dark:border-slate-700 shadow-md bg-white dark:bg-slate-800">
+              <CardContent className="p-8">
                 <div className="flex items-center justify-between">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  <div className="space-y-3">
+                    <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
                       {card.title}
                     </p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                    <p className="text-3xl font-bold text-slate-900 dark:text-white">
                       {card.value}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
                       {card.description}
                     </p>
                   </div>
-                  <div className={`p-3 rounded-lg ${card.bgColor}`}>
-                    <IconComponent className={`h-6 w-6 ${card.color}`} />
+                  <div className={`p-4 rounded-xl ${card.bgColor} shadow-sm`}>
+                    <IconComponent className={`h-7 w-7 ${card.color}`} />
                   </div>
                 </div>
               </CardContent>
@@ -238,65 +238,65 @@ export default function Dashboard() {
       </div>
 
       {/* Task Status Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="border-slate-200 dark:border-slate-700 shadow-sm">
-          <CardContent className="p-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <Card className="border-slate-200 dark:border-slate-700 shadow-md bg-white dark:bg-slate-800">
+          <CardContent className="p-8">
             <div className="flex items-center justify-between">
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
                   Pending Tasks
                 </p>
-                <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">
                   {stats.pendingTasks}
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
                   Requires attention
                 </p>
               </div>
-              <div className="p-3 rounded-lg bg-orange-50">
-                <Clock className="h-6 w-6 text-orange-600" />
+              <div className="p-4 rounded-xl bg-orange-50 shadow-sm">
+                <Clock className="h-7 w-7 text-orange-600" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 dark:border-slate-700 shadow-sm">
-          <CardContent className="p-6">
+        <Card className="border-slate-200 dark:border-slate-700 shadow-md bg-white dark:bg-slate-800">
+          <CardContent className="p-8">
             <div className="flex items-center justify-between">
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
                   Overdue Tasks
                 </p>
-                <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+                <p className="text-3xl font-bold text-red-600 dark:text-red-400">
                   {stats.overdueTasks}
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
                   Urgent action needed
                 </p>
               </div>
-              <div className="p-3 rounded-lg bg-red-50">
-                <AlertCircle className="h-6 w-6 text-red-600" />
+              <div className="p-4 rounded-xl bg-red-50 shadow-sm">
+                <AlertCircle className="h-7 w-7 text-red-600" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 dark:border-slate-700 shadow-sm">
-          <CardContent className="p-6">
+        <Card className="border-slate-200 dark:border-slate-700 shadow-md bg-white dark:bg-slate-800">
+          <CardContent className="p-8">
             <div className="flex items-center justify-between">
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
                   Active Projects
                 </p>
-                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                   {stats.totalProjects}
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
                   In progress
                 </p>
               </div>
-              <div className="p-3 rounded-lg bg-blue-50">
-                <FolderOpen className="h-6 w-6 text-blue-600" />
+              <div className="p-4 rounded-xl bg-blue-50 shadow-sm">
+                <FolderOpen className="h-7 w-7 text-blue-600" />
               </div>
             </div>
           </CardContent>
@@ -305,44 +305,46 @@ export default function Dashboard() {
 
       {/* Recent Activity & Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card className="border-slate-200 dark:border-slate-700 shadow-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
-              <Activity className="h-5 w-5 mr-2" />
+        <Card className="border-slate-200 dark:border-slate-700 shadow-md bg-white dark:bg-slate-800">
+          <CardHeader className="pb-6">
+            <CardTitle className="text-xl font-bold text-slate-900 dark:text-white flex items-center">
+              <Activity className="h-6 w-6 mr-3 text-blue-600" />
               Recent Activity
             </CardTitle>
-            <CardDescription>Latest updates and actions</CardDescription>
+            <CardDescription className="text-slate-600 dark:text-slate-400">
+              Latest updates and actions
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
-              <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
+            <div className="flex items-center space-x-4 p-4 bg-slate-50 dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600">
+              <div className="w-3 h-3 bg-green-500 rounded-full flex-shrink-0"></div>
               <div className="flex-1">
-                <p className="text-sm font-medium text-slate-900 dark:text-white">
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">
                   Task Completed
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                   "Website Redesign" finished by John Doe • 2 hours ago
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
-              <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
+            <div className="flex items-center space-x-4 p-4 bg-slate-50 dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600">
+              <div className="w-3 h-3 bg-blue-500 rounded-full flex-shrink-0"></div>
               <div className="flex-1">
-                <p className="text-sm font-medium text-slate-900 dark:text-white">
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">
                   New Project Created
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                   "Mobile App Development" started • 4 hours ago
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
-              <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0"></div>
+            <div className="flex items-center space-x-4 p-4 bg-slate-50 dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600">
+              <div className="w-3 h-3 bg-orange-500 rounded-full flex-shrink-0"></div>
               <div className="flex-1">
-                <p className="text-sm font-medium text-slate-900 dark:text-white">
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">
                   Task Assigned
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                   "API Documentation" assigned to Sarah Wilson • 6 hours ago
                 </p>
               </div>
@@ -350,29 +352,31 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 dark:border-slate-700 shadow-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
-              <Calendar className="h-5 w-5 mr-2" />
+        <Card className="border-slate-200 dark:border-slate-700 shadow-md bg-white dark:bg-slate-800">
+          <CardHeader className="pb-6">
+            <CardTitle className="text-xl font-bold text-slate-900 dark:text-white flex items-center">
+              <Calendar className="h-6 w-6 mr-3 text-green-600" />
               Quick Actions
             </CardTitle>
-            <CardDescription>Frequently used operations</CardDescription>
+            <CardDescription className="text-slate-600 dark:text-slate-400">
+              Frequently used operations
+            </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <Button className="w-full justify-start" variant="outline">
-              <CheckSquare className="h-4 w-4 mr-2" />
+          <CardContent className="space-y-4">
+            <Button className="w-full justify-start h-12 text-left bg-white border-slate-300 text-slate-700 hover:bg-slate-50" variant="outline">
+              <CheckSquare className="h-5 w-5 mr-3 text-blue-600" />
               Create New Task
             </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <FolderOpen className="h-4 w-4 mr-2" />
+            <Button className="w-full justify-start h-12 text-left bg-white border-slate-300 text-slate-700 hover:bg-slate-50" variant="outline">
+              <FolderOpen className="h-5 w-5 mr-3 text-green-600" />
               Start New Project
             </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <Users className="h-4 w-4 mr-2" />
+            <Button className="w-full justify-start h-12 text-left bg-white border-slate-300 text-slate-700 hover:bg-slate-50" variant="outline">
+              <Users className="h-5 w-5 mr-3 text-purple-600" />
               Invite Team Member
             </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <Building2 className="h-4 w-4 mr-2" />
+            <Button className="w-full justify-start h-12 text-left bg-white border-slate-300 text-slate-700 hover:bg-slate-50" variant="outline">
+              <Building2 className="h-5 w-5 mr-3 text-orange-600" />
               Add Company
             </Button>
           </CardContent>
@@ -380,60 +384,60 @@ export default function Dashboard() {
       </div>
 
       {/* Live Integration Status */}
-      <Card className="border-slate-200 dark:border-slate-700 shadow-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white">
+      <Card className="border-slate-200 dark:border-slate-700 shadow-md bg-white dark:bg-slate-800">
+        <CardHeader className="pb-6">
+          <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
             Live Integration Status
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-slate-600 dark:text-slate-400">
             Real-time status of external integrations
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-              <div>
-                <p className="text-sm font-medium text-green-900 dark:text-green-100">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="flex items-center justify-between p-6 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800 shadow-sm">
+              <div className="space-y-2">
+                <p className="text-sm font-semibold text-green-900 dark:text-green-100">
                   MongoDB Connected
                 </p>
                 <p className="text-xs text-green-600 dark:text-green-400">
-                  Real-time data from database
+                  Real-time data active
                 </p>
               </div>
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+              <div className="w-4 h-4 bg-green-500 rounded-full animate-pulse shadow-sm"></div>
             </div>
-            <div className="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-              <div>
-                <p className="text-sm font-medium text-yellow-900 dark:text-yellow-100">
+            <div className="flex items-center justify-between p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800 shadow-sm">
+              <div className="space-y-2">
+                <p className="text-sm font-semibold text-blue-900 dark:text-blue-100">
                   Email Integration
                 </p>
-                <p className="text-xs text-yellow-600 dark:text-yellow-400">
-                  Ready for configuration
+                <p className="text-xs text-blue-600 dark:text-blue-400">
+                  Ready for setup
                 </p>
               </div>
-              <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+              <div className="w-4 h-4 bg-blue-500 rounded-full shadow-sm"></div>
             </div>
-            <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-              <div>
-                <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+            <div className="flex items-center justify-between p-6 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-200 dark:border-purple-800 shadow-sm">
+              <div className="space-y-2">
+                <p className="text-sm font-semibold text-purple-900 dark:text-purple-100">
                   Calendar Sync
                 </p>
-                <p className="text-xs text-blue-600 dark:text-blue-400">
+                <p className="text-xs text-purple-600 dark:text-purple-400">
                   Available for setup
                 </p>
               </div>
-              <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+              <div className="w-4 h-4 bg-purple-500 rounded-full shadow-sm"></div>
             </div>
-            <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-              <div>
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+            <div className="flex items-center justify-between p-6 bg-slate-100 dark:bg-slate-700 rounded-xl border border-slate-300 dark:border-slate-600 shadow-sm">
+              <div className="space-y-2">
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                   Webhook Support
                 </p>
                 <p className="text-xs text-slate-600 dark:text-slate-400">
                   Ready for integration
                 </p>
               </div>
-              <div className="w-3 h-3 bg-slate-400 rounded-full"></div>
+              <div className="w-4 h-4 bg-slate-500 rounded-full shadow-sm"></div>
             </div>
           </div>
         </CardContent>
