@@ -98,16 +98,64 @@ export const forceRemoveYellowColors = () => {
 
 // Initialize color override system
 export const initColorOverride = () => {
+  // Wait for DOM to be ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      startColorOverride();
+    });
+  } else {
+    startColorOverride();
+  }
+};
+
+const startColorOverride = () => {
   // Run initial override
   forceRemoveYellowColors();
   
+  // Add global CSS override style
+  const style = document.createElement('style');
+  style.textContent = `
+    /* FORCE OVERRIDE ALL YELLOW COLORS - JAVASCRIPT INJECTION */
+    * {
+      --yellow-50: rgb(241, 245, 249) !important;
+      --yellow-100: rgb(226, 232, 240) !important;
+      --yellow-200: rgb(203, 213, 225) !important;
+      --yellow-300: rgb(148, 163, 184) !important;
+      --yellow-400: rgb(100, 116, 139) !important;
+      --yellow-500: rgb(234, 88, 12) !important;
+      --yellow-600: rgb(234, 88, 12) !important;
+      --yellow-700: rgb(194, 65, 12) !important;
+      --yellow-800: rgb(154, 52, 18) !important;
+      --yellow-900: rgb(124, 45, 18) !important;
+    }
+    
+    /* Override any yellow text or backgrounds */
+    .text-yellow-50, .text-yellow-100, .text-yellow-200, .text-yellow-300, .text-yellow-400,
+    .text-yellow-500, .text-yellow-600, .text-yellow-700, .text-yellow-800, .text-yellow-900,
+    [style*="color: yellow"], [style*="color:#FFD700"], [style*="color:#FFFF00"] {
+      color: rgb(234, 88, 12) !important;
+    }
+    
+    .bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400,
+    .bg-yellow-500, .bg-yellow-600, .bg-yellow-700, .bg-yellow-800, .bg-yellow-900,
+    [style*="background-color: yellow"], [style*="background-color:#FFD700"], [style*="background-color:#FFFF00"] {
+      background-color: transparent !important;
+    }
+  `;
+  document.head.appendChild(style);
+  
   // Set up mutation observer to catch dynamic changes
   const observer = new MutationObserver((mutations) => {
+    let hasChanges = false;
     mutations.forEach((mutation) => {
       if (mutation.type === 'childList' || mutation.type === 'attributes') {
-        setTimeout(forceRemoveYellowColors, 100);
+        hasChanges = true;
       }
     });
+    
+    if (hasChanges) {
+      setTimeout(forceRemoveYellowColors, 100);
+    }
   });
   
   // Start observing
@@ -123,5 +171,11 @@ export const initColorOverride = () => {
   window.addEventListener('resize', forceRemoveYellowColors);
   
   // Run periodically to catch any missed changes
-  setInterval(forceRemoveYellowColors, 2000);
+  const intervalId = setInterval(forceRemoveYellowColors, 1000);
+  
+  // Clean up on page unload
+  window.addEventListener('beforeunload', () => {
+    clearInterval(intervalId);
+    observer.disconnect();
+  });
 };
