@@ -619,26 +619,38 @@ function FieldProperties({ field, onUpdate }) {
 
       {(field.type === 'dropdown' || field.type === 'multiselect') && (
         <div>
-          <label className="block text-sm font-medium mb-2">Options</label>
-          <div className="space-y-2">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+            Options
+          </label>
+          <div className="space-y-3">
             {field.options?.map((option, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <Input
-                  value={option}
-                  onChange={(e) => updateOption(index, e.target.value)}
-                  className="flex-1"
-                />
+              <div key={index} className="flex items-center space-x-2 group">
+                <div className="flex-1">
+                  <Input
+                    value={option}
+                    onChange={(e) => updateOption(index, e.target.value)}
+                    placeholder={`Option ${index + 1}`}
+                    className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
                 <Button
                   size="sm"
                   variant="ghost"
                   onClick={() => removeOption(index)}
+                  className="h-9 w-9 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
+                  disabled={field.options.length <= 1}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
             ))}
-            <Button size="sm" variant="outline" onClick={addOption}>
-              <Plus className="h-4 w-4 mr-1" />
+            <Button 
+              size="sm" 
+              variant="outline" 
+              onClick={addOption}
+              className="w-full border-dashed border-slate-300 text-slate-600 hover:bg-slate-50 hover:text-slate-700 hover:border-slate-400"
+            >
+              <Plus className="h-4 w-4 mr-2" />
               Add Option
             </Button>
           </div>
@@ -646,26 +658,39 @@ function FieldProperties({ field, onUpdate }) {
       )}
 
       {field.type === 'number' && (
-        <div className="grid grid-cols-2 gap-2">
-          <div>
-            <label className="block text-sm font-medium mb-1">Min Value</label>
-            <Input
-              type="number"
-              value={field.validation?.min || ''}
-              onChange={(e) => onUpdate({ 
-                validation: { ...field.validation, min: e.target.value } 
-              })}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Max Value</label>
-            <Input
-              type="number"
-              value={field.validation?.max || ''}
-              onChange={(e) => onUpdate({ 
-                validation: { ...field.validation, max: e.target.value } 
-              })}
-            />
+        <div>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+            Number Validation
+          </label>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                Minimum Value
+              </label>
+              <Input
+                type="number"
+                value={field.validation?.min || ''}
+                onChange={(e) => onUpdate({ 
+                  validation: { ...field.validation, min: e.target.value } 
+                })}
+                placeholder="Min"
+                className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                Maximum Value
+              </label>
+              <Input
+                type="number"
+                value={field.validation?.max || ''}
+                onChange={(e) => onUpdate({ 
+                  validation: { ...field.validation, max: e.target.value } 
+                })}
+                placeholder="Max"
+                className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
           </div>
         </div>
       )}
