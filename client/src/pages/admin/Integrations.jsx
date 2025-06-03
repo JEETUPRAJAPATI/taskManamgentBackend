@@ -139,7 +139,14 @@ export default function Integrations() {
   };
 
   const StatusBadge = ({ connected, label }) => (
-    <Badge variant={connected ? "default" : "secondary"} className="flex items-center gap-1">
+    <Badge 
+      variant={connected ? "default" : "secondary"} 
+      className={`flex items-center gap-1 font-semibold ${
+        connected 
+          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-300 dark:border-green-700' 
+          : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 border-red-300 dark:border-red-700'
+      }`}
+    >
       {connected ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
       {label} {connected ? 'Connected' : 'Not Connected'}
     </Badge>
@@ -158,25 +165,25 @@ export default function Integrations() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center gap-3">
-        <Settings className="w-8 h-8" />
+        <Settings className="w-8 h-8 text-blue-600 dark:text-blue-400" />
         <div>
-          <h1 className="text-3xl font-bold">Integrations</h1>
-          <p className="text-muted-foreground">Connect your email and calendar to automatically create tasks</p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Integrations</h1>
+          <p className="text-slate-600 dark:text-slate-300 font-medium">Connect your email and calendar to automatically create tasks</p>
         </div>
       </div>
 
-      <Alert>
-        <Mail className="w-4 h-4" />
-        <AlertDescription>
+      <Alert className="border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950">
+        <Mail className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+        <AlertDescription className="text-slate-700 dark:text-slate-200 font-medium">
           Email and calendar integrations automatically convert your emails and calendar events into actionable tasks. 
           Configure your credentials below to get started.
         </AlertDescription>
       </Alert>
 
       {/* Status Overview */}
-      <Card>
+      <Card className="border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-lg">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             Integration Status
           </CardTitle>
@@ -206,13 +213,13 @@ export default function Integrations() {
         <TabsContent value="email" className="space-y-4">
           <div className="grid gap-6 md:grid-cols-2">
             {/* Gmail Setup */}
-            <Card>
+            <Card className="border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-lg">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Mail className="w-5 h-5" />
+                <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+                  <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   Gmail Integration
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-slate-600 dark:text-slate-300 font-medium">
                   Connect your Gmail account to automatically convert emails into tasks
                 </CardDescription>
               </CardHeader>
@@ -281,13 +288,13 @@ export default function Integrations() {
             </Card>
 
             {/* IMAP Setup */}
-            <Card>
+            <Card className="border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-lg">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Mail className="w-5 h-5" />
+                <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+                  <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   IMAP Integration
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-slate-600 dark:text-slate-300 font-medium">
                   Connect any IMAP email server to convert emails into tasks
                 </CardDescription>
               </CardHeader>
@@ -373,13 +380,13 @@ export default function Integrations() {
         <TabsContent value="calendar" className="space-y-4">
           <div className="grid gap-6 md:grid-cols-2">
             {/* Google Calendar Setup */}
-            <Card>
+            <Card className="border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-lg">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
+                <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+                  <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   Google Calendar Integration
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-slate-600 dark:text-slate-300 font-medium">
                   Connect your Google Calendar to automatically convert events into tasks
                 </CardDescription>
               </CardHeader>
