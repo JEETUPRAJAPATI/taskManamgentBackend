@@ -81,6 +81,12 @@
   --yellow-700: 194 65 12; /* Use orange-700 instead */
   --yellow-800: 154 52 18; /* Use orange-800 instead */
   --yellow-900: 124 45 18; /* Use orange-900 instead */
+  
+  /* Dropdown and popover specific styling */
+  --dropdown: 255 255 255; /* Solid white dropdown #ffffff */
+  --dropdown-foreground: 15 23 42; /* High contrast dropdown text #0f172a */
+  --dropdown-hover: 248 250 252; /* Light hover background #f8fafc */
+  --dropdown-border: 203 213 225; /* Clear border #cbd5e1 */
 }
 
 .light {
@@ -148,6 +154,146 @@
 }
 
 @layer components {
+  /* Dropdown Menu Styling - Solid Backgrounds and High Contrast */
+  .dropdown-content,
+  [data-radix-popper-content-wrapper],
+  [data-radix-select-content],
+  [data-radix-dropdown-menu-content],
+  [data-radix-popover-content] {
+    @apply bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg rounded-md !important;
+    backdrop-filter: none !important;
+    background-color: rgb(255 255 255) !important;
+  }
+
+  .dark .dropdown-content,
+  .dark [data-radix-popper-content-wrapper],
+  .dark [data-radix-select-content],
+  .dark [data-radix-dropdown-menu-content],
+  .dark [data-radix-popover-content] {
+    background-color: rgb(30 41 59) !important;
+    border-color: rgb(71 85 105) !important;
+  }
+
+  /* Dropdown Menu Items */
+  .dropdown-item,
+  [data-radix-select-item],
+  [data-radix-dropdown-menu-item] {
+    @apply text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 px-3 py-2 cursor-pointer !important;
+    background-color: transparent !important;
+    transition: background-color 0.15s ease-in-out !important;
+  }
+
+  .dropdown-item:hover,
+  [data-radix-select-item]:hover,
+  [data-radix-dropdown-menu-item]:hover {
+    @apply bg-slate-100 dark:bg-slate-700 !important;
+  }
+
+  /* Select Trigger */
+  [data-radix-select-trigger] {
+    @apply bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 !important;
+  }
+
+  /* Tooltip Styling */
+  [data-radix-tooltip-content] {
+    @apply bg-slate-900 dark:bg-slate-700 text-white border border-slate-700 dark:border-slate-600 shadow-lg rounded-md px-3 py-2 !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Context Menu Styling */
+  [data-radix-context-menu-content] {
+    @apply bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg rounded-md !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Menubar Styling */
+  [data-radix-menubar-content] {
+    @apply bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg rounded-md !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Navigation Menu Styling */
+  [data-radix-navigation-menu-content] {
+    @apply bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg rounded-md !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Generic popup and dropdown classes */
+  .popup-content,
+  .dropdown-menu,
+  .select-content,
+  .popover-content {
+    @apply bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg rounded-md !important;
+    backdrop-filter: none !important;
+    background-color: rgb(255 255 255) !important;
+  }
+
+  .dark .popup-content,
+  .dark .dropdown-menu,
+  .dark .select-content,
+  .dark .popover-content {
+    background-color: rgb(30 41 59) !important;
+  }
+
+  /* Select Item Focus States */
+  [data-radix-select-item][data-highlighted] {
+    @apply bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-100 !important;
+  }
+
+  /* Dropdown Menu Item Focus States */
+  [data-radix-dropdown-menu-item][data-highlighted] {
+    @apply bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-100 !important;
+  }
+
+  /* Status Badge Styling for Task Details */
+  .status-todo {
+    @apply bg-slate-100 text-slate-700 border-slate-300 !important;
+  }
+
+  .status-in-progress {
+    @apply bg-blue-100 text-blue-700 border-blue-300 !important;
+  }
+
+  .status-review {
+    @apply bg-orange-100 text-orange-700 border-orange-300 !important;
+  }
+
+  .status-completed {
+    @apply bg-green-100 text-green-700 border-green-300 !important;
+  }
+
+  /* Priority Badge Styling */
+  .priority-low {
+    @apply bg-slate-100 text-slate-700 border-slate-300 !important;
+  }
+
+  .priority-medium {
+    @apply bg-blue-100 text-blue-700 border-blue-300 !important;
+  }
+
+  .priority-high {
+    @apply bg-orange-100 text-orange-700 border-orange-300 !important;
+  }
+
+  .priority-urgent {
+    @apply bg-red-100 text-red-700 border-red-300 !important;
+  }
+
+  /* Combobox and Command Palette Styling */
+  [data-radix-combobox-content],
+  [cmdk-root] {
+    @apply bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg rounded-md !important;
+    backdrop-filter: none !important;
+  }
+
+  [cmdk-item] {
+    @apply text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 px-3 py-2 cursor-pointer !important;
+  }
+
+  [cmdk-item][data-selected] {
+    @apply bg-slate-100 dark:bg-slate-700 !important;
+  }
+
   /* Force override all yellow colors globally */
   * {
     --tw-text-yellow-50: 241 245 249 !important;
