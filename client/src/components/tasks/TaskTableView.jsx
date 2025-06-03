@@ -41,7 +41,7 @@ export function TaskTableView() {
   const queryClient = useQueryClient();
 
   // Fetch tasks with filters and pagination
-  const { data: tasksData = { tasks: [], total: 0 }, isLoading } = useQuery({
+  const { data: tasksResponse, isLoading, error } = useQuery({
     queryKey: ["/api/tasks", searchTerm, statusFilter, priorityFilter, userFilter, currentPage, sortBy, sortOrder],
     queryFn: async () => {
       const params = new URLSearchParams();
@@ -56,9 +56,22 @@ export function TaskTableView() {
       
       const response = await fetch(`/api/tasks?${params}`);
       if (!response.ok) throw new Error("Failed to fetch tasks");
-      return response.json();
-    }
+      const data = await response.json();
+      
+      // Handle different response formats
+      if (Array.isArray(data)) {
+        return { tasks: data, total: data.length };
+      }
+      return data;
+    },
+    retry: 2,
+    staleTime: 30000
   });
+
+  // Safely extract tasks data with fallbacks
+  const tasksData = tasksResponse || { tasks: [], total: 0 };
+  const tasks = Array.isArray(tasksData.tasks) ? tasksData.tasks : (Array.isArray(tasksData) ? tasksData : []);
+  const totalTasks = tasksData.total || tasks.length || 0;
 
   // Fetch users
   const { data: users = [] } = useQuery({
@@ -231,7 +244,29 @@ export function TaskTableView() {
     return user ? `${user.firstName} ${user.lastName}` : "Unassigned";
   };
 
-  const totalPages = Math.ceil(tasksData.total / tasksPerPage);
+  const totalPages = Math.ceil(totalTasks / tasksPerPage);
+
+  // Error state
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
+        <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">
+          Failed to load tasks
+        </h3>
+        <p className="text-slate-600 dark:text-slate-400 text-center mb-4">
+          {error.message}
+        </p>
+        <Button 
+          onClick={() => queryClient.invalidateQueries(["/api/tasks"])}
+          variant="outline"
+          className="border-slate-300"
+        >
+          Try Again
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -297,7 +332,7 @@ export function TaskTableView() {
 
           <div className="flex items-center justify-between">
             <p className="text-sm text-slate-600 dark:text-slate-400">
-              Showing {tasksData.tasks.length} of {tasksData.total} tasks
+              Showing {tasks.length} of {totalTasks} tasks
             </p>
             <Button 
               onClick={() => setShowCreateForm(true)}
@@ -369,7 +404,7 @@ export function TaskTableView() {
                       <TableCell><div className="h-8 bg-slate-200 rounded animate-pulse w-20 ml-auto"></div></TableCell>
                     </TableRow>
                   ))
-                ) : tasksData.tasks.length === 0 ? (
+                ) : tasks.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={7} className="text-center py-8">
                       <div className="flex flex-col items-center space-y-3">
@@ -387,7 +422,7 @@ export function TaskTableView() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  tasksData.tasks.map((task) => (
+                  tasks.map((task) => (
                     <TableRow key={task._id} className="border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50">
                       <TableCell className="font-medium text-slate-900 dark:text-white">
                         <div className="max-w-xs truncate">{task.title}</div>
