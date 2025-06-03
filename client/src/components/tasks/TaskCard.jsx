@@ -92,7 +92,7 @@ export function TaskCard({
 
   return (
     <Card 
-      className="p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group border-border bg-card"
+      className="p-6 hover:shadow-xl transition-all duration-200 cursor-pointer group border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-md hover:scale-[1.02]"
       onClick={() => onClick?.(task)}
     >
       <div className="flex items-start justify-between mb-4">

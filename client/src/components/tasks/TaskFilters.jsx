@@ -26,19 +26,19 @@ export function TaskFilters({
       {/* Search Bar */}
       <div className="flex gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-500 dark:text-slate-400" />
           <Input
             placeholder="Search tasks by title, description, or tags..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-10 bg-input border-border text-foreground placeholder:text-muted-foreground"
+            className="pl-10 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 font-medium shadow-sm focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800"
           />
         </div>
         {hasActiveFilters() && (
           <Button 
             variant="outline" 
             onClick={onClearFilters}
-            className="border-border hover:bg-accent"
+            className="border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium shadow-sm"
           >
             <X className="h-4 w-4 mr-2" />
             Clear Filters
