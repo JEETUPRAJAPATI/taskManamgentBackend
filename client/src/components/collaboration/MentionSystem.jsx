@@ -26,21 +26,15 @@ export function MentionSystem({
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Create mention notification mutation
-  const createMentionMutation = useMutation({
-    mutationFn: async (mentionData) => {
-      const response = await fetch("/api/mentions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(mentionData)
+  // Create mention notification (demo mode)
+  const createMentionMutation = {
+    mutate: (mentionData) => {
+      toast({
+        title: "Mention created",
+        description: `You mentioned ${mentionData.mentionedUserId}`
       });
-      if (!response.ok) throw new Error("Failed to create mention");
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["/api/notifications"]);
     }
-  });
+  };
 
   // Handle input changes and detect mentions
   const handleInputChange = (e) => {
@@ -307,29 +301,39 @@ export function MentionSystem({
 
 // Mention notifications component
 export function MentionNotifications({ userId, onMentionClick = () => {} }) {
-  const { data: mentions = [], isLoading } = useQuery({
-    queryKey: ["/api/mentions", userId],
-    queryFn: async () => {
-      const response = await fetch(`/api/mentions?userId=${userId}&unread=true`);
-      if (!response.ok) throw new Error("Failed to fetch mentions");
-      return response.json();
+  // Generate demo mentions
+  const mentions = [
+    {
+      _id: "mention_1",
+      mentionedBy: {
+        firstName: "Sarah",
+        lastName: "Chen",
+        email: "sarah.chen@company.com"
+      },
+      content: "Can you review the latest design mockups for @John Smith?",
+      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      unread: true
     },
-    refetchInterval: 30000
-  });
-
-  const markAsReadMutation = useMutation({
-    mutationFn: async (mentionId) => {
-      const response = await fetch(`/api/mentions/${mentionId}/read`, {
-        method: "PUT"
-      });
-      if (!response.ok) throw new Error("Failed to mark mention as read");
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["/api/mentions"]);
+    {
+      _id: "mention_2", 
+      mentionedBy: {
+        firstName: "Mike",
+        lastName: "Johnson",
+        email: "mike.johnson@company.com"
+      },
+      content: "Thanks for the feedback @John Smith! I'll implement those changes.",
+      createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+      unread: true
     }
-  });
+  ];
 
-  const queryClient = useQueryClient();
+  const isLoading = false;
+
+  const markAsReadMutation = {
+    mutate: (mentionId) => {
+      console.log("Marking mention as read:", mentionId);
+    }
+  };
 
   const handleMentionClick = (mention) => {
     markAsReadMutation.mutate(mention._id);

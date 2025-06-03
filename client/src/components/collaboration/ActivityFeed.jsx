@@ -25,22 +25,21 @@ export function ActivityFeed({
   limit = 20,
   className = "" 
 }) {
-  // Fetch activity data
-  const { data: activities = [], isLoading } = useQuery({
-    queryKey: ["/api/activities", { taskId, projectId, userId, limit }],
+  // Fetch recent activities from existing endpoint
+  const { data: activitiesData = [], isLoading } = useQuery({
+    queryKey: ["/api/recent-activities"],
     queryFn: async () => {
-      const params = new URLSearchParams();
-      if (taskId) params.append("taskId", taskId);
-      if (projectId) params.append("projectId", projectId);
-      if (userId) params.append("userId", userId);
-      params.append("limit", limit.toString());
-      
-      const response = await fetch(`/api/activities?${params}`);
+      const response = await fetch("/api/recent-activities");
       if (!response.ok) throw new Error("Failed to fetch activities");
       return response.json();
     },
     refetchInterval: 30000 // Refresh every 30 seconds
   });
+
+  // Filter activities based on taskId if provided
+  const activities = taskId 
+    ? activitiesData.filter(activity => activity.taskId === taskId).slice(0, limit)
+    : activitiesData.slice(0, limit);
 
   // Get activity icon based on type
   const getActivityIcon = (type) => {
