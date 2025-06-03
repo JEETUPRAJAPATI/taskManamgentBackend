@@ -39,47 +39,185 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-30 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 transition-all duration-300 ${
+      <div className={`fixed inset-y-0 left-0 z-30 bg-slate-800 dark:bg-slate-900 border-r border-slate-700 dark:border-slate-800 transition-all duration-300 shadow-xl ${
         isOpen ? 'w-64' : 'w-16'
       } hidden lg:block`}>
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center h-16 px-4 border-b border-slate-200 dark:border-slate-700">
+          <div className="flex items-center h-16 px-4 border-b border-slate-700 dark:border-slate-800 bg-slate-900 dark:bg-slate-950">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <CheckSquare className="h-8 w-8 text-orange-600" />
+                <CheckSquare className="h-8 w-8 text-blue-400" />
               </div>
               {isOpen && (
                 <div className="ml-3">
-                  <h1 className="text-xl font-bold text-slate-900 dark:text-white">
+                  <h1 className="text-xl font-bold text-white">
                     TaskSetu
                   </h1>
+                  <p className="text-xs text-slate-400 mt-1">Professional Edition</p>
                 </div>
               )}
             </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-2 py-4 space-y-1">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link key={item.name} href={item.href} className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
-                  isActive(item.href)
-                    ? 'bg-orange-100 text-orange-900 dark:bg-orange-900/20 dark:text-orange-300'
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'
-                }`}>
-                  <Icon className={`flex-shrink-0 h-5 w-5 ${
-                    isActive(item.href)
-                      ? 'text-orange-600'
-                      : 'text-slate-400 group-hover:text-slate-500 dark:group-hover:text-slate-300'
-                  }`} />
-                  {isOpen && (
-                    <span className="ml-3">{item.name}</span>
-                  )}
-                </Link>
-              );
-            })}
+          <nav className="flex-1 px-3 py-6 space-y-2 overflow-y-auto">
+            {/* Core Features Section */}
+            <div className="space-y-1">
+              <div className="px-3 py-2">
+                {isOpen && (
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    Core Features
+                  </p>
+                )}
+              </div>
+              
+              {navigation.slice(0, 4).map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.name}>
+                    <Link 
+                      href={item.href} 
+                      className={`group flex items-center px-3 py-3 text-sm font-semibold rounded-lg transition-all duration-200 ease-in-out relative ${
+                        isActive(item.href)
+                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
+                          : 'text-slate-300 hover:bg-slate-700/70 hover:text-white hover:shadow-md'
+                      }`}
+                    >
+                      <Icon className={`flex-shrink-0 h-5 w-5 transition-colors duration-200 ${
+                        isActive(item.href)
+                          ? 'text-blue-100'
+                          : 'text-slate-400 group-hover:text-blue-400'
+                      } ${isOpen ? 'mr-3' : ''}`} />
+                      
+                      {isOpen && (
+                        <span className="font-medium">{item.name}</span>
+                      )}
+                      
+                      {!isOpen && (
+                        <div className="absolute left-16 bg-slate-900 text-white px-2 py-1 rounded-md text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap shadow-lg">
+                          {item.name}
+                        </div>
+                      )}
+                      
+                      {isActive(item.href) && (
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-400 rounded-r-full"></div>
+                      )}
+                    </Link>
+                    
+                    {index < 3 && (
+                      <div className="my-2 mx-3 border-t border-slate-700/50 dark:border-slate-800/50"></div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Section Divider */}
+            <div className="my-6">
+              <div className="border-t border-slate-600/60 dark:border-slate-700/60 mx-3"></div>
+              {isOpen && (
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-4 mb-2 px-3 uppercase tracking-wider">
+                  Management
+                </p>
+              )}
+            </div>
+
+            {/* Management Section */}
+            <div className="space-y-1">
+              {navigation.slice(4, 7).map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.name}>
+                    <Link 
+                      href={item.href} 
+                      className={`group flex items-center px-3 py-3 text-sm font-semibold rounded-lg transition-all duration-200 ease-in-out relative ${
+                        isActive(item.href)
+                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
+                          : 'text-slate-300 hover:bg-slate-700/70 hover:text-white hover:shadow-md'
+                      }`}
+                    >
+                      <Icon className={`flex-shrink-0 h-5 w-5 transition-colors duration-200 ${
+                        isActive(item.href)
+                          ? 'text-blue-100'
+                          : 'text-slate-400 group-hover:text-blue-400'
+                      } ${isOpen ? 'mr-3' : ''}`} />
+                      
+                      {isOpen && (
+                        <span className="font-medium">{item.name}</span>
+                      )}
+                      
+                      {!isOpen && (
+                        <div className="absolute left-16 bg-slate-900 text-white px-2 py-1 rounded-md text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap shadow-lg">
+                          {item.name}
+                        </div>
+                      )}
+                      
+                      {isActive(item.href) && (
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-400 rounded-r-full"></div>
+                      )}
+                    </Link>
+                    
+                    {index < 2 && (
+                      <div className="my-2 mx-3 border-t border-slate-700/50 dark:border-slate-800/50"></div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Section Divider */}
+            <div className="my-6">
+              <div className="border-t border-slate-600/60 dark:border-slate-700/60 mx-3"></div>
+              {isOpen && (
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-4 mb-2 px-3 uppercase tracking-wider">
+                  Business
+                </p>
+              )}
+            </div>
+
+            {/* Business Section */}
+            <div className="space-y-1">
+              {navigation.slice(7).map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.name}>
+                    <Link 
+                      href={item.href} 
+                      className={`group flex items-center px-3 py-3 text-sm font-semibold rounded-lg transition-all duration-200 ease-in-out relative ${
+                        isActive(item.href)
+                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
+                          : 'text-slate-300 hover:bg-slate-700/70 hover:text-white hover:shadow-md'
+                      }`}
+                    >
+                      <Icon className={`flex-shrink-0 h-5 w-5 transition-colors duration-200 ${
+                        isActive(item.href)
+                          ? 'text-blue-100'
+                          : 'text-slate-400 group-hover:text-blue-400'
+                      } ${isOpen ? 'mr-3' : ''}`} />
+                      
+                      {isOpen && (
+                        <span className="font-medium">{item.name}</span>
+                      )}
+                      
+                      {!isOpen && (
+                        <div className="absolute left-16 bg-slate-900 text-white px-2 py-1 rounded-md text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap shadow-lg">
+                          {item.name}
+                        </div>
+                      )}
+                      
+                      {isActive(item.href) && (
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-400 rounded-r-full"></div>
+                      )}
+                    </Link>
+                    
+                    {index < navigation.slice(7).length - 1 && (
+                      <div className="my-2 mx-3 border-t border-slate-700/50 dark:border-slate-800/50"></div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </nav>
         </div>
       </div>
