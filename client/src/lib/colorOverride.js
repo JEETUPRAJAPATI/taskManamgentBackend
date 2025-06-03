@@ -2,17 +2,17 @@
 // This utility forcefully removes all yellow colors and replaces them with professional alternatives
 
 export const PROFESSIONAL_COLORS = {
-  // Professional Blue color palette - Various Blue Shades
-  primary: '#2563eb',      // Blue-600
-  secondary: '#1e40af',    // Blue-800
+  // Professional Corporate Blue palette
+  primary: '#1e3a8a',      // Navy blue-800
+  secondary: '#2563eb',    // Blue-600
   accent: '#3b82f6',       // Blue-500
-  success: '#22c55e',      // Green-500
-  warning: '#60a5fa',      // Blue-400 (NO ORANGE/YELLOW)
+  success: '#15803d',      // Green-600
+  warning: '#2563eb',      // Blue-600 (NO ORANGE/YELLOW)
   danger: '#dc2626',       // Red-600
-  info: '#0ea5e9',         // Sky-500
+  info: '#0284c7',         // Sky-600
   
   // Text colors
-  textPrimary: '#0f172a',  // Slate-900
+  textPrimary: '#1e293b',  // Slate-800
   textSecondary: '#64748b', // Slate-500
   textMuted: '#94a3b8',    // Slate-400
   
@@ -21,13 +21,14 @@ export const PROFESSIONAL_COLORS = {
   bgSecondary: '#f8fafc',  // Slate-50
   bgMuted: '#f1f5f9',      // Slate-100
   
-  // Dark mode variants
-  dark: {
-    bgPrimary: '#0f172a',    // Slate-900
-    bgSecondary: '#1e293b',  // Slate-800
-    textPrimary: '#f8fafc',  // Slate-50
-    textSecondary: '#94a3b8', // Slate-400
-  }
+  // Card backgrounds
+  cardBg: '#ffffff',       // White cards
+  cardBorder: '#e2e8f0',   // Light border
+  
+  // Professional blue shades for replacements
+  lightBlue: '#dbeafe',    // Blue-100
+  mediumBlue: '#93c5fd',   // Blue-300
+  darkBlue: '#1e40af',     // Blue-800
 };
 
 // Function to replace unwanted colors with blue alternatives
