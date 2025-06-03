@@ -51,70 +51,70 @@ export function CollaborationDemo() {
 
   const features = [
     {
-      icon: <MessageSquare className="h-6 w-6 text-primary" />,
+      icon: <MessageSquare className="h-6 w-6 text-blue-600" />,
       title: "Real-time Comments",
       description: "Thread-based commenting with edit, delete, and reply functionality",
-      color: "bg-primary/10 border-primary/30"
+      color: "bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-700"
     },
     {
-      icon: <AtSign className="h-6 w-6 text-primary" />,
+      icon: <AtSign className="h-6 w-6 text-green-600" />,
       title: "Smart Mentions",
       description: "@mention team members with autocomplete and notifications",
-      color: "bg-primary/10 border-primary/30"
+      color: "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-700"
     },
     {
-      icon: <Activity className="h-6 w-6 text-success" />,
+      icon: <Activity className="h-6 w-6 text-orange-600" />,
       title: "Activity Feed",
       description: "Real-time tracking of all task changes and team interactions",
-      color: "bg-success/10 border-success/30"
+      color: "bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-700"
     },
     {
-      icon: <Users className="h-6 w-6 text-accent" />,
+      icon: <Users className="h-6 w-6 text-purple-600" />,
       title: "Team Management",
       description: "Add/remove members, assign roles, track online status",
-      color: "bg-accent/10 border-accent/30"
+      color: "bg-purple-50 border-purple-200 dark:bg-purple-900/20 dark:border-purple-700"
     },
     {
-      icon: <Bell className="h-6 w-6 text-destructive" />,
+      icon: <Bell className="h-6 w-6 text-red-600" />,
       title: "Notifications",
       description: "Real-time notifications for mentions, assignments, and updates",
-      color: "bg-destructive/10 border-destructive/30"
+      color: "bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-700"
     },
     {
-      icon: <Zap className="h-6 w-6 text-accent" />,
+      icon: <Zap className="h-6 w-6 text-indigo-600" />,
       title: "Live Updates",
       description: "Automatic refresh every 30 seconds for real-time collaboration",
-      color: "bg-accent/10 border-accent/30"
+      color: "bg-indigo-50 border-indigo-200 dark:bg-indigo-900/20 dark:border-indigo-700"
     }
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-8 space-y-8">
       {/* Header */}
-      <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold text-foreground">
-          Advanced Task Collaboration Features
+      <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-8 text-center shadow-sm">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
+          Team Collaboration Hub
         </h1>
-        <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-          Experience real-time team collaboration with comments, mentions, activity tracking, 
-          and comprehensive team management integrated with your MongoDB database.
+        <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+          Streamline team communication with real-time comments, smart mentions, activity tracking, 
+          and comprehensive project collaboration tools.
         </p>
       </div>
 
       {/* Features Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {features.map((feature, index) => (
-          <Card key={index} className={`${feature.color} border-2`}>
-            <CardContent className="p-4">
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0">
+          <Card key={index} className={`${feature.color} border-2 shadow-sm hover:shadow-md transition-shadow`}>
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 p-3 rounded-lg bg-white dark:bg-slate-800 shadow-sm">
                   {feature.icon}
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground mb-1">
+                  <h3 className="font-semibold text-slate-900 dark:text-white mb-2 text-lg">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
@@ -126,36 +126,41 @@ export function CollaborationDemo() {
 
       {/* Task Selection */}
       {tasks.length > 0 && (
-        <Card className="bg-card border-border">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Eye className="h-5 w-5" />
+        <Card className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+          <CardHeader className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700">
+            <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+              <Eye className="h-5 w-5 text-blue-600" />
               Select a Task to Collaborate On
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {tasks.slice(0, 6).map((task) => (
                 <Card 
                   key={task._id}
-                  className={`cursor-pointer transition-all hover:shadow-md ${
+                  className={`cursor-pointer transition-all hover:shadow-md border-2 ${
                     selectedTaskId === task._id 
-                      ? 'ring-2 ring-primary bg-primary/5' 
-                      : 'bg-muted/50 hover:bg-muted'
+                      ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-600' 
+                      : 'bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-600'
                   }`}
                   onClick={() => setSelectedTaskId(task._id)}
                 >
                   <CardContent className="p-4">
-                    <h4 className="font-medium text-foreground mb-2 truncate">
+                    <h4 className="font-medium text-slate-900 dark:text-white mb-3 truncate">
                       {task.title}
                     </h4>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <Badge className="priority-medium">
+                      <Badge className={`${
+                        task.priority === 'high' ? 'bg-orange-100 text-orange-700 border-orange-200' :
+                        task.priority === 'urgent' ? 'bg-red-100 text-red-700 border-red-200' :
+                        task.priority === 'low' ? 'bg-slate-100 text-slate-700 border-slate-200' :
+                        'bg-blue-100 text-blue-700 border-blue-200'
+                      } border`}>
                         <Flag className="h-3 w-3 mr-1" />
                         {task.priority || 'medium'}
                       </Badge>
                       {task.dueDate && (
-                        <Badge variant="outline">
+                        <Badge className="bg-green-100 text-green-700 border-green-200 border">
                           <Calendar className="h-3 w-3 mr-1" />
                           Due Soon
                         </Badge>
@@ -174,14 +179,14 @@ export function CollaborationDemo() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Collaboration Panel */}
           <div className="lg:col-span-2">
-            <Card className="bg-card border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5" />
+            <Card className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+              <CardHeader className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700">
+                <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+                  <MessageSquare className="h-5 w-5 text-blue-600" />
                   Collaborating on: {selectedTask.title}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 <TeamCollaboration
                   taskId={selectedTask._id}
                   users={users}
@@ -192,12 +197,12 @@ export function CollaborationDemo() {
           </div>
 
           {/* Side Panel */}
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* Mention System Demo */}
-            <Card className="bg-card border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AtSign className="h-5 w-5" />
+            <Card className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+              <CardHeader className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700">
+                <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+                  <AtSign className="h-5 w-5 text-green-600" />
                   Try Mentions
                 </CardTitle>
               </CardHeader>
@@ -216,14 +221,14 @@ export function CollaborationDemo() {
             </Card>
 
             {/* Recent Activity */}
-            <Card className="bg-card border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5" />
+            <Card className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+              <CardHeader className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700">
+                <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+                  <Activity className="h-5 w-5 text-orange-600" />
                   Recent Activity
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 <ActivityFeed
                   taskId={selectedTask._id}
                   limit={10}
@@ -245,31 +250,31 @@ export function CollaborationDemo() {
       )}
 
       {/* Integration Information */}
-      <Card className="bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Zap className="h-5 w-5 text-primary" />
+      <Card className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 border border-green-200 dark:border-green-700 shadow-sm">
+        <CardHeader className="bg-white/50 dark:bg-slate-800/50 border-b border-green-200 dark:border-green-700">
+          <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+            <Zap className="h-5 w-5 text-indigo-600" />
             Live Integration Status
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-center gap-3">
+        <CardContent className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex items-center gap-3 p-3 bg-white dark:bg-slate-800 rounded-lg border border-green-200 dark:border-green-700">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-sm">
-                <span className="font-medium">MongoDB Connected:</span> Real data from your database
+              <span className="text-sm text-slate-700 dark:text-slate-300">
+                <span className="font-medium text-slate-900 dark:text-white">MongoDB Connected:</span> Real data from your database
               </span>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 p-3 bg-white dark:bg-slate-800 rounded-lg border border-blue-200 dark:border-blue-700">
               <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-              <span className="text-sm">
-                <span className="font-medium">Real-time Updates:</span> 30-second refresh intervals
+              <span className="text-sm text-slate-700 dark:text-slate-300">
+                <span className="font-medium text-slate-900 dark:text-white">Real-time Updates:</span> 30-second refresh intervals
               </span>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 p-3 bg-white dark:bg-slate-800 rounded-lg border border-purple-200 dark:border-purple-700">
               <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
-              <span className="text-sm">
-                <span className="font-medium">Dark Theme:</span> Optimized for collaboration
+              <span className="text-sm text-slate-700 dark:text-slate-300">
+                <span className="font-medium text-slate-900 dark:text-white">Theme Optimized:</span> Enhanced for collaboration
               </span>
             </div>
           </div>
