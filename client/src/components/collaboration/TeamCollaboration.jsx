@@ -254,7 +254,7 @@ export function TeamCollaboration({
             <Card className="bg-card border-border">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-blue-500" />
+                  <Users className="h-5 w-5 text-primary" />
                   <div>
                     <p className="text-2xl font-bold text-foreground">{stats.totalMembers || 0}</p>
                     <p className="text-xs text-muted-foreground">Team Members</p>
@@ -266,7 +266,7 @@ export function TeamCollaboration({
             <Card className="bg-card border-border">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5 text-purple-500" />
+                  <MessageSquare className="h-5 w-5 text-primary" />
                   <div>
                     <p className="text-2xl font-bold text-foreground">{stats.totalComments || 0}</p>
                     <p className="text-xs text-muted-foreground">Comments</p>
@@ -278,7 +278,7 @@ export function TeamCollaboration({
             <Card className="bg-card border-border">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-green-500" />
+                  <Activity className="h-5 w-5 text-success" />
                   <div>
                     <p className="text-2xl font-bold text-foreground">{stats.recentActivities || 0}</p>
                     <p className="text-xs text-muted-foreground">Activities</p>
@@ -290,7 +290,7 @@ export function TeamCollaboration({
             <Card className="bg-card border-border">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-orange-500" />
+                  <Clock className="h-5 w-5 text-accent" />
                   <div>
                     <p className="text-2xl font-bold text-foreground">{stats.avgResponseTime || "N/A"}</p>
                     <p className="text-xs text-muted-foreground">Avg Response</p>
