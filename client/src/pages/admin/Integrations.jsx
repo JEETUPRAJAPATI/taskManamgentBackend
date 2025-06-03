@@ -455,13 +455,13 @@ export default function Integrations() {
             </Card>
 
             {/* Outlook Calendar Setup */}
-            <Card>
+            <Card className="border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-lg">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
+                <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+                  <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   Outlook Calendar Integration
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-slate-600 dark:text-slate-300 font-medium">
                   Connect your Outlook Calendar to automatically convert events into tasks
                 </CardDescription>
               </CardHeader>
