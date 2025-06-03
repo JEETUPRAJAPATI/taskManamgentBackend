@@ -24,7 +24,42 @@ export const sessions = pgTable(
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
-// Organizations table
+// Subscription Plans table
+export const subscriptionPlans = pgTable("subscription_plans", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: varchar("name", { length: 100 }).notNull(),
+  description: text("description"),
+  monthlyPrice: integer("monthly_price").notNull(), // in cents
+  yearlyPrice: integer("yearly_price").notNull(), // in cents
+  features: jsonb("features").default([]),
+  maxUsers: integer("max_users").default(10),
+  maxProjects: integer("max_projects").default(5),
+  maxStorage: integer("max_storage").default(1024), // in MB
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Companies table (Multi-tenant)
+export const companies = pgTable("companies", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: varchar("name", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 100 }).notNull().unique(),
+  description: text("description"),
+  logo: varchar("logo", { length: 500 }),
+  adminEmail: varchar("admin_email", { length: 255 }).notNull(),
+  subscriptionPlanId: uuid("subscription_plan_id").references(() => subscriptionPlans.id),
+  subscriptionStatus: varchar("subscription_status", { length: 50 }).default("active"), // active, suspended, cancelled
+  subscriptionStartDate: timestamp("subscription_start_date"),
+  subscriptionEndDate: timestamp("subscription_end_date"),
+  billingCycle: varchar("billing_cycle", { length: 20 }).default("monthly"), // monthly, yearly
+  isActive: boolean("is_active").default(true),
+  settings: jsonb("settings").default({}),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Organizations table (kept for backward compatibility)
 export const organizations = pgTable("organizations", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name", { length: 255 }).notNull(),
@@ -34,6 +69,25 @@ export const organizations = pgTable("organizations", {
   maxUsers: integer("max_users").default(10),
   isActive: boolean("is_active").default(true),
   settings: jsonb("settings").default({}),
+  companyId: uuid("company_id").references(() => companies.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Transactions table
+export const transactions = pgTable("transactions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  companyId: uuid("company_id").references(() => companies.id).notNull(),
+  subscriptionPlanId: uuid("subscription_plan_id").references(() => subscriptionPlans.id),
+  amount: integer("amount").notNull(), // in cents
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  paymentMethod: varchar("payment_method", { length: 50 }), // credit_card, bank_transfer, paypal
+  transactionId: varchar("transaction_id", { length: 255 }), // external payment processor ID
+  status: varchar("status", { length: 50 }).default("pending"), // pending, success, failed, refunded
+  billingPeriodStart: timestamp("billing_period_start"),
+  billingPeriodEnd: timestamp("billing_period_end"),
+  description: text("description"),
+  metadata: jsonb("metadata").default({}),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -50,8 +104,9 @@ export const users = pgTable("users", {
   emailVerificationToken: varchar("email_verification_token", { length: 255 }),
   passwordResetToken: varchar("password_reset_token", { length: 255 }),
   passwordResetExpires: timestamp("password_reset_expires"),
+  companyId: uuid("company_id").references(() => companies.id),
   organizationId: uuid("organization_id").references(() => organizations.id),
-  role: varchar("role", { length: 50 }).default("member"), // member, admin, super_admin
+  role: varchar("role", { length: 50 }).default("member"), // member, admin, company_admin, super_admin
   isActive: boolean("is_active").default(true),
   lastLoginAt: timestamp("last_login_at"),
   preferences: jsonb("preferences").default({}),
@@ -213,7 +268,18 @@ export type UpsertUserDashboardView = typeof userDashboardViews.$inferInsert;
 export type UsageTracking = typeof usageTracking.$inferSelect;
 export type UpsertUsageTracking = typeof usageTracking.$inferInsert;
 
+// Multi-tenant types
+export type SubscriptionPlan = typeof subscriptionPlans.$inferSelect;
+export type UpsertSubscriptionPlan = typeof subscriptionPlans.$inferInsert;
+export type Company = typeof companies.$inferSelect;
+export type UpsertCompany = typeof companies.$inferInsert;
+export type Transaction = typeof transactions.$inferSelect;
+export type UpsertTransaction = typeof transactions.$inferInsert;
+
 // Insert schemas for validation
+export const insertSubscriptionPlanSchema = createInsertSchema(subscriptionPlans);
+export const insertCompanySchema = createInsertSchema(companies);
+export const insertTransactionSchema = createInsertSchema(transactions);
 export const insertOrganizationSchema = createInsertSchema(organizations);
 export const insertUserSchema = createInsertSchema(users);
 export const insertProjectSchema = createInsertSchema(projects);
@@ -238,6 +304,30 @@ export const registerSchema = z.object({
   firstName: z.string().min(1),
   lastName: z.string().min(1),
   organizationName: z.string().optional(),
+});
+
+// Company registration schema
+export const companyRegistrationSchema = z.object({
+  companyName: z.string().min(2, "Company name must be at least 2 characters"),
+  adminEmail: z.string().email("Valid email address required"),
+  adminFirstName: z.string().min(1, "First name is required"),
+  adminLastName: z.string().min(1, "Last name is required"),
+  adminPassword: z.string().min(8, "Password must be at least 8 characters"),
+  subscriptionPlanId: z.string().uuid("Valid subscription plan required"),
+  description: z.string().optional(),
+});
+
+// Subscription plan schema
+export const subscriptionPlanSchema = z.object({
+  name: z.string().min(1, "Plan name is required"),
+  description: z.string().optional(),
+  monthlyPrice: z.number().min(0, "Monthly price must be non-negative"),
+  yearlyPrice: z.number().min(0, "Yearly price must be non-negative"),
+  features: z.array(z.string()).default([]),
+  maxUsers: z.number().min(1, "Must allow at least 1 user"),
+  maxProjects: z.number().min(1, "Must allow at least 1 project"),
+  maxStorage: z.number().min(100, "Must provide at least 100MB storage"),
+  isActive: z.boolean().default(true),
 });
 
 export const forgotPasswordSchema = z.object({
