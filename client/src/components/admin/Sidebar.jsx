@@ -25,6 +25,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
     { name: "Collaboration", href: "/collaboration", icon: MessageSquare },
     { name: "Forms", href: "/forms", icon: FileText },
     { name: "Users", href: "/users", icon: Users },
+    { name: "Role Management", href: "/roles", icon: Shield },
     { name: "Companies", href: "/companies", icon: Building2 },
     { name: "Subscription Plans", href: "/subscription-plans", icon: CreditCard },
     { name: "Transactions", href: "/transactions", icon: Receipt },
