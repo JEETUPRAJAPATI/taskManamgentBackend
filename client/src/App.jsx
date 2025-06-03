@@ -11,6 +11,7 @@ import Companies from './pages/admin/Companies';
 import SubscriptionPlans from './pages/admin/SubscriptionPlans';
 import Transactions from './pages/admin/Transactions';
 import Roles from './pages/admin/Roles';
+import Reports from './pages/admin/Reports';
 import { AdminLayout } from './components/admin/AdminLayout';
 import { Toaster } from './components/ui/toaster';
 
@@ -40,6 +41,7 @@ function App() {
           <Route path="/subscription-plans" component={SubscriptionPlans} />
           <Route path="/transactions" component={Transactions} />
           <Route path="/roles" component={Roles} />
+          <Route path="/reports" component={Reports} />
           <Route>
             <div className="flex items-center justify-center h-64">
               <div className="text-center">

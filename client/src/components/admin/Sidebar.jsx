@@ -180,7 +180,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
 
             {/* Business Section */}
             <div className="space-y-1">
-              {navigation.slice(7).map((item, index) => {
+              {navigation.slice(8).map((item, index) => {
                 const Icon = item.icon;
                 return (
                   <div key={item.name}>
