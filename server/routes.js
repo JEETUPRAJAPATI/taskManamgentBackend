@@ -1040,4 +1040,13 @@ async function setupEmailCalendarRoutes(app) {
       res.status(500).json({ message: "Failed to export report" });
     }
   });
+
+  // Health check endpoint
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
+  // Create HTTP server
+  const httpServer = createServer(app);
+  return httpServer;
 }
