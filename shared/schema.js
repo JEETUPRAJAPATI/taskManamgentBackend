@@ -100,16 +100,13 @@ export const users = pgTable("users", {
   lastName: varchar("last_name", { length: 100 }),
   profileImageUrl: varchar("profile_image_url", { length: 500 }),
   passwordHash: varchar("password_hash", { length: 255 }),
-  emailVerified: boolean("email_verified").default(false),
-  emailVerificationToken: varchar("email_verification_token", { length: 255 }),
-  passwordResetToken: varchar("password_reset_token", { length: 255 }),
-  passwordResetExpires: timestamp("password_reset_expires"),
-  companyId: uuid("company_id").references(() => companies.id),
-  organizationId: uuid("organization_id").references(() => organizations.id),
-  role: varchar("role", { length: 50 }).default("member"), // member, admin, company_admin, super_admin
+  role: varchar("role", { length: 50 }).default("member"), // member, admin, super_admin
   isActive: boolean("is_active").default(true),
+  emailVerified: boolean("email_verified").default(false),
   lastLoginAt: timestamp("last_login_at"),
-  preferences: jsonb("preferences").default({}),
+  organizationId: uuid("organization_id").references(() => organizations.id),
+  companyId: uuid("company_id").references(() => companies.id),
+  settings: jsonb("settings").default({}),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -119,77 +116,77 @@ export const projects = pgTable("projects", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
+  status: varchar("status", { length: 50 }).default("active"), // active, completed, paused, cancelled
+  priority: varchar("priority", { length: 20 }).default("medium"), // low, medium, high, urgent
+  startDate: timestamp("start_date"),
+  endDate: timestamp("end_date"),
+  ownerId: uuid("owner_id").references(() => users.id).notNull(),
   organizationId: uuid("organization_id").references(() => organizations.id),
-  ownerId: uuid("owner_id").references(() => users.id),
-  status: varchar("status", { length: 50 }).default("active"), // active, archived, completed
-  color: varchar("color", { length: 7 }).default("#3B82F6"),
-  isPrivate: boolean("is_private").default(false),
+  companyId: uuid("company_id").references(() => companies.id),
   settings: jsonb("settings").default({}),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Task statuses table (configurable per organization)
+// Task Statuses table
 export const taskStatuses = pgTable("task_statuses", {
   id: uuid("id").primaryKey().defaultRandom(),
-  organizationId: uuid("organization_id").references(() => organizations.id),
   name: varchar("name", { length: 100 }).notNull(),
-  color: varchar("color", { length: 7 }).default("#6B7280"),
-  order: integer("order").default(0),
+  color: varchar("color", { length: 7 }).default("#gray"), // hex color
+  position: integer("position").default(0),
   isDefault: boolean("is_default").default(false),
-  isCompleted: boolean("is_completed").default(false),
+  organizationId: uuid("organization_id").references(() => organizations.id),
+  companyId: uuid("company_id").references(() => companies.id),
   createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 // Tasks table
 export const tasks = pgTable("tasks", {
   id: uuid("id").primaryKey().defaultRandom(),
-  title: varchar("title", { length: 500 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
-  organizationId: uuid("organization_id").references(() => organizations.id),
-  projectId: uuid("project_id").references(() => projects.id),
-  createdById: uuid("created_by_id").references(() => users.id).notNull(),
-  assignedToId: uuid("assigned_to_id").references(() => users.id),
   statusId: uuid("status_id").references(() => taskStatuses.id),
   priority: varchar("priority", { length: 20 }).default("medium"), // low, medium, high, urgent
   dueDate: timestamp("due_date"),
   completedAt: timestamp("completed_at"),
-  tags: jsonb("tags").default([]),
-  metadata: jsonb("metadata").default({}), // For parsed data from smart input
-  isRecurring: boolean("is_recurring").default(false),
-  recurringConfig: jsonb("recurring_config"),
-  parentTaskId: uuid("parent_task_id").references(() => tasks.id),
-  order: integer("order").default(0),
   estimatedHours: integer("estimated_hours"),
   actualHours: integer("actual_hours"),
+  projectId: uuid("project_id").references(() => projects.id),
+  assigneeId: uuid("assignee_id").references(() => users.id),
+  createdById: uuid("created_by_id").references(() => users.id).notNull(),
+  organizationId: uuid("organization_id").references(() => organizations.id),
+  companyId: uuid("company_id").references(() => companies.id),
+  tags: jsonb("tags").default([]),
+  metadata: jsonb("metadata").default({}),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Task comments/threads table
+// Task Comments table
 export const taskComments = pgTable("task_comments", {
   id: uuid("id").primaryKey().defaultRandom(),
-  taskId: uuid("task_id").references(() => tasks.id).notNull(),
-  userId: uuid("user_id").references(() => users.id).notNull(),
   content: text("content").notNull(),
-  mentions: jsonb("mentions").default([]), // Array of user IDs mentioned
-  attachments: jsonb("attachments").default([]),
+  taskId: uuid("task_id").references(() => tasks.id).notNull(),
+  authorId: uuid("author_id").references(() => users.id).notNull(),
+  parentId: uuid("parent_id").references(() => taskComments.id), // for nested comments
   isEdited: boolean("is_edited").default(false),
   editedAt: timestamp("edited_at"),
   createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Task assignments table (for multiple assignees)
+// Task Assignments table
 export const taskAssignments = pgTable("task_assignments", {
+  id: uuid("id").primaryKey().defaultRandom(),
   taskId: uuid("task_id").references(() => tasks.id).notNull(),
   userId: uuid("user_id").references(() => users.id).notNull(),
   assignedById: uuid("assigned_by_id").references(() => users.id).notNull(),
   assignedAt: timestamp("assigned_at").defaultNow(),
-}, (table) => ({
-  pk: primaryKey({ columns: [table.taskId, table.userId] }),
-}));
+  removedAt: timestamp("removed_at"),
+});
 
-// Task audit trail
+// Task Audit Logs table
 export const taskAuditLogs = pgTable("task_audit_logs", {
   id: uuid("id").primaryKey().defaultRandom(),
   taskId: uuid("task_id").references(() => tasks.id).notNull(),
@@ -197,86 +194,53 @@ export const taskAuditLogs = pgTable("task_audit_logs", {
   action: varchar("action", { length: 100 }).notNull(), // created, updated, assigned, completed, etc.
   oldValues: jsonb("old_values"),
   newValues: jsonb("new_values"),
-  metadata: jsonb("metadata").default({}),
-  createdAt: timestamp("created_at").defaultNow(),
+  changes: jsonb("changes"),
+  timestamp: timestamp("timestamp").defaultNow(),
 });
 
 // Notifications table
 export const notifications = pgTable("notifications", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id").references(() => users.id).notNull(),
-  type: varchar("type", { length: 100 }).notNull(), // task_assigned, task_completed, mention, etc.
   title: varchar("title", { length: 255 }).notNull(),
-  message: text("message"),
-  data: jsonb("data").default({}), // Additional data for the notification
+  message: text("message").notNull(),
+  type: varchar("type", { length: 50 }).notNull(), // task_assigned, task_updated, project_created, etc.
   isRead: boolean("is_read").default(false),
   readAt: timestamp("read_at"),
-  sentViaEmail: boolean("sent_via_email").default(false),
-  emailSentAt: timestamp("email_sent_at"),
+  relatedEntityType: varchar("related_entity_type", { length: 50 }), // task, project, user
+  relatedEntityId: uuid("related_entity_id"),
+  metadata: jsonb("metadata").default({}),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// User activities/dashboard views
+// User Dashboard Views table
 export const userDashboardViews = pgTable("user_dashboard_views", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id").references(() => users.id).notNull(),
-  name: varchar("name", { length: 255 }).notNull(),
-  type: varchar("type", { length: 100 }).notNull(), // due_today, overdue, upcoming, created_by_me, etc.
-  filters: jsonb("filters").default({}),
+  viewName: varchar("view_name", { length: 100 }).notNull(),
+  viewConfig: jsonb("view_config").notNull(), // stores dashboard layout, filters, etc.
   isDefault: boolean("is_default").default(false),
-  order: integer("order").default(0),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Organization usage tracking
+// Usage Tracking table
 export const usageTracking = pgTable("usage_tracking", {
   id: uuid("id").primaryKey().defaultRandom(),
-  organizationId: uuid("organization_id").references(() => organizations.id).notNull(),
+  companyId: uuid("company_id").references(() => companies.id).notNull(),
   month: varchar("month", { length: 7 }).notNull(), // YYYY-MM format
   activeUsers: integer("active_users").default(0),
   tasksCreated: integer("tasks_created").default(0),
-  tasksCompleted: integer("tasks_completed").default(0),
-  commentsPosted: integer("comments_posted").default(0),
-  storageUsed: integer("storage_used").default(0), // in bytes
+  projectsCreated: integer("projects_created").default(0),
+  storageUsed: integer("storage_used").default(0), // in MB
+  apiCalls: integer("api_calls").default(0),
   createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => [
-  index("idx_usage_org_month").on(table.organizationId, table.month),
+  primaryKey({ columns: [table.companyId, table.month] })
 ]);
 
-// Type exports
-export type Organization = typeof organizations.$inferSelect;
-export type UpsertOrganization = typeof organizations.$inferInsert;
-export type User = typeof users.$inferSelect;
-export type UpsertUser = typeof users.$inferInsert;
-export type Project = typeof projects.$inferSelect;
-export type UpsertProject = typeof projects.$inferInsert;
-export type TaskStatus = typeof taskStatuses.$inferSelect;
-export type UpsertTaskStatus = typeof taskStatuses.$inferInsert;
-export type Task = typeof tasks.$inferSelect;
-export type UpsertTask = typeof tasks.$inferInsert;
-export type TaskComment = typeof taskComments.$inferSelect;
-export type UpsertTaskComment = typeof taskComments.$inferInsert;
-export type TaskAssignment = typeof taskAssignments.$inferSelect;
-export type UpsertTaskAssignment = typeof taskAssignments.$inferInsert;
-export type TaskAuditLog = typeof taskAuditLogs.$inferSelect;
-export type UpsertTaskAuditLog = typeof taskAuditLogs.$inferInsert;
-export type Notification = typeof notifications.$inferSelect;
-export type UpsertNotification = typeof notifications.$inferInsert;
-export type UserDashboardView = typeof userDashboardViews.$inferSelect;
-export type UpsertUserDashboardView = typeof userDashboardViews.$inferInsert;
-export type UsageTracking = typeof usageTracking.$inferSelect;
-export type UpsertUsageTracking = typeof usageTracking.$inferInsert;
-
-// Multi-tenant types
-export type SubscriptionPlan = typeof subscriptionPlans.$inferSelect;
-export type UpsertSubscriptionPlan = typeof subscriptionPlans.$inferInsert;
-export type Company = typeof companies.$inferSelect;
-export type UpsertCompany = typeof companies.$inferInsert;
-export type Transaction = typeof transactions.$inferSelect;
-export type UpsertTransaction = typeof transactions.$inferInsert;
-
-// Insert schemas for validation
+// Zod validation schemas
 export const insertSubscriptionPlanSchema = createInsertSchema(subscriptionPlans);
 export const insertCompanySchema = createInsertSchema(companies);
 export const insertTransactionSchema = createInsertSchema(transactions);
@@ -292,64 +256,64 @@ export const insertNotificationSchema = createInsertSchema(notifications);
 export const insertUserDashboardViewSchema = createInsertSchema(userDashboardViews);
 export const insertUsageTrackingSchema = createInsertSchema(usageTracking);
 
-// Additional validation schemas
+// Auth schemas
 export const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 export const registerSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  organizationName: z.string().optional(),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  organizationName: z.string().min(1, "Organization name is required"),
 });
 
-// Company registration schema
 export const companyRegistrationSchema = z.object({
-  companyName: z.string().min(2, "Company name must be at least 2 characters"),
-  adminEmail: z.string().email("Valid email address required"),
+  companyName: z.string().min(1, "Company name is required"),
+  adminEmail: z.string().email("Invalid email address"),
+  adminPassword: z.string().min(8, "Password must be at least 8 characters"),
   adminFirstName: z.string().min(1, "First name is required"),
   adminLastName: z.string().min(1, "Last name is required"),
-  adminPassword: z.string().min(8, "Password must be at least 8 characters"),
-  subscriptionPlanId: z.string().uuid("Valid subscription plan required"),
-  description: z.string().optional(),
+  subscriptionPlanId: z.string().uuid("Invalid subscription plan"),
 });
 
-// Subscription plan schema
 export const subscriptionPlanSchema = z.object({
   name: z.string().min(1, "Plan name is required"),
   description: z.string().optional(),
-  monthlyPrice: z.number().min(0, "Monthly price must be non-negative"),
-  yearlyPrice: z.number().min(0, "Yearly price must be non-negative"),
-  features: z.array(z.string()).default([]),
+  monthlyPrice: z.number().min(0, "Price must be positive"),
+  yearlyPrice: z.number().min(0, "Price must be positive"),
+  features: z.array(z.string()),
   maxUsers: z.number().min(1, "Must allow at least 1 user"),
   maxProjects: z.number().min(1, "Must allow at least 1 project"),
   maxStorage: z.number().min(100, "Must provide at least 100MB storage"),
-  isActive: z.boolean().default(true),
 });
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email("Invalid email address"),
 });
 
 export const resetPasswordSchema = z.object({
-  token: z.string(),
-  password: z.string().min(6),
+  token: z.string().min(1, "Reset token is required"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 export const createTaskSchema = z.object({
-  title: z.string().min(1),
+  title: z.string().min(1, "Task title is required"),
   description: z.string().optional(),
-  projectId: z.string().uuid().optional(),
-  assignedToId: z.string().uuid().optional(),
   priority: z.enum(["low", "medium", "high", "urgent"]).default("medium"),
   dueDate: z.string().datetime().optional(),
+  projectId: z.string().uuid().optional(),
+  assigneeId: z.string().uuid().optional(),
   tags: z.array(z.string()).default([]),
 });
 
 export const smartTaskInputSchema = z.object({
-  input: z.string().min(1),
-  projectId: z.string().uuid().optional(),
+  input: z.string().min(1, "Task input is required"),
+  context: z.object({
+    projectId: z.string().uuid().optional(),
+    userId: z.string().uuid().optional(),
+    organizationId: z.string().uuid().optional(),
+  }).optional(),
 });

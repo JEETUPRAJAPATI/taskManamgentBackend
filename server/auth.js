@@ -1,32 +1,22 @@
 import { storage } from "./mongodb-storage.js";
 import jwt from "jsonwebtoken";
-import { Request, Response, NextFunction } from "express";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-jwt-secret-key";
 const JWT_EXPIRES_IN = "7d";
 
-export interface AuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    organizationId?: string;
-    role: string;
-  };
-}
-
-export function generateToken(user: { id: string; email: string; organizationId?: string; role: string }) {
+export function generateToken(user) {
   return jwt.sign(user, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 }
 
-export function verifyToken(token: string) {
+export function verifyToken(token) {
   try {
-    return jwt.verify(token, JWT_SECRET) as { id: string; email: string; organizationId?: string; role: string };
+    return jwt.verify(token, JWT_SECRET);
   } catch (error) {
     return null;
   }
 }
 
-export async function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+export async function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -48,15 +38,15 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
   req.user = {
     id: user.id,
     email: user.email,
-    organizationId: user.organizationId || undefined,
+    organizationId: user.organization || undefined,
     role: user.role,
   };
 
   next();
 }
 
-export function requireRole(roles: string[]) {
-  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export function requireRole(roles) {
+  return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ message: 'Authentication required' });
     }
@@ -69,7 +59,7 @@ export function requireRole(roles: string[]) {
   };
 }
 
-export function requireOrganization(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+export function requireOrganization(req, res, next) {
   if (!req.user?.organizationId) {
     return res.status(403).json({ message: 'Organization membership required' });
   }
