@@ -3,6 +3,7 @@ import { FloatingSidebar } from '@/components/ui/floating-sidebar';
 import { QuickActionModals } from '@/components/modals/QuickActionModals';
 import { useCreateTask } from '@/hooks/useTasks';
 import { useToast } from '@/hooks/use-toast';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { queryClient } from '@/lib/queryClient';
 
 const QuickActionsContext = createContext();
@@ -19,6 +20,19 @@ export function QuickActionsProvider({ children }) {
   const [activeModal, setActiveModal] = useState(null);
   const createTaskMutation = useCreateTask();
   const { toast } = useToast();
+
+  // Define keyboard shortcuts
+  const shortcuts = {
+    'ctrl+n': () => handleAction('create-task'),
+    'ctrl+k': () => handleAction('search'),
+    'ctrl+shift+n': () => handleAction('notifications'),
+    'ctrl+shift+c': () => handleAction('calendar'),
+    'ctrl+shift+t': () => handleAction('team'),
+    'ctrl+shift+f': () => handleAction('quick-filters'),
+    'escape': () => setActiveModal(null),
+  };
+
+  useKeyboardShortcuts(shortcuts);
 
   const handleAction = (actionId) => {
     switch (actionId) {
