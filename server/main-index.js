@@ -25,22 +25,23 @@ const connectToMongoDB = async () => {
 
 // Initialize comprehensive sample data
 async function initializeSampleData() {
-  const { Organization, User, Project, Task, TaskStatus, Form, ProcessFlow, FormResponse } = await import('./models.js');
-  
-  // Clear existing data and regenerate comprehensive sample data
   try {
-    await Organization.deleteMany({});
-    await User.deleteMany({});
-    await Project.deleteMany({});
-    await Task.deleteMany({});
-    await TaskStatus.deleteMany({});
-    await Form.deleteMany({});
-    console.log('Cleared existing data for regeneration');
-  } catch (error) {
-    console.log('No existing data to clear');
-  }
+    const { Organization, User, Project, Task, TaskStatus, Form, ProcessFlow, FormResponse } = await import('./models.js');
+    
+    // Clear existing data and regenerate comprehensive sample data
+    try {
+      await Organization.deleteMany({});
+      await User.deleteMany({});
+      await Project.deleteMany({});
+      await Task.deleteMany({});
+      await TaskStatus.deleteMany({});
+      await Form.deleteMany({});
+      console.log('Cleared existing data for regeneration');
+    } catch (error) {
+      console.log('No existing data to clear');
+    }
 
-  try {
+    try {
     // Create sample organizations
     const organizations = [
       {
