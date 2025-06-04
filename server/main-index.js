@@ -324,8 +324,11 @@ async function initializeSampleData() {
 
     console.log('Comprehensive sample data initialized successfully');
     console.log(`Created ${savedOrgs.length} organizations, ${savedUsers.length} users, ${savedProjects.length} projects, and ${tasks.length} tasks`);
+    } catch (error) {
+      console.error('Error initializing sample data:', error);
+    }
   } catch (error) {
-    console.error('Error initializing sample data:', error);
+    console.error('Critical error in sample data initialization:', error);
   }
 }
 
