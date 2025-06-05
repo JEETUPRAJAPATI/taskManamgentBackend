@@ -24,7 +24,7 @@ export function useCreateTask() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async (data: InsertTask) => {
       const response = await apiRequest("POST", "/api/tasks", data);
       return response.json();
     },
@@ -39,7 +39,7 @@ export function useUpdateTask() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async ({ id, data }) => {
+    mutationFn: async ({ id, data }: { id: number; data: Partial<InsertTask> }) => {
       const response = await apiRequest("PUT", `/api/tasks/${id}`, data);
       return response.json();
     },
@@ -54,7 +54,7 @@ export function useDeleteTask() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async (id: number) => {
       await apiRequest("DELETE", `/api/tasks/${id}`);
     },
     onSuccess: () => {
