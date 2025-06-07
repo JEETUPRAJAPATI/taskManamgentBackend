@@ -1,13 +1,29 @@
 #!/usr/bin/env node
 
-// Development server startup - Pure JavaScript/Node.js only
-process.env.NODE_ENV = 'development';
+// Development startup for TaskSetu JavaScript project
+import { spawn } from 'child_process';
 
-console.log('Starting TaskSetu Server with Node.js...');
-console.log('Environment:', process.env.NODE_ENV);
+console.log('Starting TaskSetu development server...');
 
-// Start the server
-import('./server/index.js').catch(err => {
-  console.error('Server startup failed:', err);
+const serverProcess = spawn('node', ['server/index.js'], {
+  env: {
+    ...process.env,
+    NODE_ENV: 'development'
+  },
+  stdio: 'inherit'
+});
+
+serverProcess.on('error', (err) => {
+  console.error('Failed to start server:', err);
   process.exit(1);
+});
+
+// Handle shutdown gracefully
+process.on('SIGINT', () => {
+  console.log('\nShutting down TaskSetu server...');
+  serverProcess.kill('SIGINT');
+});
+
+process.on('SIGTERM', () => {
+  serverProcess.kill('SIGTERM');
 });
