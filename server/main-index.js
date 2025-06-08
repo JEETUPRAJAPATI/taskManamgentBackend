@@ -74,8 +74,35 @@ async function initializeSampleData() {
     // Create sample users with different roles
     const bcrypt = await import('bcryptjs');
     const defaultPassword = await bcrypt.hash('demo123', 10);
+    const testPassword = await bcrypt.hash('password123', 10);
+    
+    // Create super admin user first
+    const superAdminUser = new User({
+      firstName: "Super",
+      lastName: "Admin",
+      email: "superadmin@test.com",
+      username: "superadmin",
+      passwordHash: testPassword,
+      role: "super_admin",
+      isActive: true,
+      emailVerified: true
+    });
+    await superAdminUser.save();
     
     const users = [
+      // Test admin user for company
+      {
+        firstName: "Test",
+        lastName: "Admin",
+        email: "admin@test.com",
+        username: "testadmin",
+        passwordHash: testPassword,
+        organization: savedOrgs[0]._id,
+        role: "admin",
+        department: "Administration",
+        isActive: true,
+        emailVerified: true
+      },
       {
         firstName: "John",
         lastName: "Doe",

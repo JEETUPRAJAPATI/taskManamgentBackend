@@ -9,6 +9,10 @@ export class AuthService {
     this.JWT_EXPIRES_IN = '7d';
     this.VERIFICATION_TOKEN_EXPIRES = 24 * 60 * 60 * 1000; // 24 hours
     this.RESET_TOKEN_EXPIRES = 30 * 60 * 1000; // 30 minutes
+    
+    // Testing configuration
+    this.BYPASS_EMAIL_VERIFICATION = process.env.NODE_ENV === 'development';
+    this.AUTO_AUTHENTICATE_ON_REGISTER = process.env.NODE_ENV === 'development';
   }
 
   // Generate JWT token
@@ -65,7 +69,35 @@ export class AuthService {
       throw new Error('User with this email already exists');
     }
 
-    // Generate verification code
+    // Auto-authenticate in development mode
+    if (this.AUTO_AUTHENTICATE_ON_REGISTER) {
+      // Create user directly without verification
+      const hashedPassword = await this.hashPassword('temp123'); // Temporary password
+      
+      const userData = {
+        firstName,
+        lastName,
+        email,
+        username: email.split('@')[0],
+        passwordHash: hashedPassword,
+        role: 'user',
+        isActive: true,
+        emailVerified: true
+      };
+
+      const user = await storage.createUser(userData);
+      const token = this.generateToken(user);
+      
+      return {
+        success: true,
+        user,
+        token,
+        autoAuthenticated: true,
+        message: 'Auto-authenticated for testing. Please set a password.'
+      };
+    }
+
+    // Normal flow with email verification
     const verificationCode = this.generateVerificationCode();
     const verificationExpires = new Date(Date.now() + this.VERIFICATION_TOKEN_EXPIRES);
 
@@ -103,7 +135,49 @@ export class AuthService {
       throw new Error('Organization name already exists');
     }
 
-    // Generate verification code
+    // Auto-authenticate in development mode
+    if (this.AUTO_AUTHENTICATE_ON_REGISTER) {
+      // Create organization first
+      const organization = await storage.createOrganization({
+        name: organizationName,
+        slug: orgSlug,
+        settings: {
+          maxUsers: 10,
+          features: ['tasks', 'projects', 'collaboration']
+        },
+        subscriptionPlan: 'basic',
+        isActive: true
+      });
+
+      // Create admin user directly
+      const hashedPassword = await this.hashPassword('temp123'); // Temporary password
+      
+      const adminUserData = {
+        firstName,
+        lastName,
+        email,
+        username: email.split('@')[0],
+        passwordHash: hashedPassword,
+        organization: organization._id,
+        role: 'admin',
+        isActive: true,
+        emailVerified: true
+      };
+
+      const user = await storage.createUser(adminUserData);
+      const token = this.generateToken(user);
+      
+      return {
+        success: true,
+        user,
+        token,
+        organization,
+        autoAuthenticated: true,
+        message: 'Auto-authenticated for testing. Please set a password.'
+      };
+    }
+
+    // Normal flow with email verification
     const verificationCode = this.generateVerificationCode();
     const verificationExpires = new Date(Date.now() + this.VERIFICATION_TOKEN_EXPIRES);
 
