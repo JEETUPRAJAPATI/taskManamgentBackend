@@ -25,10 +25,15 @@ import { Toaster } from './components/ui/toaster';
 
 // Authentication Components
 import RegistrationChoice from './pages/auth/RegistrationChoice';
+import IndividualRegistration from './pages/auth/IndividualRegistration';
+import OrganizationRegistration from './pages/auth/OrganizationRegistration';
 import Login from './pages/auth/Login';
 import EmailVerification from './pages/auth/EmailVerification';
 import ResetPassword from './pages/auth/ResetPassword';
 import AcceptInvitation from './pages/auth/AcceptInvitation';
+
+// Components
+import RoleBasedRedirect from './components/RoleBasedRedirect';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,7 +53,7 @@ function useUserRole() {
 }
 
 // Route protection wrapper
-function ProtectedRoute({ component: Component, requiredRole, ...props }) {
+function ProtectedRoute({ component: Component, requiredRole, allowedRoles = [], ...props }) {
   const { data: user, isLoading } = useUserRole();
   const [, setLocation] = useLocation();
 
@@ -70,18 +75,45 @@ function ProtectedRoute({ component: Component, requiredRole, ...props }) {
     return null;
   }
 
-  if (requiredRole && user.role !== requiredRole) {
+  // Check if user has required role or is in allowed roles
+  const hasAccess = () => {
+    if (requiredRole) {
+      return user.role === requiredRole;
+    }
+    if (allowedRoles.length > 0) {
+      return allowedRoles.includes(user.role);
+    }
+    return true; // No role requirement
+  };
+
+  if (!hasAccess()) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
           <p className="text-gray-600">You don't have permission to access this area.</p>
-          <button 
-            onClick={() => setLocation(user.role === 'super_admin' ? '/super-admin' : '/dashboard')}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            Go to Dashboard
-          </button>
+          <div className="mt-4 space-x-2">
+            <button 
+              onClick={() => setLocation('/login')}
+              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+            >
+              Login as Different User
+            </button>
+            <button 
+              onClick={() => {
+                if (user.role === 'super_admin') {
+                  setLocation('/super-admin');
+                } else if (user.role === 'admin' || user.role === 'member') {
+                  setLocation('/dashboard');
+                } else {
+                  setLocation('/login');
+                }
+              }}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Go to Dashboard
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -100,6 +132,8 @@ function App() {
       <Switch>
         {/* Public Authentication Routes - No Layout */}
         <Route path="/register" component={RegistrationChoice} />
+        <Route path="/register/individual" component={IndividualRegistration} />
+        <Route path="/register/organization" component={OrganizationRegistration} />
         <Route path="/login" component={Login} />
         <Route path="/verify-email" component={EmailVerification} />
         <Route path="/reset-password" component={ResetPassword} />
@@ -162,7 +196,7 @@ function App() {
                 <ProtectedRoute component={Users} />
               </Route>
               <Route path="/user-management">
-                <ProtectedRoute component={UserManagement} requiredRole="admin" />
+                <ProtectedRoute component={UserManagement} allowedRoles={["admin"]} />
               </Route>
               <Route path="/projects">
                 <ProtectedRoute component={Projects} />
