@@ -269,29 +269,29 @@ export function TaskTableView() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Filters and Search */}
       <Card className="border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
-            <Filter className="h-5 w-5 mr-2 text-blue-600" />
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-slate-900 dark:text-white flex items-center">
+            <Filter className="h-4 w-4 mr-1 text-blue-600" />
             Search & Filters
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <CardContent className="space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-slate-400" />
               <Input
                 placeholder="Search tasks..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 border-slate-300 focus:border-blue-500"
+                className="pl-7 border-slate-300 focus:border-blue-500 h-8 text-sm"
               />
             </div>
             
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="border-slate-300">
+              <SelectTrigger className="border-slate-300 h-8 text-sm">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -304,7 +304,7 @@ export function TaskTableView() {
             </Select>
 
             <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-              <SelectTrigger className="border-slate-300">
+              <SelectTrigger className="border-slate-300 h-8 text-sm">
                 <SelectValue placeholder="Filter by priority" />
               </SelectTrigger>
               <SelectContent>
@@ -316,7 +316,7 @@ export function TaskTableView() {
             </Select>
 
             <Select value={userFilter} onValueChange={setUserFilter}>
-              <SelectTrigger className="border-slate-300">
+              <SelectTrigger className="border-slate-300 h-8 text-sm">
                 <SelectValue placeholder="Filter by user" />
               </SelectTrigger>
               <SelectContent>
@@ -331,14 +331,14 @@ export function TaskTableView() {
           </div>
 
           <div className="flex items-center justify-between">
-            <p className="text-sm text-slate-600 dark:text-slate-400">
+            <p className="text-xs text-slate-600 dark:text-slate-400">
               Showing {tasks.length} of {totalTasks} tasks
             </p>
             <Button 
               onClick={() => setShowCreateForm(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-blue-600 hover:bg-blue-700 text-white h-8 text-sm px-3 py-1"
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-3 w-3 mr-1" />
               Add Task
             </Button>
           </div>
@@ -353,42 +353,42 @@ export function TaskTableView() {
               <TableHeader>
                 <TableRow className="border-slate-200 dark:border-slate-700">
                   <TableHead 
-                    className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 font-semibold text-slate-700 dark:text-slate-300"
+                    className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 font-medium text-slate-700 dark:text-slate-300 py-2 text-sm"
                     onClick={() => handleSort("title")}
                   >
                     <div className="flex items-center space-x-1">
                       <span>Task Title</span>
                       {sortBy === "title" && (
-                        sortOrder === "asc" ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />
+                        sortOrder === "asc" ? <SortAsc className="h-3 w-3" /> : <SortDesc className="h-3 w-3" />
                       )}
                     </div>
                   </TableHead>
-                  <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Description</TableHead>
-                  <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Assigned User</TableHead>
+                  <TableHead className="font-medium text-slate-700 dark:text-slate-300 py-2 text-sm">Description</TableHead>
+                  <TableHead className="font-medium text-slate-700 dark:text-slate-300 py-2 text-sm">Assigned User</TableHead>
                   <TableHead 
-                    className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 font-semibold text-slate-700 dark:text-slate-300"
+                    className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 font-medium text-slate-700 dark:text-slate-300 py-2 text-sm"
                     onClick={() => handleSort("dueDate")}
                   >
                     <div className="flex items-center space-x-1">
                       <span>Due Date</span>
                       {sortBy === "dueDate" && (
-                        sortOrder === "asc" ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />
+                        sortOrder === "asc" ? <SortAsc className="h-3 w-3" /> : <SortDesc className="h-3 w-3" />
                       )}
                     </div>
                   </TableHead>
-                  <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Status</TableHead>
+                  <TableHead className="font-medium text-slate-700 dark:text-slate-300 py-2 text-sm">Status</TableHead>
                   <TableHead 
-                    className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 font-semibold text-slate-700 dark:text-slate-300"
+                    className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 font-medium text-slate-700 dark:text-slate-300 py-2 text-sm"
                     onClick={() => handleSort("priority")}
                   >
                     <div className="flex items-center space-x-1">
                       <span>Priority</span>
                       {sortBy === "priority" && (
-                        sortOrder === "asc" ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />
+                        sortOrder === "asc" ? <SortAsc className="h-3 w-3" /> : <SortDesc className="h-3 w-3" />
                       )}
                     </div>
                   </TableHead>
-                  <TableHead className="font-semibold text-slate-700 dark:text-slate-300 text-right">Actions</TableHead>
+                  <TableHead className="font-medium text-slate-700 dark:text-slate-300 text-right py-2 text-sm">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
