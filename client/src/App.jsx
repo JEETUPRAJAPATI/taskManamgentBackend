@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import Dashboard from './pages/admin/CompactDashboard';
 import Tasks from './pages/admin/Tasks';
 import Users from './pages/admin/Users';
+import UserManagement from './pages/admin/UserManagement';
 import Projects from './pages/admin/Projects';
 import FormBuilder from './pages/admin/FormBuilder';
 import Integrations from './pages/admin/Integrations';
@@ -20,6 +21,13 @@ import SystemLogs from './pages/super-admin/SystemLogs';
 import AdminManagement from './pages/super-admin/AdminManagement';
 
 import { Toaster } from './components/ui/toaster';
+
+// Authentication Components
+import RegistrationChoice from './pages/auth/RegistrationChoice';
+import Login from './pages/auth/Login';
+import EmailVerification from './pages/auth/EmailVerification';
+import ResetPassword from './pages/auth/ResetPassword';
+import AcceptInvitation from './pages/auth/AcceptInvitation';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -120,27 +128,40 @@ function App() {
           </Switch>
         </SuperAdminLayout>
       ) : (
-        <AdminLayout>
-          <Switch>
-            <Route path="/" component={Dashboard} />
-            <Route path="/dashboard" component={Dashboard} />
-            <Route path="/tasks" component={Tasks} />
-            <Route path="/users" component={Users} />
-            <Route path="/projects" component={Projects} />
-            <Route path="/forms" component={FormBuilder} />
-            <Route path="/integrations" component={Integrations} />
-            <Route path="/roles" component={Roles} />
-            <Route path="/reports" component={Reports} />
-            <Route>
-              <div className="flex items-center justify-center h-64">
-                <div className="text-center">
-                  <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Page Not Found</h2>
-                  <p className="text-slate-600 dark:text-slate-300">The page you're looking for doesn't exist.</p>
-                </div>
-              </div>
-            </Route>
-          </Switch>
-        </AdminLayout>
+        <Switch>
+          {/* Authentication Routes - No Layout */}
+          <Route path="/register" component={RegistrationChoice} />
+          <Route path="/login" component={Login} />
+          <Route path="/verify-email" component={EmailVerification} />
+          <Route path="/reset-password" component={ResetPassword} />
+          <Route path="/accept-invitation" component={AcceptInvitation} />
+          
+          {/* Protected Admin Routes */}
+          <Route>
+            <AdminLayout>
+              <Switch>
+                <Route path="/" component={Dashboard} />
+                <Route path="/dashboard" component={Dashboard} />
+                <Route path="/tasks" component={Tasks} />
+                <Route path="/users" component={Users} />
+                <Route path="/user-management" component={UserManagement} />
+                <Route path="/projects" component={Projects} />
+                <Route path="/forms" component={FormBuilder} />
+                <Route path="/integrations" component={Integrations} />
+                <Route path="/roles" component={Roles} />
+                <Route path="/reports" component={Reports} />
+                <Route>
+                  <div className="flex items-center justify-center h-64">
+                    <div className="text-center">
+                      <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Page Not Found</h2>
+                      <p className="text-slate-600 dark:text-slate-300">The page you're looking for doesn't exist.</p>
+                    </div>
+                  </div>
+                </Route>
+              </Switch>
+            </AdminLayout>
+          </Route>
+        </Switch>
       )}
       <Toaster />
     </QueryClientProvider>
