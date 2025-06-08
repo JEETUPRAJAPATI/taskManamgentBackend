@@ -24,7 +24,7 @@ export function AdminLayout({ children }) {
       />
       
       <div className={`transition-all duration-300 ${
-        sidebarOpen ? 'lg:ml-64' : 'lg:ml-16'
+        sidebarOpen ? 'lg:ml-56' : 'lg:ml-14'
       }`}>
         <Header 
           onMenuClick={toggleMobileMenu}

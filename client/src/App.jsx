@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, Switch } from 'wouter';
-import Dashboard from './pages/admin/Dashboard';
+import Dashboard from './pages/admin/CompactDashboard';
 import Tasks from './pages/admin/Tasks';
 import Users from './pages/admin/Users';
 import Projects from './pages/admin/Projects';
