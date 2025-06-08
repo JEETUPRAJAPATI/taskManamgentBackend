@@ -65,7 +65,7 @@ export default function Reports() {
         status: selectedStatus !== 'all' ? selectedStatus : '',
         department: selectedDepartment !== 'all' ? selectedDepartment : ''
       });
-      
+
       const response = await fetch(`/api/reports?${params}`);
       if (!response.ok) throw new Error("Failed to fetch report data");
       return response.json();
@@ -93,10 +93,10 @@ export default function Reports() {
         status: selectedStatus !== 'all' ? selectedStatus : '',
         department: selectedDepartment !== 'all' ? selectedDepartment : ''
       });
-      
+
       const response = await fetch(`/api/reports/export?${params}`);
       if (!response.ok) throw new Error("Failed to export PDF");
-      
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -122,10 +122,10 @@ export default function Reports() {
         status: selectedStatus !== 'all' ? selectedStatus : '',
         department: selectedDepartment !== 'all' ? selectedDepartment : ''
       });
-      
+
       const response = await fetch(`/api/reports/export?${params}`);
       if (!response.ok) throw new Error("Failed to export CSV");
-      
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -222,7 +222,7 @@ export default function Reports() {
                 className="border-slate-300 focus:border-blue-500"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">End Date</Label>
               <Input
@@ -232,7 +232,7 @@ export default function Reports() {
                 className="border-slate-300 focus:border-blue-500"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">User</Label>
               <Select value={selectedUser} onValueChange={setSelectedUser}>
@@ -249,7 +249,7 @@ export default function Reports() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
               <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Project</Label>
               <Select value={selectedProject} onValueChange={setSelectedProject}>
@@ -266,7 +266,7 @@ export default function Reports() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
               <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Status</Label>
               <Select value={selectedStatus} onValueChange={setSelectedStatus}>
@@ -282,7 +282,7 @@ export default function Reports() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
               <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Department</Label>
               <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
@@ -481,7 +481,7 @@ export default function Reports() {
                       </TableRow>
                     ) : (
                       (reportData.userPerformance || []).map((user) => (
-                        <TableRow key={user.userId} className="border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                        <TableRow key={user.userId} className="border-slate-200 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-white dark:bg-slate-800">
                           <TableCell className="font-medium text-slate-900 dark:text-white">
                             <div className="flex items-center space-x-2">
                               <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
@@ -602,7 +602,7 @@ export default function Reports() {
                       </TableRow>
                     ) : (
                       (reportData.taskDetails || []).map((task) => (
-                        <TableRow key={task._id} className="border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                        <TableRow key={task._id} className="hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-white dark:bg-slate-800">
                           <TableCell className="font-medium text-slate-900 dark:text-white max-w-xs truncate">
                             {task.title}
                           </TableCell>
@@ -613,12 +613,18 @@ export default function Reports() {
                             {task.project?.name || 'No Project'}
                           </TableCell>
                           <TableCell>
-                            <Badge className={`status-${task.status} border-0`}>
+                            <Badge 
+                              variant="outline"
+                              className={`status-${task.status}`}
+                            >
                               {task.status?.replace('-', ' ').toUpperCase()}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge className={`priority-${task.priority} border-0`}>
+                            <Badge 
+                              variant="outline"
+                              className={`priority-${task.priority}`}
+                            >
                               {task.priority?.toUpperCase()}
                             </Badge>
                           </TableCell>

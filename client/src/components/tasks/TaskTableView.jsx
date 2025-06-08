@@ -35,7 +35,7 @@ export function TaskTableView() {
   const [sortOrder, setSortOrder] = useState("asc");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
-  
+
   const tasksPerPage = 10;
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -53,11 +53,11 @@ export function TaskTableView() {
       params.append("limit", tasksPerPage.toString());
       params.append("sortBy", sortBy);
       params.append("sortOrder", sortOrder);
-      
+
       const response = await fetch(`/api/tasks?${params}`);
       if (!response.ok) throw new Error("Failed to fetch tasks");
       const data = await response.json();
-      
+
       // Handle different response formats
       if (Array.isArray(data)) {
         return { tasks: data, total: data.length };
@@ -216,7 +216,7 @@ export function TaskTableView() {
       "completed": "bg-green-100 text-green-700 border-green-300",
       "on-hold": "bg-blue-100 text-blue-700 border-blue-300"
     };
-    
+
     return statusColors[status?.toLowerCase()] || "bg-slate-100 text-slate-700 border-slate-300";
   };
 
@@ -226,7 +226,7 @@ export function TaskTableView() {
       "medium": "bg-blue-100 text-blue-700 border-blue-300",
       "high": "bg-red-100 text-red-700 border-red-300"
     };
-    
+
     return priorityColors[priority?.toLowerCase()] || "bg-slate-100 text-slate-700 border-slate-300";
   };
 
@@ -289,7 +289,7 @@ export function TaskTableView() {
                 className="pl-7 border-slate-300 focus:border-blue-500 h-8 text-sm"
               />
             </div>
-            
+
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="border-slate-300 h-8 text-sm">
                 <SelectValue placeholder="Filter by status" />
@@ -423,7 +423,7 @@ export function TaskTableView() {
                   </TableRow>
                 ) : (
                   tasks.map((task) => (
-                    <TableRow key={task._id} className="border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                    <TableRow key={task._id} className="hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-white dark:bg-slate-800">
                       <TableCell className="font-medium text-slate-900 dark:text-white">
                         <div className="max-w-xs truncate">{task.title}</div>
                       </TableCell>
@@ -443,21 +443,21 @@ export function TaskTableView() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge 
-                          variant="outline" 
-                          className={`${getStatusBadge(task.status)} border font-medium`}
-                        >
-                          {task.status || "No Status"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge 
-                          variant="outline" 
-                          className={`${getPriorityBadge(task.priority)} border font-medium`}
-                        >
-                          {task.priority || "Medium"}
-                        </Badge>
-                      </TableCell>
+                            <Badge 
+                              variant="outline"
+                              className={`status-${task.status}`}
+                            >
+                              {task.status?.replace('-', ' ').toUpperCase()}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge 
+                              variant="outline"
+                              className={`priority-${task.priority}`}
+                            >
+                              {task.priority?.toUpperCase()}
+                            </Badge>
+                          </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end space-x-2">
                           <Button

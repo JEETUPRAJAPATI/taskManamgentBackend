@@ -26,7 +26,7 @@ export default function Roles() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingRole, setEditingRole] = useState(null);
   const [showAssignModal, setShowAssignModal] = useState(false);
-  
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -152,12 +152,12 @@ export default function Roles() {
     if (!permissions || permissions.length === 0) {
       return <Badge variant="outline" className="text-slate-500">No permissions</Badge>;
     }
-    
+
     const count = permissions.length;
     const colorClass = count > 10 ? "bg-green-100 text-green-700" : 
                      count > 5 ? "bg-blue-100 text-blue-700" : 
                      "bg-blue-100 text-blue-700";
-    
+
     return (
       <Badge className={`${colorClass} border-0`}>
         {count} permission{count !== 1 ? 's' : ''}
@@ -243,7 +243,7 @@ export default function Roles() {
             </CardContent>
           </Card>
         </div>
-        
+
         <Card className="border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
           <CardContent className="p-6">
             <div className="flex items-center space-x-3">
@@ -325,7 +325,7 @@ export default function Roles() {
                   </TableRow>
                 ) : (
                   filteredRoles.map((role) => (
-                    <TableRow key={role._id} className="border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                    <TableRow key={role._id} className="hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-white dark:bg-slate-800">
                       <TableCell className="font-medium text-slate-900 dark:text-white">
                         <div className="flex items-center space-x-2">
                           <Shield className="h-4 w-4 text-blue-600" />

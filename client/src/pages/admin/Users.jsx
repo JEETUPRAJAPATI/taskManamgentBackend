@@ -110,7 +110,7 @@ export default function Users() {
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {users.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                <tr key={user.id} className="hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-white dark:bg-slate-800">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
@@ -160,3 +160,4 @@ export default function Users() {
     </div>
   );
 }
+```
