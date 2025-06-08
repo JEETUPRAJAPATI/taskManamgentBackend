@@ -50,7 +50,7 @@ const queryClient = new QueryClient({
 // User Role Check Component
 function useUserRole() {
   return useQuery({
-    queryKey: ["/api/auth/me"],
+    queryKey: ["/api/auth/verify"],
     retry: false,
   });
 }

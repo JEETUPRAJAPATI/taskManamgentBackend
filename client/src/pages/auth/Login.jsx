@@ -62,22 +62,24 @@ export default function Login() {
       const result = await response.json();
       
       if (response.ok) {
-        localStorage.setItem("authToken", result.token);
+        localStorage.setItem("token", result.token);
         
-        // Role-based redirection
-        const userRole = result.user.role;
-        if (userRole === 'super_admin') {
-          setLocation("/super-admin");
-        } else if (userRole === 'admin' || userRole === 'member') {
-          setLocation("/dashboard");
-        } else {
-          setLocation("/dashboard"); // Default fallback
-        }
-
         toast({
           title: "Welcome back!",
           description: "You have successfully signed in"
         });
+
+        // Role-based redirection
+        const userRole = result.user.role;
+        if (userRole === 'super_admin') {
+          setLocation("/super-admin");
+        } else if (userRole === 'admin') {
+          setLocation("/dashboard");
+        } else if (userRole === 'member') {
+          setLocation("/dashboard");
+        } else {
+          setLocation("/dashboard"); // Default fallback
+        }
       } else {
         setErrors({ submit: result.message || "Invalid email or password" });
       }
