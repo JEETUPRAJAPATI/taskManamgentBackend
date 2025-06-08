@@ -23,7 +23,7 @@ export default function RoleBasedRedirect() {
     if (user.role === 'super_admin') {
       setLocation('/super-admin');
     } else if (user.role === 'admin' || user.role === 'member') {
-      setLocation('/dashboard');
+      setLocation('/home');
     } else {
       // Unknown role, redirect to login
       setLocation('/login');

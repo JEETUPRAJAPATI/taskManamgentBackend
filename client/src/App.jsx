@@ -3,7 +3,8 @@ import { Route, Switch, useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { getQueryFn } from '@/lib/queryClient';
-import Dashboard from './pages/admin/CompactDashboard';
+import Dashboard from './pages/Dashboard';
+import Home from './pages/Home';
 import Tasks from './pages/admin/Tasks';
 import Users from './pages/admin/Users';
 import UserManagement from './pages/admin/UserManagement';
@@ -223,11 +224,14 @@ function App() {
           </SuperAdminLayout>
         </Route>
 
+        {/* Home Route */}
+        <Route path="/home">
+          <ProtectedRoute component={Home} allowedRoles={["admin", "member"]} />
+        </Route>
+
         {/* Protected Admin Routes */}
         <Route path="/dashboard">
-          <AdminLayout>
-            <ProtectedRoute component={Dashboard} allowedRoles={["admin", "member"]} />
-          </AdminLayout>
+          <ProtectedRoute component={Dashboard} allowedRoles={["admin", "member"]} />
         </Route>
         <Route path="/tasks">
           <AdminLayout>
