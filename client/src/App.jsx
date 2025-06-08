@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, Switch, useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
+import { getQueryFn } from '@/lib/queryClient';
 import Dashboard from './pages/admin/CompactDashboard';
 import Tasks from './pages/admin/Tasks';
 import Users from './pages/admin/Users';
@@ -51,24 +52,64 @@ const queryClient = new QueryClient({
 
 // User Role Check Component
 function useUserRole() {
+  const token = localStorage.getItem('token');
+  
   return useQuery({
     queryKey: ["/api/auth/verify"],
+    enabled: !!token, // Only run query if token exists
+    queryFn: async ({ queryKey }) => {
+      const token = localStorage.getItem('token');
+      if (!token) return null;
+      
+      const headers = {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      };
+
+      const res = await fetch(queryKey[0], {
+        headers,
+        credentials: "include",
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        // Clear invalid token
+        localStorage.removeItem('token');
+        return null;
+      }
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+
+      return await res.json();
+    },
     retry: false,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 }
 
 // Route protection wrapper
 function ProtectedRoute({ component: Component, requiredRole, allowedRoles = [], ...props }) {
-  const { data: user, isLoading } = useUserRole();
+  const { data: user, isLoading, error } = useUserRole();
   const [, setLocation] = useLocation();
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    if (!isLoading && !user) {
+    // Only redirect if we have no token at all
+    if (!token) {
+      setLocation('/login');
+      return;
+    }
+    
+    // If we have a token but query failed and we're not loading, redirect
+    if (!isLoading && !user && token) {
+      localStorage.removeItem('token');
       setLocation('/login');
     }
-  }, [user, isLoading, setLocation]);
+  }, [user, isLoading, token, setLocation]);
 
-  if (isLoading) {
+  // Show loading while we have a token and are fetching user data
+  if (token && isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -76,7 +117,8 @@ function ProtectedRoute({ component: Component, requiredRole, allowedRoles = [],
     );
   }
 
-  if (!user) {
+  // Don't render if no token or no user
+  if (!token || !user) {
     return null;
   }
 
