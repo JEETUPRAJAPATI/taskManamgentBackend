@@ -20,19 +20,23 @@ export default function CreatePassword() {
     // Get email from URL params or localStorage
     const urlParams = new URLSearchParams(window.location.search);
     const emailParam = urlParams.get('email');
+    const emailVerified = localStorage.getItem('emailVerified');
+    const verifiedEmail = localStorage.getItem('verifiedEmail');
     
-    if (emailParam) {
+    if (emailParam && emailVerified === 'true' && verifiedEmail === emailParam) {
       setEmail(emailParam);
+    } else if (verifiedEmail && emailVerified === 'true') {
+      setEmail(verifiedEmail);
     } else {
-      const storedEmail = localStorage.getItem('verificationEmail');
-      if (storedEmail) {
-        setEmail(storedEmail);
-      } else {
-        // No email found, redirect to registration
-        setLocation('/register');
-      }
+      // Email not verified or no email found, redirect to verification
+      toast({
+        title: "Email verification required",
+        description: "Please verify your email first",
+        variant: "destructive"
+      });
+      setLocation('/verify-email');
     }
-  }, [setLocation]);
+  }, [setLocation, toast]);
 
   const validatePassword = (password) => {
     return password.length >= 8 && 
@@ -102,23 +106,34 @@ export default function CreatePassword() {
       if (response.ok) {
         // Store auth token
         localStorage.setItem('token', result.token);
+        
+        // Clean up verification data
         localStorage.removeItem('verificationEmail');
+        localStorage.removeItem('emailVerified');
+        localStorage.removeItem('verifiedEmail');
         
         toast({
-          title: "Account created successfully",
-          description: "Welcome to TaskSetu!"
+          title: "Account created successfully!",
+          description: "Welcome to TaskSetu! Redirecting to your dashboard..."
         });
 
-        // Redirect based on user role
-        if (result.user.role === 'admin') {
-          setLocation('/dashboard');
-        } else if (result.user.role === 'super_admin') {
-          setLocation('/super-admin');
-        } else {
-          setLocation('/dashboard');
-        }
+        // Redirect based on user role with immediate navigation
+        setTimeout(() => {
+          if (result.user.role === 'admin') {
+            window.location.href = '/dashboard';
+          } else if (result.user.role === 'super_admin') {
+            window.location.href = '/super-admin';
+          } else {
+            window.location.href = '/dashboard';
+          }
+        }, 1000);
       } else {
         setErrors({ submit: result.message || "Failed to create password" });
+        toast({
+          title: "Registration failed",
+          description: result.message || "Please try again",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       setErrors({ submit: "Network error. Please try again." });
