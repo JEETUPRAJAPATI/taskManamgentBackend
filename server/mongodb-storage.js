@@ -188,6 +188,16 @@ export class MongoStorage {
     return await Task.findByIdAndDelete(id);
   }
 
+  // Task Status operations
+  async createTaskStatus(statusData) {
+    const status = new TaskStatus(statusData);
+    return await status.save();
+  }
+
+  async getTaskStatuses(organizationId) {
+    return await TaskStatus.find({ organizationId }).sort({ order: 1 });
+  }
+
   // Activity operations
   async createActivity(activityData) {
     const activity = new Activity(activityData);
