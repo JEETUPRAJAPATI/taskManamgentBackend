@@ -221,137 +221,280 @@ export class MongoStorage {
 
   // Initialize sample data
   async initializeSampleData() {
-    // Check if data already exists
-    const userCount = await User.countDocuments();
-    if (userCount > 0) {
-      console.log('Sample data already exists, skipping initialization.');
-      return;
+    try {
+      // Clear existing data for regeneration
+      console.log('Cleared existing data for regeneration');
+      await Promise.all([
+        Organization.deleteMany({}),
+        User.deleteMany({}),
+        Project.deleteMany({}),
+        Task.deleteMany({}),
+        TaskStatus.deleteMany({}),
+        TaskComment.deleteMany({}),
+        TaskAssignment.deleteMany({}),
+        TaskAuditLog.deleteMany({}),
+        Notification.deleteMany({})
+      ]);
+
+      console.log('Initializing comprehensive sample data...');
+
+      // Create sample organizations
+      const organizations = await Organization.insertMany([
+        {
+          name: 'TechCorp Solutions',
+          slug: 'techcorp-solutions',
+          description: 'Leading technology solutions provider',
+          isActive: true,
+          createdAt: new Date('2024-01-15'),
+        },
+        {
+          name: 'Digital Innovations',
+          slug: 'digital-innovations',
+          description: 'Cutting-edge digital transformation company',
+          isActive: true,
+          createdAt: new Date('2024-02-10'),
+        },
+        {
+          name: 'StartupX',
+          slug: 'startupx',
+          description: 'Fast-growing startup in fintech space',
+          isActive: true,
+          createdAt: new Date('2024-03-05'),
+        }
+      ]);
+
+      // Create super admin user
+      const superAdminPasswordHash = await this.hashPassword('superadmin123');
+      const superAdmin = await User.create({
+        firstName: 'Super',
+        lastName: 'Admin',
+        email: 'superadmin@tasksetu.com',
+        passwordHash: superAdminPasswordHash,
+        role: 'super_admin',
+        isActive: true,
+        emailVerified: true,
+        createdAt: new Date('2024-01-01'),
+      });
+
+      // Create sample users for each organization
+      const sampleUsers = [];
+      
+      // TechCorp Solutions users
+      const techCorpPasswordHash = await this.hashPassword('password123');
+      sampleUsers.push(
+        await User.create({
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'john.doe@techcorp.com',
+          passwordHash: techCorpPasswordHash,
+          role: 'admin',
+          organizationId: organizations[0]._id,
+          isActive: true,
+          emailVerified: true,
+          createdAt: new Date('2024-01-16'),
+        }),
+        await User.create({
+          firstName: 'Sarah',
+          lastName: 'Wilson',
+          email: 'sarah.wilson@techcorp.com',
+          passwordHash: techCorpPasswordHash,
+          role: 'member',
+          organizationId: organizations[0]._id,
+          isActive: true,
+          emailVerified: true,
+          createdAt: new Date('2024-01-20'),
+        })
+      );
+
+      // Digital Innovations users
+      sampleUsers.push(
+        await User.create({
+          firstName: 'Mike',
+          lastName: 'Johnson',
+          email: 'mike.johnson@digitalinnov.com',
+          passwordHash: techCorpPasswordHash,
+          role: 'admin',
+          organizationId: organizations[1]._id,
+          isActive: true,
+          emailVerified: true,
+          createdAt: new Date('2024-02-12'),
+        }),
+        await User.create({
+          firstName: 'Emily',
+          lastName: 'Davis',
+          email: 'emily.davis@digitalinnov.com',
+          passwordHash: techCorpPasswordHash,
+          role: 'member',
+          organizationId: organizations[1]._id,
+          isActive: true,
+          emailVerified: true,
+          createdAt: new Date('2024-02-15'),
+        })
+      );
+
+      // StartupX users
+      sampleUsers.push(
+        await User.create({
+          firstName: 'Alex',
+          lastName: 'Chen',
+          email: 'alex.chen@startupx.com',
+          passwordHash: techCorpPasswordHash,
+          role: 'admin',
+          organizationId: organizations[2]._id,
+          isActive: true,
+          emailVerified: true,
+          createdAt: new Date('2024-03-07'),
+        })
+      );
+
+      // Create sample projects
+      const projects = await Project.insertMany([
+        {
+          name: 'Website Redesign',
+          description: 'Complete overhaul of the company website',
+          status: 'active',
+          priority: 'high',
+          organizationId: organizations[0]._id,
+          createdBy: sampleUsers[0]._id,
+          createdAt: new Date('2024-02-01'),
+        },
+        {
+          name: 'Mobile App Development',
+          description: 'Native iOS and Android app development',
+          status: 'active',
+          priority: 'medium',
+          organizationId: organizations[1]._id,
+          createdBy: sampleUsers[2]._id,
+          createdAt: new Date('2024-02-15'),
+        },
+        {
+          name: 'API Integration',
+          description: 'Integration with third-party services',
+          status: 'completed',
+          priority: 'high',
+          organizationId: organizations[0]._id,
+          createdBy: sampleUsers[0]._id,
+          createdAt: new Date('2024-01-20'),
+        },
+        {
+          name: 'Financial Dashboard',
+          description: 'Real-time financial analytics dashboard',
+          status: 'active',
+          priority: 'urgent',
+          organizationId: organizations[2]._id,
+          createdBy: sampleUsers[4]._id,
+          createdAt: new Date('2024-03-10'),
+        }
+      ]);
+
+      // Create sample tasks
+      await Task.insertMany([
+        {
+          title: 'Homepage Redesign',
+          description: 'Design new homepage with modern UI',
+          status: 'in-progress',
+          priority: 'high',
+          organizationId: organizations[0]._id,
+          projectId: projects[0]._id,
+          assignedTo: sampleUsers[1]._id,
+          createdBy: sampleUsers[0]._id,
+          dueDate: new Date('2024-07-15'),
+          createdAt: new Date('2024-06-01'),
+        },
+        {
+          title: 'API Documentation',
+          description: 'Write comprehensive API documentation',
+          status: 'todo',
+          priority: 'medium',
+          organizationId: organizations[0]._id,
+          projectId: projects[2]._id,
+          assignedTo: sampleUsers[1]._id,
+          createdBy: sampleUsers[0]._id,
+          dueDate: new Date('2024-07-20'),
+          createdAt: new Date('2024-06-05'),
+        },
+        {
+          title: 'Mobile UI Components',
+          description: 'Create reusable UI components for mobile app',
+          status: 'completed',
+          priority: 'high',
+          organizationId: organizations[1]._id,
+          projectId: projects[1]._id,
+          assignedTo: sampleUsers[3]._id,
+          createdBy: sampleUsers[2]._id,
+          dueDate: new Date('2024-06-30'),
+          createdAt: new Date('2024-05-15'),
+        },
+        {
+          title: 'Database Schema Design',
+          description: 'Design database schema for financial data',
+          status: 'in-progress',
+          priority: 'urgent',
+          organizationId: organizations[2]._id,
+          projectId: projects[3]._id,
+          assignedTo: sampleUsers[4]._id,
+          createdBy: sampleUsers[4]._id,
+          dueDate: new Date('2024-07-10'),
+          createdAt: new Date('2024-06-10'),
+        },
+        {
+          title: 'User Authentication',
+          description: 'Implement secure user authentication system',
+          status: 'todo',
+          priority: 'high',
+          organizationId: organizations[1]._id,
+          projectId: projects[1]._id,
+          assignedTo: sampleUsers[2]._id,
+          createdBy: sampleUsers[2]._id,
+          dueDate: new Date('2024-08-01'),
+          createdAt: new Date('2024-06-12'),
+        },
+        {
+          title: 'Performance Optimization',
+          description: 'Optimize application performance and loading times',
+          status: 'in-progress',
+          priority: 'medium',
+          organizationId: organizations[0]._id,
+          projectId: projects[0]._id,
+          assignedTo: sampleUsers[0]._id,
+          createdBy: sampleUsers[0]._id,
+          dueDate: new Date('2024-07-25'),
+          createdAt: new Date('2024-06-08'),
+        },
+        {
+          title: 'Data Visualization',
+          description: 'Create interactive charts and graphs for dashboard',
+          status: 'todo',
+          priority: 'medium',
+          organizationId: organizations[2]._id,
+          projectId: projects[3]._id,
+          assignedTo: sampleUsers[4]._id,
+          createdBy: sampleUsers[4]._id,
+          dueDate: new Date('2024-08-15'),
+          createdAt: new Date('2024-06-14'),
+        },
+        {
+          title: 'Security Audit',
+          description: 'Comprehensive security audit and vulnerability assessment',
+          status: 'completed',
+          priority: 'urgent',
+          organizationId: organizations[1]._id,
+          projectId: projects[1]._id,
+          assignedTo: sampleUsers[2]._id,
+          createdBy: sampleUsers[2]._id,
+          dueDate: new Date('2024-06-20'),
+          createdAt: new Date('2024-05-20'),
+        }
+      ]);
+
+      console.log('Comprehensive sample data initialized successfully');
+      console.log(`Created ${organizations.length} organizations, ${sampleUsers.length + 1} users, ${projects.length} projects, and 8 tasks`);
+      console.log('Super admin login: superadmin@tasksetu.com / superadmin123');
+      
+    } catch (error) {
+      console.error('Sample data initialization error:', error);
+      throw error;
     }
-
-    console.log('Initializing sample data...');
-
-    // Create sample users
-    const users = await User.insertMany([
-      {
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        role: 'Admin',
-        status: 'Active'
-      },
-      {
-        name: 'Sarah Wilson',
-        email: 'sarah.wilson@example.com',
-        role: 'Manager',
-        status: 'Active'
-      },
-      {
-        name: 'Mike Johnson',
-        email: 'mike.johnson@example.com',
-        role: 'Developer',
-        status: 'Active'
-      },
-      {
-        name: 'Emily Davis',
-        email: 'emily.davis@example.com',
-        role: 'Designer',
-        status: 'Active'
-      }
-    ]);
-
-    // Create sample projects
-    const projects = await Project.insertMany([
-      {
-        name: 'Website Redesign',
-        description: 'Complete overhaul of the company website with modern design and improved UX',
-        status: 'In Progress',
-        priority: 'High',
-        startDate: new Date('2024-05-01'),
-        endDate: new Date('2024-07-15'),
-        progress: 65,
-        teamMembers: 4,
-        budget: 50000
-      },
-      {
-        name: 'Mobile App Development',
-        description: 'Native iOS and Android app for customer engagement',
-        status: 'Planning',
-        priority: 'Medium',
-        startDate: new Date('2024-06-01'),
-        endDate: new Date('2024-10-30'),
-        progress: 15,
-        teamMembers: 6,
-        budget: 80000
-      },
-      {
-        name: 'API Integration',
-        description: 'Integration with third-party services and internal systems',
-        status: 'Completed',
-        priority: 'High',
-        startDate: new Date('2024-03-01'),
-        endDate: new Date('2024-05-15'),
-        progress: 100,
-        teamMembers: 3,
-        budget: 30000
-      }
-    ]);
-
-    // Create sample tasks
-    await Task.insertMany([
-      {
-        title: 'Homepage Design',
-        description: 'Design the new homepage layout with modern UI elements',
-        status: 'In Progress',
-        priority: 'High',
-        assigneeName: 'John Doe',
-        projectName: 'Website Redesign',
-        dueDate: new Date('2024-06-15')
-      },
-      {
-        title: 'API Documentation',
-        description: 'Write comprehensive API documentation for developers',
-        status: 'Todo',
-        priority: 'Medium',
-        assigneeName: 'Sarah Wilson',
-        projectName: 'API Integration',
-        dueDate: new Date('2024-06-20')
-      },
-      {
-        title: 'Database Migration',
-        description: 'Migrate legacy database to new infrastructure',
-        status: 'Completed',
-        priority: 'High',
-        assigneeName: 'Mike Johnson',
-        projectName: 'API Integration',
-        dueDate: new Date('2024-06-10')
-      },
-      {
-        title: 'Mobile UI Mockups',
-        description: 'Create UI mockups for the mobile application',
-        status: 'Todo',
-        priority: 'Medium',
-        assigneeName: 'Emily Davis',
-        projectName: 'Mobile App Development',
-        dueDate: new Date('2024-06-25')
-      }
-    ]);
-
-    // Create sample activities
-    await Activity.insertMany([
-      {
-        type: 'task_completed',
-        description: 'Task "Database Migration" completed by Mike Johnson'
-      },
-      {
-        type: 'project_created',
-        description: 'New project "Mobile App Development" created'
-      },
-      {
-        type: 'task_assigned',
-        description: 'Task "API Documentation" assigned to Sarah Wilson'
-      }
-    ]);
-
-    console.log('Sample data initialized successfully!');
   }
 
   // Form operations
