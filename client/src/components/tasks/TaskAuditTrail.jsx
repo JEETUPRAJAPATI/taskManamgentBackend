@@ -26,7 +26,7 @@ const getActionIcon = (action) => {
     case 'assigned':
       return <UserPlus className="h-4 w-4 text-purple-600" />;
     case 'unassigned':
-      return <UserMinus className="h-4 w-4 text-orange-600" />;
+      return <UserMinus className="h-4 w-4 text-blue-600" />;
     case 'status_changed':
       return <ArrowRight className="h-4 w-4 text-indigo-600" />;
     case 'commented':
@@ -34,7 +34,7 @@ const getActionIcon = (action) => {
     case 'tagged':
       return <Tag className="h-4 w-4 text-pink-600" />;
     case 'due_date_changed':
-      return <Calendar className="h-4 w-4 text-orange-600" />;
+      return <Calendar className="h-4 w-4 text-blue-600" />;
     case 'priority_changed':
       return <Flag className="h-4 w-4 text-red-500" />;
     default:
@@ -53,7 +53,7 @@ const getActionColor = (action) => {
     case 'assigned':
       return 'bg-purple-50 border-purple-200 dark:bg-purple-900/20';
     case 'unassigned':
-      return 'bg-orange-50 border-orange-200 dark:bg-orange-900/20';
+      return 'bg-blue-50 border-blue-200 dark:bg-blue-900/20';
     case 'status_changed':
       return 'bg-indigo-50 border-indigo-200 dark:bg-indigo-900/20';
     case 'commented':
@@ -61,7 +61,7 @@ const getActionColor = (action) => {
     case 'tagged':
       return 'bg-pink-50 border-pink-200 dark:bg-pink-900/20';
     case 'due_date_changed':
-      return 'bg-orange-50 border-orange-200 dark:bg-orange-900/20';
+      return 'bg-blue-50 border-blue-200 dark:bg-blue-900/20';
     case 'priority_changed':
       return 'bg-red-50 border-red-200 dark:bg-red-900/20';
     default:

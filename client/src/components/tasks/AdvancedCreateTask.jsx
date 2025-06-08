@@ -237,7 +237,7 @@ export function AdvancedCreateTask({
   const priorityLevels = [
     { value: "low", label: "Low", color: "bg-green-100 text-green-800 border-green-200", icon: "🟢" },
     { value: "medium", label: "Medium", color: "bg-blue-100 text-blue-800 border-blue-200", icon: "🔵" },
-    { value: "high", label: "High", color: "bg-orange-100 text-orange-800 border-orange-200", icon: "🟠" },
+    { value: "high", label: "High", color: "bg-blue-100 text-blue-800 border-blue-200", icon: "🔵" },
     { value: "urgent", label: "Urgent", color: "bg-red-100 text-red-800 border-red-200", icon: "🔴" }
   ];
 
@@ -629,7 +629,7 @@ export function AdvancedCreateTask({
               </div>
             )}
             {tags.length >= 10 && (
-              <p className="text-xs text-orange-600">Maximum 10 tags reached</p>
+              <p className="text-xs text-blue-600">Maximum 10 tags reached</p>
             )}
           </div>
 
@@ -706,7 +706,7 @@ export function AdvancedCreateTask({
               </div>
             )}
             {files.length >= 10 && (
-              <p className="text-xs text-orange-600">Maximum 10 files reached</p>
+              <p className="text-xs text-blue-600">Maximum 10 files reached</p>
             )}
           </div>
 
@@ -725,7 +725,7 @@ export function AdvancedCreateTask({
                 Save Draft
               </Button>
               {isDirty && (
-                <span className="text-xs text-orange-600 flex items-center gap-1">
+                <span className="text-xs text-blue-600 flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   Unsaved changes
                 </span>
