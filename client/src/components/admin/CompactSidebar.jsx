@@ -67,7 +67,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
               {navigation.slice(0, 3).map((item, index) => {
                 const Icon = item.icon;
                 return (
-                  <div key={item.name}>
+                  <div key={item.name} className={index < 2 ? 'border-b border-slate-700/30 dark:border-slate-600/30' : ''}>
                     <Link 
                       href={item.href} 
                       className={`group flex items-center px-2 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ease-in-out relative ${
@@ -114,7 +114,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
               {navigation.slice(3, 7).map((item, index) => {
                 const Icon = item.icon;
                 return (
-                  <div key={item.name}>
+                  <div key={item.name} className={index < 3 ? 'border-b border-slate-700/30 dark:border-slate-600/30' : ''}>
                     <Link 
                       href={item.href} 
                       className={`group flex items-center px-2 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ease-in-out relative ${
@@ -160,8 +160,9 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
               
               {navigation.slice(7).map((item, index) => {
                 const Icon = item.icon;
+                const isLast = index === navigation.slice(7).length - 1;
                 return (
-                  <div key={item.name}>
+                  <div key={item.name} className={!isLast ? 'border-b border-slate-700/30 dark:border-slate-600/30' : ''}>
                     <Link 
                       href={item.href} 
                       className={`group flex items-center px-2 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ease-in-out relative ${
