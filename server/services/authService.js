@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import sgMail from '@sendgrid/mail';
 import { MongoStorage } from '../mongodb-storage.js';
 
 const storage = new MongoStorage();
@@ -12,9 +13,14 @@ export class AuthService {
     this.VERIFICATION_TOKEN_EXPIRES = 24 * 60 * 60 * 1000; // 24 hours
     this.RESET_TOKEN_EXPIRES = 30 * 60 * 1000; // 30 minutes
     
-    // Testing configuration
-    this.BYPASS_EMAIL_VERIFICATION = process.env.NODE_ENV === 'development';
-    this.AUTO_AUTHENTICATE_ON_REGISTER = process.env.NODE_ENV === 'development';
+    // Configure SendGrid
+    if (process.env.SENDGRID_API_KEY) {
+      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    }
+    
+    // Testing configuration - disable email verification bypass for production email flow
+    this.BYPASS_EMAIL_VERIFICATION = false; // Always require email verification
+    this.AUTO_AUTHENTICATE_ON_REGISTER = false; // Always require verification
   }
 
   // Generate JWT token
@@ -483,31 +489,66 @@ export class AuthService {
       : 'Verify your TaskSetu account';
 
     const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #1e40af; margin: 0;">TaskSetu</h1>
+          <p style="color: #6b7280; margin: 5px 0;">Professional Task Management</p>
+        </div>
+        
         <h2 style="color: #1e40af;">Welcome to TaskSetu${organizationName ? ` - ${organizationName}` : ''}!</h2>
         <p>Hi ${firstName},</p>
         <p>Thank you for ${organizationName ? 'creating your organization on' : 'joining'} TaskSetu. To complete your registration, please verify your email address.</p>
-        <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0;">
-          <p style="margin: 0; font-size: 14px; color: #6b7280;">Your verification code is:</p>
-          <h1 style="margin: 10px 0; font-size: 32px; color: #1e40af; letter-spacing: 4px;">${code}</h1>
+        
+        <div style="background: #f8fafc; border: 2px solid #e2e8f0; padding: 25px; border-radius: 12px; text-align: center; margin: 30px 0;">
+          <p style="margin: 0 0 15px 0; font-size: 16px; color: #475569;">Your verification code is:</p>
+          <div style="background: #1e40af; color: white; padding: 15px 25px; border-radius: 8px; display: inline-block;">
+            <span style="font-size: 28px; font-weight: bold; letter-spacing: 6px;">${code}</span>
+          </div>
         </div>
-        <p>This code will expire in 24 hours for security reasons.</p>
+        
+        <div style="background: #fef3cd; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
+          <p style="margin: 0; color: #92400e; font-size: 14px;">
+            ⚠️ This code will expire in 24 hours for security reasons.
+          </p>
+        </div>
+        
+        <p>Enter this code on the verification page to activate your account and set your password.</p>
         <p>If you didn't request this verification, please ignore this email.</p>
+        
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-        <p style="font-size: 12px; color: #6b7280;">
-          TaskSetu - Professional Task Management<br>
-          This is an automated email, please do not reply.
-        </p>
+        <div style="text-align: center;">
+          <p style="font-size: 12px; color: #6b7280; margin: 0;">
+            TaskSetu - Professional Task Management<br>
+            This is an automated email, please do not reply.
+          </p>
+        </div>
       </div>
     `;
 
-    // In a real implementation, integrate with email service (SendGrid, etc.)
-    console.log(`Verification email sent to ${email}:`);
-    console.log(`Subject: ${subject}`);
-    console.log(`Verification Code: ${code}`);
-    
-    // For development, you might want to log this or use a service like Mailtrap
-    return true;
+    const msg = {
+      to: email,
+      from: {
+        email: 'noreply@tasksetu.com',
+        name: 'TaskSetu'
+      },
+      subject: subject,
+      html: html
+    };
+
+    try {
+      if (process.env.SENDGRID_API_KEY) {
+        await sgMail.send(msg);
+        console.log(`Verification email sent successfully to ${email}`);
+      } else {
+        console.log(`Development mode - Verification email would be sent to ${email}:`);
+        console.log(`Subject: ${subject}`);
+        console.log(`Verification Code: ${code}`);
+      }
+      return true;
+    } catch (error) {
+      console.error('Error sending verification email:', error);
+      throw new Error('Failed to send verification email');
+    }
   }
 
   // Send password reset email
