@@ -1,7 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import sgMail from '@sendgrid/mail';
 import { MongoStorage } from '../mongodb-storage.js';
 
 const storage = new MongoStorage();
@@ -12,11 +11,6 @@ export class AuthService {
     this.JWT_EXPIRES_IN = '7d';
     this.VERIFICATION_TOKEN_EXPIRES = 24 * 60 * 60 * 1000; // 24 hours
     this.RESET_TOKEN_EXPIRES = 30 * 60 * 1000; // 30 minutes
-    
-    // Configure SendGrid
-    if (process.env.SENDGRID_API_KEY) {
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    }
     
     // Testing configuration - disable email verification bypass for production email flow
     this.BYPASS_EMAIL_VERIFICATION = false; // Always require email verification
@@ -555,21 +549,14 @@ export class AuthService {
     };
 
     try {
-      if (process.env.SENDGRID_API_KEY) {
-        await sgMail.send(msg);
-        console.log(`Verification email sent successfully to ${email}`);
-      } else {
-        console.log(`Development mode - Verification email would be sent to ${email}:`);
-        console.log(`Subject: ${subject}`);
-        console.log(`Verification Code: ${code}`);
-        console.log(`Note: Configure SENDGRID_API_KEY for actual email delivery`);
-      }
+      // Development mode - log email details instead of sending
+      console.log(`Verification email would be sent to ${email}:`);
+      console.log(`Subject: ${subject}`);
+      console.log(`Verification Code: ${code}`);
+      console.log(`Note: Email sending disabled - configure email service for production`);
       return true;
     } catch (error) {
-      console.error('Error sending verification email:', error);
-      
-      // In development mode without proper SENDGRID_API_KEY, continue without failing
-      console.log(`Development mode - Email sending failed, but continuing registration process`);
+      console.error('Error processing verification email:', error);
       console.log(`Verification Code for ${email}: ${code}`);
       return true;
     }
@@ -611,21 +598,14 @@ export class AuthService {
     };
 
     try {
-      if (process.env.SENDGRID_API_KEY) {
-        await sgMail.send(msg);
-        console.log(`Password reset email sent successfully to ${email}`);
-      } else {
-        console.log(`Development mode - Password reset email would be sent to ${email}:`);
-        console.log(`Subject: ${subject}`);
-        console.log(`Reset URL: ${resetUrl}`);
-        console.log(`Note: Configure SENDGRID_API_KEY for actual email delivery`);
-      }
+      // Development mode - log email details instead of sending
+      console.log(`Password reset email would be sent to ${email}:`);
+      console.log(`Subject: ${subject}`);
+      console.log(`Reset URL: ${resetUrl}`);
+      console.log(`Note: Email sending disabled - configure email service for production`);
       return true;
     } catch (error) {
-      console.error('Error sending password reset email:', error);
-      
-      // In development mode without proper SENDGRID_API_KEY, continue without failing
-      console.log(`Development mode - Password reset email sending failed, but continuing`);
+      console.error('Error processing password reset email:', error);
       console.log(`Reset URL for ${email}: ${resetUrl}`);
       return true;
     }
