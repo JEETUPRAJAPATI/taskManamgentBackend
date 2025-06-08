@@ -226,6 +226,40 @@ export async function registerRoutes(app) {
       const { token } = req.body;
       
       if (!token) {
+        return res.status(400).json({ message: "Reset token is required" });
+      }
+
+      const result = await authService.validateResetToken(token);
+      res.json(result);
+    } catch (error) {
+      console.error("Validate reset token error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Reset password
+  app.post("/api/auth/reset-password", async (req, res) => {
+    try {
+      const { token, password } = req.body;
+      
+      if (!token || !password) {
+        return res.status(400).json({ message: "Token and password are required" });
+      }
+
+      const result = await authService.resetPassword(token, password);
+      res.json(result);
+    } catch (error) {
+      console.error("Reset password error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Validate reset token
+  app.post("/api/auth/validate-reset-token", async (req, res) => {
+    try {
+      const { token } = req.body;
+      
+      if (!token) {
         return res.status(400).json({ message: "Token is required" });
       }
 
