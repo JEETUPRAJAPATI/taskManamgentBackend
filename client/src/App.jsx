@@ -145,6 +145,7 @@ function App() {
         <Route path="/create-password" component={CreatePassword} />
         <Route path="/reset-password" component={ResetPassword} />
         <Route path="/accept-invitation" component={AcceptInvitation} />
+        <Route path="/forbidden" component={ForbiddenPage} />
         
         {/* Super Admin Routes */}
         <Route path="/super-admin" nest>

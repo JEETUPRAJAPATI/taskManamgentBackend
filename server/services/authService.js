@@ -80,7 +80,7 @@ export class AuthService {
         email,
         username: email.split('@')[0],
         passwordHash: hashedPassword,
-        role: 'user',
+        role: 'member',
         isActive: true,
         emailVerified: true
       };
