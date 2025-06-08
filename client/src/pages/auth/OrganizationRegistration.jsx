@@ -70,15 +70,25 @@ export default function OrganizationRegistration() {
       const result = await response.json();
       
       if (response.ok) {
-        // Store email for verification step
-        localStorage.setItem('verificationEmail', formData.email);
-        
-        toast({
-          title: "Organization registration initiated",
-          description: "Please check your email for verification instructions"
-        });
+        // Check if auto-authenticated (development mode)
+        if (result.autoAuthenticated && result.token) {
+          localStorage.setItem('token', result.token);
+          toast({
+            title: "Organization created successfully",
+            description: result.message || "Welcome to TaskSetu! Auto-authenticated for testing."
+          });
+          setLocation('/dashboard');
+        } else {
+          // Store email for verification step
+          localStorage.setItem('verificationEmail', formData.email);
+          
+          toast({
+            title: "Organization registration initiated",
+            description: "Please check your email for verification instructions"
+          });
 
-        setLocation(`/verify-email?email=${encodeURIComponent(formData.email)}`);
+          setLocation(`/verify-email?email=${encodeURIComponent(formData.email)}`);
+        }
       } else {
         setErrors({ submit: result.message || "Registration failed" });
       }

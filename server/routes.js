@@ -196,6 +196,20 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Auth verification endpoint
+  app.get('/api/auth/verify', authenticateToken, async (req, res) => {
+    try {
+      const user = await storage.getUser(req.user.id);
+      if (!user) {
+        return res.status(401).json({ message: 'User not found' });
+      }
+      res.json(user);
+    } catch (error) {
+      console.error('Auth verification error:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
   // Resend verification code
   app.post("/api/auth/resend-verification", async (req, res) => {
     try {

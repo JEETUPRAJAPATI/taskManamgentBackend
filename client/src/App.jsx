@@ -35,6 +35,8 @@ import AcceptInvitation from './pages/auth/AcceptInvitation';
 
 // Components
 import RoleBasedRedirect from './components/RoleBasedRedirect';
+import SecureRoute from './components/ProtectedRoute';
+import ForbiddenPage from './pages/ForbiddenPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
