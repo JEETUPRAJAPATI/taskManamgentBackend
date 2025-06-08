@@ -130,6 +130,9 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Switch>
+        {/* Root Route - Role-based redirect */}
+        <Route path="/" component={RoleBasedRedirect} />
+
         {/* Public Authentication Routes - No Layout */}
         <Route path="/register" component={RegistrationChoice} />
         <Route path="/register/individual" component={IndividualRegistration} />
@@ -183,11 +186,8 @@ function App() {
         <Route>
           <AdminLayout>
             <Switch>
-              <Route path="/">
-                <ProtectedRoute component={Dashboard} />
-              </Route>
               <Route path="/dashboard">
-                <ProtectedRoute component={Dashboard} />
+                <ProtectedRoute component={Dashboard} allowedRoles={["admin", "member"]} />
               </Route>
               <Route path="/tasks">
                 <ProtectedRoute component={Tasks} />

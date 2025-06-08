@@ -1,4 +1,5 @@
 import { Link, useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { 
   LayoutDashboard, 
   CheckSquare, 
@@ -15,18 +16,46 @@ import {
 
 export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) {
   const [location] = useLocation();
+  
+  const { data: user } = useQuery({
+    queryKey: ["/api/auth/me"],
+    retry: false,
+  });
 
-  const navigation = [
+  const baseNavigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Tasks", href: "/tasks", icon: CheckSquare },
     { name: "Projects", href: "/projects", icon: FolderOpen },
     { name: "Forms", href: "/forms", icon: FileText },
     { name: "Users", href: "/users", icon: Users },
-    { name: "User Management", href: "/user-management", icon: UserCog },
     { name: "Roles", href: "/roles", icon: Shield },
     { name: "Reports", href: "/reports", icon: BarChart3 },
     { name: "Integrations", href: "/integrations", icon: Settings },
   ];
+
+  // Add admin-only navigation items
+  const adminOnlyItems = [
+    { name: "User Management", href: "/user-management", icon: UserCog, insertAfter: "Users" },
+  ];
+
+  // Build navigation based on user role
+  const navigation = baseNavigation.reduce((nav, item) => {
+    nav.push(item);
+    
+    // Add admin-only items after specific items if user is admin
+    if (user?.role === 'admin') {
+      const adminItem = adminOnlyItems.find(adminItem => adminItem.insertAfter === item.name);
+      if (adminItem) {
+        nav.push({
+          name: adminItem.name,
+          href: adminItem.href,
+          icon: adminItem.icon
+        });
+      }
+    }
+    
+    return nav;
+  }, []);
 
   const isActive = (href) => {
     return location === href || (href === "/dashboard" && location === "/");
