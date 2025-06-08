@@ -58,11 +58,15 @@ function useUserRole() {
 
 // Route protection wrapper
 function ProtectedRoute({ component: Component, requiredRole, allowedRoles = [], ...props }) {
-  const { data: user, isLoading } = useUserRole();
+  const { data: user, isLoading, error } = useUserRole();
   const [, setLocation] = useLocation();
 
+  console.log("ProtectedRoute - isLoading:", isLoading, "user:", user, "error:", error);
+
   useEffect(() => {
+    console.log("ProtectedRoute useEffect - isLoading:", isLoading, "user:", user);
     if (!isLoading && !user) {
+      console.log("No user found, redirecting to login");
       setLocation('/login');
     }
   }, [user, isLoading, setLocation]);

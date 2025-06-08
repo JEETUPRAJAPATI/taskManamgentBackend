@@ -28,6 +28,8 @@ export async function apiRequest(method, url, data) {
 export const getQueryFn = ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
     const token = localStorage.getItem('token');
+    console.log("Query function - token exists:", !!token, "endpoint:", queryKey[0]);
+    
     const headers = {
       ...(token ? { "Authorization": `Bearer ${token}` } : {})
     };
@@ -37,12 +39,16 @@ export const getQueryFn = ({ on401: unauthorizedBehavior }) =>
       credentials: "include",
     });
 
+    console.log("Query response status:", res.status, "for endpoint:", queryKey[0]);
+
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
       return null;
     }
 
     await throwIfResNotOk(res);
-    return await res.json();
+    const data = await res.json();
+    console.log("Query data received:", data);
+    return data;
   };
 
 export const queryClient = new QueryClient({

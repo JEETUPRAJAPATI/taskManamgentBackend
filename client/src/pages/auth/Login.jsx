@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Mail, Eye, EyeOff, LogIn, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { queryClient } from "@/lib/queryClient";
 
 export default function Login() {
   const [, setLocation] = useLocation();
@@ -63,23 +64,36 @@ export default function Login() {
       
       if (response.ok) {
         localStorage.setItem("token", result.token);
+        console.log("Login successful, token stored:", result.token.substring(0, 20) + "...");
+        console.log("User role:", result.user.role);
         
         toast({
           title: "Welcome back!",
           description: "You have successfully signed in"
         });
 
-        // Role-based redirection
-        const userRole = result.user.role;
-        if (userRole === 'super_admin') {
-          setLocation("/super-admin");
-        } else if (userRole === 'admin') {
-          setLocation("/dashboard");
-        } else if (userRole === 'member') {
-          setLocation("/dashboard");
-        } else {
-          setLocation("/dashboard"); // Default fallback
-        }
+        // Invalidate authentication queries to refresh user state
+        queryClient.invalidateQueries({ queryKey: ["/api/auth/verify"] });
+        
+        // Add a small delay to ensure token is stored and cache is invalidated
+        setTimeout(() => {
+          const userRole = result.user.role;
+          console.log("Redirecting user with role:", userRole);
+          
+          if (userRole === 'super_admin') {
+            console.log("Redirecting to /super-admin");
+            setLocation("/super-admin");
+          } else if (userRole === 'admin') {
+            console.log("Redirecting to /dashboard");
+            setLocation("/dashboard");
+          } else if (userRole === 'member') {
+            console.log("Redirecting to /dashboard");
+            setLocation("/dashboard");
+          } else {
+            console.log("Unknown role, redirecting to /dashboard");
+            setLocation("/dashboard"); // Default fallback
+          }
+        }, 200);
       } else {
         setErrors({ submit: result.message || "Invalid email or password" });
       }
