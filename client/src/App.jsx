@@ -25,6 +25,7 @@ import AdminManagement from './pages/super-admin/AdminManagement';
 import { Toaster } from './components/ui/toaster';
 
 // Authentication Components
+import Register from './pages/auth/Register';
 import RegistrationChoice from './pages/auth/RegistrationChoice';
 import IndividualRegistration from './pages/auth/IndividualRegistration';
 import OrganizationRegistration from './pages/auth/OrganizationRegistration';
@@ -181,7 +182,8 @@ function App() {
         <Route path="/" component={RoleBasedRedirect} />
 
         {/* Public Authentication Routes - No Layout */}
-        <Route path="/register" component={RegistrationChoice} />
+        <Route path="/register" component={Register} />
+        <Route path="/register/choice" component={RegistrationChoice} />
         <Route path="/register/individual" component={IndividualRegistration} />
         <Route path="/register/organization" component={OrganizationRegistration} />
         <Route path="/login" component={Login} />

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Mail, CheckCircle, AlertCircle, RotateCcw } from "lucide-react";
+import { Mail, CheckCircle, AlertCircle, RotateCcw, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function EmailVerification() {
@@ -20,13 +20,17 @@ export default function EmailVerification() {
     
     if (emailParam) {
       setEmail(emailParam);
+      localStorage.setItem('verificationEmail', emailParam);
     } else {
       const storedEmail = localStorage.getItem('verificationEmail');
       if (storedEmail) {
         setEmail(storedEmail);
+      } else {
+        // No email found, redirect to registration
+        setLocation('/register');
       }
     }
-  }, []);
+  }, [setLocation]);
 
   const handleVerifyEmail = async (e) => {
     e.preventDefault();
