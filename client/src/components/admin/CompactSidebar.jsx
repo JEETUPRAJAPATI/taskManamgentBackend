@@ -9,7 +9,8 @@ import {
   Menu,
   X,
   Shield,
-  BarChart3
+  BarChart3,
+  UserCog
 } from "lucide-react";
 
 export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) {
@@ -21,6 +22,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
     { name: "Projects", href: "/projects", icon: FolderOpen },
     { name: "Forms", href: "/forms", icon: FileText },
     { name: "Users", href: "/users", icon: Users },
+    { name: "User Management", href: "/user-management", icon: UserCog },
     { name: "Roles", href: "/roles", icon: Shield },
     { name: "Reports", href: "/reports", icon: BarChart3 },
     { name: "Integrations", href: "/integrations", icon: Settings },
