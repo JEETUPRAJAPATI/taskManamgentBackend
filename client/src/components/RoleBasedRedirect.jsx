@@ -6,7 +6,7 @@ export default function RoleBasedRedirect() {
   const [, setLocation] = useLocation();
   
   const { data: user, isLoading } = useQuery({
-    queryKey: ["/api/auth/me"],
+    queryKey: ["/api/auth/verify"],
     retry: false,
   });
 

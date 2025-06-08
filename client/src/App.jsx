@@ -32,6 +32,7 @@ import EmailVerification from './pages/auth/EmailVerification';
 import CreatePassword from './pages/auth/CreatePassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import AcceptInvitation from './pages/auth/AcceptInvitation';
+import TestAuth from './pages/TestAuth';
 
 // Components
 import RoleBasedRedirect from './components/RoleBasedRedirect';
@@ -146,6 +147,7 @@ function App() {
         <Route path="/reset-password" component={ResetPassword} />
         <Route path="/accept-invitation" component={AcceptInvitation} />
         <Route path="/forbidden" component={ForbiddenPage} />
+        <Route path="/test-auth" component={TestAuth} />
         
         {/* Super Admin Routes */}
         <Route path="/super-admin" nest>
@@ -188,46 +190,60 @@ function App() {
         </Route>
         
         {/* Protected Admin Routes */}
-        <Route>
+        <Route path="/dashboard">
           <AdminLayout>
-            <Switch>
-              <Route path="/dashboard">
-                <ProtectedRoute component={Dashboard} allowedRoles={["admin", "member"]} />
-              </Route>
-              <Route path="/tasks">
-                <ProtectedRoute component={Tasks} />
-              </Route>
-              <Route path="/users">
-                <ProtectedRoute component={Users} />
-              </Route>
-              <Route path="/user-management">
-                <ProtectedRoute component={UserManagement} allowedRoles={["admin"]} />
-              </Route>
-              <Route path="/projects">
-                <ProtectedRoute component={Projects} />
-              </Route>
-              <Route path="/forms">
-                <ProtectedRoute component={FormBuilder} />
-              </Route>
-              <Route path="/integrations">
-                <ProtectedRoute component={Integrations} />
-              </Route>
-              <Route path="/roles">
-                <ProtectedRoute component={Roles} />
-              </Route>
-              <Route path="/reports">
-                <ProtectedRoute component={Reports} />
-              </Route>
-              <Route>
-                <div className="flex items-center justify-center h-64">
-                  <div className="text-center">
-                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Page Not Found</h2>
-                    <p className="text-slate-600 dark:text-slate-300">The page you're looking for doesn't exist.</p>
-                  </div>
-                </div>
-              </Route>
-            </Switch>
+            <ProtectedRoute component={Dashboard} allowedRoles={["admin", "member"]} />
           </AdminLayout>
+        </Route>
+        <Route path="/tasks">
+          <AdminLayout>
+            <ProtectedRoute component={Tasks} />
+          </AdminLayout>
+        </Route>
+        <Route path="/users">
+          <AdminLayout>
+            <ProtectedRoute component={Users} />
+          </AdminLayout>
+        </Route>
+        <Route path="/user-management">
+          <AdminLayout>
+            <ProtectedRoute component={UserManagement} allowedRoles={["admin"]} />
+          </AdminLayout>
+        </Route>
+        <Route path="/projects">
+          <AdminLayout>
+            <ProtectedRoute component={Projects} />
+          </AdminLayout>
+        </Route>
+        <Route path="/forms">
+          <AdminLayout>
+            <ProtectedRoute component={FormBuilder} />
+          </AdminLayout>
+        </Route>
+        <Route path="/integrations">
+          <AdminLayout>
+            <ProtectedRoute component={Integrations} />
+          </AdminLayout>
+        </Route>
+        <Route path="/roles">
+          <AdminLayout>
+            <ProtectedRoute component={Roles} />
+          </AdminLayout>
+        </Route>
+        <Route path="/reports">
+          <AdminLayout>
+            <ProtectedRoute component={Reports} />
+          </AdminLayout>
+        </Route>
+        
+        {/* 404 Not Found */}
+        <Route>
+          <div className="flex items-center justify-center h-screen">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Page Not Found</h2>
+              <p className="text-gray-600">The page you're looking for doesn't exist.</p>
+            </div>
+          </div>
         </Route>
       </Switch>
       <Toaster />
