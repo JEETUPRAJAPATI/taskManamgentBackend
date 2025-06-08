@@ -629,3 +629,20 @@ export const Form = mongoose.model('Form', formSchema);
 export const ProcessFlow = mongoose.model('ProcessFlow', processFlowSchema);
 export const FormResponse = mongoose.model('FormResponse', formResponseSchema);
 export const ProcessInstance = mongoose.model('ProcessInstance', processInstanceSchema);
+
+// Pending User Schema for email verification during registration
+const pendingUserSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  type: { type: String, enum: ['individual', 'organization'], required: true },
+  organizationName: { type: String }, // Only for organization type
+  organizationSlug: { type: String }, // Only for organization type
+  verificationCode: { type: String },
+  verificationExpires: { type: Date },
+  isVerified: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
+  expiresAt: { type: Date, default: Date.now, expires: 86400 } // 24 hours
+});
+
+export const PendingUser = mongoose.model('PendingUser', pendingUserSchema);
