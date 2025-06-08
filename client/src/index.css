@@ -940,14 +940,20 @@
 .text-yellow-500, .text-yellow-600, .text-yellow-700, .text-yellow-800, .text-yellow-900,
 .text-orange-50, .text-orange-100, .text-orange-200, .text-orange-300, .text-orange-400,
 .text-orange-500, .text-orange-600, .text-orange-700, .text-orange-800, .text-orange-900,
+.text-amber-50, .text-amber-100, .text-amber-200, .text-amber-300, .text-amber-400,
+.text-amber-500, .text-amber-600, .text-amber-700, .text-amber-800, .text-amber-900,
 .bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400,
 .bg-yellow-500, .bg-yellow-600, .bg-yellow-700, .bg-yellow-800, .bg-yellow-900,
 .bg-orange-50, .bg-orange-100, .bg-orange-200, .bg-orange-300, .bg-orange-400,
 .bg-orange-500, .bg-orange-600, .bg-orange-700, .bg-orange-800, .bg-orange-900,
+.bg-amber-50, .bg-amber-100, .bg-amber-200, .bg-amber-300, .bg-amber-400,
+.bg-amber-500, .bg-amber-600, .bg-amber-700, .bg-amber-800, .bg-amber-900,
 .border-yellow-50, .border-yellow-100, .border-yellow-200, .border-yellow-300, .border-yellow-400,
 .border-yellow-500, .border-yellow-600, .border-yellow-700, .border-yellow-800, .border-yellow-900,
 .border-orange-50, .border-orange-100, .border-orange-200, .border-orange-300, .border-orange-400,
 .border-orange-500, .border-orange-600, .border-orange-700, .border-orange-800, .border-orange-900,
+.border-amber-50, .border-amber-100, .border-amber-200, .border-amber-300, .border-amber-400,
+.border-amber-500, .border-amber-600, .border-amber-700, .border-amber-800, .border-amber-900,
 [class*="yellow"],
 [class*="amber"],
 [class*="orange"],
@@ -961,6 +967,106 @@ div[style*="color: yellow"], div[style*="color:#FFD700"], div[style*="color: ora
 *[style*="color: yellow"], *[style*="color:#FFD700"], *[style*="color: orange"],
 *[style*="color:#FFFF00"], *[style*="color:#FFA500"], *[style*="color:#FF8C00"] {
   color: rgb(37 99 235) !important; /* Professional blue */
+}
+
+/* NUCLEAR OPTION - Override ALL possible yellow/amber color variations */
+* {
+  /* Override any computed yellow colors */
+  --yellow: rgb(59 130 246) !important;
+  --amber: rgb(59 130 246) !important;
+  --orange: rgb(59 130 246) !important;
+  
+  /* Override Tailwind CSS variables completely */
+  --tw-color-yellow: 59 130 246 !important;
+  --tw-color-amber: 59 130 246 !important;
+  --tw-color-orange: 59 130 246 !important;
+}
+
+/* Force override any remaining yellow class patterns */
+[class*="yellow"] {
+  color: rgb(59 130 246) !important;
+  background-color: rgb(219 234 254) !important;
+  border-color: rgb(147 197 253) !important;
+}
+
+[class*="amber"] {
+  color: rgb(59 130 246) !important;
+  background-color: rgb(219 234 254) !important;
+  border-color: rgb(147 197 253) !important;
+}
+
+/* Override any inline styles with yellow colors */
+*[style*="yellow"] {
+  color: rgb(59 130 246) !important;
+  background-color: rgb(219 234 254) !important;
+  border-color: rgb(147 197 253) !important;
+}
+
+*[style*="amber"] {
+  color: rgb(59 130 246) !important;
+  background-color: rgb(219 234 254) !important;
+  border-color: rgb(147 197 253) !important;
+}
+
+/* Override hex color variations of yellow */
+*[style*="#fff"] {
+  color: rgb(59 130 246) !important;
+  background-color: rgb(219 234 254) !important;
+}
+
+*[style*="#ffe"] {
+  color: rgb(59 130 246) !important;
+  background-color: rgb(219 234 254) !important;
+}
+
+*[style*="#ffd"] {
+  color: rgb(59 130 246) !important;
+  background-color: rgb(219 234 254) !important;
+}
+
+*[style*="#ffc"] {
+  color: rgb(59 130 246) !important;
+  background-color: rgb(219 234 254) !important;
+}
+
+/* FINAL NUCLEAR OVERRIDE - Maximum specificity to eliminate ALL yellow variants */
+
+html body *[style*="yellow"],
+html body *[style*="amber"],
+html body *[style*="#ff"],
+html body *[style*="#fe"],
+html body *[style*="#fd"],
+html body *[style*="rgb(255"],
+html body *.text-yellow-50, html body *.text-yellow-100, html body *.text-yellow-200, 
+html body *.text-yellow-300, html body *.text-yellow-400, html body *.text-yellow-500,
+html body *.text-yellow-600, html body *.text-yellow-700, html body *.text-yellow-800, 
+html body *.text-yellow-900, html body *.text-amber-50, html body *.text-amber-100,
+html body *.text-amber-200, html body *.text-amber-300, html body *.text-amber-400,
+html body *.text-amber-500, html body *.text-amber-600, html body *.text-amber-700,
+html body *.text-amber-800, html body *.text-amber-900 {
+  color: rgb(59 130 246) !important;
+}
+
+html body *[style*="background"],
+html body *.bg-yellow-50, html body *.bg-yellow-100, html body *.bg-yellow-200,
+html body *.bg-yellow-300, html body *.bg-yellow-400, html body *.bg-yellow-500,
+html body *.bg-yellow-600, html body *.bg-yellow-700, html body *.bg-yellow-800,
+html body *.bg-yellow-900, html body *.bg-amber-50, html body *.bg-amber-100,
+html body *.bg-amber-200, html body *.bg-amber-300, html body *.bg-amber-400,
+html body *.bg-amber-500, html body *.bg-amber-600, html body *.bg-amber-700,
+html body *.bg-amber-800, html body *.bg-amber-900 {
+  background-color: rgb(219 234 254) !important;
+}
+
+/* Override any remaining yellow classes with maximum CSS specificity */
+html body div.bg-yellow-500,
+html body span.text-yellow-500,
+html body button.bg-yellow-500,
+html body .warning,
+html body .alert-warning {
+  background-color: rgb(219 234 254) !important;
+  color: rgb(59 130 246) !important;
+  border-color: rgb(147 197 253) !important;
 }
 
 .bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400,

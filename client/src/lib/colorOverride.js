@@ -108,13 +108,30 @@ export const forceRemoveUnwantedColors = () => {
     // Check and override background color
     const bgColor = computedStyle.backgroundColor;
     if (bgColor && isUnwantedColor(bgColor)) {
-      element.style.setProperty('background-color', 'transparent', 'important');
+      element.style.setProperty('background-color', 'rgb(219, 234, 254)', 'important');
     }
     
     // Check and override border color
     const borderColor = computedStyle.borderColor;
     if (borderColor && isUnwantedColor(borderColor)) {
-      element.style.setProperty('border-color', PROFESSIONAL_COLORS.secondary, 'important');
+      element.style.setProperty('border-color', 'rgb(147, 197, 253)', 'important');
+    }
+    
+    // Check for yellow class names and replace them
+    if (element.className && typeof element.className === 'string') {
+      const classes = element.className.split(' ');
+      const updatedClasses = classes.map(cls => {
+        if (cls.includes('yellow')) {
+          return cls.replace('yellow', 'blue');
+        }
+        if (cls.includes('amber')) {
+          return cls.replace('amber', 'blue');
+        }
+        return cls;
+      });
+      if (updatedClasses.join(' ') !== element.className) {
+        element.className = updatedClasses.join(' ');
+      }
     }
   });
 };
@@ -160,6 +177,19 @@ const startColorOverride = () => {
       --orange-700: rgb(59, 130, 246) !important;
       --orange-800: rgb(59, 130, 246) !important;
       --orange-900: rgb(59, 130, 246) !important;
+      --amber-50: rgb(59, 130, 246) !important;
+      --amber-100: rgb(59, 130, 246) !important;
+      --amber-200: rgb(59, 130, 246) !important;
+      --amber-300: rgb(59, 130, 246) !important;
+      --amber-400: rgb(59, 130, 246) !important;
+      --amber-500: rgb(59, 130, 246) !important;
+      --amber-600: rgb(59, 130, 246) !important;
+      --amber-700: rgb(59, 130, 246) !important;
+      --amber-800: rgb(59, 130, 246) !important;
+      --amber-900: rgb(59, 130, 246) !important;
+      --yellow: rgb(59, 130, 246) !important;
+      --amber: rgb(59, 130, 246) !important;
+      --orange: rgb(59, 130, 246) !important;
     }
     
     /* Override any unwanted text or backgrounds */
@@ -167,8 +197,12 @@ const startColorOverride = () => {
     .text-yellow-500, .text-yellow-600, .text-yellow-700, .text-yellow-800, .text-yellow-900,
     .text-orange-50, .text-orange-100, .text-orange-200, .text-orange-300, .text-orange-400,
     .text-orange-500, .text-orange-600, .text-orange-700, .text-orange-800, .text-orange-900,
+    .text-amber-50, .text-amber-100, .text-amber-200, .text-amber-300, .text-amber-400,
+    .text-amber-500, .text-amber-600, .text-amber-700, .text-amber-800, .text-amber-900,
     [style*="color: yellow"], [style*="color:#FFD700"], [style*="color:#FFFF00"],
-    [style*="color: orange"], [style*="color:#FFA500"], [style*="color:#FF8C00"] {
+    [style*="color: orange"], [style*="color:#FFA500"], [style*="color:#FF8C00"],
+    [style*="color: amber"], [style*="color:#FFC107"], [style*="color:#FF6F00"],
+    [class*="yellow"], [class*="amber"], [class*="orange"] {
       color: rgb(59, 130, 246) !important;
     }
     
@@ -176,9 +210,22 @@ const startColorOverride = () => {
     .bg-yellow-500, .bg-yellow-600, .bg-yellow-700, .bg-yellow-800, .bg-yellow-900,
     .bg-orange-50, .bg-orange-100, .bg-orange-200, .bg-orange-300, .bg-orange-400,
     .bg-orange-500, .bg-orange-600, .bg-orange-700, .bg-orange-800, .bg-orange-900,
+    .bg-amber-50, .bg-amber-100, .bg-amber-200, .bg-amber-300, .bg-amber-400,
+    .bg-amber-500, .bg-amber-600, .bg-amber-700, .bg-amber-800, .bg-amber-900,
     [style*="background-color: yellow"], [style*="background-color:#FFD700"], [style*="background-color:#FFFF00"],
-    [style*="background-color: orange"], [style*="background-color:#FFA500"], [style*="background-color:#FF8C00"] {
-      background-color: transparent !important;
+    [style*="background-color: orange"], [style*="background-color:#FFA500"], [style*="background-color:#FF8C00"],
+    [style*="background-color: amber"], [style*="background-color:#FFC107"], [style*="background-color:#FF6F00"] {
+      background-color: rgb(219, 234, 254) !important;
+    }
+    
+    /* Force override border colors */
+    .border-yellow-50, .border-yellow-100, .border-yellow-200, .border-yellow-300, .border-yellow-400,
+    .border-yellow-500, .border-yellow-600, .border-yellow-700, .border-yellow-800, .border-yellow-900,
+    .border-orange-50, .border-orange-100, .border-orange-200, .border-orange-300, .border-orange-400,
+    .border-orange-500, .border-orange-600, .border-orange-700, .border-orange-800, .border-orange-900,
+    .border-amber-50, .border-amber-100, .border-amber-200, .border-amber-300, .border-amber-400,
+    .border-amber-500, .border-amber-600, .border-amber-700, .border-amber-800, .border-amber-900 {
+      border-color: rgb(147, 197, 253) !important;
     }
   `;
   document.head.appendChild(style);
