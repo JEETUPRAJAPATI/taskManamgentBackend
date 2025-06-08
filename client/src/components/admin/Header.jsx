@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from "react";
+import { useLocation } from "wouter";
 import { Menu, Bell, Search, User, Settings, LogOut, Edit, Shield, Key, Palette, HelpCircle, ChevronDown } from "lucide-react";
 
 export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [, setLocation] = useLocation();
   const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -18,6 +20,15 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const handleLogout = () => {
+    // Clear authentication token
+    localStorage.removeItem('token');
+    // Close dropdown
+    setProfileDropdownOpen(false);
+    // Redirect to login
+    setLocation('/login');
+  };
 
   const profileMenuItems = [
     {
@@ -175,7 +186,7 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
                 {/* Logout Section */}
                 <div className="border-t border-gray-200 dark:border-gray-700 px-2 py-2">
                   <button
-                    onClick={() => console.log("Logout clicked")}
+                    onClick={handleLogout}
                     className="w-full flex items-center p-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-left group"
                   >
                     <LogOut className="h-5 w-5 text-gray-400 group-hover:text-red-500 transition-colors" />

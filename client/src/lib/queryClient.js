@@ -8,9 +8,15 @@ async function throwIfResNotOk(res) {
 }
 
 export async function apiRequest(method, url, data) {
+  const token = localStorage.getItem('token');
+  const headers = {
+    ...(data ? { "Content-Type": "application/json" } : {}),
+    ...(token ? { "Authorization": `Bearer ${token}` } : {})
+  };
+
   const res = await fetch(url, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers,
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
@@ -21,7 +27,13 @@ export async function apiRequest(method, url, data) {
 
 export const getQueryFn = ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
+    const token = localStorage.getItem('token');
+    const headers = {
+      ...(token ? { "Authorization": `Bearer ${token}` } : {})
+    };
+
     const res = await fetch(queryKey[0], {
+      headers,
       credentials: "include",
     });
 

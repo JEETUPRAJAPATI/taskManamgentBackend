@@ -49,7 +49,7 @@ function useUserRole() {
 // Route protection wrapper
 function ProtectedRoute({ component: Component, requiredRole, ...props }) {
   const { data: user, isLoading } = useUserRole();
-  const [location] = useLocation();
+  const [, setLocation] = useLocation();
 
   if (isLoading) {
     return (
@@ -60,7 +60,7 @@ function ProtectedRoute({ component: Component, requiredRole, ...props }) {
   }
 
   if (!user) {
-    window.location.href = '/api/login';
+    setLocation('/login');
     return null;
   }
 
@@ -71,7 +71,7 @@ function ProtectedRoute({ component: Component, requiredRole, ...props }) {
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
           <p className="text-gray-600">You don't have permission to access this area.</p>
           <button 
-            onClick={() => window.location.href = user.role === 'super_admin' ? '/super-admin' : '/'}
+            onClick={() => setLocation(user.role === 'super_admin' ? '/super-admin' : '/dashboard')}
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             Go to Dashboard
@@ -87,82 +87,104 @@ function ProtectedRoute({ component: Component, requiredRole, ...props }) {
 function App() {
   const [location] = useLocation();
   const isSuperAdminRoute = location.startsWith('/super-admin');
+  const isAuthRoute = ['/register', '/login', '/verify-email', '/reset-password', '/accept-invitation'].includes(location);
 
   return (
     <QueryClientProvider client={queryClient}>
-      {isSuperAdminRoute ? (
-        <SuperAdminLayout>
-          <Switch>
-            <Route path="/super-admin">
-              <ProtectedRoute component={SuperAdminDashboard} requiredRole="super_admin" />
-            </Route>
-            <Route path="/super-admin/companies">
-              <ProtectedRoute component={CompaniesManagement} requiredRole="super_admin" />
-            </Route>
-            <Route path="/super-admin/users">
-              <ProtectedRoute component={UsersManagement} requiredRole="super_admin" />
-            </Route>
-            <Route path="/super-admin/logs">
-              <ProtectedRoute component={SystemLogs} requiredRole="super_admin" />
-            </Route>
-            <Route path="/super-admin/admins">
-              <ProtectedRoute component={AdminManagement} requiredRole="super_admin" />
-            </Route>
-            <Route path="/super-admin/analytics">
-              <ProtectedRoute component={SuperAdminDashboard} requiredRole="super_admin" />
-            </Route>
-            <Route path="/super-admin/settings">
-              <div className="p-6">
-                <h1 className="text-2xl font-bold text-gray-900">System Settings</h1>
-                <p className="text-gray-600 mt-2">System configuration options coming soon.</p>
-              </div>
-            </Route>
-            <Route>
-              <div className="flex items-center justify-center h-64">
-                <div className="text-center">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Page Not Found</h2>
-                  <p className="text-gray-600">The super admin page you're looking for doesn't exist.</p>
+      <Switch>
+        {/* Public Authentication Routes - No Layout */}
+        <Route path="/register" component={RegistrationChoice} />
+        <Route path="/login" component={Login} />
+        <Route path="/verify-email" component={EmailVerification} />
+        <Route path="/reset-password" component={ResetPassword} />
+        <Route path="/accept-invitation" component={AcceptInvitation} />
+        
+        {/* Super Admin Routes */}
+        <Route path="/super-admin" nest>
+          <SuperAdminLayout>
+            <Switch>
+              <Route path="/">
+                <ProtectedRoute component={SuperAdminDashboard} requiredRole="super_admin" />
+              </Route>
+              <Route path="/companies">
+                <ProtectedRoute component={CompaniesManagement} requiredRole="super_admin" />
+              </Route>
+              <Route path="/users">
+                <ProtectedRoute component={UsersManagement} requiredRole="super_admin" />
+              </Route>
+              <Route path="/logs">
+                <ProtectedRoute component={SystemLogs} requiredRole="super_admin" />
+              </Route>
+              <Route path="/admins">
+                <ProtectedRoute component={AdminManagement} requiredRole="super_admin" />
+              </Route>
+              <Route path="/analytics">
+                <ProtectedRoute component={SuperAdminDashboard} requiredRole="super_admin" />
+              </Route>
+              <Route path="/settings">
+                <div className="p-6">
+                  <h1 className="text-2xl font-bold text-gray-900">System Settings</h1>
+                  <p className="text-gray-600 mt-2">System configuration options coming soon.</p>
                 </div>
-              </div>
-            </Route>
-          </Switch>
-        </SuperAdminLayout>
-      ) : (
-        <Switch>
-          {/* Authentication Routes - No Layout */}
-          <Route path="/register" component={RegistrationChoice} />
-          <Route path="/login" component={Login} />
-          <Route path="/verify-email" component={EmailVerification} />
-          <Route path="/reset-password" component={ResetPassword} />
-          <Route path="/accept-invitation" component={AcceptInvitation} />
-          
-          {/* Protected Admin Routes */}
-          <Route>
-            <AdminLayout>
-              <Switch>
-                <Route path="/" component={Dashboard} />
-                <Route path="/dashboard" component={Dashboard} />
-                <Route path="/tasks" component={Tasks} />
-                <Route path="/users" component={Users} />
-                <Route path="/user-management" component={UserManagement} />
-                <Route path="/projects" component={Projects} />
-                <Route path="/forms" component={FormBuilder} />
-                <Route path="/integrations" component={Integrations} />
-                <Route path="/roles" component={Roles} />
-                <Route path="/reports" component={Reports} />
-                <Route>
-                  <div className="flex items-center justify-center h-64">
-                    <div className="text-center">
-                      <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Page Not Found</h2>
-                      <p className="text-slate-600 dark:text-slate-300">The page you're looking for doesn't exist.</p>
-                    </div>
+              </Route>
+              <Route>
+                <div className="flex items-center justify-center h-64">
+                  <div className="text-center">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Page Not Found</h2>
+                    <p className="text-gray-600">The super admin page you're looking for doesn't exist.</p>
                   </div>
-                </Route>
-              </Switch>
-            </AdminLayout>
-          </Route>
-        </Switch>
-      )}
+                </div>
+              </Route>
+            </Switch>
+          </SuperAdminLayout>
+        </Route>
+        
+        {/* Protected Admin Routes */}
+        <Route>
+          <AdminLayout>
+            <Switch>
+              <Route path="/">
+                <ProtectedRoute component={Dashboard} />
+              </Route>
+              <Route path="/dashboard">
+                <ProtectedRoute component={Dashboard} />
+              </Route>
+              <Route path="/tasks">
+                <ProtectedRoute component={Tasks} />
+              </Route>
+              <Route path="/users">
+                <ProtectedRoute component={Users} />
+              </Route>
+              <Route path="/user-management">
+                <ProtectedRoute component={UserManagement} requiredRole="admin" />
+              </Route>
+              <Route path="/projects">
+                <ProtectedRoute component={Projects} />
+              </Route>
+              <Route path="/forms">
+                <ProtectedRoute component={FormBuilder} />
+              </Route>
+              <Route path="/integrations">
+                <ProtectedRoute component={Integrations} />
+              </Route>
+              <Route path="/roles">
+                <ProtectedRoute component={Roles} />
+              </Route>
+              <Route path="/reports">
+                <ProtectedRoute component={Reports} />
+              </Route>
+              <Route>
+                <div className="flex items-center justify-center h-64">
+                  <div className="text-center">
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Page Not Found</h2>
+                    <p className="text-slate-600 dark:text-slate-300">The page you're looking for doesn't exist.</p>
+                  </div>
+                </div>
+              </Route>
+            </Switch>
+          </AdminLayout>
+        </Route>
+      </Switch>
       <Toaster />
     </QueryClientProvider>
   );
