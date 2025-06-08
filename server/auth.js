@@ -1,7 +1,7 @@
 import { storage } from "./mongodb-storage.js";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-jwt-secret-key";
+const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 const JWT_EXPIRES_IN = "7d";
 
 export function generateToken(user) {
@@ -36,10 +36,10 @@ export async function authenticateToken(req, res, next) {
   }
 
   req.user = {
-    id: user.id,
-    email: user.email,
-    organizationId: user.organization || undefined,
-    role: user.role,
+    id: decoded.id,
+    email: decoded.email,
+    organizationId: decoded.organizationId || user.organization,
+    role: decoded.role,
   };
 
   next();

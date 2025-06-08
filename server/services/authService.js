@@ -18,7 +18,7 @@ export class AuthService {
         id: user._id, 
         email: user.email, 
         role: user.role,
-        organizationId: user.organizationId 
+        organizationId: user.organization || user.organizationId 
       },
       this.JWT_SECRET,
       { expiresIn: this.JWT_EXPIRES_IN }
