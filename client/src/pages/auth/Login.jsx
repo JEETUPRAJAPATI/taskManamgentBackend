@@ -80,16 +80,15 @@ export default function Login() {
           description: "You have successfully signed in"
         });
 
-        // Role-based redirection
+        // Force page reload to ensure authentication state is properly initialized
         const userRole = result.user.role;
         
         if (userRole === 'super_admin') {
-          setLocation("/super-admin");
+          window.location.href = "/super-admin";
         } else if (userRole === 'admin' || userRole === 'member') {
-          setLocation("/dashboard");
+          window.location.href = "/dashboard";
         } else {
-          // Default fallback
-          setLocation("/dashboard");
+          window.location.href = "/dashboard";
         }
       } else {
         setErrors({ submit: result.message || "Invalid email or password" });
