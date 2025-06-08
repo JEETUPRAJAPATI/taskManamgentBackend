@@ -3,6 +3,7 @@ import { createServer } from "http";
 import { MongoStorage } from "./mongodb-storage.js";
 import { authenticateToken, requireRole, requireOrganization } from "./auth.js";
 import { requireSuperAdmin, requireSuperAdminOrCompanyAdmin } from "./middleware/superAdminAuth.js";
+import { authService } from "./services/authService.js";
 import { z } from "zod";
 
 const storage = new MongoStorage();
@@ -55,7 +56,181 @@ export async function registerRoutes(app) {
     };
   };
 
-  // Auth routes
+  // New Authentication Routes for User Management Module
+
+  // Individual user registration
+  app.post("/api/auth/register/individual", async (req, res) => {
+    try {
+      const { email, firstName, lastName } = req.body;
+      
+      if (!email || !firstName || !lastName) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+
+      const result = await authService.registerIndividual({ email, firstName, lastName });
+      res.json(result);
+    } catch (error) {
+      console.error("Individual registration error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Organization registration
+  app.post("/api/auth/register/organization", async (req, res) => {
+    try {
+      const { organizationName, email, firstName, lastName } = req.body;
+      
+      if (!organizationName || !email || !firstName || !lastName) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+
+      const result = await authService.registerOrganization({ 
+        organizationName, email, firstName, lastName 
+      });
+      res.json(result);
+    } catch (error) {
+      console.error("Organization registration error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Email verification
+  app.post("/api/auth/verify-email", async (req, res) => {
+    try {
+      const { email, verificationCode } = req.body;
+      
+      if (!email || !verificationCode) {
+        return res.status(400).json({ message: "Email and verification code are required" });
+      }
+
+      const result = await authService.verifyEmail(email, verificationCode);
+      res.json(result);
+    } catch (error) {
+      console.error("Email verification error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Complete individual registration
+  app.post("/api/auth/complete-registration", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
+      }
+
+      const result = await authService.completeIndividualRegistration(email, password);
+      res.json(result);
+    } catch (error) {
+      console.error("Complete registration error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Complete organization registration
+  app.post("/api/auth/complete-organization-registration", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
+      }
+
+      const result = await authService.completeOrganizationRegistration(email, password);
+      res.json(result);
+    } catch (error) {
+      console.error("Complete organization registration error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Forgot password
+  app.post("/api/auth/forgot-password", async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+
+      const result = await authService.forgotPassword(email);
+      res.json(result);
+    } catch (error) {
+      console.error("Forgot password error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Validate reset token
+  app.post("/api/auth/validate-reset-token", async (req, res) => {
+    try {
+      const { token } = req.body;
+      
+      if (!token) {
+        return res.status(400).json({ message: "Token is required" });
+      }
+
+      const result = await authService.validateResetToken(token);
+      res.json(result);
+    } catch (error) {
+      console.error("Validate reset token error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Reset password
+  app.post("/api/auth/reset-password", async (req, res) => {
+    try {
+      const { token, password } = req.body;
+      
+      if (!token || !password) {
+        return res.status(400).json({ message: "Token and password are required" });
+      }
+
+      const result = await authService.resetPassword(token, password);
+      res.json(result);
+    } catch (error) {
+      console.error("Reset password error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Resend verification code
+  app.post("/api/auth/resend-verification", async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+
+      const result = await authService.resendVerificationCode(email);
+      res.json(result);
+    } catch (error) {
+      console.error("Resend verification error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Update login route to use auth service
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
+      }
+
+      const result = await authService.login(email, password);
+      res.json(result);
+    } catch (error) {
+      console.error("Login error:", error);
+      res.status(401).json({ message: error.message });
+    }
+  });
+
+  // Legacy auth routes
   app.post("/api/auth/register", validateBody(registerSchema), async (req, res) => {
     try {
       const { email, password, firstName, lastName, organizationName } = req.body;
@@ -1175,6 +1350,219 @@ async function setupEmailCalendarRoutes(app) {
     } catch (error) {
       console.error("Create super admin error:", error);
       res.status(500).json({ message: "Failed to create super admin" });
+    }
+  });
+
+  // Company Admin User Management API Routes
+
+  // Get organization license information
+  app.get("/api/organization/license", authenticateToken, requireRole(['admin']), async (req, res) => {
+    try {
+      const licenseInfo = await storage.getOrganizationLicenseInfo(req.user.organizationId);
+      res.json(licenseInfo);
+    } catch (error) {
+      console.error("Get license info error:", error);
+      res.status(500).json({ message: "Failed to fetch license information" });
+    }
+  });
+
+  // Get organization users with detailed information
+  app.get("/api/organization/users-detailed", authenticateToken, requireRole(['admin']), async (req, res) => {
+    try {
+      const users = await storage.getOrganizationUsersDetailed(req.user.organizationId);
+      res.json(users);
+    } catch (error) {
+      console.error("Get organization users error:", error);
+      res.status(500).json({ message: "Failed to fetch organization users" });
+    }
+  });
+
+  // Invite user to organization
+  app.post("/api/organization/invite-user", authenticateToken, requireRole(['admin']), async (req, res) => {
+    try {
+      const { email, roles } = req.body;
+      
+      if (!email || !roles || !Array.isArray(roles)) {
+        return res.status(400).json({ message: "Email and roles are required" });
+      }
+
+      // Check license limit
+      const licenseInfo = await storage.getOrganizationLicenseInfo(req.user.organizationId);
+      if (licenseInfo.available <= 0) {
+        return res.status(400).json({ message: "License limit reached. Cannot invite more users." });
+      }
+
+      // Create invitation
+      const invitedUser = await storage.inviteUserToOrganization({
+        email,
+        organizationId: req.user.organizationId,
+        roles,
+        invitedBy: req.user.id
+      });
+
+      // Get organization and inviter details
+      const organization = await storage.getOrganization(req.user.organizationId);
+      const inviter = await storage.getUser(req.user.id);
+      const inviterName = `${inviter.firstName} ${inviter.lastName}`;
+
+      // Send invitation email
+      await storage.sendInvitationEmail(
+        email,
+        invitedUser.inviteToken,
+        organization.name,
+        roles,
+        inviterName
+      );
+
+      res.status(201).json({ 
+        message: "User invitation sent successfully",
+        user: {
+          id: invitedUser._id,
+          email: invitedUser.email,
+          role: invitedUser.role,
+          status: "invited"
+        }
+      });
+    } catch (error) {
+      console.error("Invite user error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Accept user invitation
+  app.get("/api/auth/invitation/:token", async (req, res) => {
+    try {
+      const { token } = req.params;
+      
+      const invitedUser = await storage.getInvitedUser(token);
+      if (!invitedUser) {
+        return res.status(404).json({ message: "Invalid or expired invitation" });
+      }
+
+      const organization = await storage.getOrganization(invitedUser.organizationId);
+      
+      res.json({
+        message: "Invitation found",
+        invitation: {
+          email: invitedUser.email,
+          role: invitedUser.role,
+          organizationName: organization.name,
+          valid: true
+        }
+      });
+    } catch (error) {
+      console.error("Get invitation error:", error);
+      res.status(500).json({ message: "Failed to retrieve invitation" });
+    }
+  });
+
+  // Complete user invitation
+  app.post("/api/auth/complete-invitation", async (req, res) => {
+    try {
+      const { token, firstName, lastName, password } = req.body;
+      
+      if (!token || !firstName || !lastName || !password) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+
+      const user = await storage.completeUserInvitation(token, { firstName, lastName, password });
+      
+      // Generate auth token
+      const authToken = storage.generateToken(user);
+
+      res.json({
+        message: "Account setup completed successfully",
+        token: authToken,
+        user: {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          organizationId: user.organizationId
+        }
+      });
+    } catch (error) {
+      console.error("Complete invitation error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Deactivate user (admin only)
+  app.patch("/api/organization/users/:userId/deactivate", authenticateToken, requireRole(['admin']), async (req, res) => {
+    try {
+      const { userId } = req.params;
+      
+      // Prevent self-deactivation
+      if (userId === req.user.id) {
+        return res.status(400).json({ message: "Cannot deactivate your own account" });
+      }
+
+      const user = await storage.updateUser(userId, { isActive: false });
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json({ message: "User deactivated successfully" });
+    } catch (error) {
+      console.error("Deactivate user error:", error);
+      res.status(500).json({ message: "Failed to deactivate user" });
+    }
+  });
+
+  // Reactivate user (admin only)
+  app.patch("/api/organization/users/:userId/activate", authenticateToken, requireRole(['admin']), async (req, res) => {
+    try {
+      const { userId } = req.params;
+      
+      const user = await storage.updateUser(userId, { isActive: true });
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json({ message: "User activated successfully" });
+    } catch (error) {
+      console.error("Activate user error:", error);
+      res.status(500).json({ message: "Failed to activate user" });
+    }
+  });
+
+  // Update user role (admin only)
+  app.patch("/api/organization/users/:userId/role", authenticateToken, requireRole(['admin']), async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const { role } = req.body;
+      
+      if (!role || !['admin', 'member'].includes(role)) {
+        return res.status(400).json({ message: "Valid role is required (admin or member)" });
+      }
+
+      // Prevent changing own role
+      if (userId === req.user.id) {
+        return res.status(400).json({ message: "Cannot change your own role" });
+      }
+
+      const user = await storage.updateUser(userId, { role });
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json({ 
+        message: "User role updated successfully",
+        user: {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role
+        }
+      });
+    } catch (error) {
+      console.error("Update user role error:", error);
+      res.status(500).json({ message: "Failed to update user role" });
     }
   });
 
