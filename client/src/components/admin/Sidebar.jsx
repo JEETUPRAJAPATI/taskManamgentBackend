@@ -165,7 +165,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
               <div className="border-t border-slate-600/60 dark:border-slate-700/60 mx-3"></div>
               {isOpen && (
                 <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-4 mb-2 px-3 uppercase tracking-wider">
-                  Business
+                  Settings
                 </p>
               )}
             </div>

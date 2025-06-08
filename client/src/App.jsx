@@ -6,10 +6,6 @@ import Users from './pages/admin/Users';
 import Projects from './pages/admin/Projects';
 import FormBuilder from './pages/admin/FormBuilder';
 import Integrations from './pages/admin/Integrations';
-import Collaboration from './pages/admin/Collaboration';
-import Companies from './pages/admin/Companies';
-import SubscriptionPlans from './pages/admin/SubscriptionPlans';
-import Transactions from './pages/admin/Transactions';
 import Roles from './pages/admin/Roles';
 import Reports from './pages/admin/Reports';
 import { AdminLayout } from './components/admin/AdminLayout';
@@ -36,10 +32,6 @@ function App() {
           <Route path="/projects" component={Projects} />
           <Route path="/forms" component={FormBuilder} />
           <Route path="/integrations" component={Integrations} />
-          <Route path="/collaboration" component={Collaboration} />
-          <Route path="/companies" component={Companies} />
-          <Route path="/subscription-plans" component={SubscriptionPlans} />
-          <Route path="/transactions" component={Transactions} />
           <Route path="/roles" component={Roles} />
           <Route path="/reports" component={Reports} />
           <Route>
