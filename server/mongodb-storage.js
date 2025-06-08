@@ -981,6 +981,135 @@ export class MongoStorage {
       throw error;
     }
   }
+
+  // Super Admin Methods
+  async getAllCompanies() {
+    return await Organization.find({})
+      .populate('createdBy', 'firstName lastName email')
+      .sort({ createdAt: -1 });
+  }
+
+  async getCompanyDetails(companyId) {
+    const company = await Organization.findById(companyId)
+      .populate('createdBy', 'firstName lastName email');
+    
+    if (!company) return null;
+
+    // Get company statistics
+    const userCount = await User.countDocuments({ organizationId: companyId });
+    const projectCount = await Project.countDocuments({ organizationId: companyId });
+    const taskCount = await Task.countDocuments({ organizationId: companyId });
+    const formCount = await Form.countDocuments({ organization: companyId });
+
+    return {
+      ...company.toObject(),
+      stats: {
+        users: userCount,
+        projects: projectCount,
+        tasks: taskCount,
+        forms: formCount
+      }
+    };
+  }
+
+  async getAllUsersAcrossCompanies() {
+    return await User.find({})
+      .populate('organizationId', 'name slug')
+      .sort({ createdAt: -1 });
+  }
+
+  async getPlatformAnalytics() {
+    const totalCompanies = await Organization.countDocuments({});
+    const totalUsers = await User.countDocuments({});
+    const totalProjects = await Project.countDocuments({});
+    const totalTasks = await Task.countDocuments({});
+    const totalForms = await Form.countDocuments({});
+
+    // Get recent activity across all companies
+    const recentUsers = await User.find({})
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .populate('organizationId', 'name');
+
+    const recentTasks = await Task.find({})
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .populate('organizationId', 'name')
+      .populate('assignedTo', 'firstName lastName');
+
+    // Company growth over time
+    const companyGrowth = await Organization.aggregate([
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } }
+    ]);
+
+    return {
+      overview: {
+        totalCompanies,
+        totalUsers,
+        totalProjects,
+        totalTasks,
+        totalForms
+      },
+      recentActivity: {
+        users: recentUsers,
+        tasks: recentTasks
+      },
+      growth: companyGrowth
+    };
+  }
+
+  async updateCompanyStatus(companyId, status) {
+    return await Organization.findByIdAndUpdate(
+      companyId, 
+      { isActive: status },
+      { new: true }
+    );
+  }
+
+  async assignCompanyAdmin(companyId, userId) {
+    return await User.findByIdAndUpdate(
+      userId,
+      { 
+        role: 'admin',
+        organizationId: companyId
+      },
+      { new: true }
+    );
+  }
+
+  async getSystemLogs(limit = 100) {
+    return await TaskAuditLog.find({})
+      .populate('userId', 'firstName lastName email')
+      .populate('taskId', 'title')
+      .populate('organizationId', 'name')
+      .sort({ createdAt: -1 })
+      .limit(limit);
+  }
+
+  async createSuperAdmin(userData) {
+    const superAdminData = {
+      ...userData,
+      role: 'super_admin',
+      isActive: true,
+      emailVerified: true
+    };
+
+    if (userData.password) {
+      superAdminData.passwordHash = await this.hashPassword(userData.password);
+    }
+
+    const superAdmin = new User(superAdminData);
+    return await superAdmin.save();
+  }
 }
 
 export const storage = new MongoStorage();
