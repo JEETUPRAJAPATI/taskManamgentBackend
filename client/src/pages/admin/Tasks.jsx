@@ -475,19 +475,3 @@ export default function Tasks() {
     </div>
   );
 }
-            <Kanban className="h-3 w-3" />
-            <span>Kanban</span>
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="table" className="mt-3">
-          <TaskTableView />
-        </TabsContent>
-
-        <TabsContent value="kanban" className="mt-3">
-          <TaskKanbanView />
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
-}
