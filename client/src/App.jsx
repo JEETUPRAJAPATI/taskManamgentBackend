@@ -150,7 +150,7 @@ function App() {
         <Route path="/forbidden" component={ForbiddenPage} />
         <Route path="/test-auth" component={TestAuth} />
 
-        
+
         {/* Super Admin Routes */}
         <Route path="/super-admin" nest>
           <SuperAdminLayout>
@@ -190,7 +190,7 @@ function App() {
             </Switch>
           </SuperAdminLayout>
         </Route>
-        
+
         {/* Protected Admin Routes */}
         <Route path="/dashboard">
           <AdminLayout>
@@ -237,7 +237,7 @@ function App() {
             <ProtectedRoute component={Reports} />
           </AdminLayout>
         </Route>
-        
+
         {/* 404 Not Found */}
         <Route>
           <div className="flex items-center justify-center h-screen">

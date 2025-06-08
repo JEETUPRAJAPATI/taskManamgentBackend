@@ -38,7 +38,7 @@ export async function authenticateToken(req, res, next) {
   req.user = {
     id: decoded.id,
     email: decoded.email,
-    organizationId: decoded.organizationId || user.organization,
+    organizationId: decoded.organizationId || user.organization || user.organizationId,
     role: decoded.role,
   };
 

@@ -4,9 +4,22 @@ import { MongoStorage } from "./mongodb-storage.js";
 import { authenticateToken, requireRole, requireOrganization } from "./auth.js";
 import { requireSuperAdmin, requireSuperAdminOrCompanyAdmin } from "./middleware/superAdminAuth.js";
 import { authService } from "./services/authService.js";
+import { MongoStorage } from "./mongodb-storage.js";
+import { setupTestRoutes } from "./test-auth.js";
 import { z } from "zod";
 
 const storage = new MongoStorage();
+
+// Ensure storage is properly initialized
+const ensureStorageConnection = async () => {
+  try {
+    await storage.connect();
+  } catch (error) {
+    console.error('Storage connection error:', error);
+  }
+};
+
+ensureStorageConnection();
 
 // Validation schemas
 const loginSchema = z.object({
@@ -203,7 +216,21 @@ export async function registerRoutes(app) {
       if (!user) {
         return res.status(401).json({ message: 'User not found' });
       }
-      res.json(user);
+      
+      // Return consistent user data structure
+      const userData = {
+        id: user._id,
+        _id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        organizationId: user.organization || user.organizationId,
+        isActive: user.isActive,
+        emailVerified: user.emailVerified
+      };
+      
+      res.json(userData);
     } catch (error) {
       console.error('Auth verification error:', error);
       res.status(500).json({ message: 'Server error' });
@@ -1584,6 +1611,11 @@ async function setupEmailCalendarRoutes(app) {
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
+
+  // Setup test routes (development only)
+  if (process.env.NODE_ENV === 'development') {
+    await setupTestRoutes(app);
+  }
 
   // Create HTTP server
   const httpServer = createServer(app);

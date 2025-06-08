@@ -37,7 +37,11 @@ export default function ProtectedRoute({ children, requiredRole = null, allowedR
               description: "You don't have permission to access this page",
               variant: "destructive"
             });
-            setLocation('/forbidden');
+            if (userData.role === 'super_admin') {
+              setLocation('/super-admin');
+            } else {
+              setLocation('/dashboard');
+            }
             return;
           }
           
@@ -47,7 +51,11 @@ export default function ProtectedRoute({ children, requiredRole = null, allowedR
               description: "You don't have permission to access this page",
               variant: "destructive"
             });
-            setLocation('/forbidden');
+            if (userData.role === 'super_admin') {
+              setLocation('/super-admin');
+            } else {
+              setLocation('/dashboard');
+            }
             return;
           }
           

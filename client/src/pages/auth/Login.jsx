@@ -85,11 +85,10 @@ export default function Login() {
         
         if (userRole === 'super_admin') {
           setLocation("/super-admin");
-        } else if (userRole === 'admin') {
-          setLocation("/dashboard");
-        } else if (userRole === 'member') {
+        } else if (userRole === 'admin' || userRole === 'member') {
           setLocation("/dashboard");
         } else {
+          // Default fallback
           setLocation("/dashboard");
         }
       } else {

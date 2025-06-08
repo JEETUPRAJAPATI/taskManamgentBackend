@@ -1,7 +1,9 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { storage } from '../mongodb-storage.js';
+import { MongoStorage } from '../mongodb-storage.js';
+
+const storage = new MongoStorage();
 
 export class AuthService {
   constructor() {
@@ -22,7 +24,7 @@ export class AuthService {
         id: user._id, 
         email: user.email, 
         role: user.role,
-        organizationId: user.organization || user.organizationId 
+        organizationId: user.organization || user.organizationId || null
       },
       this.JWT_SECRET,
       { expiresIn: this.JWT_EXPIRES_IN }
@@ -159,6 +161,7 @@ export class AuthService {
         username: email.split('@')[0],
         passwordHash: hashedPassword,
         organization: organization._id,
+        organizationId: organization._id,
         role: 'admin',
         isActive: true,
         emailVerified: true
@@ -301,6 +304,7 @@ export class AuthService {
       lastName: pendingUser.lastName,
       passwordHash,
       role: 'admin',
+      organization: organization._id,
       organizationId: organization._id,
       isActive: true,
       emailVerified: true
