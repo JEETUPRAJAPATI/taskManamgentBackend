@@ -4,22 +4,10 @@ import { MongoStorage } from "./mongodb-storage.js";
 import { authenticateToken, requireRole, requireOrganization } from "./auth.js";
 import { requireSuperAdmin, requireSuperAdminOrCompanyAdmin } from "./middleware/superAdminAuth.js";
 import { authService } from "./services/authService.js";
-import { MongoStorage } from "./mongodb-storage.js";
 import { setupTestRoutes } from "./test-auth.js";
 import { z } from "zod";
 
 const storage = new MongoStorage();
-
-// Ensure storage is properly initialized
-const ensureStorageConnection = async () => {
-  try {
-    await storage.connect();
-  } catch (error) {
-    console.error('Storage connection error:', error);
-  }
-};
-
-ensureStorageConnection();
 
 // Validation schemas
 const loginSchema = z.object({
