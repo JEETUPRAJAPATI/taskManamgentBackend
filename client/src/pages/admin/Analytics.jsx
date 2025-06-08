@@ -106,7 +106,7 @@ export default function Analytics() {
           change={activeTasksChange}
           trend="up"
           icon={Activity}
-          iconColor="text-orange-600"
+          iconColor="text-blue-600"
         />
         <StatsCard
           title="Team Efficiency"

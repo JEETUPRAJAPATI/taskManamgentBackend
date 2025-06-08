@@ -143,14 +143,14 @@ export default function Reports() {
   const getProgressColor = (percentage) => {
     if (percentage >= 80) return "text-green-600";
     if (percentage >= 60) return "text-blue-600";
-    if (percentage >= 40) return "text-orange-600";
+    if (percentage >= 40) return "text-blue-600";
     return "text-red-600";
   };
 
   const getProgressBadge = (percentage) => {
     if (percentage >= 80) return "bg-green-100 text-green-700 border-green-200";
     if (percentage >= 60) return "bg-blue-100 text-blue-700 border-blue-200";
-    if (percentage >= 40) return "bg-orange-100 text-orange-700 border-orange-200";
+    if (percentage >= 40) return "bg-blue-100 text-blue-700 border-blue-200";
     return "bg-red-100 text-red-700 border-red-200";
   };
 
@@ -340,8 +340,8 @@ export default function Reports() {
         <Card className="border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
           <CardContent className="p-6">
             <div className="flex items-center space-x-3">
-              <div className="p-3 rounded-lg bg-orange-50">
-                <Clock className="h-6 w-6 text-orange-600" />
+              <div className="p-3 rounded-lg bg-blue-50">
+                <Clock className="h-6 w-6 text-blue-600" />
               </div>
               <div>
                 <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Avg Completion</p>

@@ -123,8 +123,8 @@ export default function Dashboard() {
       value: stats.totalCompanies,
       description: "Registered companies",
       icon: Building2,
-      color: "text-orange-600",
-      bgColor: "bg-orange-50",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
       change: "+25%",
       changeType: "positive"
     }
@@ -246,15 +246,15 @@ export default function Dashboard() {
                 <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
                   Pending Tasks
                 </p>
-                <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">
+                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                   {stats.pendingTasks}
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                   Requires attention
                 </p>
               </div>
-              <div className="p-4 rounded-xl bg-orange-50 shadow-sm">
-                <Clock className="h-7 w-7 text-orange-600" />
+              <div className="p-4 rounded-xl bg-blue-50 shadow-sm">
+                <Clock className="h-7 w-7 text-blue-600" />
               </div>
             </div>
           </CardContent>
@@ -339,7 +339,7 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex items-center space-x-4 p-4 bg-slate-50 dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600">
-              <div className="w-3 h-3 bg-orange-500 rounded-full flex-shrink-0"></div>
+              <div className="w-3 h-3 bg-blue-500 rounded-full flex-shrink-0"></div>
               <div className="flex-1">
                 <p className="text-sm font-semibold text-slate-900 dark:text-white">
                   Task Assigned
@@ -376,7 +376,7 @@ export default function Dashboard() {
               Invite Team Member
             </Button>
             <Button className="w-full justify-start h-12 text-left bg-white border-slate-300 text-slate-700 hover:bg-slate-50" variant="outline">
-              <Building2 className="h-5 w-5 mr-3 text-orange-600" />
+              <Building2 className="h-5 w-5 mr-3 text-blue-600" />
               Add Company
             </Button>
           </CardContent>
