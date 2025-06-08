@@ -3,29 +3,29 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CRITICAL: Force override ALL yellow color variants at the highest priority */
+/* CRITICAL: Force override ALL yellow color variants with blue */
 :root,
 .light,
 .dark,
 * {
-  /* Force override ALL yellow Tailwind variables */
-  --tw-color-yellow-50: 241 245 249 !important;
-  --tw-color-yellow-100: 226 232 240 !important;
-  --tw-color-yellow-200: 203 213 225 !important;
-  --tw-color-yellow-300: 148 163 184 !important;
-  --tw-color-yellow-400: 100 116 139 !important;
-  --tw-color-yellow-500: 234 88 12 !important;
-  --tw-color-yellow-600: 234 88 12 !important;
-  --tw-color-yellow-700: 194 65 12 !important;
-  --tw-color-yellow-800: 154 52 18 !important;
-  --tw-color-yellow-900: 124 45 18 !important;
+  /* Force override ALL yellow Tailwind variables with blue */
+  --tw-color-yellow-50: 239 246 255 !important;
+  --tw-color-yellow-100: 219 234 254 !important;
+  --tw-color-yellow-200: 191 219 254 !important;
+  --tw-color-yellow-300: 147 197 253 !important;
+  --tw-color-yellow-400: 96 165 250 !important;
+  --tw-color-yellow-500: 59 130 246 !important;
+  --tw-color-yellow-600: 37 99 235 !important;
+  --tw-color-yellow-700: 29 78 216 !important;
+  --tw-color-yellow-800: 30 64 175 !important;
+  --tw-color-yellow-900: 30 58 138 !important;
   
-  /* Override any possible yellow variations */
-  --yellow: 234 88 12 !important;
-  --yellow-500: 234 88 12 !important;
-  --amber-500: 234 88 12 !important;
-  --amber-400: 234 88 12 !important;
-  --amber-300: 203 213 225 !important;
+  /* Override any possible yellow variations with blue */
+  --yellow: 59 130 246 !important;
+  --yellow-500: 59 130 246 !important;
+  --amber-500: 59 130 246 !important;
+  --amber-400: 96 165 250 !important;
+  --amber-300: 147 197 253 !important;
 }
 
 :root {
@@ -857,7 +857,7 @@
   border: 0;
 }
 
-/* FORCE REMOVE ALL YELLOW COLORS - CRITICAL OVERRIDE */
+/* FORCE REMOVE ALL YELLOW COLORS - REPLACE WITH BLUE */
 .text-yellow-50,
 .text-yellow-100,
 .text-yellow-200,
@@ -868,7 +868,7 @@
 .text-yellow-700,
 .text-yellow-800,
 .text-yellow-900 {
-  color: rgb(234 88 12) !important; /* Force orange-600 */
+  color: rgb(59 130 246) !important; /* Force blue-500 */
 }
 
 .bg-yellow-50,
@@ -881,7 +881,7 @@
 .bg-yellow-700,
 .bg-yellow-800,
 .bg-yellow-900 {
-  background-color: rgb(226 232 240) !important; /* Force slate-200 */
+  background-color: rgb(219 234 254) !important; /* Force blue-100 */
 }
 
 .border-yellow-50,
@@ -894,7 +894,7 @@
 .border-yellow-700,
 .border-yellow-800,
 .border-yellow-900 {
-  border-color: rgb(203 213 225) !important; /* Force slate-300 */
+  border-color: rgb(147 197 253) !important; /* Force blue-300 */
 }
 
 /* Override any yellow variants in dark mode */
@@ -908,7 +908,7 @@
 .dark .text-yellow-700,
 .dark .text-yellow-800,
 .dark .text-yellow-900 {
-  color: rgb(251 146 60) !important; /* Force orange-400 for dark mode */
+  color: rgb(96 165 250) !important; /* Force blue-400 for dark mode */
 }
 
 .dark .bg-yellow-50,
@@ -921,7 +921,7 @@
 .dark .bg-yellow-700,
 .dark .bg-yellow-800,
 .dark .bg-yellow-900 {
-  background-color: rgb(51 65 85) !important; /* Force slate-600 for dark mode */
+  background-color: rgb(30 64 175) !important; /* Force blue-800 for dark mode */
 }
 
 /* Force override inline styles that might use yellow */
@@ -931,8 +931,8 @@
 [style*="#FFF700"],
 [style*="rgb(255, 255, 0)"],
 [style*="rgb(255, 215, 0)"] {
-  color: rgb(234 88 12) !important;
-  background-color: transparent !important;
+  color: rgb(59 130 246) !important;
+  background-color: rgb(219 234 254) !important;
 }
 
 /* ULTIMATE COLOR OVERRIDE - Replace all unwanted colors with professional blue */
@@ -1018,16 +1018,16 @@ div[style*="color: yellow"], div[style*="color:#FFD700"], div[style*="color: ora
   @apply bg-primary text-primary-foreground font-semibold;
 }
 
-/* Override any computed yellow styles */
+/* Override any computed yellow styles - Replace with blue */
 * {
-  --yellow-50: rgb(241 245 249) !important;
-  --yellow-100: rgb(226 232 240) !important;
-  --yellow-200: rgb(203 213 225) !important;
-  --yellow-300: rgb(148 163 184) !important;
-  --yellow-400: rgb(100 116 139) !important;
-  --yellow-500: rgb(234 88 12) !important;
-  --yellow-600: rgb(234 88 12) !important;
-  --yellow-700: rgb(194 65 12) !important;
-  --yellow-800: rgb(154 52 18) !important;
-  --yellow-900: rgb(124 45 18) !important;
+  --yellow-50: rgb(239 246 255) !important;
+  --yellow-100: rgb(219 234 254) !important;
+  --yellow-200: rgb(191 219 254) !important;
+  --yellow-300: rgb(147 197 253) !important;
+  --yellow-400: rgb(96 165 250) !important;
+  --yellow-500: rgb(59 130 246) !important;
+  --yellow-600: rgb(37 99 235) !important;
+  --yellow-700: rgb(29 78 216) !important;
+  --yellow-800: rgb(30 64 175) !important;
+  --yellow-900: rgb(30 58 138) !important;
 }
