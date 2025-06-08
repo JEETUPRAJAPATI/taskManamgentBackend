@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sidebar } from "./Sidebar";
+import { Sidebar } from "./CompactSidebar";
 import { Header } from "./Header";
 
 export function AdminLayout({ children }) {
@@ -32,8 +32,8 @@ export function AdminLayout({ children }) {
           sidebarOpen={sidebarOpen}
         />
         
-        <main className="px-8 py-8 min-h-screen">
-          <div className="max-w-7xl mx-auto">
+        <main className="px-4 py-4 min-h-screen">
+          <div className="max-w-full mx-auto">
             {children}
           </div>
         </main>
