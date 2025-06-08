@@ -1,311 +1,227 @@
-import Imap from 'imap';
-import { simpleParser } from 'mailparser';
-import { google } from 'googleapis';
-import cron from 'node-cron';
-import { storage } from '../mongodb-storage.js';
+import sgMail from '@sendgrid/mail';
+
+if (!process.env.SENDGRID_API_KEY) {
+  console.warn("SENDGRID_API_KEY environment variable not set. Email functionality will be disabled.");
+} else {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
 
 class EmailService {
   constructor() {
-    this.imapConfig = null;
-    this.gmail = null;
-    this.isRunning = false;
+    this.isConfigured = !!process.env.SENDGRID_API_KEY;
   }
 
-  // Initialize IMAP connection
-  initializeIMAP(config) {
-    this.imapConfig = {
-      user: config.email,
-      password: config.password,
-      host: config.host || 'imap.gmail.com',
-      port: config.port || 993,
-      tls: true,
-      authTimeout: 10000,
-      connTimeout: 30000
-    };
-  }
+  async sendVerificationEmail(email, verificationCode, firstName, organizationName = null) {
+    if (!this.isConfigured) {
+      console.log('SendGrid not configured. Verification code for', email, ':', verificationCode);
+      return false;
+    }
 
-  // Initialize Gmail API
-  async initializeGmail(credentials) {
     try {
-      const auth = new google.auth.OAuth2(
-        credentials.clientId,
-        credentials.clientSecret,
-        credentials.redirectUri
-      );
-      
-      auth.setCredentials({
-        refresh_token: credentials.refreshToken
-      });
+      const msg = {
+        to: email,
+        from: 'noreply@tasksetu.com', // You can use any email here for testing
+        subject: 'Verify Your Email - TaskSetu',
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Email Verification</title>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background: #3B82F6; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+              .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
+              .code { font-size: 24px; font-weight: bold; color: #3B82F6; text-align: center; background: white; padding: 15px; border-radius: 8px; margin: 20px 0; }
+              .footer { text-align: center; color: #666; font-size: 12px; margin-top: 20px; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>Welcome to TaskSetu!</h1>
+              </div>
+              <div class="content">
+                <h2>Hi ${firstName}!</h2>
+                ${organizationName ? 
+                  `<p>Thank you for registering your organization <strong>${organizationName}</strong> with TaskSetu.</p>` :
+                  `<p>Thank you for signing up with TaskSetu.</p>`
+                }
+                <p>To complete your registration, please verify your email address using the verification code below:</p>
+                
+                <div class="code">${verificationCode}</div>
+                
+                <p>This code will expire in 24 hours. If you didn't request this verification, please ignore this email.</p>
+                
+                <p>Welcome aboard!<br>The TaskSetu Team</p>
+              </div>
+              <div class="footer">
+                <p>This is an automated message. Please do not reply to this email.</p>
+              </div>
+            </div>
+          </body>
+          </html>
+        `,
+        text: `Hi ${firstName}!\n\n${organizationName ? 
+          `Thank you for registering your organization ${organizationName} with TaskSetu.` :
+          `Thank you for signing up with TaskSetu.`
+        }\n\nTo complete your registration, please verify your email address using this verification code: ${verificationCode}\n\nThis code will expire in 24 hours.\n\nWelcome aboard!\nThe TaskSetu Team`
+      };
 
-      this.gmail = google.gmail({ version: 'v1', auth });
+      await sgMail.send(msg);
+      console.log('Verification email sent successfully to:', email);
       return true;
     } catch (error) {
-      console.error('Gmail initialization error:', error);
+      console.error('SendGrid email error:', error.response?.body || error.message);
       return false;
     }
   }
 
-  // Fetch emails using IMAP
-  async fetchEmailsIMAP(organizationId, userId) {
-    return new Promise((resolve, reject) => {
-      if (!this.imapConfig) {
-        return reject(new Error('IMAP not configured'));
-      }
-
-      const imap = new Imap(this.imapConfig);
-      const emails = [];
-
-      imap.once('ready', () => {
-        imap.openBox('INBOX', true, (err, box) => {
-          if (err) return reject(err);
-
-          // Search for unread emails from the last 7 days
-          const searchCriteria = ['UNSEEN', ['SINCE', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)]];
-          
-          imap.search(searchCriteria, (err, results) => {
-            if (err || !results || results.length === 0) {
-              imap.end();
-              return resolve([]);
-            }
-
-            const fetch = imap.fetch(results.slice(0, 20), { // Limit to 20 emails
-              bodies: '',
-              markSeen: false
-            });
-
-            fetch.on('message', (msg) => {
-              let buffer = '';
-              
-              msg.on('body', (stream) => {
-                stream.on('data', (chunk) => {
-                  buffer += chunk.toString('utf8');
-                });
-              });
-
-              msg.once('end', async () => {
-                try {
-                  const parsed = await simpleParser(buffer);
-                  const email = {
-                    subject: parsed.subject,
-                    from: parsed.from?.text || '',
-                    date: parsed.date,
-                    text: parsed.text,
-                    html: parsed.html,
-                    messageId: parsed.messageId
-                  };
-                  emails.push(email);
-                } catch (parseError) {
-                  console.error('Email parsing error:', parseError);
-                }
-              });
-            });
-
-            fetch.once('end', () => {
-              imap.end();
-              resolve(emails);
-            });
-
-            fetch.once('error', (err) => {
-              console.error('Fetch error:', err);
-              imap.end();
-              reject(err);
-            });
-          });
-        });
-      });
-
-      imap.once('error', (err) => {
-        console.error('IMAP error:', err);
-        reject(err);
-      });
-
-      imap.connect();
-    });
-  }
-
-  // Fetch emails using Gmail API
-  async fetchEmailsGmail(organizationId, userId) {
-    try {
-      if (!this.gmail) {
-        throw new Error('Gmail API not configured');
-      }
-
-      const response = await this.gmail.users.messages.list({
-        userId: 'me',
-        q: 'is:unread newer_than:7d',
-        maxResults: 20
-      });
-
-      const messages = response.data.messages || [];
-      const emails = [];
-
-      for (const message of messages) {
-        try {
-          const msgResponse = await this.gmail.users.messages.get({
-            userId: 'me',
-            id: message.id,
-            format: 'full'
-          });
-
-          const headers = msgResponse.data.payload.headers;
-          const subject = headers.find(h => h.name === 'Subject')?.value || '';
-          const from = headers.find(h => h.name === 'From')?.value || '';
-          const date = headers.find(h => h.name === 'Date')?.value || '';
-
-          let body = '';
-          if (msgResponse.data.payload.body.data) {
-            body = Buffer.from(msgResponse.data.payload.body.data, 'base64').toString();
-          } else if (msgResponse.data.payload.parts) {
-            const textPart = msgResponse.data.payload.parts.find(part => 
-              part.mimeType === 'text/plain'
-            );
-            if (textPart && textPart.body.data) {
-              body = Buffer.from(textPart.body.data, 'base64').toString();
-            }
-          }
-
-          emails.push({
-            subject,
-            from,
-            date: new Date(date),
-            text: body,
-            messageId: message.id
-          });
-        } catch (msgError) {
-          console.error('Error fetching message:', msgError);
-        }
-      }
-
-      return emails;
-    } catch (error) {
-      console.error('Gmail fetch error:', error);
-      throw error;
+  async sendPasswordResetEmail(email, resetToken, firstName) {
+    if (!this.isConfigured) {
+      console.log('SendGrid not configured. Password reset token for', email, ':', resetToken);
+      return false;
     }
-  }
 
-  // Convert email to task
-  async emailToTask(email, organizationId, userId) {
     try {
-      // Extract task information from email
-      const taskData = this.parseEmailForTask(email);
+      const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5000'}/reset-password?token=${resetToken}`;
       
-      // Create task
-      const task = await storage.createTask({
-        title: taskData.title,
-        description: taskData.description,
-        priority: taskData.priority,
-        dueDate: taskData.dueDate,
-        organization: organizationId,
-        createdBy: userId,
-        assignedTo: userId,
-        source: 'email',
-        sourceMetadata: {
-          emailSubject: email.subject,
-          emailFrom: email.from,
-          emailDate: email.date,
-          messageId: email.messageId
-        }
-      });
-
-      return task;
-    } catch (error) {
-      console.error('Error converting email to task:', error);
-      throw error;
-    }
-  }
-
-  // Parse email content to extract task information
-  parseEmailForTask(email) {
-    const subject = email.subject || '';
-    const content = email.text || '';
-    
-    // Extract task title from subject
-    let title = subject;
-    
-    // Remove common email prefixes
-    title = title.replace(/^(RE:|FW:|FWD:)\s*/i, '');
-    
-    // Limit title length
-    if (title.length > 100) {
-      title = title.substring(0, 97) + '...';
-    }
-
-    // Extract description from email content
-    let description = content;
-    if (description.length > 500) {
-      description = description.substring(0, 497) + '...';
-    }
-
-    // Extract priority based on keywords
-    let priority = 'medium';
-    const urgentKeywords = ['urgent', 'asap', 'emergency', 'critical', 'high priority'];
-    const lowKeywords = ['fyi', 'low priority', 'when you have time'];
-    
-    const emailText = (subject + ' ' + content).toLowerCase();
-    
-    if (urgentKeywords.some(keyword => emailText.includes(keyword))) {
-      priority = 'high';
-    } else if (lowKeywords.some(keyword => emailText.includes(keyword))) {
-      priority = 'low';
-    }
-
-    // Extract due date from content
-    let dueDate = null;
-    const dateRegex = /(?:due|deadline|by)\s*:?\s*(\d{1,2}\/\d{1,2}\/\d{4}|\d{4}-\d{2}-\d{2}|\w+\s+\d{1,2},?\s+\d{4})/i;
-    const dateMatch = emailText.match(dateRegex);
-    
-    if (dateMatch) {
-      try {
-        dueDate = new Date(dateMatch[1]);
-        if (isNaN(dueDate.getTime())) {
-          dueDate = null;
-        }
-      } catch (error) {
-        dueDate = null;
-      }
-    }
-
-    return {
-      title,
-      description: `Email from: ${email.from}\n\n${description}`,
-      priority,
-      dueDate
-    };
-  }
-
-  // Manual email sync
-  async syncEmails(organizationId, userId, method = 'gmail') {
-    try {
-      let emails = [];
-      
-      if (method === 'gmail' && this.gmail) {
-        emails = await this.fetchEmailsGmail(organizationId, userId);
-      } else if (method === 'imap' && this.imapConfig) {
-        emails = await this.fetchEmailsIMAP(organizationId, userId);
-      } else {
-        throw new Error(`Email method ${method} not configured`);
-      }
-
-      const tasks = [];
-      for (const email of emails) {
-        try {
-          const task = await this.emailToTask(email, organizationId, userId);
-          tasks.push(task);
-        } catch (error) {
-          console.error('Error converting email to task:', error);
-        }
-      }
-
-      return {
-        emailsProcessed: emails.length,
-        tasksCreated: tasks.length,
-        tasks
+      const msg = {
+        to: email,
+        from: 'noreply@tasksetu.com',
+        subject: 'Reset Your Password - TaskSetu',
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Password Reset</title>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background: #EF4444; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+              .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
+              .button { display: inline-block; background: #EF4444; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; margin: 20px 0; }
+              .footer { text-align: center; color: #666; font-size: 12px; margin-top: 20px; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>Password Reset Request</h1>
+              </div>
+              <div class="content">
+                <h2>Hi ${firstName}!</h2>
+                <p>We received a request to reset your password for your TaskSetu account.</p>
+                
+                <p>Click the button below to reset your password:</p>
+                <a href="${resetUrl}" class="button">Reset Password</a>
+                
+                <p>Or copy and paste this link into your browser:</p>
+                <p style="word-break: break-all; color: #666;">${resetUrl}</p>
+                
+                <p>This link will expire in 1 hour for security reasons.</p>
+                
+                <p>If you didn't request a password reset, please ignore this email or contact support if you have concerns.</p>
+                
+                <p>Best regards,<br>The TaskSetu Team</p>
+              </div>
+              <div class="footer">
+                <p>This is an automated message. Please do not reply to this email.</p>
+              </div>
+            </div>
+          </body>
+          </html>
+        `,
+        text: `Hi ${firstName}!\n\nWe received a request to reset your password for your TaskSetu account.\n\nClick this link to reset your password: ${resetUrl}\n\nThis link will expire in 1 hour for security reasons.\n\nIf you didn't request a password reset, please ignore this email.\n\nBest regards,\nThe TaskSetu Team`
       };
+
+      await sgMail.send(msg);
+      console.log('Password reset email sent successfully to:', email);
+      return true;
     } catch (error) {
-      console.error('Manual email sync error:', error);
-      throw error;
+      console.error('SendGrid email error:', error.response?.body || error.message);
+      return false;
     }
+  }
+
+  async sendInvitationEmail(email, inviteToken, organizationName, roles, invitedByName) {
+    if (!this.isConfigured) {
+      console.log('SendGrid not configured. Invitation token for', email, ':', inviteToken);
+      return false;
+    }
+
+    try {
+      const inviteUrl = `${process.env.FRONTEND_URL || 'http://localhost:5000'}/accept-invitation?token=${inviteToken}`;
+      
+      const msg = {
+        to: email,
+        from: 'noreply@tasksetu.com',
+        subject: `You're invited to join ${organizationName} - TaskSetu`,
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Team Invitation</title>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background: #10B981; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+              .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
+              .button { display: inline-block; background: #10B981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; margin: 20px 0; }
+              .footer { text-align: center; color: #666; font-size: 12px; margin-top: 20px; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>Team Invitation</h1>
+              </div>
+              <div class="content">
+                <h2>You're invited to join ${organizationName}!</h2>
+                <p><strong>${invitedByName}</strong> has invited you to join their team on TaskSetu.</p>
+                
+                <p>You'll be joining as: <strong>${Array.isArray(roles) ? roles.join(', ') : roles}</strong></p>
+                
+                <p>Click the button below to accept the invitation and create your account:</p>
+                <a href="${inviteUrl}" class="button">Accept Invitation</a>
+                
+                <p>Or copy and paste this link into your browser:</p>
+                <p style="word-break: break-all; color: #666;">${inviteUrl}</p>
+                
+                <p>This invitation will expire in 7 days.</p>
+                
+                <p>If you don't want to join this team, you can safely ignore this email.</p>
+                
+                <p>Welcome to TaskSetu!<br>The TaskSetu Team</p>
+              </div>
+              <div class="footer">
+                <p>This is an automated message. Please do not reply to this email.</p>
+              </div>
+            </div>
+          </body>
+          </html>
+        `,
+        text: `You're invited to join ${organizationName}!\n\n${invitedByName} has invited you to join their team on TaskSetu.\n\nYou'll be joining as: ${Array.isArray(roles) ? roles.join(', ') : roles}\n\nClick this link to accept the invitation: ${inviteUrl}\n\nThis invitation will expire in 7 days.\n\nWelcome to TaskSetu!\nThe TaskSetu Team`
+      };
+
+      await sgMail.send(msg);
+      console.log('Invitation email sent successfully to:', email);
+      return true;
+    } catch (error) {
+      console.error('SendGrid email error:', error.response?.body || error.message);
+      return false;
+    }
+  }
+
+  isEmailServiceAvailable() {
+    return this.isConfigured;
   }
 }
 
-export default new EmailService();
+export const emailService = new EmailService();
