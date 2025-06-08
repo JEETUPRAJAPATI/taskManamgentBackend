@@ -256,8 +256,8 @@ const startColorOverride = () => {
   window.addEventListener('load', forceRemoveUnwantedColors);
   window.addEventListener('resize', forceRemoveUnwantedColors);
   
-  // Run periodically to catch any missed changes
-  const intervalId = setInterval(forceRemoveUnwantedColors, 1000);
+  // Run very frequently to catch any missed changes
+  const intervalId = setInterval(forceRemoveUnwantedColors, 100);
   
   // Clean up on page unload
   window.addEventListener('beforeunload', () => {
