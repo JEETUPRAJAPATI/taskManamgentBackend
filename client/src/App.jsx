@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, Switch, useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import Dashboard from './pages/admin/CompactDashboard';
 import Tasks from './pages/admin/Tasks';
 import Users from './pages/admin/Users';
@@ -51,6 +52,12 @@ function ProtectedRoute({ component: Component, requiredRole, ...props }) {
   const { data: user, isLoading } = useUserRole();
   const [, setLocation] = useLocation();
 
+  useEffect(() => {
+    if (!isLoading && !user) {
+      setLocation('/login');
+    }
+  }, [user, isLoading, setLocation]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -60,7 +67,6 @@ function ProtectedRoute({ component: Component, requiredRole, ...props }) {
   }
 
   if (!user) {
-    setLocation('/login');
     return null;
   }
 

@@ -85,7 +85,8 @@ async function initializeSampleData() {
         organization: savedOrgs[0]._id,
         role: "admin",
         department: "Engineering",
-        isActive: true
+        isActive: true,
+        emailVerified: true
       },
       {
         firstName: "Jane",
@@ -96,7 +97,8 @@ async function initializeSampleData() {
         organization: savedOrgs[0]._id,
         role: "member",
         department: "Design",
-        isActive: true
+        isActive: true,
+        emailVerified: true
       },
       {
         firstName: "Mike",
@@ -107,7 +109,8 @@ async function initializeSampleData() {
         organization: savedOrgs[0]._id,
         role: "member",
         department: "Marketing",
-        isActive: true
+        isActive: true,
+        emailVerified: true
       },
       {
         firstName: "Sarah",
@@ -118,7 +121,8 @@ async function initializeSampleData() {
         organization: savedOrgs[1]._id,
         role: "admin",
         department: "Creative",
-        isActive: true
+        isActive: true,
+        emailVerified: true
       },
       {
         firstName: "David",
@@ -129,7 +133,8 @@ async function initializeSampleData() {
         organization: savedOrgs[1]._id,
         role: "member",
         department: "Design",
-        isActive: true
+        isActive: true,
+        emailVerified: true
       },
       {
         firstName: "Emily",
@@ -140,7 +145,8 @@ async function initializeSampleData() {
         organization: savedOrgs[2]._id,
         role: "admin",
         department: "Marketing",
-        isActive: true
+        isActive: true,
+        emailVerified: true
       }
     ];
 
