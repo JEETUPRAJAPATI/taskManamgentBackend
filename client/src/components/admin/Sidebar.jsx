@@ -8,10 +8,6 @@ import {
   Settings,
   Menu,
   X,
-  MessageSquare,
-  Building2,
-  CreditCard,
-  Receipt,
   Shield,
   BarChart3
 } from "lucide-react";
@@ -23,14 +19,10 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Tasks", href: "/tasks", icon: CheckSquare },
     { name: "Projects", href: "/projects", icon: FolderOpen },
-    { name: "Collaboration", href: "/collaboration", icon: MessageSquare },
     { name: "Forms", href: "/forms", icon: FileText },
     { name: "Users", href: "/users", icon: Users },
     { name: "Role Management", href: "/roles", icon: Shield },
     { name: "Reports", href: "/reports", icon: BarChart3 },
-    { name: "Companies", href: "/companies", icon: Building2 },
-    { name: "Subscription Plans", href: "/subscription-plans", icon: CreditCard },
-    { name: "Transactions", href: "/transactions", icon: Receipt },
     { name: "Integrations", href: "/integrations", icon: Settings },
   ];
 
@@ -74,7 +66,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                 )}
               </div>
               
-              {navigation.slice(0, 4).map((item, index) => {
+              {navigation.slice(0, 3).map((item, index) => {
                 const Icon = item.icon;
                 return (
                   <div key={item.name}>
@@ -127,7 +119,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
 
             {/* Management Section */}
             <div className="space-y-1">
-              {navigation.slice(4, 8).map((item, index) => {
+              {navigation.slice(3, 7).map((item, index) => {
                 const Icon = item.icon;
                 return (
                   <div key={item.name}>
@@ -178,9 +170,9 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
               )}
             </div>
 
-            {/* Business Section */}
+            {/* Integration Section */}
             <div className="space-y-1">
-              {navigation.slice(8).map((item, index) => {
+              {navigation.slice(7).map((item, index) => {
                 const Icon = item.icon;
                 return (
                   <div key={item.name}>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation, Link } from 'wouter';
-import { Plus, Save, Eye, Share2, Settings, Trash2, GripVertical } from 'lucide-react';
+import { Plus, Save, Eye, Share2, Settings, Trash2, GripVertical, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
