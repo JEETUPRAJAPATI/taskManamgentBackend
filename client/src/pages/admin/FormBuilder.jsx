@@ -444,7 +444,7 @@ export default function FormBuilder() {
       <Card className="border-slate-200 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800">
         <CardHeader className="pb-4 border-b border-slate-200 dark:border-slate-700">
           <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
-            <FileText className="h-5 w-5 mr-2 text-orange-600" />
+            <FileText className="h-5 w-5 mr-2 text-blue-600" />
             Existing Forms
             <span className="ml-2 text-sm font-normal text-slate-500">
               ({forms.length} forms)

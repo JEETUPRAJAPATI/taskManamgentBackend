@@ -156,7 +156,7 @@ export default function Roles() {
     const count = permissions.length;
     const colorClass = count > 10 ? "bg-green-100 text-green-700" : 
                      count > 5 ? "bg-blue-100 text-blue-700" : 
-                     "bg-orange-100 text-orange-700";
+                     "bg-blue-100 text-blue-700";
     
     return (
       <Badge className={`${colorClass} border-0`}>

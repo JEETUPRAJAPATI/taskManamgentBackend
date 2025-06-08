@@ -267,7 +267,7 @@ export function TaskKanbanView() {
   const getPriorityColor = (priority) => {
     switch (priority?.toLowerCase()) {
       case "high": return "border-l-red-500";
-      case "medium": return "border-l-orange-500";
+      case "medium": return "border-l-blue-500";
       case "low": return "border-l-green-500";
       default: return "border-l-slate-300";
     }

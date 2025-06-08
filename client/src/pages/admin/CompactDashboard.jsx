@@ -114,8 +114,8 @@ export default function Dashboard() {
       value: stats.totalProjects,
       description: "Active projects",
       icon: FolderOpen,
-      color: "text-orange-600",
-      bgColor: "bg-orange-50",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
       change: "+5%",
       changeType: "positive"
     }
@@ -279,7 +279,7 @@ export default function Dashboard() {
                     {activity.type === 'completion' && <CheckCircle className="h-3 w-3 text-green-600" />}
                     {activity.type === 'creation' && <Plus className="h-3 w-3 text-blue-600" />}
                     {activity.type === 'assignment' && <Users className="h-3 w-3 text-purple-600" />}
-                    {activity.type === 'update' && <Activity className="h-3 w-3 text-orange-600" />}
+                    {activity.type === 'update' && <Activity className="h-3 w-3 text-blue-600" />}
                     {activity.type === 'milestone' && <CheckSquare className="h-3 w-3 text-indigo-600" />}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -338,7 +338,7 @@ export default function Dashboard() {
                     {deadline.priority === 'high' ? (
                       <AlertCircle className="h-4 w-4 text-red-500" />
                     ) : (
-                      <Clock className="h-4 w-4 text-orange-500" />
+                      <Clock className="h-4 w-4 text-blue-500" />
                     )}
                   </div>
                 </div>
