@@ -3,11 +3,8 @@ import { Route, Switch, useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { getQueryFn } from '@/lib/queryClient';
-import Dashboard from './pages/Dashboard';
-import Home from './pages/Home';
-import LandingPage from './pages/LandingPage';
+import Dashboard from './pages/admin/CompactDashboard';
 import Tasks from './pages/admin/Tasks';
-import CreateTask from './pages/admin/CreateTask';
 import Users from './pages/admin/Users';
 import UserManagement from './pages/admin/UserManagement';
 import Projects from './pages/admin/Projects';
@@ -88,7 +85,7 @@ function useUserRole() {
       return await res.json();
     },
     retry: false,
-    staleTime: 5 * 60 * 1000 // Cache for 5 minutes
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 }
 
@@ -181,11 +178,8 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Switch>
-        {/* Root Route - Landing page for non-authenticated, role-based redirect for authenticated */}
-        <Route path="/" component={() => {
-          const token = localStorage.getItem('token');
-          return token ? <RoleBasedRedirect /> : <LandingPage />;
-        }} />
+        {/* Root Route - Role-based redirect */}
+        <Route path="/" component={RoleBasedRedirect} />
 
         {/* Public Authentication Routes - No Layout */}
         <Route path="/register" component={Register} />
@@ -229,54 +223,48 @@ function App() {
           </SuperAdminLayout>
         </Route>
 
-        {/* Home Route */}
-        <Route path="/home">
-          <ProtectedRoute component={Home} allowedRoles={["admin", "member"]} />
-        </Route>
-
         {/* Protected Admin Routes */}
         <Route path="/dashboard">
-          <ProtectedRoute component={Dashboard} allowedRoles={["admin", "member"]} />
+          <AdminLayout>
+            <ProtectedRoute component={Dashboard} allowedRoles={["admin", "member"]} />
+          </AdminLayout>
         </Route>
-        <Route path="/admin/tasks">
+        <Route path="/tasks">
           <AdminLayout>
             <ProtectedRoute component={Tasks} />
           </AdminLayout>
         </Route>
-        <Route path="/admin/tasks/create">
-          <ProtectedRoute component={CreateTask} allowedRoles={["admin", "member"]} />
-        </Route>
-        <Route path="/admin/users">
+        <Route path="/users">
           <AdminLayout>
             <ProtectedRoute component={Users} />
           </AdminLayout>
         </Route>
-        <Route path="/admin/user-management">
+        <Route path="/user-management">
           <AdminLayout>
             <ProtectedRoute component={UserManagement} allowedRoles={["admin"]} />
           </AdminLayout>
         </Route>
-        <Route path="/admin/projects">
+        <Route path="/projects">
           <AdminLayout>
             <ProtectedRoute component={Projects} />
           </AdminLayout>
         </Route>
-        <Route path="/admin/forms">
+        <Route path="/forms">
           <AdminLayout>
             <ProtectedRoute component={FormBuilder} />
           </AdminLayout>
         </Route>
-        <Route path="/admin/integrations">
+        <Route path="/integrations">
           <AdminLayout>
             <ProtectedRoute component={Integrations} />
           </AdminLayout>
         </Route>
-        <Route path="/admin/roles">
+        <Route path="/roles">
           <AdminLayout>
             <ProtectedRoute component={Roles} />
           </AdminLayout>
         </Route>
-        <Route path="/admin/reports">
+        <Route path="/reports">
           <AdminLayout>
             <ProtectedRoute component={Reports} />
           </AdminLayout>
