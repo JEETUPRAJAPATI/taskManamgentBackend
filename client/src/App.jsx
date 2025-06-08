@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { getQueryFn } from '@/lib/queryClient';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
+import LandingPage from './pages/LandingPage';
 import Tasks from './pages/admin/Tasks';
 import CreateTask from './pages/admin/CreateTask';
 import Users from './pages/admin/Users';
@@ -180,8 +181,11 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Switch>
-        {/* Root Route - Role-based redirect */}
-        <Route path="/" component={RoleBasedRedirect} />
+        {/* Root Route - Landing page for non-authenticated, role-based redirect for authenticated */}
+        <Route path="/" component={() => {
+          const token = localStorage.getItem('token');
+          return token ? <RoleBasedRedirect /> : <LandingPage />;
+        }} />
 
         {/* Public Authentication Routes - No Layout */}
         <Route path="/register" component={Register} />
