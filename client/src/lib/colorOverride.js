@@ -40,14 +40,15 @@ export const replaceUnwantedColors = (color) => {
   // Unwanted color patterns to replace (yellow, orange, brown)
   const unwantedPatterns = [
     // Yellow patterns
-    'yellow', '#ffff00', '#ffd700', '#fff700', '#ffef00',
-    'rgb(255, 255, 0)', 'rgb(255, 215, 0)', 'rgb(255, 239, 0)',
+    'yellow', '#ffff00', '#ffd700', '#fff700', '#ffef00', '#f59e0b', '#d97706',
+    'rgb(255, 255, 0)', 'rgb(255, 215, 0)', 'rgb(255, 239, 0)', 'rgb(245, 158, 11)', 'rgb(217, 119, 6)',
     'hsl(60,', 'hsl(51,', 'hsl(45,', 'amber',
     
-    // Orange patterns
-    'orange', '#ffa500', '#ff8c00', '#ff7f50', '#ff6347',
-    'rgb(255, 165, 0)', 'rgb(255, 140, 0)', 'rgb(255, 127, 80)',
-    'hsl(39,', 'hsl(33,', 'hsl(16,',
+    // Orange patterns - COMPREHENSIVE
+    'orange', '#ffa500', '#ff8c00', '#ff7f50', '#ff6347', '#ea580c', '#f97316', '#fb923c',
+    'rgb(255, 165, 0)', 'rgb(255, 140, 0)', 'rgb(255, 127, 80)', 'rgb(234, 88, 12)', 'rgb(249, 115, 22)', 'rgb(251, 146, 60)',
+    '234, 88, 12', '249, 115, 22', '251, 146, 60', // CSS variable format
+    'hsl(39,', 'hsl(33,', 'hsl(16,', 'hsl(24,', 'hsl(32,',
     
     // Brown patterns
     'brown', '#a52a2a', '#8b4513', '#daa520', '#cd853f',
@@ -71,12 +72,14 @@ const isUnwantedColor = (color) => {
   
   const unwantedPatterns = [
     // Yellow patterns
-    'rgb(255, 255, 0)', 'rgb(255, 215, 0)', 'rgb(255, 239, 0)',
-    '#ffff00', '#ffd700', '#fff700', '#ffef00',
+    'rgb(255, 255, 0)', 'rgb(255, 215, 0)', 'rgb(255, 239, 0)', 'rgb(245, 158, 11)', 'rgb(217, 119, 6)',
+    '#ffff00', '#ffd700', '#fff700', '#ffef00', '#f59e0b', '#d97706',
     
-    // Orange patterns  
-    'rgb(255, 165, 0)', 'rgb(255, 140, 0)', 'rgb(255, 127, 80)',
-    '#ffa500', '#ff8c00', '#ff7f50', '#ff6347',
+    // Orange patterns - EXACT MATCHES FOR CSS VARIABLES
+    'rgb(255, 165, 0)', 'rgb(255, 140, 0)', 'rgb(255, 127, 80)', 'rgb(234, 88, 12)', 'rgb(249, 115, 22)', 'rgb(251, 146, 60)',
+    'rgb(234 88 12)', 'rgb(249 115 22)', 'rgb(251 146 60)', // CSS variables format (no commas)
+    '234, 88, 12', '249, 115, 22', '251, 146, 60', // Raw RGB values
+    '#ffa500', '#ff8c00', '#ff7f50', '#ff6347', '#ea580c', '#f97316', '#fb923c',
     
     // Brown patterns
     'rgb(165, 42, 42)', 'rgb(139, 69, 19)', 'rgb(218, 165, 32)',
