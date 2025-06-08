@@ -65,27 +65,27 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
           {/* Mobile menu button */}
           <button
             onClick={onMenuClick}
-            className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 lg:hidden"
+            className="p-1.5 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 lg:hidden"
           >
-            <Menu className="h-6 w-6" />
+            <Menu className="h-4 w-4" />
           </button>
 
           {/* Desktop sidebar toggle */}
           <button
             onClick={onSidebarToggle}
-            className="hidden lg:block p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="hidden lg:block p-1.5 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
-            <Menu className="h-6 w-6" />
+            <Menu className="h-4 w-4" />
           </button>
 
           {/* Search */}
-          <div className="ml-4 flex items-center">
+          <div className="ml-2 flex items-center">
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
+              <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                <Search className="h-3 w-3 text-gray-400" />
               </div>
               <input
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white dark:bg-gray-700 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white sm:text-sm"
+                className="block w-full pl-7 pr-3 py-1.5 border border-gray-300 rounded-md leading-4 bg-white dark:bg-gray-700 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white text-sm"
                 placeholder="Search..."
                 type="search"
               />
@@ -93,28 +93,28 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
           </div>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2">
           {/* Notifications */}
-          <button className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 relative">
-            <Bell className="h-6 w-6" />
-            <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
+          <button className="p-1.5 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 relative">
+            <Bell className="h-4 w-4" />
+            <span className="absolute top-0.5 right-0.5 block h-1.5 w-1.5 rounded-full bg-red-500"></span>
           </button>
 
           {/* Profile Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button 
               onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-              className="flex items-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="flex items-center p-1.5 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
               <div className="flex items-center">
                 <div className="relative">
-                  <User className="h-6 w-6" />
-                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
+                  <User className="h-4 w-4" />
+                  <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-green-500 border border-white dark:border-gray-800 rounded-full"></div>
                 </div>
-                <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:block">
-                  Admin User
+                <span className="ml-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:block">
+                  Admin
                 </span>
-                <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-200 ${
+                <ChevronDown className={`ml-1 h-3 w-3 transition-transform duration-200 ${
                   profileDropdownOpen ? 'rotate-180' : ''
                 }`} />
               </div>
