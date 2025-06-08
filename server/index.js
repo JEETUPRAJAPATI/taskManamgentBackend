@@ -21,19 +21,27 @@ const connectToMongoDB = async () => {
 };
 
 (async () => {
-  await connectToMongoDB();
-  
-  const server = await registerRoutes(app);
+  try {
+    await connectToMongoDB();
+    console.log('MongoDB connection successful, registering routes...');
+    
+    const server = await registerRoutes(app);
+    console.log('Routes registered successfully, setting up Vite...');
 
-  // Important: This setup is for production. In development, Vite will handle HMR.
-  if (process.env.NODE_ENV === "production") {
-    serveStatic(app);
-  } else {
-    await setupVite(app, server);
+    // Important: This setup is for production. In development, Vite will handle HMR.
+    if (process.env.NODE_ENV === "production") {
+      serveStatic(app);
+    } else {
+      await setupVite(app, server);
+    }
+    console.log('Vite setup complete, starting server...');
+
+    const PORT = Number(process.env.PORT) || 5000;
+    server.listen(PORT, "0.0.0.0", () => {
+      log(`TaskSetu Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('Server startup error:', error);
+    process.exit(1);
   }
-
-  const PORT = Number(process.env.PORT) || 5000;
-  server.listen(PORT, "0.0.0.0", () => {
-    log(`TaskSetu Server running on port ${PORT}`);
-  });
 })();
