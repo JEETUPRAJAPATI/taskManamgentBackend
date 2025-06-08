@@ -20,7 +20,7 @@ class EmailService {
     try {
       const msg = {
         to: email,
-        from: 'noreply@tasksetu.com', // You can use any email here for testing
+        from: process.env.SENDGRID_FROM_EMAIL || 'test@example.com', // Must be a verified sender in SendGrid
         subject: 'Verify Your Email - TaskSetu',
         html: `
           <!DOCTYPE html>
@@ -90,7 +90,7 @@ class EmailService {
       
       const msg = {
         to: email,
-        from: 'noreply@tasksetu.com',
+        from: process.env.SENDGRID_FROM_EMAIL || 'test@example.com',
         subject: 'Reset Your Password - TaskSetu',
         html: `
           <!DOCTYPE html>

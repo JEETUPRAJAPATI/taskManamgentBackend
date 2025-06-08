@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import { emailService } from './services/emailService.js';
 import { 
   Organization, 
   User, 
@@ -1394,38 +1395,7 @@ export class MongoStorage {
 
   // Send user invitation email
   async sendInvitationEmail(email, inviteToken, organizationName, roles, invitedByName) {
-    const inviteUrl = `${process.env.FRONTEND_URL || 'http://localhost:5000'}/accept-invitation?token=${inviteToken}`;
-    
-    const subject = `You're invited to join ${organizationName} on TaskSetu`;
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #1e40af;">You're Invited to Join ${organizationName}!</h2>
-        <p>Hi there,</p>
-        <p>${invitedByName} has invited you to join <strong>${organizationName}</strong> on TaskSetu.</p>
-        <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="margin-top: 0; color: #374151;">Your Role:</h3>
-          <p style="margin-bottom: 0; font-weight: bold; color: #1e40af;">${roles.join(', ')}</p>
-        </div>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${inviteUrl}" style="background: #1e40af; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">Accept Invitation</a>
-        </div>
-        <p>Or copy and paste this link in your browser:</p>
-        <p style="word-break: break-all; background: #f3f4f6; padding: 10px; border-radius: 4px;">${inviteUrl}</p>
-        <p>This invitation will expire in 7 days.</p>
-        <p>If you have any questions, please contact ${invitedByName} or your organization administrator.</p>
-        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-        <p style="font-size: 12px; color: #6b7280;">
-          TaskSetu - Professional Task Management<br>
-          This is an automated email, please do not reply.
-        </p>
-      </div>
-    `;
-
-    console.log(`Invitation email sent to ${email}:`);
-    console.log(`Subject: ${subject}`);
-    console.log(`Invite URL: ${inviteUrl}`);
-    
-    return true;
+    return await emailService.sendInvitationEmail(email, inviteToken, organizationName, roles, invitedByName);
   }
 }
 

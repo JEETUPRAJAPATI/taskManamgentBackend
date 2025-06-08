@@ -499,82 +499,11 @@ export class AuthService {
   // Send verification email
   async sendVerificationEmail(email, code, firstName, organizationName = null) {
     return await emailService.sendVerificationEmail(email, code, firstName, organizationName);
-
-    try {
-      if (process.env.SENDGRID_API_KEY) {
-        await sgMail.send(msg);
-        console.log(`Verification email sent successfully to ${email}`);
-      } else {
-        console.log(`Development mode - Verification email would be sent to ${email}:`);
-        console.log(`Subject: ${subject}`);
-        console.log(`Verification Code: ${code}`);
-        console.log(`Note: Configure SENDGRID_API_KEY for actual email delivery`);
-      }
-      return true;
-    } catch (error) {
-      console.error('Error sending verification email:', error);
-      
-      // In development mode without proper SENDGRID_API_KEY, continue without failing
-      console.log(`Development mode - Email sending failed, but continuing registration process`);
-      console.log(`Verification Code for ${email}: ${code}`);
-      return true;
-    }
   }
 
   // Send password reset email
   async sendPasswordResetEmail(email, token, firstName) {
-    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5000'}/reset-password?token=${token}`;
-    
-    const subject = 'Reset your TaskSetu password';
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #1e40af;">Password Reset Request</h2>
-        <p>Hi ${firstName},</p>
-        <p>We received a request to reset your TaskSetu password. Click the button below to create a new password:</p>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${resetUrl}" style="background: #1e40af; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">Reset Password</a>
-        </div>
-        <p>Or copy and paste this link in your browser:</p>
-        <p style="word-break: break-all; background: #f3f4f6; padding: 10px; border-radius: 4px;">${resetUrl}</p>
-        <p>This link will expire in 30 minutes for security reasons.</p>
-        <p>If you didn't request this reset, please ignore this email and your password will remain unchanged.</p>
-        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-        <p style="font-size: 12px; color: #6b7280;">
-          TaskSetu - Professional Task Management<br>
-          This is an automated email, please do not reply.
-        </p>
-      </div>
-    `;
-
-    const msg = {
-      to: email,
-      from: {
-        email: 'noreply@tasksetu.com',
-        name: 'TaskSetu'
-      },
-      subject: subject,
-      html: html
-    };
-
-    try {
-      if (process.env.SENDGRID_API_KEY) {
-        await sgMail.send(msg);
-        console.log(`Password reset email sent successfully to ${email}`);
-      } else {
-        console.log(`Development mode - Password reset email would be sent to ${email}:`);
-        console.log(`Subject: ${subject}`);
-        console.log(`Reset URL: ${resetUrl}`);
-        console.log(`Note: Configure SENDGRID_API_KEY for actual email delivery`);
-      }
-      return true;
-    } catch (error) {
-      console.error('Error sending password reset email:', error);
-      
-      // In development mode without proper SENDGRID_API_KEY, continue without failing
-      console.log(`Development mode - Password reset email sending failed, but continuing`);
-      console.log(`Reset URL for ${email}: ${resetUrl}`);
-      return true;
-    }
+    return await emailService.sendPasswordResetEmail(email, token, firstName);
   }
 }
 
