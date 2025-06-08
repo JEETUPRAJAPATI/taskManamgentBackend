@@ -340,10 +340,10 @@ export class AuthService {
 
     // Create default task statuses for the organization
     const defaultStatuses = [
-      { name: "To Do", color: "#6B7280", order: 0, isDefault: true, organizationId: organization._id },
-      { name: "In Progress", color: "#3B82F6", order: 1, organizationId: organization._id },
-      { name: "Review", color: "#F59E0B", order: 2, organizationId: organization._id },
-      { name: "Done", color: "#10B981", order: 3, isCompleted: true, organizationId: organization._id },
+      { name: "To Do", color: "#6B7280", order: 0, isDefault: true, organization: organization._id },
+      { name: "In Progress", color: "#3B82F6", order: 1, organization: organization._id },
+      { name: "Review", color: "#F59E0B", order: 2, organization: organization._id },
+      { name: "Done", color: "#10B981", order: 3, isCompleted: true, organization: organization._id },
     ];
 
     for (const status of defaultStatuses) {
