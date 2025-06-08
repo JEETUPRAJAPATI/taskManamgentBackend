@@ -1,22 +1,25 @@
 import { useState } from "react";
 import { usePlatformAnalytics } from "@/hooks/super-admin/useSuperAdmin";
 import { Building2, Users, FolderOpen, FileText, TrendingUp, Activity } from "lucide-react";
+import SuperAdminLayout from "@/components/super-admin/SuperAdminLayout";
 
 export default function SuperAdminDashboard() {
   const { data: analytics, isLoading } = usePlatformAnalytics();
 
   if (isLoading) {
     return (
-      <div className="p-6">
-        <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-24 bg-gray-200 rounded"></div>
-            ))}
+      <SuperAdminLayout>
+        <div className="p-6">
+          <div className="animate-pulse space-y-6">
+            <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="h-24 bg-gray-200 rounded"></div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      </SuperAdminLayout>
     );
   }
 
@@ -56,14 +59,15 @@ export default function SuperAdminDashboard() {
   ];
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="border-b border-gray-200 pb-4">
-        <h1 className="text-2xl font-bold text-gray-900">Platform Dashboard</h1>
-        <p className="text-sm text-gray-600 mt-1">
-          Monitor and manage all companies and users across the platform
-        </p>
-      </div>
+    <SuperAdminLayout>
+      <div className="p-6 space-y-6">
+        {/* Header */}
+        <div className="border-b border-gray-200 pb-4">
+          <h1 className="text-2xl font-bold text-gray-900">Platform Dashboard</h1>
+          <p className="text-sm text-gray-600 mt-1">
+            Monitor and manage all companies and users across the platform
+          </p>
+        </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -202,6 +206,6 @@ export default function SuperAdminDashboard() {
           </button>
         </div>
       </div>
-    </div>
+    </SuperAdminLayout>
   );
 }

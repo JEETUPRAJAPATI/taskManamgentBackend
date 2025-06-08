@@ -194,42 +194,30 @@ function App() {
 
 
         {/* Super Admin Routes */}
-        <Route path="/super-admin" nest>
+        <Route path="/super-admin">
+          <ProtectedRoute component={SuperAdminDashboard} requiredRole="super_admin" />
+        </Route>
+        <Route path="/super-admin/companies">
+          <ProtectedRoute component={CompaniesManagement} requiredRole="super_admin" />
+        </Route>
+        <Route path="/super-admin/users">
+          <ProtectedRoute component={UsersManagement} requiredRole="super_admin" />
+        </Route>
+        <Route path="/super-admin/logs">
+          <ProtectedRoute component={SystemLogs} requiredRole="super_admin" />
+        </Route>
+        <Route path="/super-admin/admins">
+          <ProtectedRoute component={AdminManagement} requiredRole="super_admin" />
+        </Route>
+        <Route path="/super-admin/analytics">
+          <ProtectedRoute component={SuperAdminDashboard} requiredRole="super_admin" />
+        </Route>
+        <Route path="/super-admin/settings">
           <SuperAdminLayout>
-            <Switch>
-              <Route path="/">
-                <ProtectedRoute component={SuperAdminDashboard} requiredRole="super_admin" />
-              </Route>
-              <Route path="/companies">
-                <ProtectedRoute component={CompaniesManagement} requiredRole="super_admin" />
-              </Route>
-              <Route path="/users">
-                <ProtectedRoute component={UsersManagement} requiredRole="super_admin" />
-              </Route>
-              <Route path="/logs">
-                <ProtectedRoute component={SystemLogs} requiredRole="super_admin" />
-              </Route>
-              <Route path="/admins">
-                <ProtectedRoute component={AdminManagement} requiredRole="super_admin" />
-              </Route>
-              <Route path="/analytics">
-                <ProtectedRoute component={SuperAdminDashboard} requiredRole="super_admin" />
-              </Route>
-              <Route path="/settings">
-                <div className="p-6">
-                  <h1 className="text-2xl font-bold text-gray-900">System Settings</h1>
-                  <p className="text-gray-600 mt-2">System configuration options coming soon.</p>
-                </div>
-              </Route>
-              <Route>
-                <div className="flex items-center justify-center h-64">
-                  <div className="text-center">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Page Not Found</h2>
-                    <p className="text-gray-600">The super admin page you're looking for doesn't exist.</p>
-                  </div>
-                </div>
-              </Route>
-            </Switch>
+            <div className="p-6">
+              <h1 className="text-2xl font-bold text-gray-900">System Settings</h1>
+              <p className="text-gray-600 mt-2">System configuration options coming soon.</p>
+            </div>
           </SuperAdminLayout>
         </Route>
 
