@@ -119,7 +119,7 @@ export function AssignRoleModal({ isOpen, onClose, users = [], roles = [] }) {
     const permissionCount = role.permissions?.length || 0;
     if (permissionCount > 10) return "bg-green-100 text-green-700";
     if (permissionCount > 5) return "bg-blue-100 text-blue-700";
-    if (permissionCount > 0) return "bg-orange-100 text-orange-700";
+    if (permissionCount > 0) return "bg-blue-100 text-blue-700";
     return "bg-slate-100 text-slate-700";
   };
 

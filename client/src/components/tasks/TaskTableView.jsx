@@ -214,7 +214,7 @@ export function TaskTableView() {
       "todo": "bg-slate-100 text-slate-700 border-slate-300",
       "in-progress": "bg-blue-100 text-blue-700 border-blue-300",
       "completed": "bg-green-100 text-green-700 border-green-300",
-      "on-hold": "bg-orange-100 text-orange-700 border-orange-300"
+      "on-hold": "bg-blue-100 text-blue-700 border-blue-300"
     };
     
     return statusColors[status?.toLowerCase()] || "bg-slate-100 text-slate-700 border-slate-300";
@@ -223,7 +223,7 @@ export function TaskTableView() {
   const getPriorityBadge = (priority) => {
     const priorityColors = {
       "low": "bg-green-100 text-green-700 border-green-300",
-      "medium": "bg-orange-100 text-orange-700 border-orange-300",
+      "medium": "bg-blue-100 text-blue-700 border-blue-300",
       "high": "bg-red-100 text-red-700 border-red-300"
     };
     

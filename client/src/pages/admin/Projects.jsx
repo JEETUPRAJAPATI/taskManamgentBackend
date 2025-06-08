@@ -59,7 +59,7 @@ export default function Projects() {
       case "In Progress":
         return "bg-blue-100 text-blue-800";
       case "Planning":
-        return "bg-orange-100 text-orange-800";
+        return "bg-blue-100 text-blue-800";
       case "On Hold":
         return "bg-red-100 text-red-800";
       default:

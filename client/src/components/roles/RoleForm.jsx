@@ -70,8 +70,8 @@ const PERMISSION_MODULES = [
     id: "projects",
     name: "Projects",
     icon: Building2,
-    color: "text-orange-600",
-    bgColor: "bg-orange-50",
+    color: "text-blue-600",
+    bgColor: "bg-blue-50",
     permissions: [
       { id: "projects.view", name: "View Projects", description: "View project details and progress" },
       { id: "projects.create", name: "Create Projects", description: "Create new projects" },
@@ -219,7 +219,7 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
                           className={`${
                             totalSelectedPermissions > 10 ? "bg-green-100 text-green-700" : 
                             totalSelectedPermissions > 5 ? "bg-blue-100 text-blue-700" : 
-                            "bg-orange-100 text-orange-700"
+                            "bg-blue-100 text-blue-700"
                           } border-0`}
                         >
                           {totalSelectedPermissions} permission{totalSelectedPermissions !== 1 ? 's' : ''}
@@ -295,7 +295,7 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
                               selectionState === "all" 
                                 ? "bg-blue-50 text-blue-700 border-blue-300" 
                                 : selectionState === "partial"
-                                ? "bg-orange-50 text-orange-700 border-orange-300"
+                                ? "bg-blue-50 text-blue-700 border-blue-300"
                                 : "border-slate-300"
                             }`}
                           >
@@ -306,7 +306,7 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
                               </>
                             ) : selectionState === "partial" ? (
                               <>
-                                <div className="w-4 h-4 mr-1 bg-orange-500 rounded-sm" />
+                                <div className="w-4 h-4 mr-1 bg-blue-500 rounded-sm" />
                                 Partial
                               </>
                             ) : (
