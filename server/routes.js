@@ -1042,6 +1042,142 @@ async function setupEmailCalendarRoutes(app) {
     }
   });
 
+  // Super Admin API Routes
+  
+  // Get platform analytics
+  app.get("/api/super-admin/analytics", authenticateToken, requireSuperAdmin, async (req, res) => {
+    try {
+      const analytics = await storage.getPlatformAnalytics();
+      res.json(analytics);
+    } catch (error) {
+      console.error("Get platform analytics error:", error);
+      res.status(500).json({ message: "Failed to fetch platform analytics" });
+    }
+  });
+
+  // Get all companies
+  app.get("/api/super-admin/companies", authenticateToken, requireSuperAdmin, async (req, res) => {
+    try {
+      const companies = await storage.getAllCompanies();
+      res.json(companies);
+    } catch (error) {
+      console.error("Get companies error:", error);
+      res.status(500).json({ message: "Failed to fetch companies" });
+    }
+  });
+
+  // Get company details
+  app.get("/api/super-admin/companies/:id", authenticateToken, requireSuperAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const company = await storage.getCompanyDetails(id);
+      
+      if (!company) {
+        return res.status(404).json({ message: "Company not found" });
+      }
+      
+      res.json(company);
+    } catch (error) {
+      console.error("Get company details error:", error);
+      res.status(500).json({ message: "Failed to fetch company details" });
+    }
+  });
+
+  // Update company status
+  app.patch("/api/super-admin/companies/:id/status", authenticateToken, requireSuperAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { isActive } = req.body;
+      
+      const company = await storage.updateCompanyStatus(id, isActive);
+      
+      if (!company) {
+        return res.status(404).json({ message: "Company not found" });
+      }
+      
+      res.json(company);
+    } catch (error) {
+      console.error("Update company status error:", error);
+      res.status(500).json({ message: "Failed to update company status" });
+    }
+  });
+
+  // Get all users across companies
+  app.get("/api/super-admin/users", authenticateToken, requireSuperAdmin, async (req, res) => {
+    try {
+      const users = await storage.getAllUsersAcrossCompanies();
+      res.json(users);
+    } catch (error) {
+      console.error("Get all users error:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  // Assign company admin
+  app.post("/api/super-admin/assign-admin", authenticateToken, requireSuperAdmin, async (req, res) => {
+    try {
+      const { companyId, userId } = req.body;
+      
+      if (!companyId || !userId) {
+        return res.status(400).json({ message: "Company ID and User ID are required" });
+      }
+      
+      const user = await storage.assignCompanyAdmin(companyId, userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      res.json({ message: "Admin assigned successfully", user });
+    } catch (error) {
+      console.error("Assign admin error:", error);
+      res.status(500).json({ message: "Failed to assign admin" });
+    }
+  });
+
+  // Get system logs
+  app.get("/api/super-admin/logs", authenticateToken, requireSuperAdmin, async (req, res) => {
+    try {
+      const { limit = 100 } = req.query;
+      const logs = await storage.getSystemLogs(parseInt(limit));
+      res.json(logs);
+    } catch (error) {
+      console.error("Get system logs error:", error);
+      res.status(500).json({ message: "Failed to fetch system logs" });
+    }
+  });
+
+  // Create super admin user
+  app.post("/api/super-admin/create-super-admin", authenticateToken, requireSuperAdmin, async (req, res) => {
+    try {
+      const { email, firstName, lastName, password } = req.body;
+      
+      if (!email || !firstName || !lastName || !password) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+      
+      const superAdmin = await storage.createSuperAdmin({
+        email,
+        firstName,
+        lastName,
+        password
+      });
+      
+      res.status(201).json({ 
+        message: "Super admin created successfully", 
+        user: { 
+          id: superAdmin._id, 
+          email: superAdmin.email, 
+          firstName: superAdmin.firstName, 
+          lastName: superAdmin.lastName 
+        } 
+      });
+    } catch (error) {
+      console.error("Create super admin error:", error);
+      res.status(500).json({ message: "Failed to create super admin" });
+    }
+  });
+
   // Health check endpoint
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });

@@ -1,0 +1,21 @@
+import { useState } from "react";
+import SuperAdminSidebar from "./SuperAdminSidebar";
+
+export default function SuperAdminLayout({ children }) {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  return (
+    <div className="flex h-screen bg-gray-50">
+      <SuperAdminSidebar 
+        isCollapsed={sidebarCollapsed} 
+        setIsCollapsed={setSidebarCollapsed} 
+      />
+      
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1 overflow-y-auto p-4">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
