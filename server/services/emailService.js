@@ -159,7 +159,7 @@ class EmailService {
       
       const msg = {
         to: email,
-        from: 'noreply@tasksetu.com',
+        from: process.env.SENDGRID_FROM_EMAIL || 'test@example.com',
         subject: `You're invited to join ${organizationName} - TaskSetu`,
         html: `
           <!DOCTYPE html>
