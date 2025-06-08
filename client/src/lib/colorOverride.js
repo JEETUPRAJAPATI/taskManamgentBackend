@@ -141,24 +141,10 @@ export const forceRemoveUnwantedColors = () => {
 
 // Initialize color override system
 export const initColorOverride = () => {
-  // Wait for DOM to be ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      startColorOverride();
-    });
-  } else {
-    startColorOverride();
-  }
-};
-
-const startColorOverride = () => {
-  // Run initial override
-  forceRemoveUnwantedColors();
-  
-  // Add global CSS override style
+  // Add simple CSS override without aggressive DOM manipulation
   const style = document.createElement('style');
   style.textContent = `
-    /* FORCE OVERRIDE ALL UNWANTED COLORS - JAVASCRIPT INJECTION */
+    /* Color override for professional palette */
     * {
       --yellow-50: rgb(59, 130, 246) !important;
       --yellow-100: rgb(59, 130, 246) !important;
@@ -190,81 +176,7 @@ const startColorOverride = () => {
       --amber-700: rgb(59, 130, 246) !important;
       --amber-800: rgb(59, 130, 246) !important;
       --amber-900: rgb(59, 130, 246) !important;
-      --yellow: rgb(59, 130, 246) !important;
-      --amber: rgb(59, 130, 246) !important;
-      --orange: rgb(59, 130, 246) !important;
-    }
-    
-    /* Override any unwanted text or backgrounds */
-    .text-yellow-50, .text-yellow-100, .text-yellow-200, .text-yellow-300, .text-yellow-400,
-    .text-yellow-500, .text-yellow-600, .text-yellow-700, .text-yellow-800, .text-yellow-900,
-    .text-orange-50, .text-orange-100, .text-orange-200, .text-orange-300, .text-orange-400,
-    .text-orange-500, .text-orange-600, .text-orange-700, .text-orange-800, .text-orange-900,
-    .text-amber-50, .text-amber-100, .text-amber-200, .text-amber-300, .text-amber-400,
-    .text-amber-500, .text-amber-600, .text-amber-700, .text-amber-800, .text-amber-900,
-    [style*="color: yellow"], [style*="color:#FFD700"], [style*="color:#FFFF00"],
-    [style*="color: orange"], [style*="color:#FFA500"], [style*="color:#FF8C00"],
-    [style*="color: amber"], [style*="color:#FFC107"], [style*="color:#FF6F00"],
-    [class*="yellow"], [class*="amber"], [class*="orange"] {
-      color: rgb(59, 130, 246) !important;
-    }
-    
-    .bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400,
-    .bg-yellow-500, .bg-yellow-600, .bg-yellow-700, .bg-yellow-800, .bg-yellow-900,
-    .bg-orange-50, .bg-orange-100, .bg-orange-200, .bg-orange-300, .bg-orange-400,
-    .bg-orange-500, .bg-orange-600, .bg-orange-700, .bg-orange-800, .bg-orange-900,
-    .bg-amber-50, .bg-amber-100, .bg-amber-200, .bg-amber-300, .bg-amber-400,
-    .bg-amber-500, .bg-amber-600, .bg-amber-700, .bg-amber-800, .bg-amber-900,
-    [style*="background-color: yellow"], [style*="background-color:#FFD700"], [style*="background-color:#FFFF00"],
-    [style*="background-color: orange"], [style*="background-color:#FFA500"], [style*="background-color:#FF8C00"],
-    [style*="background-color: amber"], [style*="background-color:#FFC107"], [style*="background-color:#FF6F00"] {
-      background-color: rgb(219, 234, 254) !important;
-    }
-    
-    /* Force override border colors */
-    .border-yellow-50, .border-yellow-100, .border-yellow-200, .border-yellow-300, .border-yellow-400,
-    .border-yellow-500, .border-yellow-600, .border-yellow-700, .border-yellow-800, .border-yellow-900,
-    .border-orange-50, .border-orange-100, .border-orange-200, .border-orange-300, .border-orange-400,
-    .border-orange-500, .border-orange-600, .border-orange-700, .border-orange-800, .border-orange-900,
-    .border-amber-50, .border-amber-100, .border-amber-200, .border-amber-300, .border-amber-400,
-    .border-amber-500, .border-amber-600, .border-amber-700, .border-amber-800, .border-amber-900 {
-      border-color: rgb(147, 197, 253) !important;
     }
   `;
   document.head.appendChild(style);
-  
-  // Set up mutation observer to catch dynamic changes
-  const observer = new MutationObserver((mutations) => {
-    let hasChanges = false;
-    mutations.forEach((mutation) => {
-      if (mutation.type === 'childList' || mutation.type === 'attributes') {
-        hasChanges = true;
-      }
-    });
-    
-    if (hasChanges) {
-      setTimeout(forceRemoveUnwantedColors, 100);
-    }
-  });
-  
-  // Start observing
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-    attributes: true,
-    attributeFilter: ['style', 'class']
-  });
-  
-  // Also run on window load and resize
-  window.addEventListener('load', forceRemoveUnwantedColors);
-  window.addEventListener('resize', forceRemoveUnwantedColors);
-  
-  // Run very frequently to catch any missed changes
-  const intervalId = setInterval(forceRemoveUnwantedColors, 100);
-  
-  // Clean up on page unload
-  window.addEventListener('beforeunload', () => {
-    clearInterval(intervalId);
-    observer.disconnect();
-  });
 };
