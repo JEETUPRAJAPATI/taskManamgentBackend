@@ -6,6 +6,7 @@ import { getQueryFn } from '@/lib/queryClient';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import Tasks from './pages/admin/Tasks';
+import CreateTask from './pages/admin/CreateTask';
 import Users from './pages/admin/Users';
 import UserManagement from './pages/admin/UserManagement';
 import Projects from './pages/admin/Projects';
@@ -233,42 +234,45 @@ function App() {
         <Route path="/dashboard">
           <ProtectedRoute component={Dashboard} allowedRoles={["admin", "member"]} />
         </Route>
-        <Route path="/tasks">
+        <Route path="/admin/tasks">
           <AdminLayout>
             <ProtectedRoute component={Tasks} />
           </AdminLayout>
         </Route>
-        <Route path="/users">
+        <Route path="/admin/tasks/create">
+          <ProtectedRoute component={CreateTask} allowedRoles={["admin", "member"]} />
+        </Route>
+        <Route path="/admin/users">
           <AdminLayout>
             <ProtectedRoute component={Users} />
           </AdminLayout>
         </Route>
-        <Route path="/user-management">
+        <Route path="/admin/user-management">
           <AdminLayout>
             <ProtectedRoute component={UserManagement} allowedRoles={["admin"]} />
           </AdminLayout>
         </Route>
-        <Route path="/projects">
+        <Route path="/admin/projects">
           <AdminLayout>
             <ProtectedRoute component={Projects} />
           </AdminLayout>
         </Route>
-        <Route path="/forms">
+        <Route path="/admin/forms">
           <AdminLayout>
             <ProtectedRoute component={FormBuilder} />
           </AdminLayout>
         </Route>
-        <Route path="/integrations">
+        <Route path="/admin/integrations">
           <AdminLayout>
             <ProtectedRoute component={Integrations} />
           </AdminLayout>
         </Route>
-        <Route path="/roles">
+        <Route path="/admin/roles">
           <AdminLayout>
             <ProtectedRoute component={Roles} />
           </AdminLayout>
         </Route>
-        <Route path="/reports">
+        <Route path="/admin/reports">
           <AdminLayout>
             <ProtectedRoute component={Reports} />
           </AdminLayout>
