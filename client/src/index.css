@@ -42,8 +42,8 @@
   --secondary-foreground: 15 23 42; /* High contrast text #0f172a */
   --muted: 241 245 249; /* Light muted background #f1f5f9 */
   --muted-foreground: 51 65 85; /* Strong gray text #334155 */
-  --accent: 234 88 12; /* Professional orange accent #ea580c */
-  --accent-foreground: 255 255 255; /* White text on orange #ffffff */
+  --accent: 59 130 246; /* Professional blue accent #3b82f6 */
+  --accent-foreground: 255 255 255; /* White text on blue #ffffff */
   --destructive: 185 28 28; /* Strong red #b91c1c */
   --destructive-foreground: 255 255 255; /* White text on red #ffffff */
   --success: 22 101 52; /* Strong green #166534 */
@@ -103,8 +103,8 @@
   --secondary-foreground: 15 23 42; /* High contrast text #0f172a */
   --muted: 241 245 249; /* Light muted #f1f5f9 */
   --muted-foreground: 51 65 85; /* Strong gray text #334155 */
-  --accent: 234 88 12; /* Professional orange #ea580c */
-  --accent-foreground: 255 255 255; /* White text on orange #ffffff */
+  --accent: 59 130 246; /* Professional blue #3b82f6 */
+  --accent-foreground: 255 255 255; /* White text on blue #ffffff */
   --destructive: 185 28 28; /* Strong red #b91c1c */
   --destructive-foreground: 255 255 255; /* White text on red #ffffff */
   --success: 22 101 52; /* Strong green #166534 */
@@ -118,8 +118,8 @@
   --sidebar-foreground: 15 23 42; /* High contrast text #0f172a */
   --sidebar-primary: 30 64 175; /* Strong navy #1e40af */
   --sidebar-primary-foreground: 255 255 255; /* White text on navy #ffffff */
-  --sidebar-accent: 234 88 12; /* Orange accent #ea580c */
-  --sidebar-accent-foreground: 255 255 255; /* White text on orange #ffffff */
+  --sidebar-accent: 59 130 246; /* Blue accent #3b82f6 */
+  --sidebar-accent-foreground: 255 255 255; /* White text on blue #ffffff */
   --sidebar-border: 203 213 225; /* Clear border #cbd5e1 */
   --sidebar-ring: 30 64 175; /* Strong blue focus ring #1e40af */
 }
