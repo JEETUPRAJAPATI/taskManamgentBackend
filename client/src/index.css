@@ -58,14 +58,14 @@
   --sidebar-foreground: 255 255 255; /* White sidebar text #ffffff */
   --sidebar-primary: 30 64 175; /* Navy blue accent #1e40af */
   --sidebar-primary-foreground: 255 255 255; /* White text on primary #ffffff */
-  --sidebar-accent: 234 88 12; /* Orange accent #ea580c */
-  --sidebar-accent-foreground: 255 255 255; /* White text on orange #ffffff */
+  --sidebar-accent: 59 130 246; /* Blue accent #3b82f6 */
+  --sidebar-accent-foreground: 255 255 255; /* White text on blue #ffffff */
   --sidebar-border: 30 41 59; /* Dark border #1e293b */
   --sidebar-ring: 30 64 175; /* Navy focus ring #1e40af */
   
   /* Chart colors - High Contrast Professional palette */
   --chart-1: 30 64 175; /* Navy blue #1e40af */
-  --chart-2: 234 88 12; /* Professional orange #ea580c */
+  --chart-2: 59 130 246; /* Professional blue #3b82f6 */
   --chart-3: 22 101 52; /* Strong green #166534 */
   --chart-4: 185 28 28; /* Strong red #b91c1c */
   --chart-5: 51 65 85; /* Strong gray #334155 */
@@ -76,8 +76,8 @@
   --yellow-200: 203 213 225; /* Use slate-300 instead */
   --yellow-300: 148 163 184; /* Use slate-400 instead */
   --yellow-400: 100 116 139; /* Use slate-500 instead */
-  --yellow-500: 234 88 12; /* Use orange-600 instead */
-  --yellow-600: 234 88 12; /* Use orange-600 instead */
+  --yellow-500: 59 130 246; /* Use blue-500 instead */
+  --yellow-600: 59 130 246; /* Use blue-500 instead */
   --yellow-700: 194 65 12; /* Use orange-700 instead */
   --yellow-800: 154 52 18; /* Use orange-800 instead */
   --yellow-900: 124 45 18; /* Use orange-900 instead */
@@ -301,8 +301,8 @@
     --tw-text-yellow-200: 203 213 225 !important;
     --tw-text-yellow-300: 148 163 184 !important;
     --tw-text-yellow-400: 100 116 139 !important;
-    --tw-text-yellow-500: 234 88 12 !important;
-    --tw-text-yellow-600: 234 88 12 !important;
+    --tw-text-yellow-500: 59 130 246 !important;
+    --tw-text-yellow-600: 59 130 246 !important;
     --tw-text-yellow-700: 194 65 12 !important;
     --tw-text-yellow-800: 154 52 18 !important;
     --tw-text-yellow-900: 124 45 18 !important;
@@ -311,8 +311,8 @@
     --tw-bg-yellow-200: 203 213 225 !important;
     --tw-bg-yellow-300: 148 163 184 !important;
     --tw-bg-yellow-400: 100 116 139 !important;
-    --tw-bg-yellow-500: 234 88 12 !important;
-    --tw-bg-yellow-600: 234 88 12 !important;
+    --tw-bg-yellow-500: 59 130 246 !important;
+    --tw-bg-yellow-600: 59 130 246 !important;
     --tw-bg-yellow-700: 194 65 12 !important;
     --tw-bg-yellow-800: 154 52 18 !important;
     --tw-bg-yellow-900: 124 45 18 !important;
@@ -756,18 +756,77 @@
   .text-professional-navy { color: #1e40af; }
   .text-professional-slate { color: #64748b; }
   .text-professional-green { color: #059669; }
-  .text-professional-orange { color: #ea580c; }
+  .text-professional-blue { color: #3b82f6; }
   
   .bg-professional-navy { background-color: #1e40af; }
   .bg-professional-slate { background-color: #64748b; }
   .bg-professional-green { background-color: #059669; }
-  .bg-professional-orange { background-color: #ea580c; }
+  .bg-professional-blue { background-color: #3b82f6; }
   
   /* Border Utilities */
   .border-professional-navy { border-color: #1e40af; }
   .border-professional-slate { border-color: #64748b; }
   .border-professional-green { border-color: #059669; }
-  .border-professional-orange { border-color: #ea580c; }
+  .border-professional-blue { border-color: #3b82f6; }
+
+  /* CRITICAL: Override ALL hover states to prevent yellow/orange colors */
+  .hover\:bg-yellow-50:hover,
+  .hover\:bg-yellow-100:hover,
+  .hover\:bg-yellow-200:hover,
+  .hover\:bg-yellow-300:hover,
+  .hover\:bg-yellow-400:hover,
+  .hover\:bg-yellow-500:hover,
+  .hover\:bg-yellow-600:hover,
+  .hover\:bg-orange-50:hover,
+  .hover\:bg-orange-100:hover,
+  .hover\:bg-orange-200:hover,
+  .hover\:bg-orange-300:hover,
+  .hover\:bg-orange-400:hover,
+  .hover\:bg-orange-500:hover,
+  .hover\:bg-orange-600:hover,
+  .hover\:border-yellow-300:hover,
+  .hover\:border-yellow-400:hover,
+  .hover\:border-yellow-500:hover,
+  .hover\:border-orange-300:hover,
+  .hover\:border-orange-400:hover,
+  .hover\:border-orange-500:hover {
+    background-color: rgb(59 130 246 / 0.1) !important; /* Light blue background */
+    border-color: rgb(59 130 246) !important; /* Blue border */
+  }
+
+  /* Force table row hover states to use blue */
+  .table-row:hover,
+  [role="row"]:hover,
+  tr:hover {
+    background-color: rgb(59 130 246 / 0.05) !important; /* Very light blue */
+  }
+
+  /* Force search input hover and focus states */
+  input[type="search"]:hover,
+  input[type="search"]:focus,
+  input[type="text"]:hover,
+  input[type="text"]:focus,
+  .search-input:hover,
+  .search-input:focus {
+    border-color: rgb(59 130 246) !important; /* Blue border */
+    outline-color: rgb(59 130 246) !important; /* Blue outline */
+    box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1) !important; /* Blue shadow */
+  }
+
+  /* Force button hover states */
+  button:hover,
+  .btn:hover,
+  .button:hover {
+    background-color: rgb(59 130 246 / 0.9) !important; /* Blue hover */
+  }
+
+  /* Force dropdown and select hover states */
+  .dropdown-item:hover,
+  .select-item:hover,
+  [role="option"]:hover,
+  [role="menuitem"]:hover {
+    background-color: rgb(59 130 246 / 0.1) !important; /* Light blue */
+  }
 }
 
 /* Responsive Design Enhancements */
