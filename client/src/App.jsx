@@ -34,6 +34,7 @@ import ResetPassword from './pages/auth/ResetPassword';
 import AcceptInvitation from './pages/auth/AcceptInvitation';
 import TestAuth from './pages/TestAuth';
 
+
 // Components
 import RoleBasedRedirect from './components/RoleBasedRedirect';
 import SecureRoute from './components/ProtectedRoute';
@@ -58,15 +59,11 @@ function useUserRole() {
 
 // Route protection wrapper
 function ProtectedRoute({ component: Component, requiredRole, allowedRoles = [], ...props }) {
-  const { data: user, isLoading, error } = useUserRole();
+  const { data: user, isLoading } = useUserRole();
   const [, setLocation] = useLocation();
 
-  console.log("ProtectedRoute - isLoading:", isLoading, "user:", user, "error:", error);
-
   useEffect(() => {
-    console.log("ProtectedRoute useEffect - isLoading:", isLoading, "user:", user);
     if (!isLoading && !user) {
-      console.log("No user found, redirecting to login");
       setLocation('/login');
     }
   }, [user, isLoading, setLocation]);
@@ -152,6 +149,7 @@ function App() {
         <Route path="/accept-invitation" component={AcceptInvitation} />
         <Route path="/forbidden" component={ForbiddenPage} />
         <Route path="/test-auth" component={TestAuth} />
+
         
         {/* Super Admin Routes */}
         <Route path="/super-admin" nest>
