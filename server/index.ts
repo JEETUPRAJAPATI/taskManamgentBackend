@@ -1,2 +1,2 @@
 // TypeScript entry point that delegates to JavaScript implementation
-import './index.js';
+import './main-index.js';
