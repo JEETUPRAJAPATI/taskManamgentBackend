@@ -29,6 +29,7 @@ import IndividualRegistration from './pages/auth/IndividualRegistration';
 import OrganizationRegistration from './pages/auth/OrganizationRegistration';
 import Login from './pages/auth/Login';
 import EmailVerification from './pages/auth/EmailVerification';
+import CreatePassword from './pages/auth/CreatePassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import AcceptInvitation from './pages/auth/AcceptInvitation';
 
@@ -139,6 +140,7 @@ function App() {
         <Route path="/register/organization" component={OrganizationRegistration} />
         <Route path="/login" component={Login} />
         <Route path="/verify-email" component={EmailVerification} />
+        <Route path="/create-password" component={CreatePassword} />
         <Route path="/reset-password" component={ResetPassword} />
         <Route path="/accept-invitation" component={AcceptInvitation} />
         
