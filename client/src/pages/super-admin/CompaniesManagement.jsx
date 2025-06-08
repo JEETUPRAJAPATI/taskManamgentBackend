@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useCompanies, useUpdateCompanyStatus } from "@/hooks/super-admin/useSuperAdmin";
 import { Building2, Users, FolderOpen, FileText, MoreVertical, Eye, Settings, Ban, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import SuperAdminLayout from "@/components/super-admin/SuperAdminLayout";
 
 export default function CompaniesManagement() {
   const { data: companies, isLoading } = useCompanies();
@@ -37,17 +38,20 @@ export default function CompaniesManagement() {
 
   if (isLoading) {
     return (
-      <div className="p-6">
-        <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-64 bg-gray-200 rounded"></div>
+      <SuperAdminLayout>
+        <div className="p-6">
+          <div className="animate-pulse space-y-6">
+            <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+            <div className="h-64 bg-gray-200 rounded"></div>
+          </div>
         </div>
-      </div>
+      </SuperAdminLayout>
     );
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <SuperAdminLayout>
+      <div className="p-6 space-y-6">
       {/* Header */}
       <div className="border-b border-gray-200 pb-4">
         <h1 className="text-2xl font-bold text-gray-900">Companies Management</h1>
@@ -180,6 +184,7 @@ export default function CompaniesManagement() {
           <p className="text-gray-600">No companies match your current filters.</p>
         </div>
       )}
-    </div>
+      </div>
+    </SuperAdminLayout>
   );
 }
