@@ -128,7 +128,7 @@ export class AuthService {
 
   // Organization registration
   async registerOrganization(userData) {
-    const { organizationName, email, firstName, lastName } = userData;
+    const { organizationName, organizationSlug, email, firstName, lastName } = userData;
 
     // Check if user already exists
     const existingUser = await storage.getUserByEmail(email);
@@ -136,11 +136,18 @@ export class AuthService {
       throw new Error('User with this email already exists');
     }
 
-    // Check if organization name/slug already exists
-    const orgSlug = organizationName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    // Use provided slug or generate from name
+    const orgSlug = organizationSlug || organizationName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    
+    // Validate slug format
+    if (!/^[a-z0-9-]+$/.test(orgSlug) || orgSlug.length < 3) {
+      throw new Error('Organization URL must be at least 3 characters and contain only lowercase letters, numbers, and hyphens');
+    }
+
+    // Check if organization slug already exists
     const existingOrg = await storage.getOrganizationBySlug(orgSlug);
     if (existingOrg) {
-      throw new Error('Organization name already exists');
+      throw new Error('Organization URL already exists');
     }
 
     // Auto-authenticate in development mode

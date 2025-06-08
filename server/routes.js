@@ -60,6 +60,23 @@ export async function registerRoutes(app) {
   // New Authentication Routes for User Management Module
 
   // Individual user registration
+  app.post("/api/auth/register-individual", async (req, res) => {
+    try {
+      const { email, firstName, lastName } = req.body;
+      
+      if (!email || !firstName || !lastName) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+
+      const result = await authService.registerIndividual({ email, firstName, lastName });
+      res.json(result);
+    } catch (error) {
+      console.error("Individual registration error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Legacy endpoint for compatibility
   app.post("/api/auth/register/individual", async (req, res) => {
     try {
       const { email, firstName, lastName } = req.body;
@@ -77,6 +94,29 @@ export async function registerRoutes(app) {
   });
 
   // Organization registration
+  app.post("/api/auth/register-organization", async (req, res) => {
+    try {
+      const { organizationName, organizationSlug, email, firstName, lastName } = req.body;
+      
+      if (!organizationName || !email || !firstName || !lastName) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+
+      const result = await authService.registerOrganization({ 
+        organizationName, 
+        organizationSlug,
+        email, 
+        firstName, 
+        lastName 
+      });
+      res.json(result);
+    } catch (error) {
+      console.error("Organization registration error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Legacy endpoint for compatibility
   app.post("/api/auth/register/organization", async (req, res) => {
     try {
       const { organizationName, email, firstName, lastName } = req.body;
@@ -108,6 +148,23 @@ export async function registerRoutes(app) {
       res.json(result);
     } catch (error) {
       console.error("Email verification error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Resend verification code
+  app.post("/api/auth/resend-verification", async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+
+      const result = await authService.resendVerificationCode(email);
+      res.json(result);
+    } catch (error) {
+      console.error("Resend verification error:", error);
       res.status(400).json({ message: error.message });
     }
   });
