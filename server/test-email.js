@@ -1,15 +1,10 @@
 import { emailService } from './services/emailService.js';
 
 async function testEmailService() {
-  console.log('Testing SendGrid Email Service...');
+  console.log('Testing Mailtrap Email Service...');
   
   // Test if service is configured
   console.log('Email service configured:', emailService.isEmailServiceAvailable());
-  
-  if (!emailService.isEmailServiceAvailable()) {
-    console.log('SendGrid API key not configured. Check SENDGRID_API_KEY environment variable.');
-    return;
-  }
   
   try {
     // Test verification email

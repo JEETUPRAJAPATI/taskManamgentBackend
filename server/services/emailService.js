@@ -1,26 +1,24 @@
-import sgMail from '@sendgrid/mail';
-
-if (!process.env.SENDGRID_API_KEY) {
-  console.warn("SENDGRID_API_KEY environment variable not set. Email functionality will be disabled.");
-} else {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-}
+import nodemailer from 'nodemailer';
 
 class EmailService {
   constructor() {
-    this.isConfigured = !!process.env.SENDGRID_API_KEY;
+    this.transporter = nodemailer.createTransport({
+      host: 'sandbox.smtp.mailtrap.io',
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: '47974993873f54',
+        pass: '1fdcda65438582'
+      }
+    });
+    this.isConfigured = true;
   }
 
   async sendVerificationEmail(email, verificationCode, firstName, organizationName = null) {
-    if (!this.isConfigured) {
-      console.log('SendGrid not configured. Verification code for', email, ':', verificationCode);
-      return false;
-    }
-
     try {
-      const msg = {
+      const mailOptions = {
+        from: '"TaskSetu" <noreply@tasksetu.com>',
         to: email,
-        from: process.env.SENDGRID_FROM_EMAIL || 'test@example.com', // Must be a verified sender in SendGrid
         subject: 'Verify Your Email - TaskSetu',
         html: `
           <!DOCTYPE html>
@@ -70,27 +68,22 @@ class EmailService {
         }\n\nTo complete your registration, please verify your email address using this verification code: ${verificationCode}\n\nThis code will expire in 24 hours.\n\nWelcome aboard!\nThe TaskSetu Team`
       };
 
-      await sgMail.send(msg);
+      await this.transporter.sendMail(mailOptions);
       console.log('Verification email sent successfully to:', email);
       return true;
     } catch (error) {
-      console.error('SendGrid email error:', error.response?.body || error.message);
+      console.error('Email sending error:', error);
       return false;
     }
   }
 
   async sendPasswordResetEmail(email, resetToken, firstName) {
-    if (!this.isConfigured) {
-      console.log('SendGrid not configured. Password reset token for', email, ':', resetToken);
-      return false;
-    }
-
     try {
       const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5000'}/reset-password?token=${resetToken}`;
       
-      const msg = {
+      const mailOptions = {
+        from: '"TaskSetu" <noreply@tasksetu.com>',
         to: email,
-        from: process.env.SENDGRID_FROM_EMAIL || 'test@example.com',
         subject: 'Reset Your Password - TaskSetu',
         html: `
           <!DOCTYPE html>
@@ -139,27 +132,22 @@ class EmailService {
         text: `Hi ${firstName}!\n\nWe received a request to reset your password for your TaskSetu account.\n\nClick this link to reset your password: ${resetUrl}\n\nThis link will expire in 1 hour for security reasons.\n\nIf you didn't request a password reset, please ignore this email.\n\nBest regards,\nThe TaskSetu Team`
       };
 
-      await sgMail.send(msg);
+      await this.transporter.sendMail(mailOptions);
       console.log('Password reset email sent successfully to:', email);
       return true;
     } catch (error) {
-      console.error('SendGrid email error:', error.response?.body || error.message);
+      console.error('Email sending error:', error);
       return false;
     }
   }
 
   async sendInvitationEmail(email, inviteToken, organizationName, roles, invitedByName) {
-    if (!this.isConfigured) {
-      console.log('SendGrid not configured. Invitation token for', email, ':', inviteToken);
-      return false;
-    }
-
     try {
       const inviteUrl = `${process.env.FRONTEND_URL || 'http://localhost:5000'}/accept-invitation?token=${inviteToken}`;
       
-      const msg = {
+      const mailOptions = {
+        from: '"TaskSetu" <noreply@tasksetu.com>',
         to: email,
-        from: process.env.SENDGRID_FROM_EMAIL || 'test@example.com',
         subject: `You're invited to join ${organizationName} - TaskSetu`,
         html: `
           <!DOCTYPE html>
@@ -210,11 +198,11 @@ class EmailService {
         text: `You're invited to join ${organizationName}!\n\n${invitedByName} has invited you to join their team on TaskSetu.\n\nYou'll be joining as: ${Array.isArray(roles) ? roles.join(', ') : roles}\n\nClick this link to accept the invitation: ${inviteUrl}\n\nThis invitation will expire in 7 days.\n\nWelcome to TaskSetu!\nThe TaskSetu Team`
       };
 
-      await sgMail.send(msg);
+      await this.transporter.sendMail(mailOptions);
       console.log('Invitation email sent successfully to:', email);
       return true;
     } catch (error) {
-      console.error('SendGrid email error:', error.response?.body || error.message);
+      console.error('Email sending error:', error);
       return false;
     }
   }
