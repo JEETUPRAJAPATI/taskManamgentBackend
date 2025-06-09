@@ -10,7 +10,7 @@ async function testEmailService() {
     // Test verification email
     console.log('\nTesting verification email...');
     const verificationResult = await emailService.sendVerificationEmail(
-      'test@example.com',
+      'techizebuilder@gmail.com',
       '123456',
       'Test User',
       'Test Organization'
