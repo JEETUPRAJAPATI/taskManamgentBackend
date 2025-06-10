@@ -19,7 +19,7 @@ export default function ProtectedRoute({ children, requiredRole = null, allowedR
       }
 
       try {
-        const response = await fetch('/api/auth/verify', {
+        const response = await fetch('/api/auth/me', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
