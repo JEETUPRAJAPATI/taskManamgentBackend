@@ -158,7 +158,7 @@ export default function UserManagement() {
       pending: { 
         variant: "outline", 
         icon: Clock, 
-        color: "text-amber-700 bg-amber-50 border-amber-200",
+        color: "text-slate-700 bg-slate-100 border-slate-300",
         label: "Pending"
       },
       inactive: { 

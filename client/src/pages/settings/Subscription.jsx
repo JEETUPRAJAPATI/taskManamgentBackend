@@ -76,31 +76,31 @@ export default function Subscription() {
       active: { 
         variant: "default", 
         icon: CheckCircle, 
-        color: "text-green-600 bg-green-50 border-green-200",
+        color: "text-green-800 bg-green-100 border-green-300",
         label: "Active"
       },
       invited: { 
         variant: "secondary", 
         icon: Mail, 
-        color: "text-blue-600 bg-blue-50 border-blue-200",
+        color: "text-blue-800 bg-blue-100 border-blue-300",
         label: "Invited"
       },
       pending: { 
         variant: "outline", 
         icon: Clock, 
-        color: "text-amber-700 bg-amber-50 border-amber-200",
+        color: "text-slate-700 bg-slate-100 border-slate-300",
         label: "Pending"
       },
       inactive: { 
         variant: "destructive", 
         icon: XCircle, 
-        color: "text-red-600 bg-red-50 border-red-200",
+        color: "text-red-800 bg-red-100 border-red-300",
         label: "Inactive"
       },
       suspended: { 
         variant: "destructive", 
         icon: AlertCircle, 
-        color: "text-orange-600 bg-orange-50 border-orange-200",
+        color: "text-gray-800 bg-gray-100 border-gray-300",
         label: "Suspended"
       }
     };
@@ -109,8 +109,8 @@ export default function Subscription() {
     const Icon = config.icon;
     
     return (
-      <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${config.color}`}>
-        <Icon className="h-3 w-3" />
+      <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border ${config.color}`}>
+        <Icon className="h-4 w-4" />
         {config.label}
       </div>
     );
@@ -120,19 +120,19 @@ export default function Subscription() {
     if (!Array.isArray(roles)) return null;
     
     const roleConfig = {
-      admin: { color: "text-purple-700 bg-purple-100 border-purple-200", icon: Shield },
-      manager: { color: "text-indigo-700 bg-indigo-100 border-indigo-200", icon: Users },
-      member: { color: "text-gray-700 bg-gray-100 border-gray-200", icon: Users }
+      admin: { color: "text-slate-800 bg-slate-200 border-slate-300", icon: Shield },
+      manager: { color: "text-gray-800 bg-gray-200 border-gray-300", icon: Users },
+      member: { color: "text-stone-800 bg-stone-200 border-stone-300", icon: Users }
     };
     
     return (
-      <div className="flex gap-1.5 flex-wrap">
+      <div className="flex gap-2 flex-wrap">
         {roles.map((role, index) => {
           const config = roleConfig[role] || roleConfig.member;
           const Icon = config.icon;
           return (
-            <div key={index} className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium border ${config.color}`}>
-              <Icon className="h-3 w-3" />
+            <div key={index} className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-sm font-medium border ${config.color}`}>
+              <Icon className="h-3.5 w-3.5" />
               {role.charAt(0).toUpperCase() + role.slice(1)}
             </div>
           );
@@ -195,45 +195,45 @@ export default function Subscription() {
         <CardContent className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-blue-100">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
               <div className="flex items-center justify-between mb-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-blue-600" />
+                <div className="p-2 bg-slate-100 rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-slate-700" />
                 </div>
-                <span className="text-2xl font-bold text-blue-600">{licenseInfo.totalLicenses || 10}</span>
+                <span className="text-2xl font-bold text-slate-800">{licenseInfo.totalLicenses || 10}</span>
               </div>
               <h4 className="font-semibold text-gray-900 mb-1">Total Licenses</h4>
               <p className="text-sm text-gray-600">Purchased licenses</p>
             </div>
             
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-green-100">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
               <div className="flex items-center justify-between mb-3">
                 <div className="p-2 bg-green-100 rounded-lg">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <CheckCircle className="h-5 w-5 text-green-700" />
                 </div>
-                <span className="text-2xl font-bold text-green-600">{licenseInfo.usedLicenses || 0}</span>
+                <span className="text-2xl font-bold text-green-800">{licenseInfo.usedLicenses || 0}</span>
               </div>
               <h4 className="font-semibold text-gray-900 mb-1">Used Licenses</h4>
               <p className="text-sm text-gray-600">Currently active users</p>
             </div>
             
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-orange-100">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
               <div className="flex items-center justify-between mb-3">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <AlertCircle className="h-5 w-5 text-orange-600" />
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <AlertCircle className="h-5 w-5 text-blue-700" />
                 </div>
-                <span className="text-2xl font-bold text-orange-600">{licenseInfo.availableLicenses || 10}</span>
+                <span className="text-2xl font-bold text-blue-800">{licenseInfo.availableLicenses || 10}</span>
               </div>
               <h4 className="font-semibold text-gray-900 mb-1">Available</h4>
               <p className="text-sm text-gray-600">Ready for new users</p>
             </div>
             
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-purple-100">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
               <div className="flex items-center justify-between mb-3">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <Shield className="h-5 w-5 text-purple-600" />
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <Shield className="h-5 w-5 text-gray-700" />
                 </div>
-                <span className="text-lg font-bold text-purple-600">{licenseInfo.licenseType || 'Professional'}</span>
+                <span className="text-lg font-bold text-gray-800">{licenseInfo.licenseType || 'Professional'}</span>
               </div>
               <h4 className="font-semibold text-gray-900 mb-1">License Type</h4>
               <p className="text-sm text-gray-600">Current subscription plan</p>
@@ -257,7 +257,7 @@ export default function Subscription() {
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3">
               <div 
-                className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500" 
+                className="bg-gradient-to-r from-slate-600 to-slate-700 h-3 rounded-full transition-all duration-500" 
                 style={{ 
                   width: `${licenseInfo.totalLicenses > 0 ? (licenseInfo.usedLicenses / licenseInfo.totalLicenses) * 100 : 0}%` 
                 }}
@@ -334,26 +334,28 @@ export default function Subscription() {
                         <div className="flex items-center justify-end gap-2">
                           {user.status === 'invited' && (
                             <Button
-                              variant="ghost"
+                              variant="outline"
                               size="sm"
                               onClick={() => resendInviteMutation.mutate(user._id)}
                               disabled={resendInviteMutation.isPending}
-                              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                              className="text-slate-700 border-slate-300 hover:text-slate-900 hover:bg-slate-100 font-medium"
                               title="Resend Invite"
                             >
-                              <RotateCcw className="h-4 w-4" />
+                              <RotateCcw className="h-4 w-4 mr-1" />
+                              Resend
                             </Button>
                           )}
                           {user.status === 'active' && (
                             <Button
-                              variant="ghost"
+                              variant="outline"
                               size="sm"
                               onClick={() => deactivateUserMutation.mutate(user._id)}
                               disabled={deactivateUserMutation.isPending}
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              className="text-gray-700 border-gray-300 hover:text-gray-900 hover:bg-gray-100 font-medium"
                               title="Deactivate User"
                             >
-                              <UserX className="h-4 w-4" />
+                              <UserX className="h-4 w-4 mr-1" />
+                              Deactivate
                             </Button>
                           )}
                         </div>
