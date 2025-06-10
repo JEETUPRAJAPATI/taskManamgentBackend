@@ -82,22 +82,11 @@ export default function OrganizationRegistration() {
           // Store email for verification step
           localStorage.setItem('verificationEmail', formData.email);
           
-          toast({
-            title: "Organization registration initiated",
-            description: "Please check your email for verification instructions"
-          });
-
-          // Show success message and stay on current page
-          setFormData({ organizationName: '', organizationSlug: '', firstName: '', lastName: '', email: '' });
-          setErrors({});
+          // Store registration info and redirect to success page
+          localStorage.setItem('registrationEmail', formData.email);
+          localStorage.setItem('registrationType', 'organization');
           
-          // Show additional success information
-          setTimeout(() => {
-            toast({
-              title: "Check your email", 
-              description: "Click the verification link to complete your organization setup"
-            });
-          }, 1000);
+          setLocation(`/registration-success?email=${encodeURIComponent(formData.email)}&type=organization`);
         }
       } else {
         setErrors({ submit: result.message || "Registration failed" });

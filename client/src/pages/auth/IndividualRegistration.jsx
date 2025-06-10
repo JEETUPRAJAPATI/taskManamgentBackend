@@ -76,22 +76,11 @@ export default function IndividualRegistration() {
           // Store email for verification step
           localStorage.setItem('verificationEmail', formData.email);
           
-          toast({
-            title: "Registration initiated",
-            description: "Please check your email for verification instructions"
-          });
-
-          // Show success message and stay on current page
-          setFormData({ firstName: '', lastName: '', email: '' });
-          setErrors({});
+          // Store registration info and redirect to success page
+          localStorage.setItem('registrationEmail', formData.email);
+          localStorage.setItem('registrationType', 'individual');
           
-          // Show additional success information
-          setTimeout(() => {
-            toast({
-              title: "Check your email",
-              description: "Click the verification link to complete your registration"
-            });
-          }, 1000);
+          setLocation(`/registration-success?email=${encodeURIComponent(formData.email)}&type=individual`);
         }
       } else {
         setErrors({ submit: result.message || "Registration failed" });

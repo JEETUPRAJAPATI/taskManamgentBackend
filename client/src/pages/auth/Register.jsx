@@ -95,28 +95,11 @@ export default function Register() {
         // Store email for verification
         localStorage.setItem('verificationEmail', formData.email);
         
-        toast({
-          title: "Registration successful!",
-          description: "Please check your email for verification link"
-        });
-
-        // Clear form and show success message
-        setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          organizationName: '',
-          organizationSlug: ''
-        });
-        setErrors({});
+        // Store registration info and redirect to success page
+        localStorage.setItem('registrationEmail', formData.email);
+        localStorage.setItem('registrationType', registrationType);
         
-        // Show additional success information
-        setTimeout(() => {
-          toast({
-            title: "Check your email",
-            description: "Click the verification link to complete your registration"
-          });
-        }, 1000);
+        setLocation(`/registration-success?email=${encodeURIComponent(formData.email)}&type=${registrationType}`);
       } else {
         setErrors({ submit: result.message || "Registration failed" });
         toast({

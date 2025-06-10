@@ -35,6 +35,7 @@ import CreatePassword from './pages/auth/CreatePassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import AcceptInvitation from './pages/auth/AcceptInvitation';
 import VerifyAndSetPassword from './pages/auth/VerifyAndSetPassword';
+import RegistrationSuccess from './pages/auth/RegistrationSuccess';
 import TestAuth from './pages/TestAuth';
 
 
@@ -174,7 +175,7 @@ function ProtectedRoute({ component: Component, requiredRole, allowedRoles = [],
 function App() {
   const [location] = useLocation();
   const isSuperAdminRoute = location.startsWith('/super-admin');
-  const isAuthRoute = ['/register', '/login', '/verify', '/reset-password', '/accept-invitation'].includes(location);
+  const isAuthRoute = ['/register', '/login', '/verify', '/registration-success', '/reset-password', '/accept-invitation'].includes(location);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -190,6 +191,7 @@ function App() {
         <Route path="/login" component={Login} />
 
         <Route path="/verify" component={VerifyAndSetPassword} />
+        <Route path="/registration-success" component={RegistrationSuccess} />
         <Route path="/create-password" component={CreatePassword} />
         <Route path="/reset-password" component={ResetPassword} />
         <Route path="/accept-invitation" component={AcceptInvitation} />
