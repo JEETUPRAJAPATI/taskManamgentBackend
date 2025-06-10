@@ -1418,6 +1418,7 @@ export class MongoStorage {
   // Get organization users with detailed info
   async getOrganizationUsersDetailed(organizationId) {
     return await User.find({ organization: organizationId })
+      .select('firstName lastName email roles status isActive emailVerified inviteToken inviteTokenExpiry lastLoginAt createdAt invitedBy invitedAt')
       .populate('invitedBy', 'firstName lastName email')
       .sort({ createdAt: -1 });
   }
