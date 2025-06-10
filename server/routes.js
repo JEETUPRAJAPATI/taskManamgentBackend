@@ -135,22 +135,7 @@ export async function registerRoutes(app) {
     }
   });
 
-  // Email verification
-  app.post("/api/auth/verify-email", async (req, res) => {
-    try {
-      const { email, verificationCode } = req.body;
-      
-      if (!email || !verificationCode) {
-        return res.status(400).json({ message: "Email and verification code are required" });
-      }
 
-      const result = await authService.verifyEmail(email, verificationCode);
-      res.json(result);
-    } catch (error) {
-      console.error("Email verification error:", error);
-      res.status(400).json({ message: error.message });
-    }
-  });
 
   // Resend verification code
   app.post("/api/auth/resend-verification", async (req, res) => {
