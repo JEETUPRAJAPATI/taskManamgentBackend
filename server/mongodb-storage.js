@@ -86,6 +86,13 @@ export class MongoStorage {
   }
 
   async createUser(userData) {
+    // For invited users, set default values for required fields
+    if (userData.status === 'invited' && !userData.passwordHash) {
+      userData.firstName = userData.firstName || '';
+      userData.lastName = userData.lastName || '';
+      userData.passwordHash = userData.passwordHash || 'temp_invite_placeholder';
+    }
+    
     const user = new User(userData);
     return await user.save();
   }

@@ -35,7 +35,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
 
   // Add admin-only navigation items
   const adminOnlyItems = [
-    { name: "User Management", href: "/user-management", icon: UserCog, insertAfter: "Users" },
+    { name: "User Management", href: "/settings/user-management", icon: UserCog, insertAfter: "Users" },
   ];
 
   // Build navigation based on user role

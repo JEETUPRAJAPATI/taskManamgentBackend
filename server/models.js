@@ -42,18 +42,15 @@ const userSchema = new mongoose.Schema({
   },
   firstName: {
     type: String,
-    required: true,
     trim: true
   },
   lastName: {
     type: String,
-    required: true,
     trim: true
   },
   profileImageUrl: String,
   passwordHash: {
-    type: String,
-    required: true
+    type: String
   },
   emailVerified: {
     type: Boolean,
