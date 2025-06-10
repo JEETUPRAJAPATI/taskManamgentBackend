@@ -7,8 +7,8 @@ class EmailService {
       port: 587,
       secure: false, // true for 465, false for other ports
       auth: {
-        user: '47974993873f54',
-        pass: '1fdcda65438582'
+        user: '3e36ba31a3527d',
+        pass: '6560b932d97631'
       }
     });
     this.isConfigured = true;
