@@ -321,51 +321,7 @@ function App() {
             <ProtectedRoute component={SettingsRoles} requiredRole="admin" />
           </SettingsLayout>
         </Route>
-        <Route path="/settings/billing">
-          <SettingsLayout>
-            <ProtectedRoute requiredRole="admin">
-              <SettingsPlaceholder 
-                title="Billing & Subscription" 
-                description="Manage your subscription and billing information" 
-              />
-            </ProtectedRoute>
-          </SettingsLayout>
-        </Route>
-        <Route path="/settings/notifications">
-          <SettingsLayout>
-            <ProtectedRoute requiredRole="admin">
-              <SettingsPlaceholder 
-                title="Notifications" 
-                description="Configure email and system notifications" 
-              />
-            </ProtectedRoute>
-          </SettingsLayout>
-        </Route>
-        <Route path="/settings/security">
-          <SettingsLayout>
-            <ProtectedRoute requiredRole="admin">
-              <SettingsPlaceholder 
-                title="Security Settings" 
-                description="Configure password policies and two-factor authentication" 
-              />
-            </ProtectedRoute>
-          </SettingsLayout>
-        </Route>
-        <Route path="/settings/api-keys">
-          <SettingsLayout>
-            <ProtectedRoute requiredRole="admin">
-              <SettingsPlaceholder 
-                title="API Keys" 
-                description="Manage API access tokens and integrations" 
-              />
-            </ProtectedRoute>
-          </SettingsLayout>
-        </Route>
-        <Route path="/settings/integrations">
-          <SettingsLayout>
-            <ProtectedRoute component={Integrations} requiredRole="admin" />
-          </SettingsLayout>
-        </Route>
+
 
         {/* 404 Not Found */}
         <Route>

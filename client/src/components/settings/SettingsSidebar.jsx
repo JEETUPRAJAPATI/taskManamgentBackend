@@ -32,86 +32,12 @@ export default function SettingsSidebar({ isOpen, onClose }) {
           href: "/settings/roles",
           icon: Shield,
           description: "Configure user roles and access"
-        }
-      ]
-    },
-    {
-      category: "Organization",
-      items: [
+        },
         {
           name: "General Settings",
           href: "/settings/general",
           icon: Settings,
           description: "Organization details and preferences"
-        },
-        {
-          name: "Billing & Subscription",
-          href: "/settings/billing",
-          icon: CreditCard,
-          description: "Manage your subscription and billing"
-        },
-        {
-          name: "Notifications",
-          href: "/settings/notifications",
-          icon: Bell,
-          description: "Email and system notifications"
-        }
-      ]
-    },
-    {
-      category: "Security & Privacy",
-      items: [
-        {
-          name: "Security Settings",
-          href: "/settings/security",
-          icon: Lock,
-          description: "Password policies and 2FA"
-        },
-        {
-          name: "API Keys",
-          href: "/settings/api-keys",
-          icon: Key,
-          description: "Manage API access tokens"
-        },
-        {
-          name: "Data Export",
-          href: "/settings/data-export",
-          icon: Database,
-          description: "Export your organization data"
-        }
-      ]
-    },
-    {
-      category: "Customization",
-      items: [
-        {
-          name: "Branding",
-          href: "/settings/branding",
-          icon: Palette,
-          description: "Customize your workspace appearance"
-        },
-        {
-          name: "Email Templates",
-          href: "/settings/email-templates",
-          icon: Mail,
-          description: "Customize notification templates"
-        },
-        {
-          name: "Custom Fields",
-          href: "/settings/custom-fields",
-          icon: FileText,
-          description: "Add custom fields to tasks"
-        }
-      ]
-    },
-    {
-      category: "Integration",
-      items: [
-        {
-          name: "Connected Apps",
-          href: "/settings/integrations",
-          icon: Globe,
-          description: "Third-party app connections"
         }
       ]
     }
