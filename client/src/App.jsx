@@ -33,7 +33,7 @@ import Login from './pages/auth/Login';
 
 import CreatePassword from './pages/auth/CreatePassword';
 import ResetPassword from './pages/auth/ResetPassword';
-import AcceptInvitation from './pages/auth/AcceptInvitation';
+import AcceptInvite from './pages/auth/AcceptInvite';
 import VerifyAndSetPassword from './pages/auth/VerifyAndSetPassword';
 import RegistrationSuccess from './pages/auth/RegistrationSuccess';
 import TestAuth from './pages/TestAuth';
@@ -194,7 +194,7 @@ function App() {
         <Route path="/registration-success" component={RegistrationSuccess} />
         <Route path="/create-password" component={CreatePassword} />
         <Route path="/reset-password" component={ResetPassword} />
-        <Route path="/accept-invitation" component={AcceptInvitation} />
+        <Route path="/register/invite/:token" component={AcceptInvite} />
         <Route path="/forbidden" component={ForbiddenPage} />
         <Route path="/test-auth" component={TestAuth} />
 
@@ -285,6 +285,11 @@ function App() {
         <Route path="/reports">
           <AdminLayout>
             <ProtectedRoute component={Reports} />
+          </AdminLayout>
+        </Route>
+        <Route path="/settings/user-management">
+          <AdminLayout>
+            <ProtectedRoute component={UserManagement} requiredRole="admin" />
           </AdminLayout>
         </Route>
 

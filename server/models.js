@@ -66,19 +66,36 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Organization'
   },
-  role: {
+  roles: {
+    type: [String],
+    default: ['member']
+  },
+  status: {
     type: String,
-    enum: ['member', 'admin', 'super_admin'],
-    default: 'member'
+    enum: ['pending', 'invited', 'active', 'inactive', 'suspended'],
+    default: 'pending'
   },
   isActive: {
     type: Boolean,
     default: true
   },
+  inviteToken: String,
+  inviteTokenExpiry: Date,
+  invitedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  invitedAt: Date,
   lastLoginAt: Date,
   preferences: {
     type: Object,
     default: {}
+  },
+  // Legacy role field for backward compatibility
+  role: {
+    type: String,
+    enum: ['member', 'admin', 'super_admin'],
+    default: 'member'
   }
 }, {
   timestamps: true
