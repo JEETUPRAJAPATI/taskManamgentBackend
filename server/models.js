@@ -42,15 +42,24 @@ const userSchema = new mongoose.Schema({
   },
   firstName: {
     type: String,
-    trim: true
+    trim: true,
+    required: function() {
+      return this.status === 'active' || this.status === 'pending';
+    }
   },
   lastName: {
     type: String,
-    trim: true
+    trim: true,
+    required: function() {
+      return this.status === 'active' || this.status === 'pending';
+    }
   },
   profileImageUrl: String,
   passwordHash: {
-    type: String
+    type: String,
+    required: function() {
+      return this.status === 'active' || this.status === 'pending';
+    }
   },
   emailVerified: {
     type: Boolean,
