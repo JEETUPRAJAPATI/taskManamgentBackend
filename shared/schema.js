@@ -100,9 +100,14 @@ export const users = pgTable("users", {
   lastName: varchar("last_name", { length: 100 }),
   profileImageUrl: varchar("profile_image_url", { length: 500 }),
   passwordHash: varchar("password_hash", { length: 255 }),
-  role: varchar("role", { length: 50 }).default("member"), // member, admin, super_admin
+  roles: jsonb("roles").default(["member"]), // array of roles: member, manager, admin, super_admin
+  status: varchar("status", { length: 50 }).default("pending"), // pending, invited, active, inactive, suspended
   isActive: boolean("is_active").default(true),
   emailVerified: boolean("email_verified").default(false),
+  inviteToken: varchar("invite_token", { length: 255 }),
+  inviteTokenExpiry: timestamp("invite_token_expiry"),
+  invitedBy: uuid("invited_by").references(() => users.id),
+  invitedAt: timestamp("invited_at"),
   lastLoginAt: timestamp("last_login_at"),
   organizationId: uuid("organization_id").references(() => organizations.id),
   companyId: uuid("company_id").references(() => companies.id),
@@ -316,4 +321,18 @@ export const smartTaskInputSchema = z.object({
     userId: z.string().uuid().optional(),
     organizationId: z.string().uuid().optional(),
   }).optional(),
+});
+
+export const inviteUsersSchema = z.object({
+  users: z.array(z.object({
+    email: z.string().email("Invalid email address"),
+    roles: z.array(z.string()).min(1, "At least one role is required").default(["member"]),
+  })).min(1, "At least one user is required"),
+});
+
+export const acceptInviteSchema = z.object({
+  token: z.string().min(1, "Invitation token is required"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
 });

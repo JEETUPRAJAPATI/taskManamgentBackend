@@ -494,6 +494,256 @@ export async function registerRoutes(app) {
     }
   });
 
+  // User invitation routes
+  app.post("/api/users/invite", authenticateToken, requireRole(['admin']), async (req, res) => {
+    try {
+      const { users } = req.body;
+      
+      if (!users || !Array.isArray(users) || users.length === 0) {
+        return res.status(400).json({ message: "Users array is required" });
+      }
+
+      const results = [];
+      const errors = [];
+
+      for (const userData of users) {
+        try {
+          // Check if user already exists
+          const existingUser = await storage.getUserByEmail(userData.email);
+          if (existingUser && existingUser.organization?.toString() === req.user.organizationId) {
+            errors.push(`${userData.email} already exists. That user will not be reinvited.`);
+            continue;
+          }
+
+          // Generate invite token
+          const inviteToken = storage.generateEmailVerificationToken();
+          const inviteTokenExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
+          // Create invited user record
+          const invitedUser = await storage.createUser({
+            email: userData.email,
+            roles: userData.roles || ['member'],
+            status: 'invited',
+            inviteToken,
+            inviteTokenExpiry,
+            invitedBy: req.user.id,
+            invitedAt: new Date(),
+            organization: req.user.organizationId,
+            isActive: false,
+            emailVerified: false
+          });
+
+          // Send invitation email
+          const adminUser = await storage.getUser(req.user.id);
+          const organization = await storage.getOrganization(req.user.organizationId);
+          
+          await storage.sendInvitationEmail(
+            userData.email,
+            inviteToken,
+            organization.name,
+            userData.roles,
+            `${adminUser.firstName} ${adminUser.lastName}`
+          );
+
+          results.push({
+            email: userData.email,
+            status: 'invited',
+            roles: userData.roles
+          });
+
+        } catch (error) {
+          errors.push(`Failed to invite ${userData.email}: ${error.message}`);
+        }
+      }
+
+      res.json({
+        message: `Successfully invited ${results.length} users`,
+        invited: results,
+        errors
+      });
+    } catch (error) {
+      console.error("Invite users error:", error);
+      res.status(500).json({ message: "Failed to invite users" });
+    }
+  });
+
+  // Accept invitation route
+  app.post("/api/auth/accept-invite", async (req, res) => {
+    try {
+      const { token, firstName, lastName, password } = req.body;
+      
+      if (!token || !firstName || !lastName || !password) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+
+      // Find user by invite token
+      const user = await storage.getUserByInviteToken(token);
+      if (!user) {
+        return res.status(400).json({ message: "Invalid or expired invitation" });
+      }
+
+      if (user.inviteTokenExpiry < new Date()) {
+        return res.status(400).json({ message: "Invitation has expired" });
+      }
+
+      // Update user with account details
+      const hashedPassword = await storage.hashPassword(password);
+      await storage.updateUser(user._id, {
+        firstName,
+        lastName,
+        passwordHash: hashedPassword,
+        status: 'active',
+        isActive: true,
+        emailVerified: true,
+        inviteToken: null,
+        inviteTokenExpiry: null
+      });
+
+      const updatedUser = await storage.getUser(user._id);
+      const authToken = storage.generateToken(updatedUser);
+
+      res.json({
+        message: "Account activated successfully",
+        user: {
+          id: updatedUser._id,
+          email: updatedUser.email,
+          firstName: updatedUser.firstName,
+          lastName: updatedUser.lastName,
+          role: updatedUser.role,
+          organizationId: updatedUser.organization
+        },
+        token: authToken
+      });
+    } catch (error) {
+      console.error("Accept invite error:", error);
+      res.status(500).json({ message: "Failed to accept invitation" });
+    }
+  });
+
+  // Get invitation details
+  app.get("/api/auth/invite/:token", async (req, res) => {
+    try {
+      const { token } = req.params;
+      
+      const user = await storage.getUserByInviteToken(token);
+      if (!user) {
+        return res.status(400).json({ message: "Invalid invitation" });
+      }
+
+      if (user.inviteTokenExpiry < new Date()) {
+        return res.status(400).json({ message: "Invitation has expired" });
+      }
+
+      const organization = await storage.getOrganization(user.organization);
+      
+      res.json({
+        email: user.email,
+        roles: user.roles || ['member'],
+        organizationName: organization?.name || 'Unknown Organization',
+        valid: true
+      });
+    } catch (error) {
+      console.error("Get invite details error:", error);
+      res.status(500).json({ message: "Failed to get invitation details" });
+    }
+  });
+
+  // Get organization users with license info
+  app.get("/api/users/organization", authenticateToken, requireRole(['admin']), async (req, res) => {
+    try {
+      const users = await storage.getOrganizationUsersDetailed(req.user.organizationId);
+      const organization = await storage.getOrganization(req.user.organizationId);
+      
+      const licenseInfo = {
+        totalLicenses: organization?.maxUsers || 10,
+        licenseType: 'Standard',
+        usedLicenses: users.filter(u => u.status === 'active').length,
+        availableLicenses: (organization?.maxUsers || 10) - users.filter(u => u.status === 'active').length
+      };
+
+      res.json({
+        users,
+        licenseInfo
+      });
+    } catch (error) {
+      console.error("Get organization users error:", error);
+      res.status(500).json({ message: "Failed to get organization users" });
+    }
+  });
+
+  // Deactivate user
+  app.patch("/api/users/:id/deactivate", authenticateToken, requireRole(['admin']), async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      const user = await storage.getUser(id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      if (user.organization?.toString() !== req.user.organizationId) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      await storage.updateUser(id, {
+        status: 'inactive',
+        isActive: false
+      });
+
+      res.json({ message: "User deactivated successfully" });
+    } catch (error) {
+      console.error("Deactivate user error:", error);
+      res.status(500).json({ message: "Failed to deactivate user" });
+    }
+  });
+
+  // Resend invitation
+  app.post("/api/users/:id/resend-invite", authenticateToken, requireRole(['admin']), async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      const user = await storage.getUser(id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      if (user.organization?.toString() !== req.user.organizationId) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      if (user.status === 'active') {
+        return res.status(400).json({ message: "User is already active" });
+      }
+
+      // Generate new invite token
+      const inviteToken = storage.generateEmailVerificationToken();
+      const inviteTokenExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+      await storage.updateUser(id, {
+        inviteToken,
+        inviteTokenExpiry,
+        status: 'invited'
+      });
+
+      // Resend invitation email
+      const adminUser = await storage.getUser(req.user.id);
+      const organization = await storage.getOrganization(req.user.organizationId);
+      
+      await storage.sendInvitationEmail(
+        user.email,
+        inviteToken,
+        organization.name,
+        user.roles || ['member'],
+        `${adminUser.firstName} ${adminUser.lastName}`
+      );
+
+      res.json({ message: "Invitation resent successfully" });
+    } catch (error) {
+      console.error("Resend invite error:", error);
+      res.status(500).json({ message: "Failed to resend invitation" });
+    }
+  });
+
   // Dashboard routes
   app.get("/api/dashboard/stats", authenticateToken, async (req, res) => {
     try {

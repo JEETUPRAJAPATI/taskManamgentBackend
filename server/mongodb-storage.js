@@ -1402,6 +1402,18 @@ export class MongoStorage {
   async getAllPendingUsers() {
     return await PendingUser.find({});
   }
+
+  // Get user by invite token
+  async getUserByInviteToken(token) {
+    return await User.findOne({ inviteToken: token });
+  }
+
+  // Get organization users with detailed info
+  async getOrganizationUsersDetailed(organizationId) {
+    return await User.find({ organization: organizationId })
+      .populate('invitedBy', 'firstName lastName email')
+      .sort({ createdAt: -1 });
+  }
 }
 
 export const storage = new MongoStorage();

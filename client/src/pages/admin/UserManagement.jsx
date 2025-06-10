@@ -1,87 +1,56 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  Users, 
-  UserPlus, 
-  Mail, 
-  Shield, 
-  UserCheck, 
-  UserX, 
-  MoreVertical,
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  Search,
-  Filter
-} from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import { Users, UserPlus, UserX, Mail, Trash2, Plus } from "lucide-react";
 
 export default function UserManagement() {
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [inviteUsers, setInviteUsers] = useState([{ email: "", roles: ["member"] }]);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterRole, setFilterRole] = useState("all");
-  const [showInviteModal, setShowInviteModal] = useState(false);
-  const [inviteData, setInviteData] = useState({
-    email: "",
-    role: "member"
+
+  // Fetch organization users and license info
+  const { data: userData, isLoading } = useQuery({
+    queryKey: ["/api/users/organization"],
+    enabled: true
   });
 
-  // Fetch license information
-  const { data: licenseInfo, isLoading: licenseLoading } = useQuery({
-    queryKey: ["/api/organization/license"],
-    retry: false
-  });
-
-  // Fetch organization users
-  const { data: users = [], isLoading: usersLoading, refetch } = useQuery({
-    queryKey: ["/api/organization/users-detailed"],
-    retry: false
-  });
-
-  // Invite user mutation
-  const inviteUserMutation = useMutation({
-    mutationFn: async (data) => {
-      return await apiRequest("POST", "/api/organization/invite-user", {
-        email: data.email,
-        roles: [data.role]
-      });
-    },
-    onSuccess: () => {
-      toast({
-        title: "Invitation sent",
-        description: "User invitation has been sent successfully"
-      });
-      setShowInviteModal(false);
-      setInviteData({ email: "", role: "member" });
-      refetch();
+  // Invite users mutation
+  const inviteUsersMutation = useMutation({
+    mutationFn: (users) => apiRequest("POST", "/api/users/invite", { users }),
+    onSuccess: (data) => {
+      setInviteModalOpen(false);
+      setInviteUsers([{ email: "", roles: ["member"] }]);
+      queryClient.invalidateQueries({ queryKey: ["/api/users/organization"] });
+      
+      if (data.errors && data.errors.length > 0) {
+        toast({
+          title: "Partial Success",
+          description: `${data.invited.length} users invited successfully. ${data.errors.length} errors occurred.`,
+          variant: "default"
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: `Successfully invited ${data.invited.length} users`,
+          variant: "default"
+        });
+      }
     },
     onError: (error) => {
       toast({
-        title: "Invitation failed",
-        description: error.message,
-        variant: "destructive"
-      });
-    }
-  });
-
-  // Update user role mutation
-  const updateRoleMutation = useMutation({
-    mutationFn: async ({ userId, role }) => {
-      return await apiRequest("PATCH", `/api/organization/users/${userId}/role`, { role });
-    },
-    onSuccess: () => {
-      toast({
-        title: "Role updated",
-        description: "User role has been updated successfully"
-      });
-      refetch();
-    },
-    onError: (error) => {
-      toast({
-        title: "Update failed",
-        description: error.message,
+        title: "Error",
+        description: error.message || "Failed to invite users",
         variant: "destructive"
       });
     }
@@ -89,104 +58,122 @@ export default function UserManagement() {
 
   // Deactivate user mutation
   const deactivateUserMutation = useMutation({
-    mutationFn: async (userId) => {
-      return await apiRequest("PATCH", `/api/organization/users/${userId}/deactivate`);
-    },
+    mutationFn: (userId) => apiRequest("PATCH", `/api/users/${userId}/deactivate`),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users/organization"] });
       toast({
-        title: "User deactivated",
-        description: "User has been deactivated successfully"
+        title: "Success",
+        description: "User deactivated successfully",
+        variant: "default"
       });
-      refetch();
     },
     onError: (error) => {
       toast({
-        title: "Deactivation failed",
-        description: error.message,
+        title: "Error",
+        description: error.message || "Failed to deactivate user",
         variant: "destructive"
       });
     }
   });
 
-  // Activate user mutation
-  const activateUserMutation = useMutation({
-    mutationFn: async (userId) => {
-      return await apiRequest("PATCH", `/api/organization/users/${userId}/activate`);
-    },
+  // Resend invite mutation
+  const resendInviteMutation = useMutation({
+    mutationFn: (userId) => apiRequest("POST", `/api/users/${userId}/resend-invite`),
     onSuccess: () => {
       toast({
-        title: "User activated",
-        description: "User has been activated successfully"
+        title: "Success",
+        description: "Invitation resent successfully",
+        variant: "default"
       });
-      refetch();
     },
     onError: (error) => {
       toast({
-        title: "Activation failed",
-        description: error.message,
+        title: "Error",
+        description: error.message || "Failed to resend invitation",
         variant: "destructive"
       });
     }
   });
 
-  const handleInviteUser = () => {
-    if (!inviteData.email || !inviteData.role) {
+  const handleAddUserRow = () => {
+    setInviteUsers([...inviteUsers, { email: "", roles: ["member"] }]);
+  };
+
+  const handleRemoveUserRow = (index) => {
+    if (inviteUsers.length > 1) {
+      setInviteUsers(inviteUsers.filter((_, i) => i !== index));
+    }
+  };
+
+  const handleUserChange = (index, field, value) => {
+    const updated = [...inviteUsers];
+    updated[index][field] = value;
+    setInviteUsers(updated);
+  };
+
+  const handleRoleChange = (index, role, checked) => {
+    const updated = [...inviteUsers];
+    if (checked && !updated[index].roles.includes(role)) {
+      updated[index].roles.push(role);
+    } else if (!checked) {
+      updated[index].roles = updated[index].roles.filter(r => r !== role);
+    }
+    // Always ensure 'member' is included
+    if (!updated[index].roles.includes('member')) {
+      updated[index].roles.push('member');
+    }
+    setInviteUsers(updated);
+  };
+
+  const handleInviteSubmit = () => {
+    const validUsers = inviteUsers.filter(user => user.email.trim() !== "");
+    
+    if (validUsers.length === 0) {
       toast({
-        title: "Validation error",
-        description: "Please fill in all required fields",
+        title: "Error",
+        description: "Please add at least one valid email address",
         variant: "destructive"
       });
       return;
     }
 
-    if (licenseInfo && licenseInfo.available <= 0) {
-      toast({
-        title: "License limit reached",
-        description: "Cannot invite more users. Please upgrade your plan.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    inviteUserMutation.mutate(inviteData);
+    inviteUsersMutation.mutate(validUsers);
   };
 
-  const formatDate = (date) => {
-    if (!date) return "Never";
-    return new Date(date).toLocaleDateString();
-  };
-
-  const formatRelativeTime = (date) => {
-    if (!date) return "Never";
-    const now = new Date();
-    const target = new Date(date);
-    const diffMs = now - target;
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const getStatusBadge = (status) => {
+    const variants = {
+      active: "default",
+      invited: "secondary",
+      pending: "outline",
+      inactive: "destructive"
+    };
     
-    if (diffDays === 0) return "Today";
-    if (diffDays === 1) return "Yesterday";
-    if (diffDays < 30) return `${diffDays} days ago`;
-    if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
-    return `${Math.floor(diffDays / 365)} years ago`;
-  };
-
-  // Filter users based on search and role filter
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = searchTerm === "" || 
-      user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesRole = filterRole === "all" || user.role === filterRole;
-    
-    return matchesSearch && matchesRole;
-  });
-
-  if (licenseLoading || usersLoading) {
     return (
-      <div className="p-4 max-w-6xl mx-auto">
+      <Badge variant={variants[status] || "outline"}>
+        {status?.charAt(0).toUpperCase() + status?.slice(1)}
+      </Badge>
+    );
+  };
+
+  const getRolesBadges = (roles) => {
+    if (!Array.isArray(roles)) return null;
+    
+    return (
+      <div className="flex gap-1 flex-wrap">
+        {roles.map((role, index) => (
+          <Badge key={index} variant="outline" className="text-xs">
+            {role.charAt(0).toUpperCase() + role.slice(1)}
+          </Badge>
+        ))}
+      </div>
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <div className="p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/4"></div>
           <div className="h-32 bg-gray-200 rounded"></div>
           <div className="h-64 bg-gray-200 rounded"></div>
         </div>
@@ -194,269 +181,234 @@ export default function UserManagement() {
     );
   }
 
+  const { users = [], licenseInfo = {} } = userData || {};
+
   return (
-    <div className="p-4 max-w-6xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-          <p className="text-sm text-gray-600">Manage your organization's users and permissions</p>
+          <p className="text-gray-600 mt-1">Manage team members and their access</p>
         </div>
-        <button
-          onClick={() => setShowInviteModal(true)}
-          disabled={licenseInfo && licenseInfo.available <= 0}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm"
-        >
-          <UserPlus className="h-4 w-4" />
-          Invite User
-        </button>
-      </div>
-
-      {/* License Information */}
-      {licenseInfo && (
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Users className="h-5 w-5 text-blue-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">License Usage</h3>
-                <p className="text-sm text-gray-600">
-                  {licenseInfo.used} of {licenseInfo.total} licenses used
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <div className="text-sm text-gray-500">Available</div>
-                <div className={`text-lg font-bold ${licenseInfo.available > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {licenseInfo.available}
-                </div>
-              </div>
-              <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div 
-                  className={`h-full transition-all duration-300 ${
-                    licenseInfo.used / licenseInfo.total > 0.8 ? 'bg-red-500' :
-                    licenseInfo.used / licenseInfo.total > 0.6 ? 'bg-yellow-500' : 'bg-green-500'
-                  }`}
-                  style={{ width: `${Math.min((licenseInfo.used / licenseInfo.total) * 100, 100)}%` }}
-                ></div>
-              </div>
-            </div>
-          </div>
-          {licenseInfo.available <= 0 && (
-            <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
-              <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
-              <div className="text-sm text-red-700">
-                <p className="font-medium">License limit reached</p>
-                <p>You've reached your user limit. Contact support to upgrade your plan.</p>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Search and Filter */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search users by name or email..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-gray-400" />
-            <select
-              value={filterRole}
-              onChange={(e) => setFilterRole(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="all">All Roles</option>
-              <option value="admin">Admin</option>
-              <option value="member">Member</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Users Table */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 text-sm">User</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 text-sm">Role</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 text-sm">Status</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 text-sm">Last Login</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 text-sm">Joined</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 text-sm">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {filteredUsers.length === 0 ? (
-                <tr>
-                  <td colSpan="6" className="text-center py-8 text-gray-500">
-                    {searchTerm || filterRole !== "all" ? "No users match your search criteria" : "No users found"}
-                  </td>
-                </tr>
-              ) : (
-                filteredUsers.map((user) => (
-                  <tr key={user._id} className="hover:bg-gray-50">
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                          <span className="text-blue-600 font-medium text-sm">
-                            {user.firstName?.[0]}{user.lastName?.[0]}
-                          </span>
-                        </div>
-                        <div>
-                          <div className="font-medium text-gray-900 text-sm">
-                            {user.firstName} {user.lastName}
-                          </div>
-                          <div className="text-gray-500 text-xs">{user.email}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <select
-                        value={user.role}
-                        onChange={(e) => updateRoleMutation.mutate({ userId: user._id, role: e.target.value })}
-                        className="text-sm border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        disabled={updateRoleMutation.isPending}
-                      >
-                        <option value="member">Member</option>
-                        <option value="admin">Admin</option>
-                      </select>
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-2">
-                        {user.isActive ? (
-                          <>
-                            <CheckCircle className="h-4 w-4 text-green-500" />
-                            <span className="text-green-700 text-sm">Active</span>
-                          </>
-                        ) : (
-                          <>
-                            <UserX className="h-4 w-4 text-red-500" />
-                            <span className="text-red-700 text-sm">Inactive</span>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-sm text-gray-600">
-                      {formatRelativeTime(user.lastLoginAt)}
-                    </td>
-                    <td className="py-3 px-4 text-sm text-gray-600">
-                      {formatDate(user.createdAt)}
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-2">
-                        {user.isActive ? (
-                          <button
-                            onClick={() => deactivateUserMutation.mutate(user._id)}
-                            disabled={deactivateUserMutation.isPending}
-                            className="text-red-600 hover:text-red-700 p-1 rounded hover:bg-red-50 disabled:opacity-50"
-                            title="Deactivate user"
-                          >
-                            <UserX className="h-4 w-4" />
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => activateUserMutation.mutate(user._id)}
-                            disabled={activateUserMutation.isPending}
-                            className="text-green-600 hover:text-green-700 p-1 rounded hover:bg-green-50 disabled:opacity-50"
-                            title="Activate user"
-                          >
-                            <UserCheck className="h-4 w-4" />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Invite User Modal */}
-      {showInviteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-md w-full p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Mail className="h-5 w-5 text-blue-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">Invite New User</h3>
-                <p className="text-sm text-gray-600">Send an invitation to join your organization</p>
-              </div>
-            </div>
+        
+        <Dialog open={inviteModalOpen} onOpenChange={setInviteModalOpen}>
+          <DialogTrigger asChild>
+            <Button className="bg-blue-600 hover:bg-blue-700">
+              <UserPlus className="h-4 w-4 mr-2" />
+              Add Users
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Invite Users</DialogTitle>
+              <DialogDescription>
+                Add multiple users to your organization. They will receive email invitations to join.
+              </DialogDescription>
+            </DialogHeader>
 
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  value={inviteData.email}
-                  onChange={(e) => setInviteData(prev => ({ ...prev, email: e.target.value }))}
-                  placeholder="user@example.com"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
+              {inviteUsers.map((user, index) => (
+                <div key={index} className="border rounded-lg p-4 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <Label className="text-sm font-medium">User {index + 1}</Label>
+                    {inviteUsers.length > 1 && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemoveUserRow(index)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Role
-                </label>
-                <select
-                  value={inviteData.role}
-                  onChange={(e) => setInviteData(prev => ({ ...prev, role: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="member">Member</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </div>
+                  <div>
+                    <Label htmlFor={`email-${index}`}>Email Address</Label>
+                    <Input
+                      id={`email-${index}`}
+                      type="email"
+                      value={user.email}
+                      onChange={(e) => handleUserChange(index, "email", e.target.value)}
+                      placeholder="user@company.com"
+                      className="mt-1"
+                    />
+                  </div>
 
-              {licenseInfo && licenseInfo.available <= 0 && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
-                  <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
-                  <div className="text-sm text-red-700">
-                    License limit reached. Cannot invite more users.
+                  <div>
+                    <Label>Roles</Label>
+                    <div className="flex flex-wrap gap-3 mt-2">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`member-${index}`}
+                          checked={true}
+                          disabled={true}
+                        />
+                        <Label htmlFor={`member-${index}`} className="text-sm text-gray-500">
+                          Member (Required)
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`manager-${index}`}
+                          checked={user.roles.includes("manager")}
+                          onCheckedChange={(checked) => handleRoleChange(index, "manager", checked)}
+                        />
+                        <Label htmlFor={`manager-${index}`} className="text-sm">
+                          Manager
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`admin-${index}`}
+                          checked={user.roles.includes("admin")}
+                          onCheckedChange={(checked) => handleRoleChange(index, "admin", checked)}
+                        />
+                        <Label htmlFor={`admin-${index}`} className="text-sm">
+                          Admin
+                        </Label>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              )}
-            </div>
+              ))}
 
-            <div className="flex items-center gap-3 mt-6">
-              <button
-                onClick={handleInviteUser}
-                disabled={inviteUserMutation.isPending || (licenseInfo && licenseInfo.available <= 0)}
-                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              <Button
+                variant="outline"
+                onClick={handleAddUserRow}
+                className="w-full"
               >
-                {inviteUserMutation.isPending ? "Sending..." : "Send Invitation"}
-              </button>
-              <button
-                onClick={() => setShowInviteModal(false)}
-                className="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200"
-              >
-                Cancel
-              </button>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Another
+              </Button>
+
+              <div className="flex gap-3 pt-4">
+                <Button
+                  onClick={handleInviteSubmit}
+                  disabled={inviteUsersMutation.isPending}
+                  className="flex-1"
+                >
+                  {inviteUsersMutation.isPending ? "Sending Invites..." : "Send Invitations"}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setInviteModalOpen(false)}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* License Summary Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-blue-600" />
+            License Summary
+          </CardTitle>
+          <CardDescription>
+            Overview of your organization's user licenses
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="text-center p-4 bg-blue-50 rounded-lg">
+              <div className="text-2xl font-bold text-blue-600">{licenseInfo.totalLicenses || 0}</div>
+              <div className="text-sm text-gray-600">Total Licenses</div>
+            </div>
+            <div className="text-center p-4 bg-green-50 rounded-lg">
+              <div className="text-2xl font-bold text-green-600">{licenseInfo.usedLicenses || 0}</div>
+              <div className="text-sm text-gray-600">Used Licenses</div>
+            </div>
+            <div className="text-center p-4 bg-orange-50 rounded-lg">
+              <div className="text-2xl font-bold text-orange-600">{licenseInfo.availableLicenses || 0}</div>
+              <div className="text-sm text-gray-600">Available</div>
+            </div>
+            <div className="text-center p-4 bg-purple-50 rounded-lg">
+              <div className="text-2xl font-bold text-purple-600">{licenseInfo.licenseType || 'Standard'}</div>
+              <div className="text-sm text-gray-600">License Type</div>
             </div>
           </div>
-        </div>
-      )}
+        </CardContent>
+      </Card>
+
+      {/* Users Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Team Members</CardTitle>
+          <CardDescription>
+            Manage your organization's users and their permissions
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Roles</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Joined</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users.map((user) => (
+                <TableRow key={user._id}>
+                  <TableCell className="font-medium">
+                    {user.firstName && user.lastName 
+                      ? `${user.firstName} ${user.lastName}`
+                      : user.email.split('@')[0]
+                    }
+                  </TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{getRolesBadges(user.roles)}</TableCell>
+                  <TableCell>{getStatusBadge(user.status)}</TableCell>
+                  <TableCell>
+                    {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-'}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      {(user.status === 'invited' || user.status === 'pending') && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => resendInviteMutation.mutate(user._id)}
+                          disabled={resendInviteMutation.isPending}
+                        >
+                          <Mail className="h-4 w-4" />
+                        </Button>
+                      )}
+                      {user.status === 'active' && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => deactivateUserMutation.mutate(user._id)}
+                          disabled={deactivateUserMutation.isPending}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <UserX className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+
+          {users.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>No users found. Start by inviting team members.</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
