@@ -66,16 +66,16 @@ export class AuthService {
   async registerIndividual(userData) {
     const { email, firstName, lastName } = userData;
 
-    // Check if user already exists
+    // Check if user already exists (registered and verified)
     const existingUser = await storage.getUserByEmail(email);
     if (existingUser) {
-      throw new Error('User with this email already exists');
+      throw new Error('An account with this email address is already registered. Please sign in or use a different email.');
     }
 
-    // Check if pending user exists and remove it to allow re-registration
+    // Check if there's already a pending registration
     const existingPendingUser = await storage.getPendingUserByEmail(email);
     if (existingPendingUser) {
-      await storage.deletePendingUser(existingPendingUser._id);
+      throw new Error('A verification email has already been sent to this email address. Please check your inbox or try again in 30 minutes.');
     }
 
     // Auto-authenticate in development mode
@@ -106,8 +106,8 @@ export class AuthService {
       };
     }
 
-    // Normal flow with email verification
-    const verificationCode = this.generateVerificationCode();
+    // Normal flow with email verification - use secure token instead of OTP
+    const verificationToken = this.generateResetToken(); // Uses crypto.randomBytes for security
     const verificationExpires = new Date(Date.now() + this.VERIFICATION_TOKEN_EXPIRES);
 
     // Create pending user
@@ -116,15 +116,15 @@ export class AuthService {
       firstName,
       lastName,
       type: 'individual',
-      verificationCode,
+      verificationCode: verificationToken, // Using secure token instead of 6-digit code
       verificationExpires,
       isVerified: false
     });
 
     // Send verification email
-    await this.sendVerificationEmail(email, verificationCode, firstName);
+    await this.sendVerificationEmail(email, verificationToken, firstName);
 
-    return { message: 'Verification email sent successfully' };
+    return { message: 'A verification link has been sent to your email. Please complete your registration.' };
   }
 
   // Organization registration
