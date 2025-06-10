@@ -14,6 +14,8 @@ import Roles from './pages/admin/Roles';
 import Reports from './pages/admin/Reports';
 import { AdminLayout } from './components/admin/AdminLayout';
 import SettingsLayout from './components/settings/SettingsLayout';
+import GeneralSettings from './pages/settings/GeneralSettings';
+import SettingsPlaceholder from './pages/settings/SettingsPlaceholder';
 
 // Super Admin Components
 import SuperAdminLayout from './components/super-admin/SuperAdminLayout';
@@ -288,9 +290,75 @@ function App() {
             <ProtectedRoute component={Reports} />
           </AdminLayout>
         </Route>
+        {/* Settings Routes */}
+        <Route path="/settings">
+          <SettingsLayout>
+            <ProtectedRoute requiredRole="admin">
+              <div className="p-6">
+                <script>window.location.href = '/settings/user-management';</script>
+                <p>Redirecting to User Management...</p>
+              </div>
+            </ProtectedRoute>
+          </SettingsLayout>
+        </Route>
+        <Route path="/settings/general">
+          <SettingsLayout>
+            <ProtectedRoute component={GeneralSettings} requiredRole="admin" />
+          </SettingsLayout>
+        </Route>
         <Route path="/settings/user-management">
           <SettingsLayout>
             <ProtectedRoute component={UserManagement} requiredRole="admin" />
+          </SettingsLayout>
+        </Route>
+        <Route path="/settings/roles">
+          <SettingsLayout>
+            <ProtectedRoute component={Roles} requiredRole="admin" />
+          </SettingsLayout>
+        </Route>
+        <Route path="/settings/billing">
+          <SettingsLayout>
+            <ProtectedRoute requiredRole="admin">
+              <SettingsPlaceholder 
+                title="Billing & Subscription" 
+                description="Manage your subscription and billing information" 
+              />
+            </ProtectedRoute>
+          </SettingsLayout>
+        </Route>
+        <Route path="/settings/notifications">
+          <SettingsLayout>
+            <ProtectedRoute requiredRole="admin">
+              <SettingsPlaceholder 
+                title="Notifications" 
+                description="Configure email and system notifications" 
+              />
+            </ProtectedRoute>
+          </SettingsLayout>
+        </Route>
+        <Route path="/settings/security">
+          <SettingsLayout>
+            <ProtectedRoute requiredRole="admin">
+              <SettingsPlaceholder 
+                title="Security Settings" 
+                description="Configure password policies and two-factor authentication" 
+              />
+            </ProtectedRoute>
+          </SettingsLayout>
+        </Route>
+        <Route path="/settings/api-keys">
+          <SettingsLayout>
+            <ProtectedRoute requiredRole="admin">
+              <SettingsPlaceholder 
+                title="API Keys" 
+                description="Manage API access tokens and integrations" 
+              />
+            </ProtectedRoute>
+          </SettingsLayout>
+        </Route>
+        <Route path="/settings/integrations">
+          <SettingsLayout>
+            <ProtectedRoute component={Integrations} requiredRole="admin" />
           </SettingsLayout>
         </Route>
 

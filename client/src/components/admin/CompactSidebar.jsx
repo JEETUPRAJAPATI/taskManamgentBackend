@@ -31,11 +31,12 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
     { name: "Roles", href: "/roles", icon: Shield },
     { name: "Reports", href: "/reports", icon: BarChart3 },
     { name: "Integrations", href: "/integrations", icon: Settings },
+    { name: "Settings", href: "/settings/user-management", icon: UserCog },
   ];
 
   // Add admin-only navigation items
   const adminOnlyItems = [
-    { name: "User Management", href: "/settings/user-management", icon: UserCog, insertAfter: "Users" },
+    // Settings link is now in base navigation for all users
   ];
 
   // Build navigation based on user role
