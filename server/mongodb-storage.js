@@ -307,7 +307,7 @@ export class MongoStorage {
           email: 'john.doe@techcorp.com',
           passwordHash: techCorpPasswordHash,
           role: 'admin',
-          organizationId: organizations[0]._id,
+          organization: organizations[0]._id,
           isActive: true,
           emailVerified: true,
           createdAt: new Date('2024-01-16'),
@@ -318,7 +318,7 @@ export class MongoStorage {
           email: 'sarah.wilson@techcorp.com',
           passwordHash: techCorpPasswordHash,
           role: 'member',
-          organizationId: organizations[0]._id,
+          organization: organizations[0]._id,
           isActive: true,
           emailVerified: true,
           createdAt: new Date('2024-01-20'),
@@ -333,7 +333,7 @@ export class MongoStorage {
           email: 'mike.johnson@digitalinnov.com',
           passwordHash: techCorpPasswordHash,
           role: 'admin',
-          organizationId: organizations[1]._id,
+          organization: organizations[1]._id,
           isActive: true,
           emailVerified: true,
           createdAt: new Date('2024-02-12'),
@@ -344,7 +344,7 @@ export class MongoStorage {
           email: 'emily.davis@digitalinnov.com',
           passwordHash: techCorpPasswordHash,
           role: 'member',
-          organizationId: organizations[1]._id,
+          organization: organizations[1]._id,
           isActive: true,
           emailVerified: true,
           createdAt: new Date('2024-02-15'),
@@ -359,12 +359,49 @@ export class MongoStorage {
           email: 'alex.chen@startupx.com',
           passwordHash: techCorpPasswordHash,
           role: 'admin',
-          organizationId: organizations[2]._id,
+          organization: organizations[2]._id,
           isActive: true,
           emailVerified: true,
           createdAt: new Date('2024-03-07'),
         })
       );
+
+      // Add invited users to show different statuses in subscription table
+      const inviteToken1 = this.generateEmailVerificationToken();
+      const inviteToken2 = this.generateEmailVerificationToken();
+      
+      // TechCorp invited users
+      await User.create({
+        firstName: null,
+        lastName: null,
+        email: 'lisa.martinez@techcorp.com',
+        roles: ['member'],
+        status: 'invited',
+        organizationId: organizations[0]._id,
+        inviteToken: inviteToken1,
+        inviteTokenExpiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        invitedBy: sampleUsers[0]._id,
+        invitedAt: new Date('2024-06-15'),
+        isActive: false,
+        emailVerified: false,
+        createdAt: new Date('2024-06-15'),
+      });
+
+      await User.create({
+        firstName: null,
+        lastName: null,
+        email: 'david.kim@techcorp.com',
+        roles: ['member'],
+        status: 'invited',
+        organizationId: organizations[0]._id,
+        inviteToken: inviteToken2,
+        inviteTokenExpiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        invitedBy: sampleUsers[0]._id,
+        invitedAt: new Date('2024-06-18'),
+        isActive: false,
+        emailVerified: false,
+        createdAt: new Date('2024-06-18'),
+      });
 
       // Create sample projects
       const projects = await Project.insertMany([
@@ -507,7 +544,7 @@ export class MongoStorage {
       ]);
 
       console.log('Comprehensive sample data initialized successfully');
-      console.log(`Created ${organizations.length} organizations, ${sampleUsers.length + 1} users, ${projects.length} projects, and 8 tasks`);
+      console.log(`Created ${organizations.length} organizations, ${sampleUsers.length + 3} users (including 2 invited), ${projects.length} projects, and 8 tasks`);
       console.log('Super admin login: superadmin@tasksetu.com / superadmin123');
       
     } catch (error) {
@@ -1392,13 +1429,7 @@ export class MongoStorage {
     };
   }
 
-  // Get organization users with detailed info
-  async getOrganizationUsersDetailed(organizationId) {
-    return await User.find({ organizationId, isActive: true })
-      .select('firstName lastName email role lastLoginAt createdAt invitedBy')
-      .populate('invitedBy', 'firstName lastName email')
-      .sort({ createdAt: -1 });
-  }
+
 
   // Send user invitation email
   async sendInvitationEmail(email, inviteToken, organizationName, roles, invitedByName) {
