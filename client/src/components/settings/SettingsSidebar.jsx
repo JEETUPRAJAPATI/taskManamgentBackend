@@ -28,6 +28,12 @@ export default function SettingsSidebar({ isOpen, onClose }) {
           description: "Manage team members and permissions"
         },
         {
+          name: "Subscription",
+          href: "/settings/subscription",
+          icon: CreditCard,
+          description: "License summary and user management"
+        },
+        {
           name: "Roles & Permissions",
           href: "/settings/roles",
           icon: Shield,
