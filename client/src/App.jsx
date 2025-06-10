@@ -172,7 +172,11 @@ function ProtectedRoute({ component: Component, requiredRole, allowedRoles = [],
     );
   }
 
-  return <Component {...props} />;
+  if (Component) {
+    return <Component {...props} />;
+  }
+  
+  return props.children || null;
 }
 
 function App() {

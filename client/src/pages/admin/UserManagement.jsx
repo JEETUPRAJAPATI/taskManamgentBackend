@@ -158,7 +158,7 @@ export default function UserManagement() {
       pending: { 
         variant: "outline", 
         icon: Clock, 
-        color: "text-yellow-600 bg-yellow-50 border-yellow-200",
+        color: "text-amber-700 bg-amber-50 border-amber-200",
         label: "Pending"
       },
       inactive: { 
@@ -267,105 +267,156 @@ export default function UserManagement() {
               Add Users
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Invite Users</DialogTitle>
-              <DialogDescription>
-                Add multiple users to your organization. They will receive email invitations to join.
+          <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+            <DialogHeader className="border-b border-gray-200 pb-4">
+              <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <UserPlus className="h-5 w-5 text-blue-600" />
+                </div>
+                Invite Team Members
+              </DialogTitle>
+              <DialogDescription className="text-base text-gray-600 mt-2">
+                Send invitations to new team members. They'll receive an email with instructions to join your organization.
               </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-4">
+            <div className="space-y-6 pt-6">
               {inviteUsers.map((user, index) => (
-                <div key={index} className="border rounded-lg p-4 space-y-3">
+                <div key={index} className="bg-gray-50 border border-gray-200 rounded-xl p-6 space-y-4 relative">
                   <div className="flex justify-between items-center">
-                    <Label className="text-sm font-medium">User {index + 1}</Label>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                        <span className="text-white font-semibold text-sm">{index + 1}</span>
+                      </div>
+                      <div>
+                        <Label className="text-base font-semibold text-gray-900">Team Member {index + 1}</Label>
+                        <p className="text-sm text-gray-600">Configure access and permissions</p>
+                      </div>
+                    </div>
                     {inviteUsers.length > 1 && (
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => handleRemoveUserRow(index)}
-                        className="text-red-600 hover:text-red-700"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     )}
                   </div>
 
-                  <div>
-                    <Label htmlFor={`email-${index}`}>Email Address</Label>
-                    <Input
-                      id={`email-${index}`}
-                      type="email"
-                      value={user.email}
-                      onChange={(e) => handleUserChange(index, "email", e.target.value)}
-                      placeholder="user@company.com"
-                      className="mt-1"
-                    />
-                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor={`email-${index}`} className="text-sm font-medium text-gray-700">
+                        Email Address <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id={`email-${index}`}
+                        type="email"
+                        value={user.email}
+                        onChange={(e) => handleUserChange(index, "email", e.target.value)}
+                        placeholder="colleague@company.com"
+                        className="h-11 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      />
+                    </div>
 
-                  <div>
-                    <Label>Roles</Label>
-                    <div className="flex flex-wrap gap-3 mt-2">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`member-${index}`}
-                          checked={true}
-                          disabled={true}
-                        />
-                        <Label htmlFor={`member-${index}`} className="text-sm text-gray-500">
-                          Member (Required)
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`manager-${index}`}
-                          checked={user.roles.includes("manager")}
-                          onCheckedChange={(checked) => handleRoleChange(index, "manager", checked)}
-                        />
-                        <Label htmlFor={`manager-${index}`} className="text-sm">
-                          Manager
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`admin-${index}`}
-                          checked={user.roles.includes("admin")}
-                          onCheckedChange={(checked) => handleRoleChange(index, "admin", checked)}
-                        />
-                        <Label htmlFor={`admin-${index}`} className="text-sm">
-                          Admin
-                        </Label>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium text-gray-700">Role Permissions</Label>
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                          <Checkbox
+                            id={`member-${index}`}
+                            checked={true}
+                            disabled={true}
+                            className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                          />
+                          <div className="flex-1">
+                            <Label htmlFor={`member-${index}`} className="text-sm font-medium text-blue-700">
+                              Member
+                            </Label>
+                            <p className="text-xs text-blue-600">Basic access (Required)</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center space-x-3 p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                          <Checkbox
+                            id={`manager-${index}`}
+                            checked={user.roles.includes("manager")}
+                            onCheckedChange={(checked) => handleRoleChange(index, "manager", checked)}
+                            className="data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
+                          />
+                          <div className="flex-1">
+                            <Label htmlFor={`manager-${index}`} className="text-sm font-medium text-gray-700 cursor-pointer">
+                              Manager
+                            </Label>
+                            <p className="text-xs text-gray-500">Project oversight and team coordination</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center space-x-3 p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                          <Checkbox
+                            id={`admin-${index}`}
+                            checked={user.roles.includes("admin")}
+                            onCheckedChange={(checked) => handleRoleChange(index, "admin", checked)}
+                            className="data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
+                          />
+                          <div className="flex-1">
+                            <Label htmlFor={`admin-${index}`} className="text-sm font-medium text-gray-700 cursor-pointer">
+                              Administrator
+                            </Label>
+                            <p className="text-xs text-gray-500">Full system access and user management</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
 
-              <Button
-                variant="outline"
-                onClick={handleAddUserRow}
-                className="w-full"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Another
-              </Button>
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gray-50 hover:bg-gray-100 transition-colors">
+                <Button
+                  variant="ghost"
+                  onClick={handleAddUserRow}
+                  className="w-full h-auto py-4 text-gray-600 hover:text-gray-900 hover:bg-white"
+                >
+                  <Plus className="h-5 w-5 mr-3" />
+                  <div className="text-left">
+                    <div className="font-medium">Add Another Team Member</div>
+                    <div className="text-sm text-gray-500">Invite multiple people at once</div>
+                  </div>
+                </Button>
+              </div>
 
-              <div className="flex gap-3 pt-4">
-                <Button
-                  onClick={handleInviteSubmit}
-                  disabled={inviteUsersMutation.isPending}
-                  className="flex-1"
-                >
-                  {inviteUsersMutation.isPending ? "Sending Invites..." : "Send Invitations"}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setInviteModalOpen(false)}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
+              <div className="border-t border-gray-200 pt-6 mt-8">
+                <div className="flex gap-3">
+                  <Button
+                    onClick={handleInviteSubmit}
+                    disabled={inviteUsersMutation.isPending}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white h-12 text-base font-medium"
+                  >
+                    {inviteUsersMutation.isPending ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Sending Invitations...
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="h-4 w-4 mr-2" />
+                        Send {inviteUsers.length} Invitation{inviteUsers.length !== 1 ? 's' : ''}
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setInviteModalOpen(false)}
+                    className="px-8 h-12 text-base border-gray-300 hover:bg-gray-50"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+                <p className="text-sm text-gray-500 mt-3 text-center">
+                  Invited users will receive an email with instructions to join your organization
+                </p>
               </div>
             </div>
           </DialogContent>
