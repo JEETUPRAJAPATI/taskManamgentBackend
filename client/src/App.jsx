@@ -13,6 +13,7 @@ import Integrations from './pages/admin/Integrations';
 import Roles from './pages/admin/Roles';
 import Reports from './pages/admin/Reports';
 import { AdminLayout } from './components/admin/AdminLayout';
+import SettingsLayout from './components/settings/SettingsLayout';
 
 // Super Admin Components
 import SuperAdminLayout from './components/super-admin/SuperAdminLayout';
@@ -288,9 +289,9 @@ function App() {
           </AdminLayout>
         </Route>
         <Route path="/settings/user-management">
-          <AdminLayout>
+          <SettingsLayout>
             <ProtectedRoute component={UserManagement} requiredRole="admin" />
-          </AdminLayout>
+          </SettingsLayout>
         </Route>
 
         {/* 404 Not Found */}
