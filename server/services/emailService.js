@@ -19,7 +19,7 @@ class EmailService {
       const mailOptions = {
         from: '"TaskSetu" <noreply@tasksetu.com>',
         to: email,
-        subject: 'Verify Your Email - TaskSetu',
+        subject: '✅ Complete Your Tasksetu Registration',
         html: `
           <!DOCTYPE html>
           <html>
@@ -42,25 +42,28 @@ class EmailService {
                 <h1>Welcome to TaskSetu!</h1>
               </div>
               <div class="content">
-                <h2>Hi ${firstName}!</h2>
-                ${organizationName ? 
-                  `<p>Thank you for registering your organization <strong>${organizationName}</strong> with TaskSetu.</p>` :
-                  `<p>Thank you for signing up with TaskSetu.</p>`
-                }
-                <p>To complete your registration, please click the button below or use the verification code:</p>
+                <h2>Hi ${firstName},</h2>
+                <p>Thanks for signing up with Tasksetu!</p>
+                <p>To activate your account and set your password, please click the link below:</p>
                 
-                <div style="text-align: center; margin: 20px 0;">
+                <div style="text-align: center; margin: 30px 0;">
                   <a href="${process.env.FRONTEND_URL || 'http://localhost:5000'}/verify?token=${verificationCode}" 
-                     style="background: #3B82F6; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block;">
-                    Verify Email & Set Password
+                     style="background: #3B82F6; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600;">
+                    👉 Set My Password & Verify Email
                   </a>
                 </div>
                 
-                <p>Or use this verification code: <strong>${verificationCode}</strong></p>
+                <div style="background: #f7fafc; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3B82F6;">
+                  <p style="margin: 0; color: #4a5568; font-size: 14px;"><strong>Can't click the button?</strong> Copy and paste this URL into your browser:</p>
+                  <p style="margin: 5px 0 0 0; color: #4a5568; font-size: 14px; word-break: break-all;">${process.env.FRONTEND_URL || 'http://localhost:5000'}/verify?token=${verificationCode}</p>
+                </div>
                 
-                <p>This verification will expire in 24 hours. If you didn't request this verification, please ignore this email.</p>
+                <p>This link is <strong style="color: #e53e3e;">valid for 24 hours</strong>.</p>
+                <p>Once verified, you'll be able to start managing your tasks and deadlines with ease.</p>
+                <p>See you enrolled in!</p>
                 
-                <p>Welcome aboard!<br>The TaskSetu Team</p>
+                <p><strong>— The Tasksetu Team</strong><br>
+                <a href="https://www.tasksetu.com" style="color: #3B82F6;">www.Tasksetu.com</a></p>
               </div>
               <div class="footer">
                 <p>This is an automated message. Please do not reply to this email.</p>
@@ -69,10 +72,23 @@ class EmailService {
           </body>
           </html>
         `,
-        text: `Hi ${firstName}!\n\n${organizationName ? 
-          `Thank you for registering your organization ${organizationName} with TaskSetu.` :
-          `Thank you for signing up with TaskSetu.`
-        }\n\nTo complete your registration, please click this link to verify your email and set your password:\n${process.env.FRONTEND_URL || 'http://localhost:5000'}/verify?token=${verificationCode}\n\nOr use this verification code: ${verificationCode}\n\nThis verification will expire in 24 hours.\n\nWelcome aboard!\nThe TaskSetu Team`
+        text: `Hi ${firstName},
+
+Thanks for signing up with Tasksetu!
+
+To activate your account and set your password, please click the link below:
+👉 Set My Password & Verify Email: ${process.env.FRONTEND_URL || 'http://localhost:5000'}/verify?token=${verificationCode}
+
+(or copy and paste this URL into your browser: ${process.env.FRONTEND_URL || 'http://localhost:5000'}/verify?token=${verificationCode})
+
+This link is valid for 24 hours.
+
+Once verified, you'll be able to start managing your tasks and deadlines with ease.
+
+See you enrolled in!
+
+— The Tasksetu Team
+www.Tasksetu.com`
       };
 
       await this.transporter.sendMail(mailOptions);
