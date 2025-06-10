@@ -372,12 +372,10 @@ export class MongoStorage {
       
       // TechCorp invited users
       await User.create({
-        firstName: null,
-        lastName: null,
         email: 'lisa.martinez@techcorp.com',
         roles: ['member'],
         status: 'invited',
-        organizationId: organizations[0]._id,
+        organization: organizations[0]._id,
         inviteToken: inviteToken1,
         inviteTokenExpiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         invitedBy: sampleUsers[0]._id,
@@ -388,12 +386,10 @@ export class MongoStorage {
       });
 
       await User.create({
-        firstName: null,
-        lastName: null,
         email: 'david.kim@techcorp.com',
         roles: ['member'],
         status: 'invited',
-        organizationId: organizations[0]._id,
+        organization: organizations[0]._id,
         inviteToken: inviteToken2,
         inviteTokenExpiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         invitedBy: sampleUsers[0]._id,
