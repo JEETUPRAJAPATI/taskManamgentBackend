@@ -87,7 +87,17 @@ export default function OrganizationRegistration() {
             description: "Please check your email for verification instructions"
           });
 
-          setLocation(`/verify-email?email=${encodeURIComponent(formData.email)}`);
+          // Show success message and stay on current page
+          setFormData({ organizationName: '', organizationSlug: '', firstName: '', lastName: '', email: '' });
+          setErrors({});
+          
+          // Show additional success information
+          setTimeout(() => {
+            toast({
+              title: "Check your email", 
+              description: "Click the verification link to complete your organization setup"
+            });
+          }, 1000);
         }
       } else {
         setErrors({ submit: result.message || "Registration failed" });

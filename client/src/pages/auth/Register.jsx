@@ -97,11 +97,26 @@ export default function Register() {
         
         toast({
           title: "Registration successful!",
-          description: "Please check your email for verification code"
+          description: "Please check your email for verification link"
         });
 
-        // Redirect to email verification
-        setLocation(`/verify-email?email=${encodeURIComponent(formData.email)}`);
+        // Clear form and show success message
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          organizationName: '',
+          organizationSlug: ''
+        });
+        setErrors({});
+        
+        // Show additional success information
+        setTimeout(() => {
+          toast({
+            title: "Check your email",
+            description: "Click the verification link to complete your registration"
+          });
+        }, 1000);
       } else {
         setErrors({ submit: result.message || "Registration failed" });
         toast({

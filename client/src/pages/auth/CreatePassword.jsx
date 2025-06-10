@@ -34,7 +34,7 @@ export default function CreatePassword() {
         description: "Please verify your email first",
         variant: "destructive"
       });
-      setLocation('/verify-email');
+      setLocation('/login');
     }
   }, [setLocation, toast]);
 
