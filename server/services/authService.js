@@ -505,6 +505,135 @@ export class AuthService {
   async sendPasswordResetEmail(email, token, firstName) {
     return await emailService.sendPasswordResetEmail(email, token, firstName);
   }
+
+  // Validate verification token and return user info
+  async validateVerificationToken(token) {
+    // For verification codes (6-digit numeric)
+    if (/^\d{6}$/.test(token)) {
+      throw new Error('Please use the verification link from your email, not the verification code');
+    }
+
+    // For JWT tokens or URL tokens, we need to validate against pending users
+    const pendingUser = await storage.getPendingUserByEmail(token); // This needs to be updated
+    
+    if (!pendingUser) {
+      // Try to find by verification code if it's a 6-digit code
+      const allPendingUsers = await storage.getAllPendingUsers();
+      const userByCode = allPendingUsers.find(user => user.verificationCode === token);
+      
+      if (!userByCode) {
+        throw new Error('Invalid or expired verification token');
+      }
+      
+      if (userByCode.verificationExpires < new Date()) {
+        throw new Error('Verification token has expired');
+      }
+
+      return {
+        user: {
+          email: userByCode.email,
+          firstName: userByCode.firstName,
+          lastName: userByCode.lastName,
+          organizationName: userByCode.organizationName,
+          type: userByCode.type
+        }
+      };
+    }
+
+    if (pendingUser.verificationExpires < new Date()) {
+      throw new Error('Verification token has expired');
+    }
+
+    return {
+      user: {
+        email: pendingUser.email,
+        firstName: pendingUser.firstName,
+        lastName: pendingUser.lastName,
+        organizationName: pendingUser.organizationName,
+        type: pendingUser.type
+      }
+    };
+  }
+
+  // Set password with verification token
+  async setPasswordWithToken(token, password) {
+    // Find pending user by verification code
+    const allPendingUsers = await storage.getAllPendingUsers();
+    const pendingUser = allPendingUsers.find(user => user.verificationCode === token);
+    
+    if (!pendingUser) {
+      throw new Error('Invalid or expired verification token');
+    }
+
+    if (pendingUser.verificationExpires < new Date()) {
+      throw new Error('Verification token has expired');
+    }
+
+    // Hash password
+    const passwordHash = await this.hashPassword(password);
+
+    if (pendingUser.type === 'individual') {
+      // Complete individual registration
+      const user = await storage.createUser({
+        email: pendingUser.email,
+        firstName: pendingUser.firstName,
+        lastName: pendingUser.lastName,
+        passwordHash,
+        role: 'member',
+        isActive: true,
+        emailVerified: true
+      });
+
+      // Remove pending user
+      await storage.deletePendingUser(pendingUser._id);
+
+      return { 
+        message: 'Account activated successfully',
+        user: {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName
+        }
+      };
+    } else if (pendingUser.type === 'organization') {
+      // Create organization first
+      const organization = await storage.createOrganization({
+        name: pendingUser.organizationName,
+        slug: pendingUser.organizationSlug,
+        description: `Organization for ${pendingUser.organizationName}`,
+        settings: { timezone: 'UTC', language: 'en' }
+      });
+
+      // Create admin user
+      const user = await storage.createUser({
+        email: pendingUser.email,
+        firstName: pendingUser.firstName,
+        lastName: pendingUser.lastName,
+        passwordHash,
+        organization: organization._id,
+        role: 'admin',
+        isActive: true,
+        emailVerified: true
+      });
+
+      // Remove pending user
+      await storage.deletePendingUser(pendingUser._id);
+
+      return { 
+        message: 'Organization and account activated successfully',
+        user: {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          organizationId: organization._id
+        }
+      };
+    }
+
+    throw new Error('Invalid registration type');
+  }
 }
 
 export const authService = new AuthService();

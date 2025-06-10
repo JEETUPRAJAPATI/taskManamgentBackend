@@ -34,6 +34,7 @@ import EmailVerification from './pages/auth/EmailVerification';
 import CreatePassword from './pages/auth/CreatePassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import AcceptInvitation from './pages/auth/AcceptInvitation';
+import VerifyAndSetPassword from './pages/auth/VerifyAndSetPassword';
 import TestAuth from './pages/TestAuth';
 
 
@@ -188,6 +189,7 @@ function App() {
         <Route path="/register/organization" component={OrganizationRegistration} />
         <Route path="/login" component={Login} />
         <Route path="/verify-email" component={EmailVerification} />
+        <Route path="/verify" component={VerifyAndSetPassword} />
         <Route path="/create-password" component={CreatePassword} />
         <Route path="/reset-password" component={ResetPassword} />
         <Route path="/accept-invitation" component={AcceptInvitation} />

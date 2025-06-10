@@ -1397,6 +1397,11 @@ export class MongoStorage {
   async sendInvitationEmail(email, inviteToken, organizationName, roles, invitedByName) {
     return await emailService.sendInvitationEmail(email, inviteToken, organizationName, roles, invitedByName);
   }
+
+  // Get all pending users
+  async getAllPendingUsers() {
+    return await PendingUser.find({});
+  }
 }
 
 export const storage = new MongoStorage();

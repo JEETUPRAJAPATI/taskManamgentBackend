@@ -47,11 +47,18 @@ class EmailService {
                   `<p>Thank you for registering your organization <strong>${organizationName}</strong> with TaskSetu.</p>` :
                   `<p>Thank you for signing up with TaskSetu.</p>`
                 }
-                <p>To complete your registration, please verify your email address using the verification code below:</p>
+                <p>To complete your registration, please click the button below or use the verification code:</p>
                 
-                <div class="code">${verificationCode}</div>
+                <div style="text-align: center; margin: 20px 0;">
+                  <a href="${process.env.FRONTEND_URL || 'http://localhost:5000'}/verify?token=${verificationCode}" 
+                     style="background: #3B82F6; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block;">
+                    Verify Email & Set Password
+                  </a>
+                </div>
                 
-                <p>This code will expire in 24 hours. If you didn't request this verification, please ignore this email.</p>
+                <p>Or use this verification code: <strong>${verificationCode}</strong></p>
+                
+                <p>This verification will expire in 24 hours. If you didn't request this verification, please ignore this email.</p>
                 
                 <p>Welcome aboard!<br>The TaskSetu Team</p>
               </div>

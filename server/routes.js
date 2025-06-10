@@ -271,6 +271,40 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Verify token and get user info for password setup
+  app.post("/api/auth/verify-token", async (req, res) => {
+    try {
+      const { token } = req.body;
+      
+      if (!token) {
+        return res.status(400).json({ message: "Token is required" });
+      }
+
+      const result = await authService.validateVerificationToken(token);
+      res.json(result);
+    } catch (error) {
+      console.error("Verify token error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Set password for verified user
+  app.post("/api/auth/set-password", async (req, res) => {
+    try {
+      const { token, password } = req.body;
+      
+      if (!token || !password) {
+        return res.status(400).json({ message: "Token and password are required" });
+      }
+
+      const result = await authService.setPasswordWithToken(token, password);
+      res.json(result);
+    } catch (error) {
+      console.error("Set password error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
   // Reset password
   app.post("/api/auth/reset-password", async (req, res) => {
     try {
