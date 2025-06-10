@@ -72,7 +72,7 @@ class EmailService {
         text: `Hi ${firstName}!\n\n${organizationName ? 
           `Thank you for registering your organization ${organizationName} with TaskSetu.` :
           `Thank you for signing up with TaskSetu.`
-        }\n\nTo complete your registration, please verify your email address using this verification code: ${verificationCode}\n\nThis code will expire in 24 hours.\n\nWelcome aboard!\nThe TaskSetu Team`
+        }\n\nTo complete your registration, please click this link to verify your email and set your password:\n${process.env.FRONTEND_URL || 'http://localhost:5000'}/verify?token=${verificationCode}\n\nOr use this verification code: ${verificationCode}\n\nThis verification will expire in 24 hours.\n\nWelcome aboard!\nThe TaskSetu Team`
       };
 
       await this.transporter.sendMail(mailOptions);

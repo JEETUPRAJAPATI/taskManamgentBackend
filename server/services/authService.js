@@ -508,38 +508,14 @@ export class AuthService {
 
   // Validate verification token and return user info
   async validateVerificationToken(token) {
-    // For verification codes (6-digit numeric)
-    if (/^\d{6}$/.test(token)) {
-      throw new Error('Please use the verification link from your email, not the verification code');
-    }
-
-    // For JWT tokens or URL tokens, we need to validate against pending users
-    const pendingUser = await storage.getPendingUserByEmail(token); // This needs to be updated
+    // Find pending user by verification code
+    const allPendingUsers = await storage.getAllPendingUsers();
+    const pendingUser = allPendingUsers.find(user => user.verificationCode === token);
     
     if (!pendingUser) {
-      // Try to find by verification code if it's a 6-digit code
-      const allPendingUsers = await storage.getAllPendingUsers();
-      const userByCode = allPendingUsers.find(user => user.verificationCode === token);
-      
-      if (!userByCode) {
-        throw new Error('Invalid or expired verification token');
-      }
-      
-      if (userByCode.verificationExpires < new Date()) {
-        throw new Error('Verification token has expired');
-      }
-
-      return {
-        user: {
-          email: userByCode.email,
-          firstName: userByCode.firstName,
-          lastName: userByCode.lastName,
-          organizationName: userByCode.organizationName,
-          type: userByCode.type
-        }
-      };
+      throw new Error('Invalid or expired verification token');
     }
-
+    
     if (pendingUser.verificationExpires < new Date()) {
       throw new Error('Verification token has expired');
     }
