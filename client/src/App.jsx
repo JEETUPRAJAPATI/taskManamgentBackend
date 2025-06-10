@@ -15,6 +15,7 @@ import Reports from './pages/admin/Reports';
 import { AdminLayout } from './components/admin/AdminLayout';
 import SettingsLayout from './components/settings/SettingsLayout';
 import GeneralSettings from './pages/settings/GeneralSettings';
+import SettingsRoles from './pages/settings/Roles';
 import SettingsPlaceholder from './pages/settings/SettingsPlaceholder';
 
 // Super Admin Components
@@ -317,7 +318,7 @@ function App() {
         </Route>
         <Route path="/settings/roles">
           <SettingsLayout>
-            <ProtectedRoute component={Roles} requiredRole="admin" />
+            <ProtectedRoute component={SettingsRoles} requiredRole="admin" />
           </SettingsLayout>
         </Route>
         <Route path="/settings/billing">

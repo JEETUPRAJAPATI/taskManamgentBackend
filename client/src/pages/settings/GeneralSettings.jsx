@@ -76,25 +76,27 @@ export default function GeneralSettings() {
   }
 
   return (
-    <div className="p-6 max-w-4xl">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">General Settings</h1>
-        <p className="text-gray-600 mt-2">Manage your organization's basic information and preferences</p>
+    <div className="p-6 max-w-5xl mx-auto">
+      <div className="mb-8 border-b border-gray-200 pb-6">
+        <h1 className="text-3xl font-bold text-gray-900">General Settings</h1>
+        <p className="text-lg text-gray-600 mt-2">Configure your organization's basic information and regional preferences</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Organization Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Building className="h-5 w-5 text-blue-600" />
+        <Card className="shadow-sm border-gray-200">
+          <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+            <CardTitle className="flex items-center gap-3 text-xl">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Building className="h-6 w-6 text-blue-600" />
+              </div>
               Organization Information
             </CardTitle>
-            <CardDescription>
-              Basic details about your organization
+            <CardDescription className="text-base text-gray-600 mt-2">
+              Configure your organization's basic details and public information
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-8 p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="orgName">Organization Name</Label>
@@ -173,17 +175,19 @@ export default function GeneralSettings() {
         </Card>
 
         {/* Contact Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Mail className="h-5 w-5 text-green-600" />
+        <Card className="shadow-sm border-gray-200">
+          <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
+            <CardTitle className="flex items-center gap-3 text-xl">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <Mail className="h-6 w-6 text-green-600" />
+              </div>
               Contact Information
             </CardTitle>
-            <CardDescription>
-              How people can reach your organization
+            <CardDescription className="text-base text-gray-600 mt-2">
+              Configure how people can reach your organization
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-8 p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="email">Contact Email</Label>
@@ -263,48 +267,63 @@ export default function GeneralSettings() {
         </Card>
 
         {/* Regional Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-purple-600" />
+        <Card className="shadow-sm border-gray-200">
+          <CardHeader className="bg-gradient-to-r from-purple-50 to-violet-50 border-b border-purple-100">
+            <CardTitle className="flex items-center gap-3 text-xl">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <Clock className="h-6 w-6 text-purple-600" />
+              </div>
               Regional Settings
             </CardTitle>
-            <CardDescription>
-              Configure timezone and regional preferences
+            <CardDescription className="text-base text-gray-600 mt-2">
+              Configure timezone and regional preferences for your organization
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div>
-              <Label htmlFor="timezone">Timezone</Label>
+          <CardContent className="p-8">
+            <div className="space-y-4">
+              <Label htmlFor="timezone" className="text-base font-medium text-gray-700">Timezone</Label>
               <Select onValueChange={(value) => handleInputChange('timezone', value)}>
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Select timezone" />
+                <SelectTrigger className="h-12 text-base border-gray-300 focus:border-purple-500 focus:ring-purple-500">
+                  <SelectValue placeholder="Select your organization's timezone" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="America/New_York">Eastern Time (ET)</SelectItem>
-                  <SelectItem value="America/Chicago">Central Time (CT)</SelectItem>
-                  <SelectItem value="America/Denver">Mountain Time (MT)</SelectItem>
-                  <SelectItem value="America/Los_Angeles">Pacific Time (PT)</SelectItem>
-                  <SelectItem value="Europe/London">London (GMT)</SelectItem>
-                  <SelectItem value="Europe/Paris">Paris (CET)</SelectItem>
-                  <SelectItem value="Asia/Tokyo">Tokyo (JST)</SelectItem>
-                  <SelectItem value="Asia/Kolkata">India (IST)</SelectItem>
-                  <SelectItem value="Australia/Sydney">Sydney (AEST)</SelectItem>
+                  <SelectItem value="America/New_York">Eastern Time (ET) - New York</SelectItem>
+                  <SelectItem value="America/Chicago">Central Time (CT) - Chicago</SelectItem>
+                  <SelectItem value="America/Denver">Mountain Time (MT) - Denver</SelectItem>
+                  <SelectItem value="America/Los_Angeles">Pacific Time (PT) - Los Angeles</SelectItem>
+                  <SelectItem value="Europe/London">Greenwich Mean Time (GMT) - London</SelectItem>
+                  <SelectItem value="Europe/Paris">Central European Time (CET) - Paris</SelectItem>
+                  <SelectItem value="Asia/Tokyo">Japan Standard Time (JST) - Tokyo</SelectItem>
+                  <SelectItem value="Asia/Kolkata">India Standard Time (IST) - Mumbai</SelectItem>
+                  <SelectItem value="Australia/Sydney">Australian Eastern Time (AEST) - Sydney</SelectItem>
                 </SelectContent>
               </Select>
+              <p className="text-sm text-gray-500">This timezone will be used for scheduling and time-based features across your organization.</p>
             </div>
           </CardContent>
         </Card>
 
         {/* Save Button */}
-        <div className="flex justify-end">
-          <Button
-            type="submit"
-            disabled={updateSettingsMutation.isPending}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            {updateSettingsMutation.isPending ? "Saving..." : "Save Changes"}
-          </Button>
+        <div className="border-t border-gray-200 pt-8">
+          <div className="flex justify-between items-center">
+            <div className="text-sm text-gray-600">
+              Changes are automatically saved when you submit the form
+            </div>
+            <Button
+              type="submit"
+              disabled={updateSettingsMutation.isPending}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-base font-medium h-12"
+            >
+              {updateSettingsMutation.isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Saving Changes...
+                </>
+              ) : (
+                "Save All Changes"
+              )}
+            </Button>
+          </div>
         </div>
       </form>
     </div>
