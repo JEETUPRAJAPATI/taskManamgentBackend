@@ -184,7 +184,7 @@ www.Tasksetu.com`
 
   async sendInvitationEmail(email, inviteToken, organizationName, roles, invitedByName) {
     if (!this.isConfigured) {
-      console.error('Email service not configured - SENDGRID_API_KEY missing');
+      console.error('Email service not configured - Mailtrap credentials missing');
       return false;
     }
 
@@ -193,7 +193,7 @@ www.Tasksetu.com`
       
       const mailOptions = {
         to: email,
-        from: 'techizebuilder@gmail.com',
+        from: 'noreply@tasksetu.com',
         subject: `You're invited to join ${organizationName} - TaskSetu`,
         html: `
           <!DOCTYPE html>
@@ -244,7 +244,7 @@ www.Tasksetu.com`
         text: `You're invited to join ${organizationName}!\n\n${invitedByName} has invited you to join their team on TaskSetu.\n\nYou'll be joining as: ${Array.isArray(roles) ? roles.join(', ') : roles}\n\nClick this link to accept the invitation: ${inviteUrl}\n\nThis invitation will expire in 7 days.\n\nWelcome to TaskSetu!\nThe TaskSetu Team`
       };
 
-      await this.mailService.send(mailOptions);
+      await this.transporter.sendMail(mailOptions);
       console.log('Invitation email sent successfully to:', email);
       return true;
     } catch (error) {
