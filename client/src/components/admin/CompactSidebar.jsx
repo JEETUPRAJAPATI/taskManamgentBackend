@@ -65,9 +65,9 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-30 bg-slate-800 dark:bg-slate-900 border-r border-slate-700 dark:border-slate-800 transition-all duration-300 shadow-xl ${
+      <div className={`fixed inset-y-0 left-0 z-50 bg-slate-800 dark:bg-slate-900 border-r border-slate-700 dark:border-slate-800 transition-all duration-300 shadow-xl ${
         isOpen ? 'w-56' : 'w-14'
-      } hidden lg:block`}>
+      } block`}>
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center h-10 px-2 border-b border-slate-700 dark:border-slate-800 bg-slate-900 dark:bg-slate-950">
