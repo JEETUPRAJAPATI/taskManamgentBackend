@@ -264,13 +264,13 @@ export class AuthService {
     // Hash password
     const passwordHash = await this.hashPassword(password);
 
-    // Create actual user as employee (individual registration)
+    // Create actual user as individual (individual registration)
     const user = await storage.createUser({
       email: pendingUser.email,
       firstName: pendingUser.firstName,
       lastName: pendingUser.lastName,
       passwordHash,
-      role: 'employee',
+      role: 'individual',
       isActive: true,
       emailVerified: true,
       status: 'active'
@@ -318,13 +318,13 @@ export class AuthService {
       isActive: true
     });
 
-    // Create admin user
+    // Create organization admin user
     const user = await storage.createUser({
       email: pendingUser.email,
       firstName: pendingUser.firstName,
       lastName: pendingUser.lastName,
       passwordHash,
-      role: 'admin',
+      role: 'org_admin',
       organization: organization._id,
       organizationId: organization._id,
       isActive: true,
@@ -404,7 +404,9 @@ export class AuthService {
       switch (role) {
         case 'superadmin':
           return '/superadmin';
-        case 'admin':
+        case 'org_admin':
+          return '/dashboard';
+        case 'individual':
           return '/dashboard';
         case 'employee':
           return '/dashboard';

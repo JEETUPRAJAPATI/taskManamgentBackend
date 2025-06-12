@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { 
   LayoutDashboard, 
   CheckSquare, 
@@ -23,12 +24,21 @@ export function SimpleSidebar() {
     system: false
   });
 
+  // Get current user data to check role
+  const { data: user } = useQuery({
+    queryKey: ["/api/auth/verify"],
+    enabled: !!localStorage.getItem('token'),
+  });
+
   const toggleSection = (section) => {
     setExpandedSections(prev => ({
       ...prev,
       [section]: !prev[section]
     }));
   };
+
+  // Check if user has organization management permissions
+  const canManageOrganization = user?.role === 'org_admin' || user?.role === 'superadmin';
 
   const mainNavigation = [
     { 
@@ -49,12 +59,12 @@ export function SimpleSidebar() {
       icon: FolderOpen,
       description: "Manage active projects"
     },
-    { 
+    ...(canManageOrganization ? [{ 
       name: "Team Members", 
       href: "/users", 
       icon: Users,
       description: "Manage team and users"
-    },
+    }] : []),
     { 
       name: "Reports & Analytics", 
       href: "/reports", 
