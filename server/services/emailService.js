@@ -25,10 +25,7 @@ class EmailService {
     try {
       const mailOptions = {
         to: email,
-        from: {
-          email: 'noreply@tasksetu.com',
-          name: 'TaskSetu'
-        },
+        from: 'techizebuilder@gmail.com',
         subject: '✅ Complete Your Tasksetu Registration',
         html: `
           <!DOCTYPE html>
@@ -121,10 +118,7 @@ www.Tasksetu.com`
       
       const mailOptions = {
         to: email,
-        from: {
-          email: 'noreply@tasksetu.com',
-          name: 'TaskSetu'
-        },
+        from: 'techizebuilder@gmail.com',
         subject: 'Reset Your Password - TaskSetu',
         html: `
           <!DOCTYPE html>
@@ -193,10 +187,7 @@ www.Tasksetu.com`
       
       const mailOptions = {
         to: email,
-        from: {
-          email: 'noreply@tasksetu.com',
-          name: 'TaskSetu'
-        },
+        from: 'techizebuilder@gmail.com',
         subject: `You're invited to join ${organizationName} - TaskSetu`,
         html: `
           <!DOCTYPE html>
