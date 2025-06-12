@@ -28,18 +28,14 @@ async function initializeSampleData() {
   try {
     const { Organization, User, Project, Task, TaskStatus, Form, ProcessFlow, FormResponse } = await import('./models.js');
     
-    // Clear existing data and regenerate comprehensive sample data
-    try {
-      await Organization.deleteMany({});
-      await User.deleteMany({});
-      await Project.deleteMany({});
-      await Task.deleteMany({});
-      await TaskStatus.deleteMany({});
-      await Form.deleteMany({});
-      console.log('Cleared existing data for regeneration');
-    } catch (error) {
-      console.log('No existing data to clear');
+    // Check if sample data already exists
+    const existingOrgs = await Organization.countDocuments();
+    if (existingOrgs > 0) {
+      console.log('Sample data already exists, skipping initialization');
+      return;
     }
+    
+    console.log('Initializing sample data...');
 
     try {
     // Create sample organizations
