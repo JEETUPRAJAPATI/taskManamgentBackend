@@ -449,8 +449,8 @@ export class AuthService {
 
     // Store reset token
     await storage.updateUser(user._id, {
-      resetPasswordToken: resetToken,
-      resetPasswordExpires: resetExpires
+      passwordResetToken: resetToken,
+      passwordResetExpires: resetExpires
     });
 
     // Send reset email
@@ -470,12 +470,25 @@ export class AuthService {
 
   // Validate reset token
   async validateResetToken(token) {
+    console.log('Validating reset token:', token);
     const user = await storage.getUserByResetToken(token);
     
-    if (!user || user.resetPasswordExpires < new Date()) {
+    if (!user) {
+      console.log('No user found with reset token:', token);
+      throw new Error('Invalid or expired reset token');
+    }
+    
+    console.log('Found user:', user.email);
+    console.log('Token expires:', user.passwordResetExpires);
+    console.log('Current time:', new Date());
+    console.log('Token is expired:', user.passwordResetExpires < new Date());
+    
+    if (user.passwordResetExpires < new Date()) {
+      console.log('Reset token has expired');
       throw new Error('Invalid or expired reset token');
     }
 
+    console.log('Reset token is valid for user:', user.email);
     return { message: 'Reset token is valid' };
   }
 
@@ -493,8 +506,8 @@ export class AuthService {
     // Update user password and clear reset token
     await storage.updateUser(user._id, {
       passwordHash,
-      resetPasswordToken: null,
-      resetPasswordExpires: null
+      passwordResetToken: null,
+      passwordResetExpires: null
     });
 
     return { message: 'Password reset successfully' };

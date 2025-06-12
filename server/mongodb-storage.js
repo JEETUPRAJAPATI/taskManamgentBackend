@@ -1325,8 +1325,8 @@ export class MongoStorage {
   // User Authentication Methods
   async getUserByResetToken(token) {
     return await User.findOne({
-      resetPasswordToken: token,
-      resetPasswordExpires: { $gt: new Date() }
+      passwordResetToken: token,
+      passwordResetExpires: { $gt: new Date() }
     });
   }
 
