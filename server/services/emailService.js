@@ -19,7 +19,7 @@ class EmailService {
     }
     
     // Base URL - configurable via environment variable
-    this.baseUrl = process.env.BASE_URL || `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co` || 'https://25b3cec7-b6b2-48b7-a8f4-7ee8a9c12574-00-36vzyej2u9kbm.kirk.replit.dev';
+    this.baseUrl = process.env.BASE_URL || 'https://25b3cec7-b6b2-48b7-a8f4-7ee8a9c12574-00-36vzyej2u9kbm.kirk.replit.dev';
   }
 
   async sendVerificationEmail(email, verificationCode, firstName, organizationName = null) {
