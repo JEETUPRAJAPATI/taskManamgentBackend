@@ -524,7 +524,7 @@ export async function registerRoutes(app) {
           // Create invited user record
           const invitedUser = await storage.createUser({
             email: userData.email,
-            roles: userData.roles || ['member'],
+            role: userData.role || 'employee',
             status: 'invited',
             inviteToken,
             inviteTokenExpiry,
@@ -554,7 +554,7 @@ export async function registerRoutes(app) {
           results.push({
             email: userData.email,
             status: 'invited',
-            roles: userData.roles
+            role: userData.role || 'employee'
           });
 
         } catch (error) {
