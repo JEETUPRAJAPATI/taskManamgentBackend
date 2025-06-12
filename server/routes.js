@@ -1956,6 +1956,195 @@ async function setupEmailCalendarRoutes(app) {
     }
   });
 
+  // Role-based Dashboard API Routes
+  
+  // Super Admin Dashboard Routes
+  app.get("/api/superadmin/platform-stats", roleAuthToken, roleRequireSuperAdmin, async (req, res) => {
+    try {
+      const stats = await storage.getPlatformAnalytics();
+      res.json(stats);
+    } catch (error) {
+      console.error("Get platform stats error:", error);
+      res.status(500).json({ message: "Failed to fetch platform statistics" });
+    }
+  });
+
+  app.get("/api/superadmin/organizations", roleAuthToken, roleRequireSuperAdmin, async (req, res) => {
+    try {
+      const organizations = await storage.getAllCompanies();
+      res.json(organizations);
+    } catch (error) {
+      console.error("Get organizations error:", error);
+      res.status(500).json({ message: "Failed to fetch organizations" });
+    }
+  });
+
+  app.get("/api/superadmin/system-logs", roleAuthToken, roleRequireSuperAdmin, async (req, res) => {
+    try {
+      const logs = await storage.getSystemLogs(100);
+      res.json(logs);
+    } catch (error) {
+      console.error("Get system logs error:", error);
+      res.status(500).json({ message: "Failed to fetch system logs" });
+    }
+  });
+
+  // Admin Dashboard Routes
+  app.get("/api/admin/organization-stats", roleAuthToken, requireAdminOrAbove, async (req, res) => {
+    try {
+      const stats = await storage.getDashboardStats(req.user.organizationId);
+      res.json(stats);
+    } catch (error) {
+      console.error("Get organization stats error:", error);
+      res.status(500).json({ message: "Failed to fetch organization statistics" });
+    }
+  });
+
+  app.get("/api/admin/users", roleAuthToken, requireAdminOrAbove, async (req, res) => {
+    try {
+      const users = await storage.getOrganizationUsersDetailed(req.user.organizationId);
+      res.json(users);
+    } catch (error) {
+      console.error("Get organization users error:", error);
+      res.status(500).json({ message: "Failed to fetch organization users" });
+    }
+  });
+
+  app.get("/api/admin/projects", roleAuthToken, requireAdminOrAbove, async (req, res) => {
+    try {
+      const projects = await storage.getProjects({ organizationId: req.user.organizationId });
+      res.json(projects);
+    } catch (error) {
+      console.error("Get organization projects error:", error);
+      res.status(500).json({ message: "Failed to fetch organization projects" });
+    }
+  });
+
+  app.get("/api/admin/tasks", roleAuthToken, requireAdminOrAbove, async (req, res) => {
+    try {
+      const tasks = await storage.getTasks({ organizationId: req.user.organizationId });
+      res.json(tasks);
+    } catch (error) {
+      console.error("Get organization tasks error:", error);
+      res.status(500).json({ message: "Failed to fetch organization tasks" });
+    }
+  });
+
+  // Admin user invitation
+  app.post("/api/admin/invite-user", roleAuthToken, requireAdminOrAbove, async (req, res) => {
+    try {
+      const { email, role = 'employee' } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+
+      const organization = await storage.getOrganization(req.user.organizationId);
+      if (!organization) {
+        return res.status(404).json({ message: "Organization not found" });
+      }
+
+      const inviteData = {
+        email,
+        role,
+        organizationId: req.user.organizationId,
+        organizationName: organization.name,
+        invitedBy: req.user.id
+      };
+
+      const result = await storage.inviteUserToOrganization(inviteData);
+      res.json(result);
+    } catch (error) {
+      console.error("Invite user error:", error);
+      res.status(500).json({ message: error.message || "Failed to send invitation" });
+    }
+  });
+
+  // Employee Dashboard Routes
+  app.get("/api/employee/my-tasks", roleAuthToken, requireEmployee, async (req, res) => {
+    try {
+      const tasks = await storage.getTasks({ 
+        assignedTo: req.user.id,
+        organizationId: req.user.organizationId 
+      });
+      res.json(tasks);
+    } catch (error) {
+      console.error("Get my tasks error:", error);
+      res.status(500).json({ message: "Failed to fetch your tasks" });
+    }
+  });
+
+  app.get("/api/employee/my-stats", roleAuthToken, requireEmployee, async (req, res) => {
+    try {
+      const tasks = await storage.getTasks({ 
+        assignedTo: req.user.id,
+        organizationId: req.user.organizationId 
+      });
+      
+      const stats = {
+        totalTasks: tasks.length,
+        completedTasks: tasks.filter(t => t.status === 'completed').length,
+        inProgressTasks: tasks.filter(t => t.status === 'in_progress').length,
+        newTasksThisWeek: tasks.filter(t => {
+          const taskDate = new Date(t.createdAt);
+          const weekAgo = new Date();
+          weekAgo.setDate(weekAgo.getDate() - 7);
+          return taskDate > weekAgo;
+        }).length,
+        completionRate: tasks.length > 0 ? Math.round((tasks.filter(t => t.status === 'completed').length / tasks.length) * 100) : 0,
+        overdueTasks: tasks.filter(t => {
+          if (!t.dueDate) return false;
+          return new Date(t.dueDate) < new Date() && t.status !== 'completed';
+        }).length
+      };
+      
+      res.json(stats);
+    } catch (error) {
+      console.error("Get my stats error:", error);
+      res.status(500).json({ message: "Failed to fetch your statistics" });
+    }
+  });
+
+  app.get("/api/employee/my-projects", roleAuthToken, requireEmployee, async (req, res) => {
+    try {
+      const tasks = await storage.getTasks({ 
+        assignedTo: req.user.id,
+        organizationId: req.user.organizationId 
+      });
+      
+      const projectIds = [...new Set(tasks.map(t => t.project).filter(Boolean))];
+      const projects = [];
+      
+      for (const projectId of projectIds) {
+        const project = await storage.getProject(projectId);
+        if (project) {
+          const myTasksInProject = tasks.filter(t => t.project?.toString() === projectId.toString());
+          projects.push({
+            ...project,
+            myTasksCount: myTasksInProject.length,
+            progress: myTasksInProject.length > 0 ? 
+              Math.round((myTasksInProject.filter(t => t.status === 'completed').length / myTasksInProject.length) * 100) : 0
+          });
+        }
+      }
+      
+      res.json(projects);
+    } catch (error) {
+      console.error("Get my projects error:", error);
+      res.status(500).json({ message: "Failed to fetch your projects" });
+    }
+  });
+
+  app.get("/api/employee/notifications", roleAuthToken, requireEmployee, async (req, res) => {
+    try {
+      const notifications = await storage.getUserNotifications(req.user.id);
+      res.json(notifications);
+    } catch (error) {
+      console.error("Get notifications error:", error);
+      res.status(500).json({ message: "Failed to fetch notifications" });
+    }
+  });
+
   // Health check endpoint
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
