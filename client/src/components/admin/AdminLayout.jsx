@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sidebar } from "./CompactSidebar";
+import { SimpleSidebar } from "./SimpleSidebar";
 import { Header } from "./Header";
 
 export function AdminLayout({ children }) {
@@ -16,16 +16,9 @@ export function AdminLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      <Sidebar 
-        isOpen={sidebarOpen} 
-        isMobileMenuOpen={isMobileMenuOpen}
-        onToggle={toggleSidebar}
-        onMobileToggle={toggleMobileMenu}
-      />
+      <SimpleSidebar />
       
-      <div className={`transition-all duration-300 ${
-        sidebarOpen ? 'lg:ml-56' : 'lg:ml-14'
-      }`}>
+      <div className="ml-56">
         <Header 
           onMenuClick={toggleMobileMenu}
           onSidebarToggle={toggleSidebar}
@@ -38,13 +31,6 @@ export function AdminLayout({ children }) {
           </div>
         </main>
       </div>
-
-      {isMobileMenuOpen && (
-        <div 
-          className="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden"
-          onClick={toggleMobileMenu}
-        />
-      )}
     </div>
   );
 }

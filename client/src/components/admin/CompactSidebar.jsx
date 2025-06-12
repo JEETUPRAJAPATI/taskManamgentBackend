@@ -24,6 +24,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
   
   // Debug logging
   console.log('Sidebar render - user:', user, 'isLoading:', isLoading, 'isOpen:', isOpen);
+  console.log('Navigation items:', navigation.length);
 
   const baseNavigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -51,39 +52,40 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
 
   return (
     <>
+      {/* Debug Indicator */}
+      <div className="fixed top-0 left-0 z-[9999] bg-red-500 text-white p-2 text-xs">
+        Sidebar Loading: {isLoading ? 'Yes' : 'No'} | Open: {isOpen ? 'Yes' : 'No'}
+      </div>
+      
       {/* Desktop Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 bg-slate-800 dark:bg-slate-900 border-r border-slate-700 dark:border-slate-800 transition-all duration-300 shadow-xl ${
-        isOpen ? 'w-56' : 'w-14'
-      }`} style={{ display: 'block', visibility: 'visible' }}>
+      <div 
+        className="fixed inset-y-0 left-0 z-[1000] bg-slate-800 w-56 border-r border-slate-700 shadow-xl"
+        style={{ 
+          display: 'block !important', 
+          visibility: 'visible !important',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          height: '100vh',
+          width: '224px',
+          backgroundColor: '#1e293b',
+          zIndex: 1000
+        }}
+      >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center h-10 px-2 border-b border-slate-700 dark:border-slate-800 bg-slate-900 dark:bg-slate-950">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <CheckSquare className="h-5 w-5 text-blue-400" />
-              </div>
-              {isOpen && (
-                <div className="ml-2">
-                  <h1 className="text-sm font-bold text-white">TaskSetu</h1>
-                  <p className="text-xs text-slate-400">Professional</p>
-                </div>
-              )}
+          <div className="flex items-center h-12 px-3 border-b border-slate-600 bg-slate-900">
+            <CheckSquare className="h-6 w-6 text-blue-400" />
+            <div className="ml-3">
+              <h1 className="text-lg font-bold text-white">TaskSetu</h1>
+              <p className="text-xs text-slate-400">Admin Panel</p>
             </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-1 py-2 space-y-0.5 overflow-y-auto">
-            {/* Core Features Section */}
-            <div className="space-y-0.5">
-              <div className="px-2 py-1">
-                {isOpen && (
-                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    Core
-                  </p>
-                )}
-              </div>
-              
-              {navigation.slice(0, 3).map((item, index) => {
+          <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
+            {/* Navigation Menu Items */}
+            {navigation.map((item, index) => {
                 const Icon = item.icon;
                 return (
                   <div key={item.name} className={index < 2 ? 'border-b border-slate-700/30 dark:border-slate-600/30' : ''}>
