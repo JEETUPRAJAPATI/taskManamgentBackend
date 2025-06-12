@@ -299,7 +299,17 @@ function App() {
             <ProtectedRoute component={InviteUsers} allowedRoles={["org_admin", "superadmin"]} />
           </AdminLayout>
         </Route>
+        <Route path="/admin/invite-users">
+          <AdminLayout>
+            <ProtectedRoute component={InviteUsers} allowedRoles={["org_admin", "superadmin"]} />
+          </AdminLayout>
+        </Route>
         <Route path="/roles">
+          <AdminLayout>
+            <ProtectedRoute component={RoleManagement} allowedRoles={["org_admin", "superadmin"]} />
+          </AdminLayout>
+        </Route>
+        <Route path="/admin/role-management">
           <AdminLayout>
             <ProtectedRoute component={RoleManagement} allowedRoles={["org_admin", "superadmin"]} />
           </AdminLayout>

@@ -94,13 +94,13 @@ export function SimpleSidebar() {
     ...(canManageOrganization ? [
       { 
         name: "Invite Users", 
-        href: "/invite-users", 
+        href: "/admin/invite-users", 
         icon: UserPlus,
         description: "Invite new team members"
       },
       { 
         name: "Role Management", 
-        href: "/role-management", 
+        href: "/admin/role-management", 
         icon: Shield,
         description: "Configure permissions"
       }
