@@ -28,6 +28,7 @@ export default function VerifyAndSetPassword() {
   const [, setLocation] = useLocation();
   const [token, setToken] = useState('');
   const [userInfo, setUserInfo] = useState(null);
+  const [tokenType, setTokenType] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [verificationError, setVerificationError] = useState('');
@@ -61,6 +62,7 @@ export default function VerifyAndSetPassword() {
     try {
       const response = await apiRequest('POST', '/api/auth/verify-token', { token: tokenValue });
       setUserInfo(response.user);
+      setTokenType(response.tokenType);
     } catch (error) {
       setVerificationError(error.message || 'Invalid or expired verification link.');
     }
@@ -137,9 +139,14 @@ export default function VerifyAndSetPassword() {
           <div className="mx-auto w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-4">
             <Shield className="w-6 h-6 text-green-600 dark:text-green-400" />
           </div>
-          <CardTitle>Welcome, {userInfo.firstName}!</CardTitle>
+          <CardTitle>
+            {tokenType === 'invitation' ? `Welcome to ${userInfo.organizationName}!` : `Welcome, ${userInfo.firstName}!`}
+          </CardTitle>
           <CardDescription>
-            Let's finish setting up your account by creating a secure password.
+            {tokenType === 'invitation' 
+              ? "Complete your account setup by creating a secure password to join your organization."
+              : "Let's finish setting up your account by creating a secure password."
+            }
           </CardDescription>
         </CardHeader>
         

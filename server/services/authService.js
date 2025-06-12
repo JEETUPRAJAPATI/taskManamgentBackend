@@ -508,107 +508,157 @@ export class AuthService {
 
   // Validate verification token and return user info
   async validateVerificationToken(token) {
-    // Find pending user by verification code
+    // First try to find pending user by verification code (new registrations)
     const allPendingUsers = await storage.getAllPendingUsers();
     const pendingUser = allPendingUsers.find(user => user.verificationCode === token);
     
-    if (!pendingUser) {
-      throw new Error('Invalid or expired verification token');
-    }
-    
-    if (pendingUser.verificationExpires < new Date()) {
-      throw new Error('Verification token has expired');
+    if (pendingUser) {
+      if (pendingUser.verificationExpires < new Date()) {
+        throw new Error('Verification token has expired');
+      }
+
+      return {
+        user: {
+          email: pendingUser.email,
+          firstName: pendingUser.firstName,
+          lastName: pendingUser.lastName,
+          organizationName: pendingUser.organizationName,
+          type: pendingUser.type
+        },
+        tokenType: 'registration'
+      };
     }
 
-    return {
-      user: {
-        email: pendingUser.email,
-        firstName: pendingUser.firstName,
-        lastName: pendingUser.lastName,
-        organizationName: pendingUser.organizationName,
-        type: pendingUser.type
+    // Try to find invited user by invite token (user invitations)
+    try {
+      const invitedUser = await storage.getUserByInviteToken(token);
+      if (invitedUser) {
+        if (invitedUser.inviteTokenExpiry < new Date()) {
+          throw new Error('Invitation token has expired');
+        }
+
+        const organization = await storage.getOrganization(invitedUser.organization);
+        
+        return {
+          user: {
+            email: invitedUser.email,
+            firstName: invitedUser.firstName || '',
+            lastName: invitedUser.lastName || '',
+            organizationName: organization?.name || 'Unknown Organization',
+            type: 'invitation'
+          },
+          tokenType: 'invitation'
+        };
       }
-    };
+    } catch (error) {
+      // Continue to check other token types
+    }
+    
+    throw new Error('Invalid or expired verification token');
   }
 
   // Set password with verification token
   async setPasswordWithToken(token, password) {
-    // Find pending user by verification code
-    const allPendingUsers = await storage.getAllPendingUsers();
-    const pendingUser = allPendingUsers.find(user => user.verificationCode === token);
-    
-    if (!pendingUser) {
-      throw new Error('Invalid or expired verification token');
-    }
-
-    if (pendingUser.verificationExpires < new Date()) {
-      throw new Error('Verification token has expired');
-    }
+    // First validate the token to determine its type
+    const validationResult = await this.validateVerificationToken(token);
+    const { user: userInfo, tokenType } = validationResult;
 
     // Hash password
     const passwordHash = await this.hashPassword(password);
 
-    if (pendingUser.type === 'individual') {
-      // Complete individual registration
-      const user = await storage.createUser({
-        email: pendingUser.email,
-        firstName: pendingUser.firstName,
-        lastName: pendingUser.lastName,
+    if (tokenType === 'registration') {
+      // Handle pending user registration
+      const allPendingUsers = await storage.getAllPendingUsers();
+      const pendingUser = allPendingUsers.find(user => user.verificationCode === token);
+
+      if (userInfo.type === 'individual') {
+        // Complete individual registration
+        const user = await storage.createUser({
+          email: pendingUser.email,
+          firstName: pendingUser.firstName,
+          lastName: pendingUser.lastName,
+          passwordHash,
+          role: 'member',
+          isActive: true,
+          emailVerified: true
+        });
+
+        // Remove pending user
+        await storage.deletePendingUser(pendingUser._id);
+
+        return { 
+          message: 'Account activated successfully',
+          user: {
+            id: user._id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName
+          }
+        };
+      } else if (userInfo.type === 'organization') {
+        // Create organization first
+        const organization = await storage.createOrganization({
+          name: pendingUser.organizationName,
+          slug: pendingUser.organizationSlug,
+          description: `Organization for ${pendingUser.organizationName}`,
+          settings: { timezone: 'UTC', language: 'en' }
+        });
+
+        // Create admin user
+        const user = await storage.createUser({
+          email: pendingUser.email,
+          firstName: pendingUser.firstName,
+          lastName: pendingUser.lastName,
+          passwordHash,
+          organization: organization._id,
+          role: 'admin',
+          isActive: true,
+          emailVerified: true
+        });
+
+        // Remove pending user
+        await storage.deletePendingUser(pendingUser._id);
+
+        return { 
+          message: 'Organization and account activated successfully',
+          user: {
+            id: user._id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            organizationId: organization._id
+          }
+        };
+      }
+    } else if (tokenType === 'invitation') {
+      // Handle invited user completing setup
+      const invitedUser = await storage.getUserByInviteToken(token);
+      
+      // Update the invited user with password and activate account
+      const updatedUser = await storage.updateUser(invitedUser._id, {
+        firstName: userInfo.firstName || 'User',
+        lastName: userInfo.lastName || 'User',
         passwordHash,
-        role: 'member',
         isActive: true,
-        emailVerified: true
+        emailVerified: true,
+        inviteToken: null,
+        inviteTokenExpiry: null,
+        status: 'active'
       });
 
-      // Remove pending user
-      await storage.deletePendingUser(pendingUser._id);
-
-      return { 
-        message: 'Account activated successfully',
+      return {
+        message: 'Account setup completed successfully',
         user: {
-          id: user._id,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName
-        }
-      };
-    } else if (pendingUser.type === 'organization') {
-      // Create organization first
-      const organization = await storage.createOrganization({
-        name: pendingUser.organizationName,
-        slug: pendingUser.organizationSlug,
-        description: `Organization for ${pendingUser.organizationName}`,
-        settings: { timezone: 'UTC', language: 'en' }
-      });
-
-      // Create admin user
-      const user = await storage.createUser({
-        email: pendingUser.email,
-        firstName: pendingUser.firstName,
-        lastName: pendingUser.lastName,
-        passwordHash,
-        organization: organization._id,
-        role: 'admin',
-        isActive: true,
-        emailVerified: true
-      });
-
-      // Remove pending user
-      await storage.deletePendingUser(pendingUser._id);
-
-      return { 
-        message: 'Organization and account activated successfully',
-        user: {
-          id: user._id,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          organizationId: organization._id
+          id: updatedUser._id,
+          email: updatedUser.email,
+          firstName: updatedUser.firstName,
+          lastName: updatedUser.lastName,
+          organizationId: updatedUser.organization
         }
       };
     }
 
-    throw new Error('Invalid registration type');
+    throw new Error('Invalid verification token type');
   }
 }
 
