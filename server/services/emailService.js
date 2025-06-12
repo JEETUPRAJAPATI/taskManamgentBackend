@@ -12,6 +12,7 @@ class EmailService {
       }
     });
     this.isConfigured = true;
+    this.baseUrl = process.env.BASE_URL || 'https://25b3cec7-b6b2-48b7-a8f4-7ee8a9c12574-00-36vzyej2u9kbm.kirk.replit.dev';
   }
 
   async sendVerificationEmail(email, verificationCode, firstName, organizationName = null) {
@@ -47,7 +48,7 @@ class EmailService {
                 <p>To activate your account and set your password, please click the link below:</p>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                  <a href="${process.env.FRONTEND_URL || 'http://localhost:5000'}/verify?token=${verificationCode}" 
+                  <a href="${this.baseUrl}/verify?token=${verificationCode}" 
                      style="background: #3B82F6; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600;">
                     👉 Set My Password & Verify Email
                   </a>
@@ -55,7 +56,7 @@ class EmailService {
                 
                 <div style="background: #f7fafc; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3B82F6;">
                   <p style="margin: 0; color: #4a5568; font-size: 14px;"><strong>Can't click the button?</strong> Copy and paste this URL into your browser:</p>
-                  <p style="margin: 5px 0 0 0; color: #4a5568; font-size: 14px; word-break: break-all;">${process.env.FRONTEND_URL || 'http://localhost:5000'}/verify?token=${verificationCode}</p>
+                  <p style="margin: 5px 0 0 0; color: #4a5568; font-size: 14px; word-break: break-all;">${this.baseUrl}/verify?token=${verificationCode}</p>
                 </div>
                 
                 <p>This link is <strong style="color: #e53e3e;">valid for 24 hours</strong>.</p>
@@ -77,9 +78,9 @@ class EmailService {
 Thanks for signing up with Tasksetu!
 
 To activate your account and set your password, please click the link below:
-👉 Set My Password & Verify Email: ${process.env.FRONTEND_URL || 'http://localhost:5000'}/verify?token=${verificationCode}
+👉 Set My Password & Verify Email: ${this.baseUrl}/verify?token=${verificationCode}
 
-(or copy and paste this URL into your browser: ${process.env.FRONTEND_URL || 'http://localhost:5000'}/verify?token=${verificationCode})
+(or copy and paste this URL into your browser: ${this.baseUrl}/verify?token=${verificationCode})
 
 This link is valid for 24 hours.
 
@@ -102,7 +103,7 @@ www.Tasksetu.com`
 
   async sendPasswordResetEmail(email, resetToken, firstName) {
     try {
-      const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5000'}/reset-password?token=${resetToken}`;
+      const resetUrl = `${this.baseUrl}/reset-password?token=${resetToken}`;
       
       const mailOptions = {
         from: '"TaskSetu" <noreply@tasksetu.com>',
@@ -166,7 +167,7 @@ www.Tasksetu.com`
 
   async sendInvitationEmail(email, inviteToken, organizationName, roles, invitedByName) {
     try {
-      const inviteUrl = `${process.env.FRONTEND_URL || 'http://localhost:5000'}/accept-invitation?token=${inviteToken}`;
+      const inviteUrl = `${this.baseUrl}/accept-invitation?token=${inviteToken}`;
       
       const mailOptions = {
         from: '"TaskSetu" <noreply@tasksetu.com>',
