@@ -18,8 +18,8 @@ class EmailService {
       this.isConfigured = false;
     }
     
-    // Production base URL - configurable via environment variable
-    this.baseUrl = process.env.BASE_URL || 'https://25b3cec7-b6b2-48b7-a8f4-7ee8a9c12574-00-36vzyej2u9kbm.kirk.replit.dev';
+    // Base URL - configurable via environment variable
+    this.baseUrl = process.env.BASE_URL || `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co` || 'https://25b3cec7-b6b2-48b7-a8f4-7ee8a9c12574-00-36vzyej2u9kbm.kirk.replit.dev';
   }
 
   async sendVerificationEmail(email, verificationCode, firstName, organizationName = null) {
@@ -173,11 +173,18 @@ www.Tasksetu.com`
         text: `Hi ${firstName}!\n\nWe received a request to reset your password for your TaskSetu account.\n\nClick this link to reset your password: ${resetUrl}\n\nThis link will expire in 1 hour for security reasons.\n\nIf you didn't request a password reset, please ignore this email.\n\nBest regards,\nThe TaskSetu Team`
       };
 
-      await this.transporter.sendMail(mailOptions);
+      const result = await this.transporter.sendMail(mailOptions);
       console.log('Password reset email sent successfully to:', email);
+      console.log('Email result:', result);
       return true;
     } catch (error) {
-      console.error('Email sending error:', error);
+      console.error('Email sending error:', error.message);
+      if (error.response) {
+        console.error('Email service response:', error.response);
+      }
+      if (error.code) {
+        console.error('Error code:', error.code);
+      }
       return false;
     }
   }
