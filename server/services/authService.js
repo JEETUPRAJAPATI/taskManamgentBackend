@@ -477,12 +477,6 @@ export class AuthService {
 
   // Validate reset token
   async validateResetToken(token) {
-    // For demo purposes, accept specific test tokens
-    if (token.startsWith('demo-token-') || token.length === 64) {
-      return { message: 'Reset token is valid' };
-    }
-    
-    // Regular validation
     const user = await storage.getUserByResetToken(token);
     
     if (!user) {
@@ -510,23 +504,34 @@ export class AuthService {
 
   // Reset password
   async resetPassword(token, newPassword) {
-    // For demo purposes, accept demo tokens and reset for john.doe@techcorp.com
-    if (token.startsWith('demo-token-') || token.length === 64) {
-      const user = await storage.getUserByEmail('john.doe@techcorp.com');
-      if (user) {
-        const passwordHash = await this.hashPassword(newPassword);
-        await storage.updateUser(user._id, {
-          passwordHash,
-          passwordResetToken: null,
-          passwordResetExpires: null
-        });
-        return { message: 'Password reset successfully' };
-      }
-    }
-    
     const user = await storage.getUserByResetToken(token);
     
-    if (!user || user.resetPasswordExpires < new Date()) {
+    if (!user) {
+      // Fallback: search all users for the token
+      const allUsers = await storage.getUsers();
+      const userWithToken = allUsers.find(u => 
+        u.passwordResetToken === token && 
+        u.passwordResetExpires && 
+        u.passwordResetExpires > new Date()
+      );
+      
+      if (!userWithToken) {
+        throw new Error('Invalid or expired reset token');
+      }
+      
+      const passwordHash = await this.hashPassword(newPassword);
+      
+      // Update password and clear reset token
+      await storage.updateUser(userWithToken._id, {
+        passwordHash,
+        passwordResetToken: null,
+        passwordResetExpires: null
+      });
+      
+      return { message: 'Password reset successfully' };
+    }
+    
+    if (user.passwordResetExpires < new Date()) {
       throw new Error('Invalid or expired reset token');
     }
 
