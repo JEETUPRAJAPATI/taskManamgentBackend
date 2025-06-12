@@ -65,12 +65,25 @@ export const requireOrgAdminOrAbove = requireRole(['superadmin', 'org_admin']);
 export const requireEmployee = requireRole(['superadmin', 'org_admin', 'employee']);
 
 // New middleware for organization management features
-export const requireOrganizationManagement = requireRole(['superadmin', 'org_admin']);
+export const requireOrganizationManagement = (req, res, next) => {
+  // Explicitly block individual users from organization management
+  if (req.user && req.user.role === 'individual') {
+    return res.status(403).json({ error: 'Individual users cannot access organization management features' });
+  }
+  
+  // Allow superadmin and org_admin roles
+  return requireRole(['superadmin', 'org_admin'])(req, res, next);
+};
 
 export const requireOrganizationAccess = async (req, res, next) => {
   try {
     const { organizationId } = req.params;
     const user = req.user;
+
+    // Individual users should not access organization features
+    if (user.role === 'individual') {
+      return res.status(403).json({ error: 'Individual users cannot access organization features' });
+    }
 
     // Super admins have access to all organizations
     if (user.role === 'superadmin') {

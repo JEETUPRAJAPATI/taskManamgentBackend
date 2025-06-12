@@ -325,7 +325,7 @@ export async function registerRoutes(app) {
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
-        organizationId: user.organization || user.organizationId,
+        organizationId: user.organization || user.organizationId || null,
         isActive: user.isActive,
         emailVerified: user.emailVerified
       };
@@ -496,7 +496,7 @@ export async function registerRoutes(app) {
     }
   });
 
-  // User invitation routes
+  // User invitation routes - Block individual users
   app.post("/api/users/invite", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const { users } = req.body;
@@ -654,7 +654,7 @@ export async function registerRoutes(app) {
     }
   });
 
-  // Get organization users with license info
+  // Get organization users with license info - Block individual users
   app.get("/api/users/organization", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const users = await storage.getOrganizationUsersDetailed(req.user.organizationId);
