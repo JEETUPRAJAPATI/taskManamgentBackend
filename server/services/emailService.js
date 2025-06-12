@@ -1,14 +1,20 @@
-import { MailService } from '@sendgrid/mail';
+import nodemailer from 'nodemailer';
 
 class EmailService {
   constructor() {
-    if (process.env.SENDGRID_API_KEY) {
-      this.mailService = new MailService();
-      this.mailService.setApiKey(process.env.SENDGRID_API_KEY);
+    if (process.env.MAILTRAP_HOST && process.env.MAILTRAP_PORT && process.env.MAILTRAP_USERNAME && process.env.MAILTRAP_PASSWORD) {
+      this.transporter = nodemailer.createTransport({
+        host: process.env.MAILTRAP_HOST,
+        port: parseInt(process.env.MAILTRAP_PORT),
+        auth: {
+          user: process.env.MAILTRAP_USERNAME,
+          pass: process.env.MAILTRAP_PASSWORD
+        }
+      });
       this.isConfigured = true;
-      console.log('SendGrid email service configured successfully');
+      console.log('Mailtrap email service configured successfully');
     } else {
-      console.warn('SENDGRID_API_KEY not found - email service disabled');
+      console.warn('Mailtrap credentials not found - email service disabled');
       this.isConfigured = false;
     }
     
@@ -18,14 +24,14 @@ class EmailService {
 
   async sendVerificationEmail(email, verificationCode, firstName, organizationName = null) {
     if (!this.isConfigured) {
-      console.error('Email service not configured - SENDGRID_API_KEY missing');
+      console.error('Email service not configured - Mailtrap credentials missing');
       return false;
     }
 
     try {
       const mailOptions = {
         to: email,
-        from: 'techizebuilder@gmail.com',
+        from: 'noreply@tasksetu.com',
         subject: '✅ Complete Your Tasksetu Registration',
         html: `
           <!DOCTYPE html>
@@ -98,7 +104,7 @@ See you enrolled in!
 www.Tasksetu.com`
       };
 
-      await this.mailService.send(mailOptions);
+      await this.transporter.sendMail(mailOptions);
       console.log('Verification email sent successfully to:', email);
       return true;
     } catch (error) {
@@ -109,7 +115,7 @@ www.Tasksetu.com`
 
   async sendPasswordResetEmail(email, resetToken, firstName) {
     if (!this.isConfigured) {
-      console.error('Email service not configured - SENDGRID_API_KEY missing');
+      console.error('Email service not configured - Mailtrap credentials missing');
       return false;
     }
 
@@ -118,7 +124,7 @@ www.Tasksetu.com`
       
       const mailOptions = {
         to: email,
-        from: 'techizebuilder@gmail.com',
+        from: 'noreply@tasksetu.com',
         subject: 'Reset Your Password - TaskSetu',
         html: `
           <!DOCTYPE html>
@@ -167,7 +173,7 @@ www.Tasksetu.com`
         text: `Hi ${firstName}!\n\nWe received a request to reset your password for your TaskSetu account.\n\nClick this link to reset your password: ${resetUrl}\n\nThis link will expire in 1 hour for security reasons.\n\nIf you didn't request a password reset, please ignore this email.\n\nBest regards,\nThe TaskSetu Team`
       };
 
-      await this.mailService.send(mailOptions);
+      await this.transporter.sendMail(mailOptions);
       console.log('Password reset email sent successfully to:', email);
       return true;
     } catch (error) {
