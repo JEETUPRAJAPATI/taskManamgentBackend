@@ -405,7 +405,7 @@ export class AuthService {
         case 'superadmin':
           return '/superadmin';
         case 'admin':
-          return '/admin';
+          return '/dashboard';
         case 'employee':
           return '/dashboard';
         default:

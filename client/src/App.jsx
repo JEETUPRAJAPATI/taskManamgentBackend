@@ -227,18 +227,6 @@ function App() {
             <SuperAdminDashboard />
           </RequireSuperAdmin>
         </Route>
-        
-        <Route path="/admin">
-          <RequireAdmin>
-            <AdminDashboard />
-          </RequireAdmin>
-        </Route>
-        
-        <Route path="/dashboard">
-          <RequireEmployee>
-            <EmployeeDashboard />
-          </RequireEmployee>
-        </Route>
 
         {/* Legacy Super Admin Routes */}
         <Route path="/super-admin">
@@ -282,10 +270,10 @@ function App() {
           </SuperAdminLayout>
         </Route>
 
-        {/* Protected Admin Routes */}
+        {/* Main Dashboard Route - Admin Panel with Sidebar */}
         <Route path="/dashboard">
           <AdminLayout>
-            <ProtectedRoute component={Dashboard} allowedRoles={["admin", "member"]} />
+            <ProtectedRoute component={Dashboard} allowedRoles={["admin", "employee", "member"]} />
           </AdminLayout>
         </Route>
         <Route path="/tasks">
@@ -326,6 +314,19 @@ function App() {
         <Route path="/reports">
           <AdminLayout>
             <ProtectedRoute component={Reports} />
+          </AdminLayout>
+        </Route>
+        <Route path="/admin-settings">
+          <AdminLayout>
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <div className="p-6">
+                <h1 className="text-2xl font-bold text-gray-900 mb-4">Admin Settings</h1>
+                <div className="bg-white rounded-lg shadow p-6">
+                  <h2 className="text-lg font-semibold text-gray-800 mb-3">System Configuration</h2>
+                  <p className="text-gray-600">Admin configuration options and system settings will be available here.</p>
+                </div>
+              </div>
+            </ProtectedRoute>
           </AdminLayout>
         </Route>
         {/* Settings Routes */}

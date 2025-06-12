@@ -51,7 +51,7 @@ export function SimpleSidebar() {
     },
     { 
       name: "Team Members", 
-      href: "/team", 
+      href: "/users", 
       icon: Users,
       description: "Manage team and users"
     },
