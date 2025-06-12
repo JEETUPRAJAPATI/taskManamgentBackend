@@ -12,6 +12,7 @@ class EmailService {
       }
     });
     this.isConfigured = true;
+    // Production base URL - configurable via environment variable
     this.baseUrl = process.env.BASE_URL || 'https://25b3cec7-b6b2-48b7-a8f4-7ee8a9c12574-00-36vzyej2u9kbm.kirk.replit.dev';
   }
 
