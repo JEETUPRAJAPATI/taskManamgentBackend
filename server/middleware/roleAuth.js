@@ -3,11 +3,12 @@ import { storage } from '../mongodb-storage.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
-// Role hierarchy: superadmin > admin > employee
+// Role hierarchy: superadmin > org_admin > employee > individual
 const ROLE_HIERARCHY = {
-  superadmin: 3,
-  admin: 2,
-  employee: 1
+  superadmin: 4,
+  org_admin: 3,
+  employee: 2,
+  individual: 1
 };
 
 export const authenticateToken = async (req, res, next) => {
@@ -59,9 +60,12 @@ export const requireRole = (allowedRoles) => {
 
 export const requireSuperAdmin = requireRole(['superadmin']);
 
-export const requireAdminOrAbove = requireRole(['superadmin', 'admin']);
+export const requireOrgAdminOrAbove = requireRole(['superadmin', 'org_admin']);
 
-export const requireEmployee = requireRole(['superadmin', 'admin', 'employee']);
+export const requireEmployee = requireRole(['superadmin', 'org_admin', 'employee']);
+
+// New middleware for organization management features
+export const requireOrganizationManagement = requireRole(['superadmin', 'org_admin']);
 
 export const requireOrganizationAccess = async (req, res, next) => {
   try {

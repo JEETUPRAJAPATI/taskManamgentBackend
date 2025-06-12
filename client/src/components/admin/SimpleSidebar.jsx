@@ -89,12 +89,12 @@ export function SimpleSidebar() {
   ];
 
   const adminNavigation = [
-    { 
+    ...(canManageOrganization ? [{ 
       name: "Role Management", 
       href: "/roles", 
       icon: Shield,
       description: "Configure permissions"
-    },
+    }] : []),
     { 
       name: "Admin Settings", 
       href: "/admin-settings", 

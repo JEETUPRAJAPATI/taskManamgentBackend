@@ -3,7 +3,7 @@ import { createServer } from "http";
 import { MongoStorage } from "./mongodb-storage.js";
 import { authenticateToken, requireRole, requireOrganization } from "./auth.js";
 import { requireSuperAdmin, requireSuperAdminOrCompanyAdmin } from "./middleware/superAdminAuth.js";
-import { authenticateToken as roleAuthToken, requireSuperAdmin as roleRequireSuperAdmin, requireAdminOrAbove, requireEmployee } from "./middleware/roleAuth.js";
+import { authenticateToken as roleAuthToken, requireSuperAdmin as roleRequireSuperAdmin, requireOrgAdminOrAbove, requireEmployee, requireOrganizationManagement } from "./middleware/roleAuth.js";
 import { authService } from "./services/authService.js";
 // import { setupTestRoutes } from "./test-auth.js";
 import { z } from "zod";
@@ -496,7 +496,7 @@ export async function registerRoutes(app) {
   });
 
   // User invitation routes
-  app.post("/api/users/invite", authenticateToken, requireRole(['admin']), async (req, res) => {
+  app.post("/api/users/invite", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const { users } = req.body;
       
@@ -1990,7 +1990,7 @@ async function setupEmailCalendarRoutes(app) {
   });
 
   // Admin Dashboard Routes
-  app.get("/api/admin/organization-stats", roleAuthToken, requireAdminOrAbove, async (req, res) => {
+  app.get("/api/admin/organization-stats", roleAuthToken, requireOrgAdminOrAbove, async (req, res) => {
     try {
       const stats = await storage.getDashboardStats(req.user.organizationId);
       res.json(stats);
@@ -2000,7 +2000,7 @@ async function setupEmailCalendarRoutes(app) {
     }
   });
 
-  app.get("/api/admin/users", roleAuthToken, requireAdminOrAbove, async (req, res) => {
+  app.get("/api/admin/users", roleAuthToken, requireOrgAdminOrAbove, async (req, res) => {
     try {
       const users = await storage.getOrganizationUsersDetailed(req.user.organizationId);
       res.json(users);
