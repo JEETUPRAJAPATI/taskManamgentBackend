@@ -1,26 +1,34 @@
-import nodemailer from 'nodemailer';
+import { MailService } from '@sendgrid/mail';
 
 class EmailService {
   constructor() {
-    this.transporter = nodemailer.createTransport({
-      host: 'sandbox.smtp.mailtrap.io',
-      port: 587,
-      secure: false, // true for 465, false for other ports
-      auth: {
-        user: '3e36ba31a3527d',
-        pass: '6560b932d97631'
-      }
-    });
-    this.isConfigured = true;
+    if (process.env.SENDGRID_API_KEY) {
+      this.mailService = new MailService();
+      this.mailService.setApiKey(process.env.SENDGRID_API_KEY);
+      this.isConfigured = true;
+      console.log('SendGrid email service configured successfully');
+    } else {
+      console.warn('SENDGRID_API_KEY not found - email service disabled');
+      this.isConfigured = false;
+    }
+    
     // Production base URL - configurable via environment variable
     this.baseUrl = process.env.BASE_URL || 'https://25b3cec7-b6b2-48b7-a8f4-7ee8a9c12574-00-36vzyej2u9kbm.kirk.replit.dev';
   }
 
   async sendVerificationEmail(email, verificationCode, firstName, organizationName = null) {
+    if (!this.isConfigured) {
+      console.error('Email service not configured - SENDGRID_API_KEY missing');
+      return false;
+    }
+
     try {
       const mailOptions = {
-        from: '"TaskSetu" <noreply@tasksetu.com>',
         to: email,
+        from: {
+          email: 'noreply@tasksetu.com',
+          name: 'TaskSetu'
+        },
         subject: '✅ Complete Your Tasksetu Registration',
         html: `
           <!DOCTYPE html>
@@ -93,7 +101,7 @@ See you enrolled in!
 www.Tasksetu.com`
       };
 
-      await this.transporter.sendMail(mailOptions);
+      await this.mailService.send(mailOptions);
       console.log('Verification email sent successfully to:', email);
       return true;
     } catch (error) {
@@ -103,12 +111,20 @@ www.Tasksetu.com`
   }
 
   async sendPasswordResetEmail(email, resetToken, firstName) {
+    if (!this.isConfigured) {
+      console.error('Email service not configured - SENDGRID_API_KEY missing');
+      return false;
+    }
+
     try {
       const resetUrl = `${this.baseUrl}/reset-password?token=${resetToken}`;
       
       const mailOptions = {
-        from: '"TaskSetu" <noreply@tasksetu.com>',
         to: email,
+        from: {
+          email: 'noreply@tasksetu.com',
+          name: 'TaskSetu'
+        },
         subject: 'Reset Your Password - TaskSetu',
         html: `
           <!DOCTYPE html>
@@ -157,7 +173,7 @@ www.Tasksetu.com`
         text: `Hi ${firstName}!\n\nWe received a request to reset your password for your TaskSetu account.\n\nClick this link to reset your password: ${resetUrl}\n\nThis link will expire in 1 hour for security reasons.\n\nIf you didn't request a password reset, please ignore this email.\n\nBest regards,\nThe TaskSetu Team`
       };
 
-      await this.transporter.sendMail(mailOptions);
+      await this.mailService.send(mailOptions);
       console.log('Password reset email sent successfully to:', email);
       return true;
     } catch (error) {
@@ -167,12 +183,20 @@ www.Tasksetu.com`
   }
 
   async sendInvitationEmail(email, inviteToken, organizationName, roles, invitedByName) {
+    if (!this.isConfigured) {
+      console.error('Email service not configured - SENDGRID_API_KEY missing');
+      return false;
+    }
+
     try {
       const inviteUrl = `${this.baseUrl}/accept-invitation?token=${inviteToken}`;
       
       const mailOptions = {
-        from: '"TaskSetu" <noreply@tasksetu.com>',
         to: email,
+        from: {
+          email: 'noreply@tasksetu.com',
+          name: 'TaskSetu'
+        },
         subject: `You're invited to join ${organizationName} - TaskSetu`,
         html: `
           <!DOCTYPE html>
@@ -223,7 +247,7 @@ www.Tasksetu.com`
         text: `You're invited to join ${organizationName}!\n\n${invitedByName} has invited you to join their team on TaskSetu.\n\nYou'll be joining as: ${Array.isArray(roles) ? roles.join(', ') : roles}\n\nClick this link to accept the invitation: ${inviteUrl}\n\nThis invitation will expire in 7 days.\n\nWelcome to TaskSetu!\nThe TaskSetu Team`
       };
 
-      await this.transporter.sendMail(mailOptions);
+      await this.mailService.send(mailOptions);
       console.log('Invitation email sent successfully to:', email);
       return true;
     } catch (error) {
