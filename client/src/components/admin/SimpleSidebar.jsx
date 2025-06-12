@@ -39,9 +39,12 @@ export function SimpleSidebar() {
   };
 
   // Check if user has organization management permissions (ONLY org_admin)
-  const canManageOrganization = user?.role === 'org_admin';
+  // Also check for 'admin' role as fallback for organization admins
+  const canManageOrganization = user?.role === 'org_admin' || user?.role === 'admin';
   const isIndividualUser = user?.role === 'individual';
   const isSuperAdmin = user?.role === 'superadmin';
+  
+
   
 
 
@@ -115,6 +118,8 @@ export function SimpleSidebar() {
       description: "System configuration"
     },
   ];
+
+
 
 
 
