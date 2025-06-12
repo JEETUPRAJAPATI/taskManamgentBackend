@@ -184,7 +184,7 @@ function ProtectedRoute({ component: Component, requiredRole, allowedRoles = [],
 function App() {
   const [location] = useLocation();
   const isSuperAdminRoute = location.startsWith('/super-admin');
-  const isAuthRoute = ['/register', '/login', '/verify', '/registration-success', '/reset-password', '/accept-invitation'].includes(location);
+  const isAuthRoute = ['/register', '/login', '/verify', '/registration-success', '/reset-password', '/accept-invitation', '/create-password'].includes(location) || location.startsWith('/register/');
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -203,6 +203,7 @@ function App() {
         <Route path="/registration-success" component={RegistrationSuccess} />
         <Route path="/create-password" component={CreatePassword} />
         <Route path="/reset-password" component={ResetPassword} />
+        <Route path="/accept-invitation" component={AcceptInvite} />
         <Route path="/register/invite/:token" component={AcceptInvite} />
         <Route path="/forbidden" component={ForbiddenPage} />
         <Route path="/test-auth" component={TestAuth} />
