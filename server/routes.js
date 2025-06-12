@@ -1306,7 +1306,7 @@ async function setupEmailCalendarRoutes(app) {
   });
 
   // Update a role
-  app.put("/api/roles/:id", authenticateToken, requireOrganization, requireRole(['admin', 'super_admin']), async (req, res) => {
+  app.put("/api/roles/:id", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const { id } = req.params;
       const { name, description, permissions } = req.body;
@@ -1348,7 +1348,7 @@ async function setupEmailCalendarRoutes(app) {
   });
 
   // Delete a role
-  app.delete("/api/roles/:id", authenticateToken, requireOrganization, requireRole(['admin', 'super_admin']), async (req, res) => {
+  app.delete("/api/roles/:id", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const { id } = req.params;
 
@@ -1400,7 +1400,7 @@ async function setupEmailCalendarRoutes(app) {
   });
 
   // Assign role to user
-  app.post("/api/roles/assign", authenticateToken, requireOrganization, requireRole(['admin', 'super_admin']), async (req, res) => {
+  app.post("/api/roles/assign", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const { userId, roleId } = req.body;
 
@@ -1746,7 +1746,7 @@ async function setupEmailCalendarRoutes(app) {
   // Company Admin User Management API Routes
 
   // Get organization license information
-  app.get("/api/organization/license", authenticateToken, requireRole(['admin']), async (req, res) => {
+  app.get("/api/organization/license", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const licenseInfo = await storage.getOrganizationLicenseInfo(req.user.organizationId);
       res.json(licenseInfo);
@@ -1757,7 +1757,7 @@ async function setupEmailCalendarRoutes(app) {
   });
 
   // Get organization users with detailed information
-  app.get("/api/organization/users-detailed", authenticateToken, requireRole(['admin']), async (req, res) => {
+  app.get("/api/organization/users-detailed", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const users = await storage.getOrganizationUsersDetailed(req.user.organizationId);
       res.json(users);
@@ -1768,7 +1768,7 @@ async function setupEmailCalendarRoutes(app) {
   });
 
   // Invite user to organization
-  app.post("/api/organization/invite-user", authenticateToken, requireRole(['admin']), async (req, res) => {
+  app.post("/api/organization/invite-user", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const { email, roles } = req.body;
       
@@ -1879,7 +1879,7 @@ async function setupEmailCalendarRoutes(app) {
   });
 
   // Deactivate user (admin only)
-  app.patch("/api/organization/users/:userId/deactivate", authenticateToken, requireRole(['admin']), async (req, res) => {
+  app.patch("/api/organization/users/:userId/deactivate", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const { userId } = req.params;
       
@@ -1902,7 +1902,7 @@ async function setupEmailCalendarRoutes(app) {
   });
 
   // Reactivate user (admin only)
-  app.patch("/api/organization/users/:userId/activate", authenticateToken, requireRole(['admin']), async (req, res) => {
+  app.patch("/api/organization/users/:userId/activate", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const { userId } = req.params;
       
@@ -1920,7 +1920,7 @@ async function setupEmailCalendarRoutes(app) {
   });
 
   // Update user role (admin only)
-  app.patch("/api/organization/users/:userId/role", authenticateToken, requireRole(['admin']), async (req, res) => {
+  app.patch("/api/organization/users/:userId/role", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const { userId } = req.params;
       const { role } = req.body;
