@@ -378,7 +378,11 @@ async function initializeSampleData() {
   }
 
   const PORT = Number(process.env.PORT) || 5000;
-  server.listen(PORT, "0.0.0.0", () => {
+  server.listen(PORT, "0.0.0.0", (err) => {
+    if (err) {
+      console.error(`Failed to start server on port ${PORT}:`, err);
+      process.exit(1);
+    }
     log(`TaskSetu Server running on port ${PORT}`);
   });
 })();
