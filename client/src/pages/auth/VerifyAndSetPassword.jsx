@@ -48,19 +48,13 @@ export default function VerifyAndSetPassword() {
 
   // Extract token from URL
   useEffect(() => {
-    console.log('VerifyAndSetPassword component mounted');
-    console.log('Current URL:', window.location.href);
-    console.log('Search params:', window.location.search);
-    
     const urlParams = new URLSearchParams(window.location.search);
     const tokenParam = urlParams.get('token');
-    console.log('Extracted token:', tokenParam);
     
     if (tokenParam) {
       setToken(tokenParam);
       verifyToken(tokenParam);
     } else {
-      console.error('No token found in URL');
       setVerificationError('Invalid verification link. Please check your email and try again.');
       setIsLoading(false);
     }
@@ -68,43 +62,20 @@ export default function VerifyAndSetPassword() {
 
   // Verify token and get user info
   const verifyToken = async (tokenValue) => {
-    console.log('=== Starting token verification ===');
-    console.log('Token to verify:', tokenValue);
-    
     try {
       setIsLoading(true);
       setVerificationError('');
       
-      console.log('Making API request to /api/auth/verify-token');
       const response = await apiRequest('POST', '/api/auth/verify-token', { token: tokenValue });
       
-      console.log('API Response received:', response);
-      console.log('Response type:', typeof response);
-      console.log('Response keys:', response ? Object.keys(response) : 'null/undefined');
-      
-      if (!response) {
-        throw new Error('No response received from server');
-      }
-      
-      if (!response.user) {
-        console.error('Response missing user data:', response);
+      if (!response || !response.user) {
         throw new Error('Invalid response format - missing user data');
       }
-      
-      console.log('Setting user info:', response.user);
-      console.log('Setting token type:', response.tokenType);
       
       setUserInfo(response.user);
       setTokenType(response.tokenType);
       setIsLoading(false);
-      
-      console.log('=== Token verification successful ===');
     } catch (error) {
-      console.error('=== Token verification failed ===');
-      console.error('Error object:', error);
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
-      
       setVerificationError(error.message || 'Invalid or expired verification link.');
       setIsLoading(false);
     }
@@ -139,16 +110,7 @@ export default function VerifyAndSetPassword() {
     { test: /[A-Z]/.test(password), text: 'Contains uppercase letter' }
   ];
 
-  // Add state logging for debugging
-  console.log('=== Component Render State ===');
-  console.log('isLoading:', isLoading);
-  console.log('userInfo:', userInfo);
-  console.log('verificationError:', verificationError);
-  console.log('token:', token);
-  console.log('tokenType:', tokenType);
-
   if (verificationError && !userInfo) {
-    console.log('Rendering error state');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
         <Card className="w-full max-w-md">

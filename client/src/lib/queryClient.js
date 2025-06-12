@@ -22,7 +22,7 @@ export async function apiRequest(method, url, data) {
   });
 
   await throwIfResNotOk(res);
-  return res;
+  return await res.json();
 }
 
 export const getQueryFn = ({ on401: unauthorizedBehavior }) =>
