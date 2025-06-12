@@ -98,7 +98,7 @@ async function initializeSampleData() {
         firstName: "John",
         lastName: "Doe", 
         email: "john.doe@techcorp.com",
-        password: "$2a$10$Yx8z3V4K2QwZ5R7N8B9C1uX4Y6T7R8N9M0L1K2J3H4G5F6D7C8B9A0",
+        passwordHash: "$2a$10$Yx8z3V4K2QwZ5R7N8B9C1uX4Y6T7R8N9M0L1K2J3H4G5F6D7C8B9A0",
         role: "admin",
         organization: null, // Will be set after org creation
         profile: {
@@ -116,7 +116,7 @@ async function initializeSampleData() {
         firstName: "Jane",
         lastName: "Smith",
         email: "jane.smith@techcorp.com", 
-        password: "$2a$10$Yx8z3V4K2QwZ5R7N8B9C1uX4Y6T7R8N9M0L1K2J3H4G5F6D7C8B9A0",
+        passwordHash: "$2a$10$Yx8z3V4K2QwZ5R7N8B9C1uX4Y6T7R8N9M0L1K2J3H4G5F6D7C8B9A0",
         role: "member",
         organization: null,
         profile: {
@@ -134,7 +134,7 @@ async function initializeSampleData() {
         firstName: "Mike",
         lastName: "Johnson",
         email: "mike.johnson@creativestudio.com",
-        password: "$2a$10$Yx8z3V4K2QwZ5R7N8B9C1uX4Y6T7R8N9M0L1K2J3H4G5F6D7C8B9A0",
+        passwordHash: "$2a$10$Yx8z3V4K2QwZ5R7N8B9C1uX4Y6T7R8N9M0L1K2J3H4G5F6D7C8B9A0",
         role: "admin",
         organization: null,
         profile: {
@@ -152,7 +152,7 @@ async function initializeSampleData() {
         firstName: "Sarah",
         lastName: "Wilson",
         email: "sarah.wilson@creativestudio.com",
-        password: "$2a$10$Yx8z3V4K2QwZ5R7N8B9C1uX4Y6T7R8N9M0L1K2J3H4G5F6D7C8B9A0",
+        passwordHash: "$2a$10$Yx8z3V4K2QwZ5R7N8B9C1uX4Y6T7R8N9M0L1K2J3H4G5F6D7C8B9A0",
         role: "member",
         organization: null,
         profile: {
@@ -170,7 +170,7 @@ async function initializeSampleData() {
         firstName: "David",
         lastName: "Brown",
         email: "david.brown@globalmarketing.com",
-        password: "$2a$10$Yx8z3V4K2QwZ5R7N8B9C1uX4Y6T7R8N9M0L1K2J3H4G5F6D7C8B9A0",
+        passwordHash: "$2a$10$Yx8z3V4K2QwZ5R7N8B9C1uX4Y6T7R8N9M0L1K2J3H4G5F6D7C8B9A0",
         role: "admin",
         organization: null,
         profile: {
@@ -188,7 +188,7 @@ async function initializeSampleData() {
         firstName: "Emily",
         lastName: "Davis",
         email: "emily.davis@globalmarketing.com",
-        password: "$2a$10$Yx8z3V4K2QwZ5R7N8B9C1uX4Y6T7R8N9M0L1K2J3H4G5F6D7C8B9A0",
+        passwordHash: "$2a$10$Yx8z3V4K2QwZ5R7N8B9C1uX4Y6T7R8N9M0L1K2J3H4G5F6D7C8B9A0",
         role: "member",
         organization: null,
         profile: {
@@ -206,7 +206,7 @@ async function initializeSampleData() {
         firstName: "Alex",
         lastName: "Thompson",
         email: "alex.thompson@techcorp.com",
-        password: "$2a$10$Yx8z3V4K2QwZ5R7N8B9C1uX4Y6T7R8N9M0L1K2J3H4G5F6D7C8B9A0",
+        passwordHash: "$2a$10$Yx8z3V4K2QwZ5R7N8B9C1uX4Y6T7R8N9M0L1K2J3H4G5F6D7C8B9A0",
         role: "member",
         organization: null,
         profile: {
