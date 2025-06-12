@@ -17,10 +17,13 @@ import {
 export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) {
   const [location] = useLocation();
   
-  const { data: user } = useQuery({
+  const { data: user, isLoading } = useQuery({
     queryKey: ["/api/auth/me"],
     retry: false,
   });
+  
+  // Debug logging
+  console.log('Sidebar render - user:', user, 'isLoading:', isLoading, 'isOpen:', isOpen);
 
   const baseNavigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -40,23 +43,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
   ];
 
   // Build navigation based on user role
-  const navigation = baseNavigation.reduce((nav, item) => {
-    nav.push(item);
-    
-    // Add admin-only items after specific items if user is admin
-    if (user?.role === 'admin') {
-      const adminItem = adminOnlyItems.find(adminItem => adminItem.insertAfter === item.name);
-      if (adminItem) {
-        nav.push({
-          name: adminItem.name,
-          href: adminItem.href,
-          icon: adminItem.icon
-        });
-      }
-    }
-    
-    return nav;
-  }, []);
+  const navigation = baseNavigation;
 
   const isActive = (href) => {
     return location === href || (href === "/dashboard" && location === "/");
@@ -67,7 +54,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
       {/* Desktop Sidebar */}
       <div className={`fixed inset-y-0 left-0 z-50 bg-slate-800 dark:bg-slate-900 border-r border-slate-700 dark:border-slate-800 transition-all duration-300 shadow-xl ${
         isOpen ? 'w-56' : 'w-14'
-      } block`}>
+      }`} style={{ display: 'block', visibility: 'visible' }}>
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center h-10 px-2 border-b border-slate-700 dark:border-slate-800 bg-slate-900 dark:bg-slate-950">
