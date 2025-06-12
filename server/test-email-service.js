@@ -19,9 +19,12 @@ async function testEmailService() {
       console.log('❌ Failed to send password reset email');
     }
   } catch (error) {
-    console.error('❌ Email test failed:', error);
+    console.error('❌ Email test failed:', error.message);
     if (error.response && error.response.body) {
       console.error('SendGrid error details:', JSON.stringify(error.response.body, null, 2));
+    }
+    if (error.code) {
+      console.error('Error code:', error.code);
     }
   }
 }
