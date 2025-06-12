@@ -470,26 +470,6 @@ export class AuthService {
 
   // Validate reset token
   async validateResetToken(token) {
-    console.log('Validating token:', token);
-    
-    // First check if any user has this token
-    const allUsers = await storage.getUsers();
-    const userWithToken = allUsers.find(u => u.passwordResetToken === token);
-    
-    if (userWithToken) {
-      console.log('Found user with token:', userWithToken.email);
-      console.log('Token expires:', userWithToken.passwordResetExpires);
-      console.log('Current time:', new Date());
-      console.log('Token expired:', userWithToken.passwordResetExpires < new Date());
-    } else {
-      console.log('No user found with token');
-      const usersWithTokens = allUsers.filter(u => u.passwordResetToken).map(u => ({
-        email: u.email,
-        token: u.passwordResetToken?.substring(0, 10) + '...'
-      }));
-      console.log('Users with reset tokens:', usersWithTokens);
-    }
-    
     const user = await storage.getUserByResetToken(token);
     
     if (!user || user.passwordResetExpires < new Date()) {
