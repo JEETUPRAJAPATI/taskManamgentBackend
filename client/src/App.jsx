@@ -14,6 +14,7 @@ import Dashboard from './pages/admin/CompactDashboard';
 import Tasks from './pages/admin/Tasks';
 import Users from './pages/admin/Users';
 import UserManagement from './pages/admin/UserManagement';
+import SettingsUserManagement from './pages/settings/UserManagement';
 import Projects from './pages/admin/Projects';
 import FormBuilder from './pages/admin/FormBuilder';
 import Integrations from './pages/admin/Integrations';
@@ -359,7 +360,7 @@ function App() {
         </Route>
         <Route path="/settings/user-management">
           <SettingsLayout>
-            <ProtectedRoute component={UserManagement} requiredRole="admin" />
+            <ProtectedRoute component={SettingsUserManagement} allowedRoles={["org_admin", "superadmin"]} />
           </SettingsLayout>
         </Route>
         <Route path="/settings/subscription">

@@ -1,4 +1,5 @@
 import { Link, useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { 
   Users, 
   Shield, 
@@ -17,33 +18,39 @@ import {
 export default function SettingsSidebar({ isOpen, onClose }) {
   const [location] = useLocation();
 
+  // Get current user data to check role
+  const { data: user } = useQuery({
+    queryKey: ["/api/auth/verify"],
+    enabled: !!localStorage.getItem('token'),
+  });
+
+  // Check if user can manage organization
+  const canManageOrganization = user?.role === 'org_admin' || user?.role === 'superadmin';
+
   const settingsItems = [
     {
       category: "Team Management",
       items: [
-        {
-          name: "User Management",
-          href: "/settings/user-management",
-          icon: Users,
-          description: "Manage team members and permissions"
-        },
-        {
-          name: "Subscription",
-          href: "/settings/subscription",
-          icon: CreditCard,
-          description: "License summary and user management"
-        },
-        {
-          name: "Roles & Permissions",
-          href: "/settings/roles",
-          icon: Shield,
-          description: "Configure user roles and access"
-        },
+        // Only show User Management / Subscription for organization admins
+        ...(canManageOrganization ? [
+          {
+            name: "User Management / Subscription",
+            href: "/settings/user-management",
+            icon: Users,
+            description: "Manage team members, licenses and permissions"
+          },
+          {
+            name: "Roles & Permissions",
+            href: "/settings/roles",
+            icon: Shield,
+            description: "Configure user roles and access"
+          }
+        ] : []),
         {
           name: "General Settings",
           href: "/settings/general",
           icon: Settings,
-          description: "Organization details and preferences"
+          description: "Personal preferences and account settings"
         }
       ]
     }

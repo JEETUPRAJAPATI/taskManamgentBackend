@@ -1405,19 +1405,20 @@ export class MongoStorage {
       throw new Error('Organization not found');
     }
 
-    const totalUsers = await User.countDocuments({ 
-      organizationId, 
+    const activeUsers = await User.countDocuments({ 
+      organization: organizationId, 
       isActive: true 
     });
 
     const totalLicenses = organization.maxUsers || 10; // Default 10 users
-    const usedLicenses = totalUsers;
-    const availableLicenses = Math.max(0, totalLicenses - usedLicenses);
+    const usedLicenses = activeUsers;
+    const availableSlots = Math.max(0, totalLicenses - usedLicenses);
 
     return {
-      total: totalLicenses,
-      used: usedLicenses,
-      available: availableLicenses
+      totalLicenses,
+      licenseType: organization.subscriptionType || 'Monthly',
+      usedLicenses,
+      availableSlots
     };
   }
 
