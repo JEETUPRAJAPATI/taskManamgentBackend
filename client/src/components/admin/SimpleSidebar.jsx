@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { 
   LayoutDashboard, 
@@ -8,22 +9,88 @@ import {
   Settings,
   Shield,
   BarChart3,
-  UserCog
+  UserCog,
+  ChevronRight,
+  HelpCircle,
+  Bell,
+  Database
 } from "lucide-react";
 
 export function SimpleSidebar() {
   const [location] = useLocation();
+  const [expandedSections, setExpandedSections] = useState({
+    admin: false,
+    system: false
+  });
 
-  const navigation = [
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Tasks", href: "/tasks", icon: CheckSquare },
-    { name: "Projects", href: "/projects", icon: FolderOpen },
-    { name: "Forms", href: "/forms", icon: FileText },
-    { name: "Users", href: "/users", icon: Users },
-    { name: "Roles", href: "/roles", icon: Shield },
-    { name: "Reports", href: "/reports", icon: BarChart3 },
-    { name: "Integrations", href: "/integrations", icon: Settings },
-    { name: "Settings", href: "/settings/user-management", icon: UserCog },
+  const toggleSection = (section) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+
+  const mainNavigation = [
+    { 
+      name: "Organization Dashboard", 
+      href: "/dashboard", 
+      icon: LayoutDashboard,
+      description: "Overview and analytics"
+    },
+    { 
+      name: "Task Management", 
+      href: "/tasks", 
+      icon: CheckSquare,
+      description: "Create and track tasks"
+    },
+    { 
+      name: "Project Management", 
+      href: "/projects", 
+      icon: FolderOpen,
+      description: "Manage active projects"
+    },
+    { 
+      name: "Team Members", 
+      href: "/team", 
+      icon: Users,
+      description: "Manage team and users"
+    },
+    { 
+      name: "Reports & Analytics", 
+      href: "/reports", 
+      icon: BarChart3,
+      description: "Performance insights"
+    },
+  ];
+
+  const workflowNavigation = [
+    { 
+      name: "Forms & Workflows", 
+      href: "/forms", 
+      icon: FileText,
+      description: "Create forms and processes"
+    },
+    { 
+      name: "Integrations", 
+      href: "/integrations", 
+      icon: Settings,
+      description: "Connect external tools"
+    },
+  ];
+
+  const adminNavigation = [
+    { 
+      name: "Role Management", 
+      href: "/roles", 
+      icon: Shield,
+      description: "Configure permissions"
+    },
+    { 
+      name: "Admin Settings", 
+      href: "/admin-settings", 
+      icon: UserCog,
+      description: "System configuration"
+    },
   ];
 
   const isActive = (href) => {
@@ -43,29 +110,182 @@ export function SimpleSidebar() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
-          {navigation.map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link 
-                key={item.name}
-                href={item.href} 
-                className={`group flex items-center px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-                  isActive(item.href)
-                    ? 'bg-gray-800 text-gray-100 border-l-2 border-gray-600'
-                    : 'text-gray-300 hover:bg-gray-800 hover:text-gray-100'
-                }`}
-              >
-                <Icon className={`flex-shrink-0 h-4 w-4 mr-3 ${
-                  isActive(item.href)
-                    ? 'text-gray-300'
-                    : 'text-gray-400 group-hover:text-gray-300'
-                }`} />
-                <span>{item.name}</span>
-              </Link>
-            );
-          })}
+        <nav className="flex-1 px-2 py-4 space-y-4 overflow-y-auto">
+          {/* Main Navigation Section */}
+          <div>
+            <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              Core Features
+            </h3>
+            <div className="space-y-1">
+              {mainNavigation.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.href);
+                return (
+                  <div key={item.name} className="relative group">
+                    <Link 
+                      href={item.href} 
+                      className={`group flex items-center justify-between px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                        active
+                          ? 'bg-gray-700 text-gray-100 shadow-sm border-l-3 border-blue-500'
+                          : 'text-gray-300 hover:bg-gray-800 hover:text-gray-100 hover:shadow-sm'
+                      }`}
+                    >
+                      <div className="flex items-center min-w-0 flex-1">
+                        <Icon className={`flex-shrink-0 h-5 w-5 mr-3 transition-colors ${
+                          active
+                            ? 'text-blue-400'
+                            : 'text-gray-400 group-hover:text-blue-400'
+                        }`} />
+                        <div className="min-w-0 flex-1">
+                          <span className="font-medium">{item.name}</span>
+                          <p className={`text-xs mt-0.5 transition-colors ${
+                            active
+                              ? 'text-gray-300'
+                              : 'text-gray-500 group-hover:text-gray-400'
+                          }`}>
+                            {item.description}
+                          </p>
+                        </div>
+                      </div>
+                      <ChevronRight className={`h-4 w-4 transition-transform duration-200 ${
+                        active 
+                          ? 'text-blue-400 transform rotate-90' 
+                          : 'text-gray-500 group-hover:text-gray-400 group-hover:transform group-hover:translate-x-1'
+                      }`} />
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Workflow Section */}
+          <div>
+            <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              Workflow & Automation
+            </h3>
+            <div className="space-y-1">
+              {workflowNavigation.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.href);
+                return (
+                  <div key={item.name} className="relative group">
+                    <Link 
+                      href={item.href} 
+                      className={`group flex items-center justify-between px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                        active
+                          ? 'bg-gray-700 text-gray-100 shadow-sm border-l-3 border-blue-500'
+                          : 'text-gray-300 hover:bg-gray-800 hover:text-gray-100 hover:shadow-sm'
+                      }`}
+                    >
+                      <div className="flex items-center min-w-0 flex-1">
+                        <Icon className={`flex-shrink-0 h-5 w-5 mr-3 transition-colors ${
+                          active
+                            ? 'text-blue-400'
+                            : 'text-gray-400 group-hover:text-blue-400'
+                        }`} />
+                        <div className="min-w-0 flex-1">
+                          <span className="font-medium">{item.name}</span>
+                          <p className={`text-xs mt-0.5 transition-colors ${
+                            active
+                              ? 'text-gray-300'
+                              : 'text-gray-500 group-hover:text-gray-400'
+                          }`}>
+                            {item.description}
+                          </p>
+                        </div>
+                      </div>
+                      <ChevronRight className={`h-4 w-4 transition-transform duration-200 ${
+                        active 
+                          ? 'text-blue-400 transform rotate-90' 
+                          : 'text-gray-500 group-hover:text-gray-400 group-hover:transform group-hover:translate-x-1'
+                      }`} />
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Admin Section */}
+          <div>
+            <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              Administration
+            </h3>
+            <div className="space-y-1">
+              {adminNavigation.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.href);
+                return (
+                  <div key={item.name} className="relative group">
+                    <Link 
+                      href={item.href} 
+                      className={`group flex items-center justify-between px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                        active
+                          ? 'bg-gray-700 text-gray-100 shadow-sm border-l-3 border-blue-500'
+                          : 'text-gray-300 hover:bg-gray-800 hover:text-gray-100 hover:shadow-sm'
+                      }`}
+                    >
+                      <div className="flex items-center min-w-0 flex-1">
+                        <Icon className={`flex-shrink-0 h-5 w-5 mr-3 transition-colors ${
+                          active
+                            ? 'text-blue-400'
+                            : 'text-gray-400 group-hover:text-blue-400'
+                        }`} />
+                        <div className="min-w-0 flex-1">
+                          <span className="font-medium">{item.name}</span>
+                          <p className={`text-xs mt-0.5 transition-colors ${
+                            active
+                              ? 'text-gray-300'
+                              : 'text-gray-500 group-hover:text-gray-400'
+                          }`}>
+                            {item.description}
+                          </p>
+                        </div>
+                      </div>
+                      <ChevronRight className={`h-4 w-4 transition-transform duration-200 ${
+                        active 
+                          ? 'text-blue-400 transform rotate-90' 
+                          : 'text-gray-500 group-hover:text-gray-400 group-hover:transform group-hover:translate-x-1'
+                      }`} />
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </nav>
+
+        {/* Footer Section */}
+        <div className="px-2 py-3 border-t border-gray-700">
+          {/* Quick Actions */}
+          <div className="space-y-1 mb-3">
+            <button className="w-full flex items-center px-3 py-2 text-xs text-gray-400 hover:text-gray-300 hover:bg-gray-800 rounded-md transition-colors">
+              <HelpCircle className="h-4 w-4 mr-2" />
+              Help & Support
+            </button>
+            <button className="w-full flex items-center px-3 py-2 text-xs text-gray-400 hover:text-gray-300 hover:bg-gray-800 rounded-md transition-colors">
+              <Bell className="h-4 w-4 mr-2" />
+              System Alerts
+            </button>
+            <button className="w-full flex items-center px-3 py-2 text-xs text-gray-400 hover:text-gray-300 hover:bg-gray-800 rounded-md transition-colors">
+              <Database className="h-4 w-4 mr-2" />
+              System Status
+            </button>
+          </div>
+
+          {/* Version Info */}
+          <div className="px-3 py-2 bg-gray-950 rounded-md">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-gray-300">TaskSetu</span>
+              <span className="text-xs text-gray-500">v2.1.0</span>
+            </div>
+            <div className="flex items-center mt-1">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span className="text-xs text-gray-500">All systems operational</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
