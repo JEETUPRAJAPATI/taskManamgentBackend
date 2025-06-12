@@ -41,6 +41,8 @@ export function SimpleSidebar() {
   // Check if user has organization management permissions
   const canManageOrganization = user?.role === 'org_admin' || user?.role === 'superadmin';
   const isIndividualUser = user?.role === 'individual';
+  
+
 
   const mainNavigation = [
     { 
@@ -112,6 +114,8 @@ export function SimpleSidebar() {
       description: "System configuration"
     },
   ];
+
+
 
   const isActive = (href) => {
     return location === href || (href === "/dashboard" && location === "/");
@@ -197,7 +201,24 @@ export function SimpleSidebar() {
           </div>
 
           {/* Admin Features - Only show for organization admins */}
-          {!isIndividualUser && renderSection("Administration", adminNavigation, "admin")}
+          {!isIndividualUser && (
+            <div className="mb-6">
+              <button
+                onClick={() => toggleSection("admin")}
+                className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-300 transition-colors"
+              >
+                Administration
+                <ChevronRight className={`h-3 w-3 transition-transform ${
+                  expandedSections.admin ? 'rotate-90' : ''
+                }`} />
+              </button>
+              {expandedSections.admin && (
+                <div className="mt-2 space-y-1">
+                  {adminNavigation.map(renderNavItem)}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Footer */}
