@@ -370,7 +370,7 @@ function App() {
         </Route>
         <Route path="/settings/user-management">
           <SettingsLayout>
-            <ProtectedRoute component={SettingsUserManagement} allowedRoles={["org_admin", "superadmin"]} />
+            <ProtectedRoute component={SettingsUserManagement} allowedRoles={["org_admin"]} />
           </SettingsLayout>
         </Route>
         <Route path="/settings/subscription">
