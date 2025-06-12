@@ -11,6 +11,7 @@ import {
   Shield,
   BarChart3,
   UserCog,
+  UserPlus,
   ChevronRight,
   HelpCircle,
   Bell,
@@ -89,12 +90,20 @@ export function SimpleSidebar() {
   ];
 
   const adminNavigation = [
-    ...(canManageOrganization ? [{ 
-      name: "Role Management", 
-      href: "/roles", 
-      icon: Shield,
-      description: "Configure permissions"
-    }] : []),
+    ...(canManageOrganization ? [
+      { 
+        name: "Invite Users", 
+        href: "/invite-users", 
+        icon: UserPlus,
+        description: "Invite new team members"
+      },
+      { 
+        name: "Role Management", 
+        href: "/role-management", 
+        icon: Shield,
+        description: "Configure permissions"
+      }
+    ] : []),
     { 
       name: "Admin Settings", 
       href: "/admin-settings", 
