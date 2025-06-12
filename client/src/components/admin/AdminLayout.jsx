@@ -15,7 +15,7 @@ export function AdminLayout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-gray-100">
       <SimpleSidebar />
       
       <div className="ml-56">
@@ -25,7 +25,7 @@ export function AdminLayout({ children }) {
           sidebarOpen={sidebarOpen}
         />
         
-        <main className="px-4 py-4 min-h-screen">
+        <main className="px-6 py-6 min-h-screen bg-gray-50">
           <div className="max-w-full mx-auto">
             {children}
           </div>
