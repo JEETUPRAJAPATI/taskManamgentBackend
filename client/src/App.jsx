@@ -296,22 +296,22 @@ function App() {
         </Route>
         <Route path="/invite-users">
           <AdminLayout>
-            <ProtectedRoute component={InviteUsers} allowedRoles={["org_admin"]} />
+            <ProtectedRoute component={InviteUsers} allowedRoles={["org_admin", "admin"]} />
           </AdminLayout>
         </Route>
         <Route path="/admin/invite-users">
           <AdminLayout>
-            <ProtectedRoute component={InviteUsers} allowedRoles={["org_admin"]} />
+            <ProtectedRoute component={InviteUsers} allowedRoles={["org_admin", "admin"]} />
           </AdminLayout>
         </Route>
         <Route path="/roles">
           <AdminLayout>
-            <ProtectedRoute component={RoleManagement} allowedRoles={["org_admin"]} />
+            <ProtectedRoute component={RoleManagement} allowedRoles={["org_admin", "admin"]} />
           </AdminLayout>
         </Route>
         <Route path="/admin/role-management">
           <AdminLayout>
-            <ProtectedRoute component={RoleManagement} allowedRoles={["org_admin"]} />
+            <ProtectedRoute component={RoleManagement} allowedRoles={["org_admin", "admin"]} />
           </AdminLayout>
         </Route>
         <Route path="/projects">
@@ -370,7 +370,7 @@ function App() {
         </Route>
         <Route path="/settings/user-management">
           <SettingsLayout>
-            <ProtectedRoute component={SettingsUserManagement} allowedRoles={["org_admin"]} />
+            <ProtectedRoute component={SettingsUserManagement} allowedRoles={["org_admin", "admin"]} />
           </SettingsLayout>
         </Route>
         <Route path="/settings/subscription">

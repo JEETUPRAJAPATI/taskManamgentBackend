@@ -70,7 +70,8 @@ export const requireOrgAdminOnly = (req, res, next) => {
     return res.status(401).json({ error: 'Authentication required' });
   }
 
-  if (req.user.role !== 'org_admin') {
+  // Allow both 'org_admin' and 'admin' roles for organization management
+  if (req.user.role !== 'org_admin' && req.user.role !== 'admin') {
     return res.status(403).json({ 
       error: 'Access denied. This feature is only available to organization administrators.' 
     });
