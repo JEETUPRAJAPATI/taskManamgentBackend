@@ -3,6 +3,13 @@ import { Route, Switch, useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { getQueryFn } from '@/lib/queryClient';
+
+// Role-based Dashboards
+import SuperAdminDashboard from './pages/dashboards/SuperAdminDashboard';
+import AdminDashboard from './pages/dashboards/AdminDashboard';
+import EmployeeDashboard from './pages/dashboards/EmployeeDashboard';
+
+// Legacy Admin Components (for reference)
 import Dashboard from './pages/admin/CompactDashboard';
 import Tasks from './pages/admin/Tasks';
 import Users from './pages/admin/Users';
@@ -21,7 +28,7 @@ import SettingsPlaceholder from './pages/settings/SettingsPlaceholder';
 
 // Super Admin Components
 import SuperAdminLayout from './components/super-admin/SuperAdminLayout';
-import SuperAdminDashboard from './pages/super-admin/SuperAdminDashboard';
+import LegacySuperAdminDashboard from './pages/super-admin/SuperAdminDashboard';
 import CompaniesManagement from './pages/super-admin/CompaniesManagement';
 import UsersManagement from './pages/super-admin/UsersManagement';
 import SystemLogs from './pages/super-admin/SystemLogs';
@@ -43,8 +50,13 @@ import VerifyAndSetPassword from './pages/auth/VerifyAndSetPassword';
 import RegistrationSuccess from './pages/auth/RegistrationSuccess';
 import TestAuth from './pages/TestAuth';
 
-
-// Components
+// Role Protection Components
+import { 
+  RoleProtectedRoute, 
+  RequireSuperAdmin, 
+  RequireAdmin, 
+  RequireEmployee 
+} from './components/auth/RoleProtectedRoute';
 import RoleBasedRedirect from './components/RoleBasedRedirect';
 import SecureRoute from './components/ProtectedRoute';
 import ForbiddenPage from './pages/ForbiddenPage';
@@ -209,10 +221,29 @@ function App() {
         <Route path="/test-auth" component={TestAuth} />
 
 
-        {/* Super Admin Routes */}
+        {/* Role-based Dashboard Routes */}
+        <Route path="/superadmin">
+          <RequireSuperAdmin>
+            <SuperAdminDashboard />
+          </RequireSuperAdmin>
+        </Route>
+        
+        <Route path="/admin">
+          <RequireAdmin>
+            <AdminDashboard />
+          </RequireAdmin>
+        </Route>
+        
+        <Route path="/dashboard">
+          <RequireEmployee>
+            <EmployeeDashboard />
+          </RequireEmployee>
+        </Route>
+
+        {/* Legacy Super Admin Routes */}
         <Route path="/super-admin">
           <SuperAdminLayout>
-            <ProtectedRoute component={SuperAdminDashboard} requiredRole="super_admin" />
+            <ProtectedRoute component={LegacySuperAdminDashboard} requiredRole="super_admin" />
           </SuperAdminLayout>
         </Route>
         <Route path="/super-admin/companies">

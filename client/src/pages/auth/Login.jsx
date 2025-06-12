@@ -76,6 +76,7 @@ export default function Login() {
       
       if (response.ok) {
         localStorage.setItem("token", result.token);
+        localStorage.setItem("user", JSON.stringify(result.user));
         
         // Set user data in cache immediately to prevent loading state
         queryClient.setQueryData(["/api/auth/verify"], {
@@ -92,16 +93,9 @@ export default function Login() {
           description: "You have successfully signed in"
         });
 
-        // Force page reload to ensure authentication state is properly initialized
-        const userRole = result.user.role;
-        
-        if (userRole === 'super_admin') {
-          window.location.href = "/super-admin";
-        } else if (userRole === 'admin' || userRole === 'member') {
-          window.location.href = "/dashboard";
-        } else {
-          window.location.href = "/dashboard";
-        }
+        // Use role-based redirection from server response
+        const redirectPath = result.redirectTo || '/dashboard';
+        window.location.href = redirectPath;
       } else {
         setErrors({ submit: result.message || "Invalid email or password" });
       }
