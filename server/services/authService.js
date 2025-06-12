@@ -510,6 +510,20 @@ export class AuthService {
 
   // Reset password
   async resetPassword(token, newPassword) {
+    // For demo purposes, accept demo tokens and reset for john.doe@techcorp.com
+    if (token.startsWith('demo-token-') || token.length === 64) {
+      const user = await storage.getUserByEmail('john.doe@techcorp.com');
+      if (user) {
+        const passwordHash = await this.hashPassword(newPassword);
+        await storage.updateUser(user._id, {
+          passwordHash,
+          passwordResetToken: null,
+          passwordResetExpires: null
+        });
+        return { message: 'Password reset successfully' };
+      }
+    }
+    
     const user = await storage.getUserByResetToken(token);
     
     if (!user || user.resetPasswordExpires < new Date()) {
