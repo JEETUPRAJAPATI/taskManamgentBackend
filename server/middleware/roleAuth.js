@@ -64,6 +64,21 @@ export const requireOrgAdminOrAbove = requireRole(['superadmin', 'org_admin']);
 
 export const requireEmployee = requireRole(['superadmin', 'org_admin', 'employee']);
 
+// Strict middleware for org_admin only access (excludes superadmin)
+export const requireOrgAdminOnly = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+
+  if (req.user.role !== 'org_admin') {
+    return res.status(403).json({ 
+      error: 'Access denied. This feature is only available to organization administrators.' 
+    });
+  }
+
+  next();
+};
+
 // New middleware for organization management features
 export const requireOrganizationManagement = (req, res, next) => {
   // Explicitly block individual users from organization management

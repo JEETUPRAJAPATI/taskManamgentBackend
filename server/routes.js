@@ -3,7 +3,7 @@ import { createServer } from "http";
 import { MongoStorage } from "./mongodb-storage.js";
 import { authenticateToken, requireRole, requireOrganization } from "./auth.js";
 import { requireSuperAdmin, requireSuperAdminOrCompanyAdmin } from "./middleware/superAdminAuth.js";
-import { authenticateToken as roleAuthToken, requireSuperAdmin as roleRequireSuperAdmin, requireOrgAdminOrAbove, requireEmployee, requireOrganizationManagement } from "./middleware/roleAuth.js";
+import { authenticateToken as roleAuthToken, requireSuperAdmin as roleRequireSuperAdmin, requireOrgAdminOrAbove, requireEmployee, requireOrganizationManagement, requireOrgAdminOnly } from "./middleware/roleAuth.js";
 import { authService } from "./services/authService.js";
 import { inviteEmailService } from "./services/inviteEmailService.js";
 // import { setupTestRoutes } from "./test-auth.js";
@@ -1807,7 +1807,7 @@ async function setupEmailCalendarRoutes(app) {
   });
 
   // Invite user to organization
-  app.post("/api/organization/invite-user", roleAuthToken, requireOrganizationManagement, async (req, res) => {
+  app.post("/api/organization/invite-user", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
     try {
       const { email, roles } = req.body;
       
@@ -2070,7 +2070,7 @@ async function setupEmailCalendarRoutes(app) {
   });
 
   // Admin user invitation
-  app.post("/api/admin/invite-user", roleAuthToken, requireOrganizationManagement, async (req, res) => {
+  app.post("/api/admin/invite-user", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
     try {
       const { email, role = 'employee' } = req.body;
       

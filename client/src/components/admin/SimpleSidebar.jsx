@@ -38,9 +38,10 @@ export function SimpleSidebar() {
     }));
   };
 
-  // Check if user has organization management permissions
-  const canManageOrganization = user?.role === 'org_admin' || user?.role === 'superadmin';
+  // Check if user has organization management permissions (ONLY org_admin)
+  const canManageOrganization = user?.role === 'org_admin';
   const isIndividualUser = user?.role === 'individual';
+  const isSuperAdmin = user?.role === 'superadmin';
   
 
 
@@ -201,7 +202,7 @@ export function SimpleSidebar() {
           </div>
 
           {/* Admin Features - Only show for organization admins */}
-          {!isIndividualUser && (
+          {canManageOrganization && (
             <div className="mb-6">
               <button
                 onClick={() => toggleSection("admin")}
