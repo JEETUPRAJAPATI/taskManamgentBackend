@@ -60,10 +60,13 @@ export default function VerifyAndSetPassword() {
   // Verify token and get user info
   const verifyToken = async (tokenValue) => {
     try {
+      console.log('Verifying token:', tokenValue);
       const response = await apiRequest('POST', '/api/auth/verify-token', { token: tokenValue });
+      console.log('Verification response:', response);
       setUserInfo(response.user);
       setTokenType(response.tokenType);
     } catch (error) {
+      console.error('Verification error:', error);
       setVerificationError(error.message || 'Invalid or expired verification link.');
     }
   };
