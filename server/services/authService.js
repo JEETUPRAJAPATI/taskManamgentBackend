@@ -477,9 +477,26 @@ export class AuthService {
 
   // Validate reset token
   async validateResetToken(token) {
+    // First try the optimized query
     const user = await storage.getUserByResetToken(token);
     
-    if (!user || user.passwordResetExpires < new Date()) {
+    if (!user) {
+      // Fallback: search all users for the token (in case of DB query issues)
+      const allUsers = await storage.getUsers();
+      const userWithToken = allUsers.find(u => 
+        u.passwordResetToken === token && 
+        u.passwordResetExpires && 
+        u.passwordResetExpires > new Date()
+      );
+      
+      if (!userWithToken) {
+        throw new Error('Invalid or expired reset token');
+      }
+      
+      return { message: 'Reset token is valid' };
+    }
+    
+    if (user.passwordResetExpires < new Date()) {
       throw new Error('Invalid or expired reset token');
     }
 
