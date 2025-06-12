@@ -32,6 +32,7 @@ export default function VerifyAndSetPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [verificationError, setVerificationError] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const {
     register,
@@ -61,13 +62,16 @@ export default function VerifyAndSetPassword() {
   const verifyToken = async (tokenValue) => {
     try {
       console.log('Verifying token:', tokenValue);
+      setIsLoading(true);
       const response = await apiRequest('POST', '/api/auth/verify-token', { token: tokenValue });
       console.log('Verification response:', response);
       setUserInfo(response.user);
       setTokenType(response.tokenType);
+      setIsLoading(false);
     } catch (error) {
       console.error('Verification error:', error);
       setVerificationError(error.message || 'Invalid or expired verification link.');
+      setIsLoading(false);
     }
   };
 
@@ -127,7 +131,7 @@ export default function VerifyAndSetPassword() {
     );
   }
 
-  if (!userInfo) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
