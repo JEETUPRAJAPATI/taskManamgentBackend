@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Menu, Bell, Search, User, Settings, LogOut, Edit, Shield, Key, Palette, HelpCircle, ChevronDown, UserPlus } from "lucide-react";
 
@@ -117,10 +117,12 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
         <div className="flex items-center space-x-2">
           {/* Invite User Button - Only for organization admins */}
           {canInviteUsers && (
-            <button className="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:text-gray-100 hover:bg-gray-700 rounded-md transition-colors">
-              <UserPlus className="h-4 w-4 mr-2" />
-              Invite User
-            </button>
+            <Link href="/invite-users">
+              <button className="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:text-gray-100 hover:bg-gray-700 rounded-md transition-colors">
+                <UserPlus className="h-4 w-4 mr-2" />
+                Invite User
+              </button>
+            </Link>
           )}
 
           {/* Notifications */}

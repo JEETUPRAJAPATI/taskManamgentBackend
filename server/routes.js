@@ -5,6 +5,7 @@ import { authenticateToken, requireRole, requireOrganization } from "./auth.js";
 import { requireSuperAdmin, requireSuperAdminOrCompanyAdmin } from "./middleware/superAdminAuth.js";
 import { authenticateToken as roleAuthToken, requireSuperAdmin as roleRequireSuperAdmin, requireOrgAdminOrAbove, requireEmployee, requireOrganizationManagement } from "./middleware/roleAuth.js";
 import { authService } from "./services/authService.js";
+import { inviteEmailService } from "./services/inviteEmailService.js";
 // import { setupTestRoutes } from "./test-auth.js";
 import { z } from "zod";
 
@@ -538,13 +539,17 @@ export async function registerRoutes(app) {
           const adminUser = await storage.getUser(req.user.id);
           const organization = await storage.getOrganization(req.user.organizationId);
           
-          await storage.sendInvitationEmail(
-            userData.email,
-            inviteToken,
-            organization.name,
-            userData.roles,
-            `${adminUser.firstName} ${adminUser.lastName}`
-          );
+          if (inviteEmailService.isServiceAvailable()) {
+            await inviteEmailService.sendInvitationEmail(
+              userData.email,
+              inviteToken,
+              organization.name,
+              userData.role || 'employee',
+              `${adminUser.firstName} ${adminUser.lastName}`
+            );
+          } else {
+            console.warn(`Email service not available - invitation sent to ${userData.email} but no email delivered`);
+          }
 
           results.push({
             email: userData.email,
