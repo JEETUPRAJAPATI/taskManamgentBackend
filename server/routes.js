@@ -2152,7 +2152,7 @@ async function setupEmailCalendarRoutes(app) {
 
   // Setup test routes (development only)
   if (process.env.NODE_ENV === 'development') {
-    await setupTestRoutes(app);
+    // await setupTestRoutes(app);
   }
 
   // Create HTTP server
