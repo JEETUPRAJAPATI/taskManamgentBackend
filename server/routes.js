@@ -5,7 +5,7 @@ import { authenticateToken, requireRole, requireOrganization } from "./auth.js";
 import { requireSuperAdmin, requireSuperAdminOrCompanyAdmin } from "./middleware/superAdminAuth.js";
 import { authenticateToken as roleAuthToken, requireSuperAdmin as roleRequireSuperAdmin, requireAdminOrAbove, requireEmployee } from "./middleware/roleAuth.js";
 import { authService } from "./services/authService.js";
-import { setupTestRoutes } from "./test-auth.js";
+// import { setupTestRoutes } from "./test-auth.js";
 import { z } from "zod";
 
 const storage = new MongoStorage();
