@@ -447,11 +447,18 @@ export class AuthService {
     const resetToken = this.generateResetToken();
     const resetExpires = new Date(Date.now() + this.RESET_TOKEN_EXPIRES);
 
-    // Store reset token
-    await storage.updateUser(user._id, {
+    // Store reset token with explicit field updates
+    const updateResult = await storage.updateUser(user._id, {
       passwordResetToken: resetToken,
       passwordResetExpires: resetExpires
     });
+
+    // Verify token was stored
+    const updatedUser = await storage.getUserByEmail(email);
+    if (!updatedUser.passwordResetToken) {
+      console.error('Failed to store reset token for user:', email);
+      throw new Error('Failed to generate reset token');
+    }
 
     // Send reset email
     try {
