@@ -1,0 +1,98 @@
+import jwt from 'jsonwebtoken';
+import { storage } from '../mongodb-storage.js';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+
+// Role hierarchy: superadmin > admin > employee
+const ROLE_HIERARCHY = {
+  superadmin: 3,
+  admin: 2,
+  employee: 1
+};
+
+export const authenticateToken = async (req, res, next) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+      return res.status(401).json({ error: 'Access token required' });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    
+    // Get fresh user data to ensure role/organization info is current
+    const user = await storage.getUser(decoded.id);
+    if (!user || !user.isActive) {
+      return res.status(401).json({ error: 'Invalid or inactive user' });
+    }
+
+    req.user = {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+      organizationId: user.organization,
+      permissions: user.permissions || []
+    };
+
+    next();
+  } catch (error) {
+    return res.status(403).json({ error: 'Invalid token' });
+  }
+};
+
+export const requireRole = (allowedRoles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const userRole = req.user.role;
+    
+    if (allowedRoles.includes(userRole)) {
+      return next();
+    }
+
+    return res.status(403).json({ error: 'Insufficient permissions' });
+  };
+};
+
+export const requireSuperAdmin = requireRole(['superadmin']);
+
+export const requireAdminOrAbove = requireRole(['superadmin', 'admin']);
+
+export const requireEmployee = requireRole(['superadmin', 'admin', 'employee']);
+
+export const requireOrganizationAccess = async (req, res, next) => {
+  try {
+    const { organizationId } = req.params;
+    const user = req.user;
+
+    // Super admins have access to all organizations
+    if (user.role === 'superadmin') {
+      return next();
+    }
+
+    // Admins and employees can only access their own organization
+    if (user.organizationId && user.organizationId.toString() === organizationId) {
+      return next();
+    }
+
+    return res.status(403).json({ error: 'Access denied to this organization' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Authorization check failed' });
+  }
+};
+
+export const getRedirectRoute = (role) => {
+  switch (role) {
+    case 'superadmin':
+      return '/superadmin';
+    case 'admin':
+      return '/admin';
+    case 'employee':
+      return '/dashboard';
+    default:
+      return '/dashboard';
+  }
+};

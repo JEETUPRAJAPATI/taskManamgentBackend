@@ -72,9 +72,15 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Organization'
   },
-  roles: {
+  role: {
+    type: String,
+    enum: ['superadmin', 'admin', 'employee'],
+    default: 'employee',
+    required: true
+  },
+  permissions: {
     type: [String],
-    default: ['member']
+    default: []
   },
   status: {
     type: String,
@@ -97,11 +103,10 @@ const userSchema = new mongoose.Schema({
     type: Object,
     default: {}
   },
-  // Legacy role field for backward compatibility
-  role: {
-    type: String,
-    enum: ['member', 'admin', 'super_admin'],
-    default: 'member'
+  // Legacy fields for backward compatibility
+  roles: {
+    type: [String],
+    default: []
   }
 }, {
   timestamps: true

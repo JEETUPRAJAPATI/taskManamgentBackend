@@ -264,15 +264,16 @@ export class AuthService {
     // Hash password
     const passwordHash = await this.hashPassword(password);
 
-    // Create actual user
+    // Create actual user as employee (individual registration)
     const user = await storage.createUser({
       email: pendingUser.email,
       firstName: pendingUser.firstName,
       lastName: pendingUser.lastName,
       passwordHash,
-      role: 'member',
+      role: 'employee',
       isActive: true,
-      emailVerified: true
+      emailVerified: true,
+      status: 'active'
     });
 
     // Remove pending user
@@ -392,16 +393,43 @@ export class AuthService {
     // Generate token
     const token = this.generateToken(user);
 
+    // Get organization info if user belongs to one
+    let organizationInfo = null;
+    if (user.organization) {
+      organizationInfo = await storage.getOrganization(user.organization);
+    }
+
+    // Determine redirect route based on role
+    const getRedirectRoute = (role) => {
+      switch (role) {
+        case 'superadmin':
+          return '/superadmin';
+        case 'admin':
+          return '/admin';
+        case 'employee':
+          return '/dashboard';
+        default:
+          return '/dashboard';
+      }
+    };
+
     return {
       message: 'Login successful',
       token,
+      redirectTo: getRedirectRoute(user.role),
       user: {
         id: user._id,
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
-        organizationId: user.organizationId
+        organizationId: user.organization,
+        permissions: user.permissions || [],
+        organization: organizationInfo ? {
+          id: organizationInfo._id,
+          name: organizationInfo.name,
+          slug: organizationInfo.slug
+        } : null
       }
     };
   }
