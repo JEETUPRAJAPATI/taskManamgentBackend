@@ -454,7 +454,16 @@ export class AuthService {
     });
 
     // Send reset email
-    await this.sendPasswordResetEmail(email, resetToken, user.firstName);
+    try {
+      const emailSent = await this.sendPasswordResetEmail(email, resetToken, user.firstName);
+      if (!emailSent) {
+        console.error('Failed to send password reset email to:', email);
+      } else {
+        console.log('Password reset email sent successfully to:', email);
+      }
+    } catch (error) {
+      console.error('Error sending password reset email:', error);
+    }
 
     return { message: 'If the email exists, a reset link has been sent' };
   }
