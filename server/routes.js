@@ -573,6 +573,40 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Validate invitation token
+  app.post("/api/auth/validate-invite-token", async (req, res) => {
+    try {
+      const { token } = req.body;
+      
+      if (!token) {
+        return res.status(400).json({ message: "Token is required" });
+      }
+
+      // Find user by invite token
+      const user = await storage.getUserByInviteToken(token);
+      if (!user) {
+        return res.status(400).json({ message: "Invalid or expired invitation" });
+      }
+
+      if (user.inviteTokenExpiry < new Date()) {
+        return res.status(400).json({ message: "Invitation has expired" });
+      }
+
+      // Get organization details
+      const organization = await storage.getOrganization(user.organization);
+      
+      res.json({
+        email: user.email,
+        role: user.role,
+        organizationName: organization.name,
+        organizationId: user.organization
+      });
+    } catch (error) {
+      console.error("Validate invite token error:", error);
+      res.status(500).json({ message: "Failed to validate invitation token" });
+    }
+  });
+
   // Accept invitation route
   app.post("/api/auth/accept-invite", async (req, res) => {
     try {
@@ -605,20 +639,20 @@ export async function registerRoutes(app) {
         inviteTokenExpiry: null
       });
 
-      const updatedUser = await storage.getUser(user._id);
-      const authToken = storage.generateToken(updatedUser);
+      const activatedUser = await storage.getUser(user._id);
+      const authToken = storage.generateToken(activatedUser);
 
       res.json({
         message: "Account activated successfully",
+        token: authToken,
         user: {
-          id: updatedUser._id,
-          email: updatedUser.email,
-          firstName: updatedUser.firstName,
-          lastName: updatedUser.lastName,
-          role: updatedUser.role,
-          organizationId: updatedUser.organization
-        },
-        token: authToken
+          id: activatedUser._id,
+          email: activatedUser.email,
+          firstName: activatedUser.firstName,
+          lastName: activatedUser.lastName,
+          role: activatedUser.role,
+          organizationId: activatedUser.organization
+        }
       });
     } catch (error) {
       console.error("Accept invite error:", error);
