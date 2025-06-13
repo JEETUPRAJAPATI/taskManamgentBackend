@@ -196,7 +196,7 @@ www.Tasksetu.com`
     }
 
     try {
-      const inviteUrl = `${this.baseUrl}/accept-invitation?token=${inviteToken}`;
+      const inviteUrl = `${this.baseUrl}/accept-invite?token=${inviteToken}`;
       
       const mailOptions = {
         to: email,
