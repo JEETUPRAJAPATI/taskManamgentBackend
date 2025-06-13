@@ -72,23 +72,128 @@
   --chart-4: 185 28 28; /* Strong red #b91c1c */
   --chart-5: 51 65 85; /* Strong gray #334155 */
   
-  /* Override default yellow colors */
-  --yellow-50: 241 245 249; /* Use slate-50 instead */
-  --yellow-100: 226 232 240; /* Use slate-200 instead */
-  --yellow-200: 203 213 225; /* Use slate-300 instead */
-  --yellow-300: 148 163 184; /* Use slate-400 instead */
-  --yellow-400: 100 116 139; /* Use slate-500 instead */
-  --yellow-500: 59 130 246; /* Use blue-500 instead */
-  --yellow-600: 59 130 246; /* Use blue-500 instead */
-  --yellow-700: 194 65 12; /* Use orange-700 instead */
-  --yellow-800: 154 52 18; /* Use orange-800 instead */
-  --yellow-900: 124 45 18; /* Use orange-900 instead */
+  /* Override default yellow colors with professional alternatives */
+  --yellow-50: 240 249 255; /* Use sky-50 instead */
+  --yellow-100: 224 242 254; /* Use sky-100 instead */
+  --yellow-200: 186 230 253; /* Use sky-200 instead */
+  --yellow-300: 125 211 252; /* Use sky-300 instead */
+  --yellow-400: 56 189 248; /* Use sky-400 instead */
+  --yellow-500: 14 165 233; /* Use sky-500 instead */
+  --yellow-600: 2 132 199; /* Use sky-600 instead */
+  --yellow-700: 3 105 161; /* Use sky-700 instead */
+  --yellow-800: 7 89 133; /* Use sky-800 instead */
+  --yellow-900: 12 74 110; /* Use sky-900 instead */
   
   /* Dropdown and popover specific styling */
   --dropdown: 255 255 255; /* Solid white dropdown #ffffff */
   --dropdown-foreground: 15 23 42; /* High contrast dropdown text #0f172a */
   --dropdown-hover: 248 250 252; /* Light hover background #f8fafc */
   --dropdown-border: 203 213 225; /* Clear border #cbd5e1 */
+  
+  /* Global yellow color overrides */
+  --warning: 249 115 22; /* Use orange-500 instead of yellow */
+  --warning-foreground: 255 255 255; /* White text on warning */
+  
+  /* Toast and notification styling */
+  --toast-background: 255 255 255; /* White background */
+  --toast-foreground: 15 23 42; /* Dark text */
+  --toast-border: 226 232 240; /* Light border */
+  --toast-success: 22 163 74; /* Green for success */
+  --toast-error: 239 68 68; /* Red for error */
+  --toast-warning: 249 115 22; /* Orange for warning */
+  --toast-info: 59 130 246; /* Blue for info */
+}
+
+/* Global color class overrides to eliminate yellow */
+.bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400 {
+  background-color: rgb(240 249 255) !important; /* sky-50 */
+}
+
+.bg-yellow-500, .bg-yellow-600 {
+  background-color: rgb(14 165 233) !important; /* sky-500 */
+}
+
+.bg-yellow-700, .bg-yellow-800, .bg-yellow-900 {
+  background-color: rgb(3 105 161) !important; /* sky-700 */
+}
+
+.text-yellow-50, .text-yellow-100, .text-yellow-200, .text-yellow-300, .text-yellow-400 {
+  color: rgb(7 89 133) !important; /* sky-800 */
+}
+
+.text-yellow-500, .text-yellow-600, .text-yellow-700, .text-yellow-800, .text-yellow-900 {
+  color: rgb(255 255 255) !important; /* white text */
+}
+
+.border-yellow-50, .border-yellow-100, .border-yellow-200, .border-yellow-300 {
+  border-color: rgb(186 230 253) !important; /* sky-200 */
+}
+
+.border-yellow-400, .border-yellow-500, .border-yellow-600, .border-yellow-700, .border-yellow-800, .border-yellow-900 {
+  border-color: rgb(14 165 233) !important; /* sky-500 */
+}
+
+/* Toast component improvements */
+[data-sonner-toast] {
+  background: rgb(255 255 255) !important;
+  border: 1px solid rgb(226 232 240) !important;
+  color: rgb(15 23 42) !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+  min-width: 300px !important;
+  max-width: 500px !important;
+  padding: 1rem !important;
+}
+
+[data-sonner-toast][data-type="success"] {
+  border-left: 4px solid rgb(22 163 74) !important;
+}
+
+[data-sonner-toast][data-type="error"] {
+  border-left: 4px solid rgb(239 68 68) !important;
+}
+
+[data-sonner-toast][data-type="warning"] {
+  border-left: 4px solid rgb(249 115 22) !important;
+}
+
+[data-sonner-toast][data-type="info"] {
+  border-left: 4px solid rgb(59 130 246) !important;
+}
+
+/* Targeted yellow color elimination */
+*[style*="background-color: yellow"], 
+*[style*="background: yellow"],
+*[class*="bg-yellow"],
+*[class*="bg-amber"] {
+  background-color: rgb(248 250 252) !important; /* slate-50 */
+  color: rgb(51 65 85) !important; /* slate-700 */
+}
+
+/* Override any remaining yellow variants */
+.bg-yellow-400, .bg-yellow-500 {
+  background-color: rgb(240 249 255) !important; /* sky-50 */
+}
+
+/* Fix card backgrounds without breaking other components */
+.card-enhanced, .card {
+  background-color: rgb(255 255 255) !important;
+  border: 1px solid rgb(226 232 240) !important;
+}
+
+/* Enhanced toast positioning and sizing */
+[data-sonner-toaster] {
+  top: 20px !important;
+  right: 20px !important;
+  z-index: 9999 !important;
+}
+
+[data-sonner-toast] {
+  min-width: 350px !important;
+  max-width: 450px !important;
+  padding: 16px !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
 }
 
 .light {
