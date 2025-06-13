@@ -1336,32 +1336,42 @@ export class MongoStorage {
 
   // User Invitation and Management Methods
   async inviteUserToOrganization(inviteData) {
-    const { email, organizationId, roles, invitedBy } = inviteData;
+    const { email, organizationId, roles, invitedBy, invitedByName, organizationName } = inviteData;
     
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      throw new Error('User with this email already exists');
+      // Skip existing users silently - they will be filtered out in the API
+      return null;
     }
 
-    // Generate invitation token
+    // Generate invitation token (48 hours expiry as requested)
     const inviteToken = crypto.randomBytes(32).toString('hex');
-    const inviteExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+    const inviteExpires = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48 hours
 
-    // Create invited user record
+    // Create invited user record with proper status
     const invitedUser = new User({
       email,
-      role: roles.includes('admin') ? 'admin' : 'member',
+      role: roles.includes('admin') || roles.includes('org_admin') ? 'admin' : 'member',
+      roles: roles, // Store full roles array
       organizationId,
+      status: 'pending',
       isActive: false,
       emailVerified: false,
       inviteToken,
       inviteExpires,
       invitedBy,
-      invitedAt: new Date()
+      invitedAt: new Date(),
+      firstName: '',
+      lastName: ''
     });
 
-    return await invitedUser.save();
+    const savedUser = await invitedUser.save();
+
+    // Send invitation email
+    await this.sendInvitationEmail(email, inviteToken, organizationName, roles, invitedByName);
+
+    return savedUser;
   }
 
   async getInvitedUser(token) {

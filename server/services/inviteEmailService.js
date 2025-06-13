@@ -19,17 +19,18 @@ class InviteEmailService {
     }
   }
 
-  async sendInvitationEmail(email, inviteToken, organizationName, role, invitedByName) {
+  async sendInvitationEmail(email, inviteToken, organizationName, roles, invitedByName) {
     if (!this.isConfigured) {
       throw new Error('Email service is not configured. Please check Mailtrap credentials.');
     }
 
-    const inviteUrl = `${process.env.CLIENT_URL || 'http://localhost:5000'}/accept-invitation?token=${inviteToken}`;
+    const inviteUrl = `https://25b3cec7-b6b2-48b7-a8f4-7ee8a9c12574-00-36vzyej2u9kbm.kirk.replit.dev/accept-invite?token=${inviteToken}`;
+    const rolesList = Array.isArray(roles) ? roles.join(', ') : roles;
     
     const mailOptions = {
       to: email,
       from: 'noreply@tasksetu.com',
-      subject: `Invitation to join ${organizationName} on TaskSetu`,
+      subject: `You're invited to join TaskSetu by ${organizationName}`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -38,16 +39,22 @@ class InviteEmailService {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Join ${organizationName} on TaskSetu</title>
           <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background-color: #f8fafc; }
-            .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
-            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background-color: #f8fafc; line-height: 1.6; }
+            .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+            .header { background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%); padding: 40px 30px; text-align: center; }
             .header h1 { color: #ffffff; margin: 0; font-size: 28px; font-weight: 600; }
-            .content { padding: 40px 30px; }
-            .invitation-box { background-color: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 30px; margin: 30px 0; text-align: center; }
-            .btn { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; margin: 20px 0; }
-            .btn:hover { opacity: 0.9; }
-            .details { background-color: #f1f5f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
-            .footer { background-color: #1e293b; color: #94a3b8; padding: 30px; text-align: center; font-size: 14px; }
+            .content { padding: 40px 30px; color: #374151; }
+            .greeting { font-size: 18px; margin-bottom: 24px; }
+            .invitation-text { font-size: 16px; margin-bottom: 30px; }
+            .btn-container { text-align: center; margin: 30px 0; }
+            .btn { display: inline-block; background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; transition: transform 0.2s; }
+            .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3); }
+            .features { background-color: #F8FAFC; padding: 24px; border-radius: 8px; margin: 24px 0; }
+            .features h3 { margin: 0 0 16px 0; color: #1F2937; font-size: 18px; }
+            .features ul { margin: 0; padding-left: 0; list-style: none; }
+            .features li { padding: 8px 0; color: #4B5563; }
+            .features li:before { content: "✓"; color: #10B981; font-weight: bold; margin-right: 12px; }
+            .footer { background-color: #F9FAFB; color: #6B7280; padding: 24px 30px; text-align: center; font-size: 14px; border-top: 1px solid #E5E7EB; }
             .footer a { color: #3b82f6; text-decoration: none; }
             h2 { color: #1e293b; margin: 0 0 16px 0; }
             p { color: #475569; line-height: 1.6; margin: 0 0 16px 0; }
@@ -65,26 +72,20 @@ class InviteEmailService {
               
               <p>Hello!</p>
               
-              <p><strong>${invitedByName}</strong> has invited you to join <strong>${organizationName}</strong> on TaskSetu as a <span class="highlight">${role}</span>.</p>
+              <p><strong>${invitedByName}</strong> has invited you to join <strong>${organizationName}</strong>'s workspace on TaskSetu.</p>
               
-              <div class="invitation-box">
-                <h3 style="color: #1e293b; margin: 0 0 16px 0;">Ready to get started?</h3>
-                <p style="margin-bottom: 24px;">Click the button below to accept your invitation and set up your account.</p>
+              <div class="btn-container">
                 <a href="${inviteUrl}" class="btn">Accept Invitation</a>
               </div>
               
-              <div class="details">
-                <h3 style="color: #1e293b; margin: 0 0 12px 0;">What happens next?</h3>
-                <ul style="color: #475569; padding-left: 20px; margin: 0;">
-                  <li>Click the invitation link to create your account</li>
-                  <li>Set up your password and complete your profile</li>
-                  <li>Start collaborating with your team immediately</li>
+              <div class="features">
+                <h3>Once inside, you'll be able to:</h3>
+                <ul>
+                  <li>Collaborate with your team</li>
+                  <li>Manage and follow up on tasks</li>
+                  <li>Stay on top of your deadlines</li>
                 </ul>
               </div>
-              
-              <p style="margin-top: 30px;"><strong>Organization:</strong> ${organizationName}</p>
-              <p><strong>Your Role:</strong> ${role}</p>
-              <p><strong>Invited by:</strong> ${invitedByName}</p>
               
               <p style="margin-top: 30px; font-size: 14px; color: #64748b;">This invitation will expire in 7 days. If you have any questions, please contact your organization administrator.</p>
             </div>
