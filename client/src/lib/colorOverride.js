@@ -1,34 +1,12 @@
-// Color Override Utility - Force Professional Color Palette
-// This utility forcefully removes all yellow colors and replaces them with professional alternatives
-
+// Professional color constants
 export const PROFESSIONAL_COLORS = {
-  // Professional Corporate Blue palette
-  primary: '#1e3a8a',      // Navy blue-800
-  secondary: '#2563eb',    // Blue-600
-  accent: '#3b82f6',       // Blue-500
-  success: '#15803d',      // Green-600
-  warning: '#2563eb',      // Blue-600 (NO ORANGE/YELLOW)
-  danger: '#dc2626',       // Red-600
-  info: '#0284c7',         // Sky-600
-  
-  // Text colors
-  textPrimary: '#1e293b',  // Slate-800
-  textSecondary: '#64748b', // Slate-500
-  textMuted: '#94a3b8',    // Slate-400
-  
-  // Background colors
-  bgPrimary: '#ffffff',    // White
-  bgSecondary: '#f8fafc',  // Slate-50
-  bgMuted: '#f1f5f9',      // Slate-100
-  
-  // Card backgrounds
-  cardBg: '#ffffff',       // White cards
-  cardBorder: '#e2e8f0',   // Light border
-  
-  // Professional blue shades for replacements
-  lightBlue: '#dbeafe',    // Blue-100
-  mediumBlue: '#93c5fd',   // Blue-300
-  darkBlue: '#1e40af',     // Blue-800
+  primary: '#1e3a8a',
+  secondary: '#2563eb', 
+  accent: '#3b82f6',
+  success: '#15803d',
+  warning: '#64748b',    // Use slate instead of yellow/orange
+  danger: '#dc2626',
+  info: '#0284c7',
 };
 
 // Function to replace unwanted colors with blue alternatives

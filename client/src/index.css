@@ -3,29 +3,31 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CRITICAL: Force override ALL yellow color variants with blue */
-:root,
-.light,
-.dark,
-* {
-  /* Force override ALL yellow Tailwind variables with blue */
-  --tw-color-yellow-50: 239 246 255 !important;
-  --tw-color-yellow-100: 219 234 254 !important;
-  --tw-color-yellow-200: 191 219 254 !important;
-  --tw-color-yellow-300: 147 197 253 !important;
-  --tw-color-yellow-400: 96 165 250 !important;
-  --tw-color-yellow-500: 59 130 246 !important;
-  --tw-color-yellow-600: 37 99 235 !important;
-  --tw-color-yellow-700: 29 78 216 !important;
-  --tw-color-yellow-800: 30 64 175 !important;
-  --tw-color-yellow-900: 30 58 138 !important;
+/* Professional color scheme - eliminate yellow/amber/bright colors */
+:root {
+  /* Replace yellow variants with professional slate/blue tones */
+  --yellow-50: 248 250 252;
+  --yellow-100: 241 245 249;
+  --yellow-200: 226 232 240;
+  --yellow-300: 203 213 225;
+  --yellow-400: 148 163 184;
+  --yellow-500: 100 116 139;
+  --yellow-600: 71 85 105;
+  --yellow-700: 51 65 85;
+  --yellow-800: 30 41 59;
+  --yellow-900: 15 23 42;
   
-  /* Override any possible yellow variations with blue */
-  --yellow: 59 130 246 !important;
-  --yellow-500: 59 130 246 !important;
-  --amber-500: 59 130 246 !important;
-  --amber-400: 96 165 250 !important;
-  --amber-300: 147 197 253 !important;
+  /* Replace amber variants with muted blue-gray */
+  --amber-50: 248 250 252;
+  --amber-100: 241 245 249;
+  --amber-200: 226 232 240;
+  --amber-300: 203 213 225;
+  --amber-400: 148 163 184;
+  --amber-500: 100 116 139;
+  --amber-600: 71 85 105;
+  --amber-700: 51 65 85;
+  --amber-800: 30 41 59;
+  --amber-900: 15 23 42;
 }
 
 :root {
@@ -537,7 +539,7 @@
   }
   
   .priority-high {
-    @apply bg-orange-100 text-orange-800 border border-orange-300 font-medium px-2 py-1 rounded-md text-xs;
+    @apply bg-indigo-100 text-indigo-800 border border-indigo-300 font-medium px-2 py-1 rounded-md text-xs;
   }
   
   .priority-urgent {
@@ -930,29 +932,17 @@
   .border-professional-green { border-color: #059669; }
   .border-professional-blue { border-color: #3b82f6; }
 
-  /* CRITICAL: Override ALL hover states to prevent yellow/orange colors */
-  .hover\:bg-yellow-50:hover,
-  .hover\:bg-yellow-100:hover,
-  .hover\:bg-yellow-200:hover,
-  .hover\:bg-yellow-300:hover,
-  .hover\:bg-yellow-400:hover,
-  .hover\:bg-yellow-500:hover,
-  .hover\:bg-yellow-600:hover,
-  .hover\:bg-orange-50:hover,
-  .hover\:bg-orange-100:hover,
-  .hover\:bg-orange-200:hover,
-  .hover\:bg-orange-300:hover,
-  .hover\:bg-orange-400:hover,
-  .hover\:bg-orange-500:hover,
-  .hover\:bg-orange-600:hover,
-  .hover\:border-yellow-300:hover,
-  .hover\:border-yellow-400:hover,
-  .hover\:border-yellow-500:hover,
-  .hover\:border-orange-300:hover,
-  .hover\:border-orange-400:hover,
-  .hover\:border-orange-500:hover {
-    background-color: rgb(59 130 246 / 0.1) !important; /* Light blue background */
-    border-color: rgb(59 130 246) !important; /* Blue border */
+  /* Professional hover states */
+  .hover\:bg-yellow-50:hover, .hover\:bg-yellow-100:hover, .hover\:bg-yellow-200:hover,
+  .hover\:bg-yellow-300:hover, .hover\:bg-yellow-400:hover, .hover\:bg-yellow-500:hover,
+  .hover\:bg-orange-50:hover, .hover\:bg-orange-100:hover, .hover\:bg-orange-200:hover,
+  .hover\:bg-orange-300:hover, .hover\:bg-orange-400:hover, .hover\:bg-orange-500:hover {
+    @apply hover:bg-slate-100;
+  }
+
+  .hover\:border-yellow-300:hover, .hover\:border-yellow-400:hover, .hover\:border-yellow-500:hover,
+  .hover\:border-orange-300:hover, .hover\:border-orange-400:hover, .hover\:border-orange-500:hover {
+    @apply hover:border-slate-300;
   }
 
   /* Force table row hover states to use blue */
@@ -1084,44 +1074,26 @@
   border: 0;
 }
 
-/* FORCE REMOVE ALL YELLOW COLORS - REPLACE WITH BLUE */
-.text-yellow-50,
-.text-yellow-100,
-.text-yellow-200,
-.text-yellow-300,
-.text-yellow-400,
-.text-yellow-500,
-.text-yellow-600,
-.text-yellow-700,
-.text-yellow-800,
-.text-yellow-900 {
-  color: rgb(59 130 246) !important; /* Force blue-500 */
+/* Clean professional color overrides */
+.text-yellow-50, .text-yellow-100, .text-yellow-200, .text-yellow-300, .text-yellow-400,
+.text-yellow-500, .text-yellow-600, .text-yellow-700, .text-yellow-800, .text-yellow-900,
+.text-amber-50, .text-amber-100, .text-amber-200, .text-amber-300, .text-amber-400,
+.text-amber-500, .text-amber-600, .text-amber-700, .text-amber-800, .text-amber-900 {
+  @apply text-slate-600;
 }
 
-.bg-yellow-50,
-.bg-yellow-100,
-.bg-yellow-200,
-.bg-yellow-300,
-.bg-yellow-400,
-.bg-yellow-500,
-.bg-yellow-600,
-.bg-yellow-700,
-.bg-yellow-800,
-.bg-yellow-900 {
-  background-color: rgb(219 234 254) !important; /* Force blue-100 */
+.bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400,
+.bg-yellow-500, .bg-yellow-600, .bg-yellow-700, .bg-yellow-800, .bg-yellow-900,
+.bg-amber-50, .bg-amber-100, .bg-amber-200, .bg-amber-300, .bg-amber-400,
+.bg-amber-500, .bg-amber-600, .bg-amber-700, .bg-amber-800, .bg-amber-900 {
+  @apply bg-slate-100;
 }
 
-.border-yellow-50,
-.border-yellow-100,
-.border-yellow-200,
-.border-yellow-300,
-.border-yellow-400,
-.border-yellow-500,
-.border-yellow-600,
-.border-yellow-700,
-.border-yellow-800,
-.border-yellow-900 {
-  border-color: rgb(147 197 253) !important; /* Force blue-300 */
+.border-yellow-50, .border-yellow-100, .border-yellow-200, .border-yellow-300, .border-yellow-400,
+.border-yellow-500, .border-yellow-600, .border-yellow-700, .border-yellow-800, .border-yellow-900,
+.border-amber-50, .border-amber-100, .border-amber-200, .border-amber-300, .border-amber-400,
+.border-amber-500, .border-amber-600, .border-amber-700, .border-amber-800, .border-amber-900 {
+  @apply border-slate-300;
 }
 
 /* Override any yellow variants in dark mode */
@@ -1274,26 +1246,9 @@ html body *.text-amber-800, html body *.text-amber-900 {
   color: rgb(59 130 246) !important;
 }
 
-html body *[style*="background"],
-html body *.bg-yellow-50, html body *.bg-yellow-100, html body *.bg-yellow-200,
-html body *.bg-yellow-300, html body *.bg-yellow-400, html body *.bg-yellow-500,
-html body *.bg-yellow-600, html body *.bg-yellow-700, html body *.bg-yellow-800,
-html body *.bg-yellow-900, html body *.bg-amber-50, html body *.bg-amber-100,
-html body *.bg-amber-200, html body *.bg-amber-300, html body *.bg-amber-400,
-html body *.bg-amber-500, html body *.bg-amber-600, html body *.bg-amber-700,
-html body *.bg-amber-800, html body *.bg-amber-900 {
-  background-color: rgb(219 234 254) !important;
-}
-
-/* Override any remaining yellow classes with maximum CSS specificity */
-html body div.bg-yellow-500,
-html body span.text-yellow-500,
-html body button.bg-yellow-500,
-html body .warning,
-html body .alert-warning {
-  background-color: rgb(219 234 254) !important;
-  color: rgb(59 130 246) !important;
-  border-color: rgb(147 197 253) !important;
+/* Professional warning and alert styles */
+.warning, .alert-warning {
+  @apply bg-slate-50 text-slate-700 border-slate-200;
 }
 
 .bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400,
@@ -1351,16 +1306,15 @@ html body .alert-warning {
   @apply bg-primary text-primary-foreground font-semibold;
 }
 
-/* Override any computed yellow styles - Replace with blue */
-* {
-  --yellow-50: rgb(239 246 255) !important;
-  --yellow-100: rgb(219 234 254) !important;
-  --yellow-200: rgb(191 219 254) !important;
-  --yellow-300: rgb(147 197 253) !important;
-  --yellow-400: rgb(96 165 250) !important;
-  --yellow-500: rgb(59 130 246) !important;
-  --yellow-600: rgb(37 99 235) !important;
-  --yellow-700: rgb(29 78 216) !important;
-  --yellow-800: rgb(30 64 175) !important;
-  --yellow-900: rgb(30 58 138) !important;
+/* Professional color utilities */
+.text-warning {
+  @apply text-slate-600;
+}
+
+.bg-warning {
+  @apply bg-slate-100;
+}
+
+.border-warning {
+  @apply border-slate-300;
 }
