@@ -368,6 +368,8 @@ export function InviteUsersModal({ isOpen, onClose }) {
         title: "License limit exceeded",
         description: `You need ${totalLicensesNeeded} licenses but only have ${licenseInfo.availableSlots} available. Upgrade your plan or reduce invitations.`,
         variant: "destructive",
+        className: "border-red-200 bg-red-50 text-red-800 shadow-lg",
+        duration: 6000,
       });
       return;
     }

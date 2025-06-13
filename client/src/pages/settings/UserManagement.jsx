@@ -75,8 +75,10 @@ export default function UserManagement() {
     },
     onSuccess: () => {
       toast({
-        title: "User deactivated",
-        description: "User has been successfully deactivated",
+        title: "User deactivated successfully",
+        description: "User has been deactivated and removed from active access",
+        className: "border-emerald-200 bg-emerald-50 text-emerald-800 shadow-lg",
+        duration: 5000,
       });
       queryClient.invalidateQueries({ queryKey: ["/api/organization/users-detailed"] });
       queryClient.invalidateQueries({ queryKey: ["/api/organization/license"] });
@@ -86,6 +88,8 @@ export default function UserManagement() {
         title: "Failed to deactivate user",
         description: error.message,
         variant: "destructive",
+        className: "border-red-200 bg-red-50 text-red-800 shadow-lg",
+        duration: 6000,
       });
     },
   });
@@ -110,16 +114,19 @@ export default function UserManagement() {
     },
     onSuccess: () => {
       toast({
-        title: "Invite resent",
-        description: "Invitation email has been resent successfully",
-        className: "border-emerald-200 bg-emerald-50 text-emerald-800",
+        title: "Invitation resent successfully",
+        description: "Invitation email has been resent to the user",
+        className: "border-emerald-200 bg-emerald-50 text-emerald-800 shadow-lg",
+        duration: 5000,
       });
     },
     onError: (error) => {
       toast({
-        title: "Failed to resend invite",
+        title: "Failed to resend invitation",
         description: error.message,
         variant: "destructive",
+        className: "border-red-200 bg-red-50 text-red-800 shadow-lg",
+        duration: 6000,
       });
     },
   });
@@ -132,7 +139,7 @@ export default function UserManagement() {
       case "invited":
         return <Badge variant="secondary" className="bg-slate-50 text-slate-700 border-slate-200"><Mail className="h-3 w-3 mr-1" />Invited</Badge>;
       case "pending":
-        return <Badge variant="secondary" className="bg-amber-50 text-amber-700 border-amber-200"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
+        return <Badge variant="secondary" className="bg-slate-50 text-slate-700 border-slate-200"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
       case "inactive":
       case "deactivated":
         return <Badge variant="secondary" className="bg-gray-50 text-gray-700 border-gray-200"><UserX className="h-3 w-3 mr-1" />Inactive</Badge>;
