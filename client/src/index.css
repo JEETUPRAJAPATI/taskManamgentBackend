@@ -38,39 +38,39 @@
   --card-foreground: 15 23 42; /* High contrast card text #0f172a */
   --popover: 255 255 255; /* White popover #ffffff */
   --popover-foreground: 15 23 42; /* High contrast popover text #0f172a */
-  --primary: 51 65 85; /* Professional slate-700 #334155 */
+  --primary: 30 58 138; /* Professional blue-800 #1e3a8a */
   --primary-foreground: 255 255 255; /* White text on primary #ffffff */
   --secondary: 248 250 252; /* Very light background #f8fafc */
   --secondary-foreground: 15 23 42; /* High contrast text #0f172a */
   --muted: 241 245 249; /* Light muted background #f1f5f9 */
   --muted-foreground: 71 85 105; /* Professional gray text #475569 */
-  --accent: 71 85 105; /* Professional slate-600 #475569 */
-  --accent-foreground: 255 255 255; /* White text on slate #ffffff */
-  --destructive: 127 29 29; /* Muted red #7f1d1d */
+  --accent: 59 130 246; /* Professional blue-500 #3b82f6 */
+  --accent-foreground: 255 255 255; /* White text on blue #ffffff */
+  --destructive: 185 28 28; /* Professional red #b91c1c */
   --destructive-foreground: 255 255 255; /* White text on red #ffffff */
-  --success: 22 78 41; /* Muted green #164e29 */
+  --success: 34 197 94; /* Professional green-500 #22c55e */
   --success-foreground: 255 255 255; /* White text on green #ffffff */
   --border: 203 213 225; /* Clear border #cbd5e1 */
   --input: 255 255 255; /* White input background #ffffff */
   --ring: 30 64 175; /* Strong blue focus ring #1e40af */
   --radius: 0.5rem;
   
-  /* Sidebar colors - Professional Muted */
+  /* Sidebar colors - Professional Navy & Blue */
   --sidebar-background: 15 23 42; /* Dark navy sidebar #0f172a */
   --sidebar-foreground: 255 255 255; /* White sidebar text #ffffff */
-  --sidebar-primary: 71 85 105; /* Professional slate-600 #475569 */
+  --sidebar-primary: 59 130 246; /* Professional blue-500 #3b82f6 */
   --sidebar-primary-foreground: 255 255 255; /* White text on primary #ffffff */
-  --sidebar-accent: 100 116 139; /* Muted slate-500 #64748b */
-  --sidebar-accent-foreground: 255 255 255; /* White text on slate #ffffff */
+  --sidebar-accent: 96 165 250; /* Light blue-400 #60a5fa */
+  --sidebar-accent-foreground: 255 255 255; /* White text on blue #ffffff */
   --sidebar-border: 30 41 59; /* Dark border #1e293b */
-  --sidebar-ring: 71 85 105; /* Slate focus ring #475569 */
+  --sidebar-ring: 59 130 246; /* Blue focus ring #3b82f6 */
   
-  /* Chart colors - Professional Muted palette */
-  --chart-1: 71 85 105; /* Professional slate-600 #475569 */
-  --chart-2: 100 116 139; /* Muted slate-500 #64748b */
-  --chart-3: 55 65 81; /* Professional gray-700 #374151 */
-  --chart-4: 107 114 128; /* Muted gray-500 #6b7280 */
-  --chart-5: 156 163 175; /* Light gray-400 #9ca3af */
+  /* Chart colors - Professional Business palette */
+  --chart-1: 59 130 246; /* Professional blue-500 #3b82f6 */
+  --chart-2: 20 184 166; /* Professional teal-500 #14b8a6 */
+  --chart-3: 139 69 19; /* Professional amber-800 #92400e */
+  --chart-4: 101 163 13; /* Professional lime-600 #65a30d */
+  --chart-5: 147 51 234; /* Professional purple-600 #9333ea */
   
   /* Override default yellow colors with professional alternatives */
   --yellow-50: 240 249 255; /* Use sky-50 instead */
@@ -476,48 +476,7 @@
   --tw-bg-yellow-800: 248 250 252 !important;
   --tw-bg-yellow-900: 248 250 252 !important;
   
-  /* Override all bright colors with professional grays */
-  --tw-text-green-50: 71 85 105 !important;
-  --tw-text-green-100: 71 85 105 !important;
-  --tw-text-green-200: 71 85 105 !important;
-  --tw-text-green-300: 71 85 105 !important;
-  --tw-text-green-400: 71 85 105 !important;
-  --tw-text-green-500: 71 85 105 !important;
-  --tw-text-green-600: 71 85 105 !important;
-  --tw-text-green-700: 71 85 105 !important;
-  --tw-text-green-800: 71 85 105 !important;
-  --tw-text-green-900: 71 85 105 !important;
-  --tw-bg-green-50: 241 245 249 !important;
-  --tw-bg-green-100: 241 245 249 !important;
-  --tw-bg-green-200: 241 245 249 !important;
-  --tw-bg-green-300: 241 245 249 !important;
-  --tw-bg-green-400: 241 245 249 !important;
-  --tw-bg-green-500: 241 245 249 !important;
-  --tw-bg-green-600: 241 245 249 !important;
-  --tw-bg-green-700: 241 245 249 !important;
-  --tw-bg-green-800: 241 245 249 !important;
-  --tw-bg-green-900: 241 245 249 !important;
-  
-  --tw-text-blue-50: 71 85 105 !important;
-  --tw-text-blue-100: 71 85 105 !important;
-  --tw-text-blue-200: 71 85 105 !important;
-  --tw-text-blue-300: 71 85 105 !important;
-  --tw-text-blue-400: 71 85 105 !important;
-  --tw-text-blue-500: 71 85 105 !important;
-  --tw-text-blue-600: 71 85 105 !important;
-  --tw-text-blue-700: 71 85 105 !important;
-  --tw-text-blue-800: 71 85 105 !important;
-  --tw-text-blue-900: 71 85 105 !important;
-  --tw-bg-blue-50: 241 245 249 !important;
-  --tw-bg-blue-100: 241 245 249 !important;
-  --tw-bg-blue-200: 241 245 249 !important;
-  --tw-bg-blue-300: 241 245 249 !important;
-  --tw-bg-blue-400: 241 245 249 !important;
-  --tw-bg-blue-500: 241 245 249 !important;
-  --tw-bg-blue-600: 241 245 249 !important;
-  --tw-bg-blue-700: 241 245 249 !important;
-  --tw-bg-blue-800: 241 245 249 !important;
-  --tw-bg-blue-900: 241 245 249 !important;
+  /* Keep professional color palette available */
 }
   
   /* Navigation active state */
@@ -670,28 +629,28 @@
   }
   
   .status-completed {
-    @apply bg-slate-100 text-slate-800 border border-slate-300 font-medium px-2 py-1 rounded-md text-xs;
+    @apply bg-green-100 text-green-800 border border-green-300 font-medium px-2 py-1 rounded-md text-xs;
   }
   
   .status-done {
-    @apply bg-slate-100 text-slate-800 border border-slate-300 font-medium px-2 py-1 rounded-md text-xs;
+    @apply bg-green-100 text-green-800 border border-green-300 font-medium px-2 py-1 rounded-md text-xs;
   }
   
-  /* Priority badges - Professional Muted Colors */
+  /* Priority badges - Professional Business Colors */
   .priority-low {
-    @apply bg-slate-100 text-slate-800 border border-slate-300 font-medium px-2 py-1 rounded-md text-xs;
+    @apply bg-emerald-100 text-emerald-800 border border-emerald-300 font-medium px-2 py-1 rounded-md text-xs;
   }
   
   .priority-medium {
-    @apply bg-slate-200 text-slate-800 border border-slate-400 font-medium px-2 py-1 rounded-md text-xs;
+    @apply bg-blue-100 text-blue-800 border border-blue-300 font-medium px-2 py-1 rounded-md text-xs;
   }
   
   .priority-high {
-    @apply bg-slate-300 text-slate-900 border border-slate-500 font-medium px-2 py-1 rounded-md text-xs;
+    @apply bg-amber-100 text-amber-800 border border-amber-300 font-medium px-2 py-1 rounded-md text-xs;
   }
   
   .priority-urgent {
-    @apply bg-slate-400 text-slate-900 border border-slate-600 font-medium px-2 py-1 rounded-md text-xs;
+    @apply bg-red-100 text-red-800 border border-red-300 font-medium px-2 py-1 rounded-md text-xs;
   }
 
   /* Light theme variants - High Contrast WCAG AAA */

@@ -93,8 +93,8 @@ export default function Dashboard() {
       value: stats.totalTasks,
       description: "Active tasks in system",
       icon: CheckSquare,
-      color: "text-slate-600",
-      bgColor: "bg-slate-50",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
       change: "+12%",
       changeType: "positive"
     },
@@ -103,8 +103,8 @@ export default function Dashboard() {
       value: stats.completedTasks,
       description: "Tasks finished this month",
       icon: CheckCircle,
-      color: "text-slate-600",
-      bgColor: "bg-slate-50",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
       change: "+8%",
       changeType: "positive"
     },
@@ -113,8 +113,8 @@ export default function Dashboard() {
       value: stats.totalUsers,
       description: "Registered users",
       icon: Users,
-      color: "text-slate-600",
-      bgColor: "bg-slate-50",
+      color: "text-purple-600",
+      bgColor: "bg-purple-50",
       change: "+15%",
       changeType: "positive"
     },
@@ -123,8 +123,8 @@ export default function Dashboard() {
       value: stats.totalCompanies,
       description: "Registered companies",
       icon: Building2,
-      color: "text-slate-600",
-      bgColor: "bg-slate-50",
+      color: "text-teal-600",
+      bgColor: "bg-teal-50",
       change: "+25%",
       changeType: "positive"
     }
@@ -136,16 +136,16 @@ export default function Dashboard() {
       value: `$${(stats.monthlyRevenue / 100).toLocaleString()}`,
       description: "Total revenue this month",
       icon: CreditCard,
-      color: "text-slate-600",
-      bgColor: "bg-slate-50"
+      color: "text-emerald-600",
+      bgColor: "bg-emerald-50"
     },
     {
       title: "Active Subscriptions",
       value: stats.activeSubscriptions,
       description: "Current paying customers",
       icon: TrendingUp,
-      color: "text-slate-600",
-      bgColor: "bg-slate-50"
+      color: "text-indigo-600",
+      bgColor: "bg-indigo-50"
     }
   ];
 
@@ -197,7 +197,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <div className="mt-6 flex items-center justify-between">
-                  <Badge variant="secondary" className="text-xs font-medium bg-slate-100 text-slate-700">
+                  <Badge variant="secondary" className={`text-xs font-medium ${card.bgColor} ${card.color.replace('text-', 'text-')}`}>
                     {card.change}
                   </Badge>
                   <span className="text-xs text-slate-500">vs last month</span>
