@@ -348,29 +348,29 @@
     @apply bg-slate-100 dark:bg-slate-700 !important;
   }
 
-  /* Force override all yellow colors globally */
-  * {
-    --tw-text-yellow-50: 241 245 249 !important;
-    --tw-text-yellow-100: 226 232 240 !important;
-    --tw-text-yellow-200: 203 213 225 !important;
-    --tw-text-yellow-300: 148 163 184 !important;
-    --tw-text-yellow-400: 100 116 139 !important;
-    --tw-text-yellow-500: 59 130 246 !important;
-    --tw-text-yellow-600: 59 130 246 !important;
-    --tw-text-yellow-700: 194 65 12 !important;
-    --tw-text-yellow-800: 154 52 18 !important;
-    --tw-text-yellow-900: 124 45 18 !important;
-    --tw-bg-yellow-50: 241 245 249 !important;
-    --tw-bg-yellow-100: 226 232 240 !important;
-    --tw-bg-yellow-200: 203 213 225 !important;
-    --tw-bg-yellow-300: 148 163 184 !important;
-    --tw-bg-yellow-400: 100 116 139 !important;
-    --tw-bg-yellow-500: 59 130 246 !important;
-    --tw-bg-yellow-600: 59 130 246 !important;
-    --tw-bg-yellow-700: 194 65 12 !important;
-    --tw-bg-yellow-800: 154 52 18 !important;
-    --tw-bg-yellow-900: 124 45 18 !important;
-  }
+  /* Professional color variables override */
+* {
+  --tw-text-yellow-50: 71 85 105 !important;
+  --tw-text-yellow-100: 71 85 105 !important;
+  --tw-text-yellow-200: 71 85 105 !important;
+  --tw-text-yellow-300: 71 85 105 !important;
+  --tw-text-yellow-400: 71 85 105 !important;
+  --tw-text-yellow-500: 71 85 105 !important;
+  --tw-text-yellow-600: 71 85 105 !important;
+  --tw-text-yellow-700: 71 85 105 !important;
+  --tw-text-yellow-800: 71 85 105 !important;
+  --tw-text-yellow-900: 71 85 105 !important;
+  --tw-bg-yellow-50: 248 250 252 !important;
+  --tw-bg-yellow-100: 248 250 252 !important;
+  --tw-bg-yellow-200: 248 250 252 !important;
+  --tw-bg-yellow-300: 248 250 252 !important;
+  --tw-bg-yellow-400: 248 250 252 !important;
+  --tw-bg-yellow-500: 248 250 252 !important;
+  --tw-bg-yellow-600: 248 250 252 !important;
+  --tw-bg-yellow-700: 248 250 252 !important;
+  --tw-bg-yellow-800: 248 250 252 !important;
+  --tw-bg-yellow-900: 248 250 252 !important;
+}
   
   /* Navigation active state */
   .nav-item-active {
@@ -1113,143 +1113,43 @@
   @apply bg-slate-700;
 }
 
-/* Force override inline styles that might use yellow */
-[style*="yellow"],
-[style*="#FFD700"],
-[style*="#FFFF00"],
-[style*="#FFF700"],
-[style*="rgb(255, 255, 0)"],
-[style*="rgb(255, 215, 0)"] {
-  color: rgb(59 130 246) !important;
-  background-color: rgb(219 234 254) !important;
+/* Professional color overrides */
+[style*="yellow"], [style*="#FFD700"], [style*="#FFFF00"], [style*="#FFF700"],
+[style*="rgb(255, 255, 0)"], [style*="rgb(255, 215, 0)"] {
+  color: rgb(71 85 105) !important; /* slate-600 */
+  background-color: rgb(248 250 252) !important; /* slate-50 */
 }
 
-/* ULTIMATE COLOR OVERRIDE - Replace all unwanted colors with professional blue */
+/* Clean professional color overrides */
 .text-yellow-50, .text-yellow-100, .text-yellow-200, .text-yellow-300, .text-yellow-400,
 .text-yellow-500, .text-yellow-600, .text-yellow-700, .text-yellow-800, .text-yellow-900,
-.text-orange-50, .text-orange-100, .text-orange-200, .text-orange-300, .text-orange-400,
-.text-orange-500, .text-orange-600, .text-orange-700, .text-orange-800, .text-orange-900,
 .text-amber-50, .text-amber-100, .text-amber-200, .text-amber-300, .text-amber-400,
-.text-amber-500, .text-amber-600, .text-amber-700, .text-amber-800, .text-amber-900,
+.text-amber-500, .text-amber-600, .text-amber-700, .text-amber-800, .text-amber-900 {
+  @apply text-slate-600;
+}
+
 .bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400,
 .bg-yellow-500, .bg-yellow-600, .bg-yellow-700, .bg-yellow-800, .bg-yellow-900,
-.bg-orange-50, .bg-orange-100, .bg-orange-200, .bg-orange-300, .bg-orange-400,
-.bg-orange-500, .bg-orange-600, .bg-orange-700, .bg-orange-800, .bg-orange-900,
 .bg-amber-50, .bg-amber-100, .bg-amber-200, .bg-amber-300, .bg-amber-400,
-.bg-amber-500, .bg-amber-600, .bg-amber-700, .bg-amber-800, .bg-amber-900,
+.bg-amber-500, .bg-amber-600, .bg-amber-700, .bg-amber-800, .bg-amber-900 {
+  @apply bg-slate-50;
+}
+
 .border-yellow-50, .border-yellow-100, .border-yellow-200, .border-yellow-300, .border-yellow-400,
 .border-yellow-500, .border-yellow-600, .border-yellow-700, .border-yellow-800, .border-yellow-900,
-.border-orange-50, .border-orange-100, .border-orange-200, .border-orange-300, .border-orange-400,
-.border-orange-500, .border-orange-600, .border-orange-700, .border-orange-800, .border-orange-900,
 .border-amber-50, .border-amber-100, .border-amber-200, .border-amber-300, .border-amber-400,
-.border-amber-500, .border-amber-600, .border-amber-700, .border-amber-800, .border-amber-900,
-[class*="yellow"],
-[class*="amber"],
-[class*="orange"],
-[class*="brown"],
-h1[style*="color: yellow"], h1[style*="color:#FFD700"], h1[style*="color: orange"],
-h2[style*="color: yellow"], h2[style*="color:#FFD700"], h2[style*="color: orange"],
-h3[style*="color: yellow"], h3[style*="color:#FFD700"], h3[style*="color: orange"],
-p[style*="color: yellow"], p[style*="color:#FFD700"], p[style*="color: orange"],
-span[style*="color: yellow"], span[style*="color:#FFD700"], span[style*="color: orange"],
-div[style*="color: yellow"], div[style*="color:#FFD700"], div[style*="color: orange"],
-*[style*="color: yellow"], *[style*="color:#FFD700"], *[style*="color: orange"],
-*[style*="color:#FFFF00"], *[style*="color:#FFA500"], *[style*="color:#FF8C00"] {
-  color: rgb(37 99 235) !important; /* Professional blue */
+.border-amber-500, .border-amber-600, .border-amber-700, .border-amber-800, .border-amber-900 {
+  @apply border-slate-300;
 }
 
-/* NUCLEAR OPTION - Override ALL possible yellow/amber color variations */
-* {
-  /* Override any computed yellow colors */
-  --yellow: rgb(59 130 246) !important;
-  --amber: rgb(59 130 246) !important;
-  --orange: rgb(59 130 246) !important;
-  
-  /* Override Tailwind CSS variables completely */
-  --tw-color-yellow: 59 130 246 !important;
-  --tw-color-amber: 59 130 246 !important;
-  --tw-color-orange: 59 130 246 !important;
-}
-
-/* Force override any remaining yellow class patterns */
-[class*="yellow"] {
-  color: rgb(59 130 246) !important;
-  background-color: rgb(219 234 254) !important;
-  border-color: rgb(147 197 253) !important;
-}
-
-[class*="amber"] {
-  color: rgb(59 130 246) !important;
-  background-color: rgb(219 234 254) !important;
-  border-color: rgb(147 197 253) !important;
-}
-
-/* Override any inline styles with yellow colors */
-*[style*="yellow"] {
-  color: rgb(59 130 246) !important;
-  background-color: rgb(219 234 254) !important;
-  border-color: rgb(147 197 253) !important;
-}
-
-*[style*="amber"] {
-  color: rgb(59 130 246) !important;
-  background-color: rgb(219 234 254) !important;
-  border-color: rgb(147 197 253) !important;
-}
-
-/* Override hex color variations of yellow */
-*[style*="#fff"] {
-  color: rgb(59 130 246) !important;
-  background-color: rgb(219 234 254) !important;
-}
-
-*[style*="#ffe"] {
-  color: rgb(59 130 246) !important;
-  background-color: rgb(219 234 254) !important;
-}
-
-*[style*="#ffd"] {
-  color: rgb(59 130 246) !important;
-  background-color: rgb(219 234 254) !important;
-}
-
-*[style*="#ffc"] {
-  color: rgb(59 130 246) !important;
-  background-color: rgb(219 234 254) !important;
-}
-
-/* FINAL NUCLEAR OVERRIDE - Maximum specificity to eliminate ALL yellow variants */
-
-html body *[style*="yellow"],
-html body *[style*="amber"],
-html body *[style*="#ff"],
-html body *[style*="#fe"],
-html body *[style*="#fd"],
-html body *[style*="rgb(255"],
-html body *.text-yellow-50, html body *.text-yellow-100, html body *.text-yellow-200, 
-html body *.text-yellow-300, html body *.text-yellow-400, html body *.text-yellow-500,
-html body *.text-yellow-600, html body *.text-yellow-700, html body *.text-yellow-800, 
-html body *.text-yellow-900, html body *.text-amber-50, html body *.text-amber-100,
-html body *.text-amber-200, html body *.text-amber-300, html body *.text-amber-400,
-html body *.text-amber-500, html body *.text-amber-600, html body *.text-amber-700,
-html body *.text-amber-800, html body *.text-amber-900 {
-  color: rgb(59 130 246) !important;
+/* Clean yellow color overrides */
+[class*="yellow"], [class*="amber"] {
+  @apply text-slate-600 bg-slate-50 border-slate-300;
 }
 
 /* Professional warning and alert styles */
 .warning, .alert-warning {
   @apply bg-slate-50 text-slate-700 border-slate-200;
-}
-
-.bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400,
-.bg-yellow-500, .bg-yellow-600, .bg-yellow-700, .bg-yellow-800, .bg-yellow-900,
-.bg-orange-50, .bg-orange-100, .bg-orange-200, .bg-orange-300, .bg-orange-400,
-.bg-orange-500, .bg-orange-600, .bg-orange-700, .bg-orange-800, .bg-orange-900,
-*[style*="background-color: yellow"], *[style*="background-color:#FFD700"],
-*[style*="background-color: orange"], *[style*="background-color:#FFA500"],
-*[style*="background-color:#FFFF00"], *[style*="background-color:#FF8C00"] {
-  background-color: rgb(219 234 254) !important; /* Light blue background */
-  border-color: rgb(37 99 235) !important; /* Blue border */
 }
 
 /* High Contrast Form Controls and Inputs */
