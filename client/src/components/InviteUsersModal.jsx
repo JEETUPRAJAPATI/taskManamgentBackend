@@ -293,9 +293,10 @@ export function InviteUsersModal({ isOpen, onClose }) {
     },
     onSuccess: (data) => {
       toast({
-        title: "Invitations sent",
-        description: `${data.successCount || 0} invitations were sent successfully`,
-        className: "border-emerald-200 bg-emerald-50 text-emerald-800",
+        title: "Invitations sent successfully",
+        description: `${data.successCount || 0} invitation${data.successCount === 1 ? '' : 's'} sent to new users`,
+        className: "border-emerald-200 bg-emerald-50 text-emerald-800 shadow-lg",
+        duration: 5000,
       });
       onClose();
       queryClient.invalidateQueries({ queryKey: ["/api/organization/users-detailed"] });
@@ -306,6 +307,8 @@ export function InviteUsersModal({ isOpen, onClose }) {
         title: "Failed to send invitations",
         description: error.message,
         variant: "destructive",
+        className: "border-red-200 bg-red-50 text-red-800 shadow-lg",
+        duration: 6000,
       });
     },
   });
@@ -346,9 +349,11 @@ export function InviteUsersModal({ isOpen, onClose }) {
 
     if (validInvites.length === 0) {
       toast({
-        title: "No valid invitations",
+        title: "No valid invitations to send",
         description: "Please enter at least one valid email address with proper roles assigned.",
         variant: "destructive",
+        className: "border-red-200 bg-red-50 text-red-800 shadow-lg",
+        duration: 5000,
       });
       return;
     }
@@ -488,22 +493,28 @@ export function InviteUsersModal({ isOpen, onClose }) {
                     {/* Display all validation errors */}
                     <div className="space-y-1">
                       {invite.emailError && (
-                        <p className="text-sm text-red-700 flex items-center mt-1">
-                          <AlertCircle className="h-3 w-3 mr-1" />
-                          {invite.emailError}
-                        </p>
+                        <div className="bg-red-50 border border-red-200 rounded-md p-2 mt-1">
+                          <p className="text-sm text-red-700 flex items-center">
+                            <AlertCircle className="h-3 w-3 mr-1 text-red-500" />
+                            {invite.emailError}
+                          </p>
+                        </div>
                       )}
                       {invite.existsError && (
-                        <p className="text-sm text-amber-700 flex items-center mt-1">
-                          <AlertCircle className="h-3 w-3 mr-1" />
-                          {invite.existsError}
-                        </p>
+                        <div className="bg-slate-50 border border-slate-200 rounded-md p-2 mt-1">
+                          <p className="text-sm text-slate-700 flex items-center">
+                            <AlertCircle className="h-3 w-3 mr-1 text-slate-500" />
+                            {invite.existsError}
+                          </p>
+                        </div>
                       )}
                       {invite.licenseError && (
-                        <p className="text-sm text-red-700 flex items-center mt-1">
-                          <AlertCircle className="h-3 w-3 mr-1" />
-                          {invite.licenseError}
-                        </p>
+                        <div className="bg-red-50 border border-red-200 rounded-md p-2 mt-1">
+                          <p className="text-sm text-red-700 flex items-center">
+                            <AlertCircle className="h-3 w-3 mr-1 text-red-500" />
+                            {invite.licenseError}
+                          </p>
+                        </div>
                       )}
                     </div>
                   </div>
