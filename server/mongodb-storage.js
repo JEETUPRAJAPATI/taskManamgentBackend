@@ -1338,11 +1338,15 @@ export class MongoStorage {
   async inviteUserToOrganization(inviteData) {
     const { email, organizationId, roles, invitedBy, invitedByName, organizationName } = inviteData;
     
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    // Check if user already exists in this organization (active or invited)
+    const existingUser = await User.findOne({ 
+      email: email.toLowerCase(),
+      organization: organizationId 
+    });
+    
     if (existingUser) {
-      // Skip existing users silently - they will be filtered out in the API
-      return null;
+      // Return error for duplicate validation
+      throw new Error(`${email} is already invited to your organization.`);
     }
 
     // Generate invitation token (48 hours expiry as requested)

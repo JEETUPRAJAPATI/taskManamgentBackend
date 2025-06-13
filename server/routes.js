@@ -784,6 +784,31 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Revoke invitation
+  app.delete("/api/organization/revoke-invite/:userId", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
+    try {
+      const { userId } = req.params;
+      
+      // Get user details
+      const user = await storage.getUser(userId);
+      if (!user || user.organization.toString() !== req.user.organizationId) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      if (user.status !== 'invited') {
+        return res.status(400).json({ message: "Only invited users can be revoked" });
+      }
+
+      // Delete the invited user
+      await storage.deleteUser(userId);
+
+      res.json({ message: "Invitation revoked successfully" });
+    } catch (error) {
+      console.error("Revoke invite error:", error);
+      res.status(500).json({ message: "Failed to revoke invitation" });
+    }
+  });
+
   // Dashboard routes
   app.get("/api/dashboard/stats", authenticateToken, async (req, res) => {
     try {
