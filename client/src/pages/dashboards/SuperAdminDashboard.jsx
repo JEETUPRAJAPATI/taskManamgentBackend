@@ -94,7 +94,7 @@ export default function SuperAdminDashboard() {
                   <Settings className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-green-600">Healthy</div>
+                  <div className="text-2xl font-bold text-slate-600">Healthy</div>
                   <p className="text-xs text-muted-foreground">
                     99.9% uptime
                   </p>
