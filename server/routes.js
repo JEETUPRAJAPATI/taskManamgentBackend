@@ -1185,6 +1185,105 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Deactivate user endpoint
+  app.put("/api/organization/users/:userId/deactivate", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
+    try {
+      const { userId } = req.params;
+      
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+
+      // Get user to verify they belong to the organization
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      if (user.organizationId !== req.user.organizationId) {
+        return res.status(403).json({ message: "Access denied. User not in your organization" });
+      }
+
+      // Prevent self-deactivation
+      if (userId === req.user.id) {
+        return res.status(400).json({ message: "Cannot deactivate your own account" });
+      }
+
+      // Update user status to deactivated
+      await storage.updateUser(userId, { 
+        status: "deactivated",
+        deactivatedAt: new Date(),
+        deactivatedBy: req.user.id
+      });
+
+      res.json({ 
+        message: "User deactivated successfully",
+        userId: userId
+      });
+
+    } catch (error) {
+      console.error("Deactivate user error:", error);
+      res.status(500).json({ message: "Failed to deactivate user" });
+    }
+  });
+
+  // Resend invite endpoint
+  app.post("/api/organization/users/:userId/resend-invite", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
+    try {
+      const { userId } = req.params;
+      
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+
+      // Get user to verify they belong to the organization and are pending
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      if (user.organizationId !== req.user.organizationId) {
+        return res.status(403).json({ message: "Access denied. User not in your organization" });
+      }
+
+      if (user.status !== "pending") {
+        return res.status(400).json({ message: "User is not in pending status" });
+      }
+
+      // Generate new invite token
+      const inviteToken = storage.generateEmailVerificationToken();
+      
+      // Update user with new invite token
+      await storage.updateUser(userId, { 
+        inviteToken: inviteToken,
+        inviteTokenExpiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+        lastInviteSent: new Date()
+      });
+
+      // Send invitation email
+      const organizationName = req.user.organizationName || "Organization";
+      const invitedByName = `${req.user.firstName} ${req.user.lastName}`;
+      
+      await storage.sendInvitationEmail(
+        user.email, 
+        inviteToken, 
+        organizationName, 
+        user.roles || [user.role], 
+        invitedByName
+      );
+
+      res.json({ 
+        message: "Invitation resent successfully",
+        userId: userId,
+        email: user.email
+      });
+
+    } catch (error) {
+      console.error("Resend invite error:", error);
+      res.status(500).json({ message: "Failed to resend invitation" });
+    }
+  });
+
   app.get("/api/organization/usage", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const months = parseInt(req.query.months) || 12;
