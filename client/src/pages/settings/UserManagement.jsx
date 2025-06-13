@@ -137,7 +137,7 @@ export default function UserManagement() {
       case "active":
         return <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-200"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>;
       case "invited":
-        return <Badge variant="secondary" className="bg-slate-50 text-slate-700 border-slate-200"><Mail className="h-3 w-3 mr-1" />Invited</Badge>;
+        return <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200"><Mail className="h-3 w-3 mr-1" />Invited</Badge>;
       case "pending":
         return <Badge variant="secondary" className="bg-slate-50 text-slate-700 border-slate-200"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
       case "inactive":
@@ -289,6 +289,7 @@ export default function UserManagement() {
                   <TableHead>Email</TableHead>
                   <TableHead>Role(s)</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Invited By</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -301,10 +302,22 @@ export default function UserManagement() {
                           {getRoleIcon(user.role)}
                         </div>
                         <div>
-                          <div className="font-medium">{user.firstName} {user.lastName}</div>
-                          {user.lastActive && (
-                            <div className="text-xs text-gray-500">
-                              Last active: {new Date(user.lastActive).toLocaleDateString()}
+                          <div className="font-medium">
+                            {user.firstName && user.lastName 
+                              ? `${user.firstName} ${user.lastName}` 
+                              : user.status === 'invited' 
+                                ? 'Invitation Pending'
+                                : 'User'
+                            }
+                          </div>
+                          {user.status === 'invited' && user.invitedAt && (
+                            <div className="text-xs text-slate-500">
+                              Invited: {new Date(user.invitedAt).toLocaleDateString()}
+                            </div>
+                          )}
+                          {user.lastLoginAt && user.status === 'active' && (
+                            <div className="text-xs text-slate-500">
+                              Last active: {new Date(user.lastLoginAt).toLocaleDateString()}
                             </div>
                           )}
                         </div>
@@ -328,6 +341,20 @@ export default function UserManagement() {
                     </TableCell>
                     <TableCell>
                       {getStatusBadge(user.status)}
+                    </TableCell>
+                    <TableCell>
+                      {user.invitedBy ? (
+                        <div className="text-sm">
+                          <div className="font-medium">
+                            {user.invitedBy.firstName} {user.invitedBy.lastName}
+                          </div>
+                          <div className="text-xs text-slate-500">
+                            {user.invitedBy.email}
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-sm text-slate-400">—</span>
+                      )}
                     </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>

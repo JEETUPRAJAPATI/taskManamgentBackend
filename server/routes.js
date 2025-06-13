@@ -1057,8 +1057,8 @@ export async function registerRoutes(app) {
         // Check if user already exists in organization
         if (invite.email) {
           const existingUser = await storage.getUserByEmail(invite.email.trim());
-          if (existingUser && existingUser.organizationId === req.user.organizationId) {
-            errors.push("User already exists in organization");
+          if (existingUser && existingUser.organization?.toString() === req.user.organizationId) {
+            errors.push(`${invite.email} already exists. That user will not be reinvited.`);
           }
         }
         
@@ -1163,9 +1163,9 @@ export async function registerRoutes(app) {
         return res.status(400).json({ message: "Email is required" });
       }
 
-      // Check if user exists in the organization
+      // Check if user exists in the organization (including invited users)
       const existingUser = await storage.getUserByEmail(email);
-      const exists = existingUser && existingUser.organizationId === req.user.organizationId;
+      const exists = existingUser && existingUser.organization?.toString() === req.user.organizationId;
       
       res.json({ exists, email });
     } catch (error) {
