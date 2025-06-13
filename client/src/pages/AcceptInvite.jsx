@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useLocation, useRouter } from "wouter";
+import { useLocation } from "wouter";
 import { Eye, EyeOff, UserPlus, CheckCircle, AlertCircle, Shield, Users, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,6 @@ import { useToast } from "@/hooks/use-toast";
 export function AcceptInvite() {
   console.log('AcceptInvite function called');
   const [, setLocation] = useLocation();
-  const [, navigate] = useRouter();
   const { toast } = useToast();
   
   // Get token from URL params
@@ -41,7 +40,7 @@ export function AcceptInvite() {
           </CardHeader>
           <CardContent>
             <Button 
-              onClick={() => navigate('/login')} 
+              onClick={() => setLocation('/login')} 
               className="w-full"
               variant="outline"
             >
@@ -113,9 +112,9 @@ export function AcceptInvite() {
       // Store token if provided and redirect to dashboard
       if (data.token) {
         localStorage.setItem('token', data.token);
-        navigate('/dashboard');
+        setLocation('/dashboard');
       } else {
-        navigate('/login');
+        setLocation('/login');
       }
     },
     onError: (error) => {
@@ -130,7 +129,7 @@ export function AcceptInvite() {
         });
         
         // Redirect to login after showing the error
-        setTimeout(() => navigate('/login'), 2000);
+        setTimeout(() => setLocation('/login'), 2000);
       } else {
         toast({
           title: "Registration failed",
@@ -214,6 +213,11 @@ export function AcceptInvite() {
   if (!token && !isLoading) {
     console.log('Rendering no token message');
   }
+  
+  // Debug: Check if we're reaching the main render
+  if (!isLoading && !error && inviteData) {
+    console.log('About to render registration form with data:', inviteData);
+  }
 
   // Loading state
   if (isLoading) {
@@ -253,7 +257,7 @@ export function AcceptInvite() {
           </CardHeader>
           <CardContent className="space-y-3">
             <Button 
-              onClick={() => navigate('/login')} 
+              onClick={() => setLocation('/login')} 
               className="w-full"
               variant={isAlreadyRegistered ? "default" : "outline"}
             >
@@ -261,7 +265,7 @@ export function AcceptInvite() {
             </Button>
             {isAlreadyRegistered && (
               <Button 
-                onClick={() => navigate('/')} 
+                onClick={() => setLocation('/')} 
                 className="w-full"
                 variant="outline"
               >
@@ -274,6 +278,8 @@ export function AcceptInvite() {
     );
   }
 
+  console.log('Rendering main registration form');
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -284,7 +290,7 @@ export function AcceptInvite() {
           </div>
           <h2 className="text-3xl font-bold text-gray-900">Complete Your Registration</h2>
           <p className="mt-2 text-gray-600">
-            You've been invited to join <span className="font-semibold text-blue-600">{inviteData.organizationName}</span>
+            You've been invited to join <span className="font-semibold text-blue-600">{inviteData?.organizationName}</span>
           </p>
         </div>
 
