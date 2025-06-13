@@ -176,7 +176,7 @@ export default function SuperAdminDashboard() {
               <h3 className="text-lg font-medium">User Management</h3>
               <Button variant="outline">Export Users</Button>
             </div>
-            
+
             <Card>
               <CardContent className="p-6">
                 <p className="text-center text-muted-foreground">

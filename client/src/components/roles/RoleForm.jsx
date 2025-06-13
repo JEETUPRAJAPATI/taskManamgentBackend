@@ -154,20 +154,20 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
     const modulePermissionIds = modulePermissions.map(p => p.id);
     const allSelected = modulePermissionIds.every(id => selectedPermissions.has(id));
     const newSelectedPermissions = new Set(selectedPermissions);
-    
+
     if (allSelected) {
       modulePermissionIds.forEach(id => newSelectedPermissions.delete(id));
     } else {
       modulePermissionIds.forEach(id => newSelectedPermissions.add(id));
     }
-    
+
     setSelectedPermissions(newSelectedPermissions);
   };
 
   const getModuleSelectionState = (modulePermissions) => {
     const modulePermissionIds = modulePermissions.map(p => p.id);
     const selectedCount = modulePermissionIds.filter(id => selectedPermissions.has(id)).length;
-    
+
     if (selectedCount === 0) return "none";
     if (selectedCount === modulePermissionIds.length) return "all";
     return "partial";
@@ -209,7 +209,7 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
                         className="border-slate-300 focus:border-blue-500"
                       />
                     </div>
-                    
+
                     <div className="space-y-2">
                       <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                         Permissions Selected
@@ -238,7 +238,7 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="description" className="text-sm font-medium text-slate-700 dark:text-slate-300">
                       Description
@@ -268,7 +268,7 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
                   {PERMISSION_MODULES.map((module) => {
                     const IconComponent = module.icon;
                     const selectionState = getModuleSelectionState(module.permissions);
-                    
+
                     return (
                       <div key={module.id} className="space-y-3">
                         <div className="flex items-center justify-between">
@@ -285,7 +285,7 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
                               </p>
                             </div>
                           </div>
-                          
+
                           <Button
                             type="button"
                             variant="outline"
@@ -317,7 +317,7 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
                             )}
                           </Button>
                         </div>
-                        
+
                         <div className="ml-12 space-y-2">
                           {module.permissions.map((permission) => (
                             <div 
@@ -347,7 +347,7 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
                             </div>
                           ))}
                         </div>
-                        
+
                         {module.id !== PERMISSION_MODULES[PERMISSION_MODULES.length - 1].id && (
                           <Separator className="my-4" />
                         )}
@@ -371,7 +371,7 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
                         const permission = PERMISSION_MODULES
                           .flatMap(m => m.permissions)
                           .find(p => p.id === permissionId);
-                        
+
                         return (
                           <Badge 
                             key={permissionId}
