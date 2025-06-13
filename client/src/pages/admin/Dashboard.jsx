@@ -93,8 +93,8 @@ export default function Dashboard() {
       value: stats.totalTasks,
       description: "Active tasks in system",
       icon: CheckSquare,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
+      color: "text-slate-600",
+      bgColor: "bg-slate-50",
       change: "+12%",
       changeType: "positive"
     },
@@ -103,8 +103,8 @@ export default function Dashboard() {
       value: stats.completedTasks,
       description: "Tasks finished this month",
       icon: CheckCircle,
-      color: "text-green-600",
-      bgColor: "bg-green-50",
+      color: "text-slate-600",
+      bgColor: "bg-slate-50",
       change: "+8%",
       changeType: "positive"
     },
@@ -113,8 +113,8 @@ export default function Dashboard() {
       value: stats.totalUsers,
       description: "Registered users",
       icon: Users,
-      color: "text-purple-600",
-      bgColor: "bg-purple-50",
+      color: "text-slate-600",
+      bgColor: "bg-slate-50",
       change: "+15%",
       changeType: "positive"
     },
@@ -123,8 +123,8 @@ export default function Dashboard() {
       value: stats.totalCompanies,
       description: "Registered companies",
       icon: Building2,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
+      color: "text-slate-600",
+      bgColor: "bg-slate-50",
       change: "+25%",
       changeType: "positive"
     }
@@ -136,16 +136,16 @@ export default function Dashboard() {
       value: `$${(stats.monthlyRevenue / 100).toLocaleString()}`,
       description: "Total revenue this month",
       icon: CreditCard,
-      color: "text-green-600",
-      bgColor: "bg-green-50"
+      color: "text-slate-600",
+      bgColor: "bg-slate-50"
     },
     {
       title: "Active Subscriptions",
       value: stats.activeSubscriptions,
       description: "Current paying customers",
       icon: TrendingUp,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50"
+      color: "text-slate-600",
+      bgColor: "bg-slate-50"
     }
   ];
 
