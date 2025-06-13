@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
 export function AcceptInvite() {
+  console.log('AcceptInvite function called');
   const [, setLocation] = useLocation();
   const [, navigate] = useRouter();
   const { toast } = useToast();
@@ -17,6 +18,40 @@ export function AcceptInvite() {
   // Get token from URL params
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get('token');
+  
+  // Debug logging
+  console.log('AcceptInvite component loaded');
+  console.log('URL:', window.location.href);
+  console.log('Token from URL:', token);
+  
+  // Early return if no token
+  if (!token) {
+    console.log('No token found, showing error');
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="h-6 w-6 text-red-600" />
+            </div>
+            <CardTitle className="text-red-600">Invalid Invitation</CardTitle>
+            <CardDescription>
+              No invitation token provided in the URL.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              onClick={() => navigate('/login')} 
+              className="w-full"
+              variant="outline"
+            >
+              Go to Login
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
   
   const [formData, setFormData] = useState({
     firstName: "",
@@ -169,8 +204,17 @@ export function AcceptInvite() {
     }
   };
 
+  // Debug logging for states
+  console.log('Component state:', { isLoading, error, inviteData, token });
+
+  // Add a simple test render to debug the blank page
+  if (!token && !isLoading) {
+    console.log('Rendering no token message');
+  }
+
   // Loading state
   if (isLoading) {
+    console.log('Showing loading state');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
