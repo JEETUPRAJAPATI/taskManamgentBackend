@@ -399,7 +399,25 @@ function App() {
           </div>
         </Route>
       </Switch>
-      <Toaster />
+      <Toaster 
+        position="top-right"
+        expand={true}
+        richColors={true}
+        closeButton={true}
+        duration={4000}
+        toastOptions={{
+          style: {
+            background: 'white',
+            border: '1px solid #e2e8f0',
+            color: '#0f172a',
+            fontSize: '14px',
+            padding: '16px',
+            minWidth: '350px',
+            maxWidth: '450px'
+          },
+          className: 'toast-enhanced'
+        }}
+      />
     </QueryClientProvider>
   );
 }

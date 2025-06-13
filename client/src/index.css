@@ -196,6 +196,38 @@
   line-height: 1.5 !important;
 }
 
+/* Enhanced toast styling */
+.toast-enhanced {
+  border-radius: 8px !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  font-weight: 500 !important;
+}
+
+.toast-enhanced[data-type="success"] {
+  border-left: 4px solid #16a34a !important;
+  background-color: #f0fdf4 !important;
+  color: #15803d !important;
+}
+
+.toast-enhanced[data-type="error"] {
+  border-left: 4px solid #dc2626 !important;
+  background-color: #fef2f2 !important;
+  color: #991b1b !important;
+}
+
+.toast-enhanced[data-type="warning"] {
+  border-left: 4px solid #ea580c !important;
+  background-color: #fff7ed !important;
+  color: #c2410c !important;
+}
+
+.toast-enhanced[data-type="info"] {
+  border-left: 4px solid #2563eb !important;
+  background-color: #eff6ff !important;
+  color: #1d4ed8 !important;
+}
+
 .light {
   /* Professional High-Contrast Light Theme - WCAG AAA */
   --background: 255 255 255; /* Pure white #ffffff */
