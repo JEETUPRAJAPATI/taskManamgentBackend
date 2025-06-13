@@ -74,7 +74,7 @@ export default function AuthFlowTest() {
       case 'FAIL':
         return <XCircle className="h-5 w-5 text-red-500" />;
       case 'SKIP':
-        return <AlertCircle className="h-5 w-5 text-yellow-500" />;
+        return <AlertCircle className="h-5 w-5 text-orange-500" />;
       default:
         return <AlertCircle className="h-5 w-5 text-gray-500" />;
     }
@@ -211,7 +211,7 @@ export default function AuthFlowTest() {
                             <span className={`text-xs px-2 py-1 rounded ${
                               test.status === 'PASS' ? 'bg-green-100 text-green-800' :
                               test.status === 'FAIL' ? 'bg-red-100 text-red-800' :
-                              'bg-yellow-100 text-yellow-800'
+                              'bg-blue-100 text-blue-800'
                             }`}>
                               {test.status}
                             </span>
@@ -248,7 +248,7 @@ export default function AuthFlowTest() {
                     {userCreationResults.results.map((result, index) => (
                       <div key={index} className="flex items-center gap-2 text-sm">
                         {result.status === 'created' && <CheckCircle className="h-4 w-4 text-green-500" />}
-                        {result.status === 'exists' && <AlertCircle className="h-4 w-4 text-yellow-500" />}
+                        {result.status === 'exists' && <AlertCircle className="h-4 w-4 text-orange-500" />}
                         {result.status === 'failed' && <XCircle className="h-4 w-4 text-red-500" />}
                         <span className="capitalize font-medium">{result.type}:</span>
                         <span>{result.email || 'N/A'}</span>
