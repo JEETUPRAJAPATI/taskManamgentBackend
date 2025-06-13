@@ -44,21 +44,21 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
     required: function() {
-      return this.status === 'active' || this.status === 'pending';
+      return this.status === 'active';
     }
   },
   lastName: {
     type: String,
     trim: true,
     required: function() {
-      return this.status === 'active' || this.status === 'pending';
+      return this.status === 'active';
     }
   },
   profileImageUrl: String,
   passwordHash: {
     type: String,
     required: function() {
-      return this.status === 'active' || this.status === 'pending';
+      return this.status === 'active';
     }
   },
   emailVerified: {

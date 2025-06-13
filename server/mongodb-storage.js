@@ -1355,15 +1355,14 @@ export class MongoStorage {
       role: roles.includes('admin') || roles.includes('org_admin') ? 'admin' : 'member',
       roles: roles, // Store full roles array
       organizationId,
-      status: 'pending',
+      status: 'invited', // Use 'invited' status to avoid validation requirements
       isActive: false,
       emailVerified: false,
       inviteToken,
       inviteExpires,
       invitedBy,
-      invitedAt: new Date(),
-      firstName: '',
-      lastName: ''
+      invitedAt: new Date()
+      // firstName, lastName, and passwordHash not required for invited status
     });
 
     const savedUser = await invitedUser.save();
@@ -1378,7 +1377,7 @@ export class MongoStorage {
     return await User.findOne({
       inviteToken: token,
       inviteExpires: { $gt: new Date() },
-      isActive: false
+      status: 'invited'
     });
   }
 
@@ -1393,11 +1392,12 @@ export class MongoStorage {
     // Hash password
     const passwordHash = await this.hashPassword(password);
 
-    // Update user
+    // Update user to active status
     const updatedUser = await User.findByIdAndUpdate(user._id, {
       firstName,
       lastName,
       passwordHash,
+      status: 'active',
       isActive: true,
       emailVerified: true,
       inviteToken: null,
@@ -1446,7 +1446,11 @@ export class MongoStorage {
 
   // Get user by invite token
   async getUserByInviteToken(token) {
-    return await User.findOne({ inviteToken: token });
+    return await User.findOne({ 
+      inviteToken: token,
+      status: 'invited',
+      inviteExpires: { $gt: new Date() }
+    });
   }
 
   // Get organization users with detailed info
