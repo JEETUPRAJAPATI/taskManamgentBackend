@@ -1,253 +1,186 @@
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Mail, X, UserPlus, Check, AlertCircle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
+import { UserPlus, Users, Shield, Mail, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { InviteUsersModal } from "@/components/InviteUsersModal";
 
 export function InviteUsers() {
-  const [inviteList, setInviteList] = useState([{ email: "", role: "employee" }]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  // Get available roles
-  const { data: roles = [], isLoading: rolesLoading } = useQuery({
-    queryKey: ["/api/roles"],
-  });
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   // Get organization license info
-  const { data: licenseInfo, isLoading: licenseLoading } = useQuery({
+  const { data: licenseInfo } = useQuery({
     queryKey: ["/api/organization/license"],
   });
 
-  // Invite users mutation
-  const inviteUsersMutation = useMutation({
-    mutationFn: async (userData) => {
-      const response = await fetch("/api/users/invite", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ users: userData })
-      });
-      
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to send invitations");
-      }
-      
-      return response.json();
-    },
-    onSuccess: (data) => {
-      toast({
-        title: "Invitations sent successfully",
-        description: `${data.results?.length || 0} invitations were sent`,
-      });
-      setInviteList([{ email: "", role: "employee" }]);
-      queryClient.invalidateQueries({ queryKey: ["/api/organization/users-detailed"] });
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to send invitations",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
+  // Get organization users
+  const { data: users = [] } = useQuery({
+    queryKey: ["/api/organization/users-detailed"],
   });
 
-  const addInviteRow = () => {
-    setInviteList([...inviteList, { email: "", role: "employee" }]);
-  };
-
-  const removeInviteRow = (index) => {
-    if (inviteList.length > 1) {
-      setInviteList(inviteList.filter((_, i) => i !== index));
-    }
-  };
-
-  const updateInviteRow = (index, field, value) => {
-    const updated = [...inviteList];
-    updated[index][field] = value;
-    setInviteList(updated);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    // Validate all emails are filled
-    const validInvites = inviteList.filter(invite => invite.email.trim() !== "");
-    
-    if (validInvites.length === 0) {
-      toast({
-        title: "No valid invitations",
-        description: "Please add at least one email address",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Check license limits
-    if (licenseInfo && validInvites.length > licenseInfo.availableSlots) {
-      toast({
-        title: "License limit exceeded",
-        description: `You can only invite ${licenseInfo.availableSlots} more users. Upgrade your plan for more slots.`,
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      await inviteUsersMutation.mutateAsync(validInvites);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  if (rolesLoading || licenseLoading) {
-    return (
-      <div className="p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-700 rounded w-1/4"></div>
-          <div className="h-32 bg-gray-700 rounded"></div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
+    <div className="space-y-8">
+      {/* Header Section */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-100">Invite Users</h1>
-          <p className="text-gray-400 mt-1">
-            Send invitations to new team members to join your organization
+          <h1 className="text-3xl font-bold text-gray-900">Invite Users</h1>
+          <p className="text-lg text-gray-600 mt-2">
+            Add new team members to your organization
           </p>
         </div>
-        <div className="flex items-center space-x-2 text-sm text-gray-400">
-          <UserPlus className="h-4 w-4" />
-          <span>
-            {licenseInfo ? `${licenseInfo.availableSlots} slots available` : "Loading..."}
-          </span>
-        </div>
+        <Button
+          onClick={() => setIsInviteModalOpen(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-lg"
+        >
+          <UserPlus className="h-5 w-5 mr-2" />
+          Add User
+        </Button>
       </div>
 
-      {/* License Warning */}
-      {licenseInfo && licenseInfo.availableSlots <= 5 && (
-        <div className="bg-amber-900/20 border border-amber-700 rounded-lg p-4 flex items-start space-x-3">
-          <AlertCircle className="h-5 w-5 text-amber-400 mt-0.5" />
-          <div>
-            <h3 className="text-amber-400 font-medium">Limited slots available</h3>
-            <p className="text-amber-300 text-sm mt-1">
-              You have {licenseInfo.availableSlots} invitation slots remaining. 
-              Consider upgrading your plan to invite more team members.
-            </p>
-          </div>
-        </div>
+      {/* License Information Card */}
+      {licenseInfo && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Shield className="h-5 w-5 text-blue-600" />
+              <span>License Information</span>
+            </CardTitle>
+            <CardDescription>
+              Current license usage and available slots
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">
+                  {licenseInfo.totalLicenses}
+                </div>
+                <div className="text-sm text-gray-600">Total Licenses</div>
+              </div>
+              <div className="text-center p-4 bg-green-50 rounded-lg">
+                <div className="text-2xl font-bold text-green-600">
+                  {licenseInfo.usedLicenses}
+                </div>
+                <div className="text-sm text-gray-600">Used Licenses</div>
+              </div>
+              <div className="text-center p-4 bg-orange-50 rounded-lg">
+                <div className="text-2xl font-bold text-orange-600">
+                  {licenseInfo.availableSlots}
+                </div>
+                <div className="text-sm text-gray-600">Available Slots</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Invite Form */}
-      <div className="bg-gray-800 rounded-lg border border-gray-700">
-        <div className="p-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-4">
-                Team Member Invitations
-              </label>
-              
-              <div className="space-y-3">
-                {inviteList.map((invite, index) => (
-                  <div key={index} className="flex items-center space-x-4">
-                    <div className="flex-1">
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                        <input
-                          type="email"
-                          placeholder="Enter email address"
-                          value={invite.email}
-                          onChange={(e) => updateInviteRow(index, "email", e.target.value)}
-                          className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          required
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="w-40">
-                      <select
-                        value={invite.role}
-                        onChange={(e) => updateInviteRow(index, "role", e.target.value)}
-                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      >
-                        <option value="employee">Employee</option>
-                        <option value="org_admin">Admin</option>
-                        {roles.map((role) => (
-                          <option key={role._id} value={role.name}>
-                            {role.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    
-                    {inviteList.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeInviteRow(index)}
-                        className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-700 rounded-md transition-colors"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    )}
+      {/* Current Users Overview */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Users className="h-5 w-5 text-gray-600" />
+            <span>Current Team Members</span>
+          </CardTitle>
+          <CardDescription>
+            Overview of existing users in your organization
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {users.length > 0 ? (
+              users.slice(0, 5).map((user, index) => (
+                <div key={index} className="flex items-center space-x-4 p-3 border border-gray-200 rounded-lg">
+                  <div className="p-2 bg-gray-100 rounded-full">
+                    <Mail className="h-4 w-4 text-gray-600" />
                   </div>
-                ))}
+                  <div className="flex-1">
+                    <div className="font-medium text-gray-900">
+                      {user.firstName} {user.lastName}
+                    </div>
+                    <div className="text-sm text-gray-500">{user.email}</div>
+                  </div>
+                  <div className="text-sm text-gray-600 capitalize">
+                    {user.role}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                No team members found. Start by inviting your first user.
               </div>
-              
-              <button
-                type="button"
-                onClick={addInviteRow}
-                className="mt-3 flex items-center text-sm text-blue-400 hover:text-blue-300 transition-colors"
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                Add another invitation
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between pt-4 border-t border-gray-700">
-              <div className="text-sm text-gray-400">
-                Invited users will receive an email with setup instructions
+            )}
+            {users.length > 5 && (
+              <div className="text-center text-sm text-gray-500">
+                And {users.length - 5} more team members...
               </div>
-              
-              <button
-                type="submit"
-                disabled={isSubmitting || inviteUsersMutation.isPending}
-                className="flex items-center px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {isSubmitting || inviteUsersMutation.isPending ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Sending Invitations...
-                  </>
-                ) : (
-                  <>
-                    <Check className="h-4 w-4 mr-2" />
-                    Send Invitations
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      {/* Recent Invitations */}
-      <div className="bg-gray-800 rounded-lg border border-gray-700">
-        <div className="p-6">
-          <h3 className="text-lg font-medium text-gray-100 mb-4">Recent Activity</h3>
-          <div className="text-sm text-gray-400">
-            Recent invitation activity will appear here once the system tracks invitation history.
+            )}
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
+
+      {/* Getting Started Guide */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Getting Started</CardTitle>
+          <CardDescription>
+            How to invite users to your organization
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex items-start space-x-3">
+              <div className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
+                1
+              </div>
+              <div>
+                <h4 className="font-medium text-gray-900">Click "Add User"</h4>
+                <p className="text-sm text-gray-600">
+                  Use the blue "Add User" button to open the invitation modal
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-3">
+              <div className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
+                2
+              </div>
+              <div>
+                <h4 className="font-medium text-gray-900">Enter Email Addresses</h4>
+                <p className="text-sm text-gray-600">
+                  Add email addresses for each person you want to invite
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-3">
+              <div className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
+                3
+              </div>
+              <div>
+                <h4 className="font-medium text-gray-900">Assign Roles</h4>
+                <p className="text-sm text-gray-600">
+                  Choose appropriate roles - Member is required, additional roles are optional
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-3">
+              <div className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
+                4
+              </div>
+              <div>
+                <h4 className="font-medium text-gray-900">Send Invitations</h4>
+                <p className="text-sm text-gray-600">
+                  Invited users will receive email instructions to join your organization
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Invite Users Modal */}
+      <InviteUsersModal 
+        isOpen={isInviteModalOpen}
+        onClose={() => setIsInviteModalOpen(false)}
+      />
     </div>
   );
 }

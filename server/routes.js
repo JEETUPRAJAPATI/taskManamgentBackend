@@ -1027,6 +1027,103 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Multi-user invitation endpoint
+  app.post("/api/organization/invite-users", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
+    try {
+      const { invites } = req.body;
+      
+      if (!invites || !Array.isArray(invites) || invites.length === 0) {
+        return res.status(400).json({ message: "Invalid invitation data" });
+      }
+
+      // Validate each invitation
+      for (const invite of invites) {
+        if (!invite.email || !invite.roles || !Array.isArray(invite.roles)) {
+          return res.status(400).json({ message: "Each invitation must have email and roles" });
+        }
+        
+        // Check if email is valid
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(invite.email)) {
+          return res.status(400).json({ message: `Invalid email format: ${invite.email}` });
+        }
+        
+        // Check if user already exists
+        const existingUser = await storage.getUserByEmail(invite.email);
+        if (existingUser) {
+          return res.status(400).json({ message: `User with email ${invite.email} already exists` });
+        }
+      }
+
+      // Check license limits
+      const licenseInfo = await storage.getOrganizationLicenseInfo(req.user.organizationId);
+      if (licenseInfo && invites.length > licenseInfo.availableSlots) {
+        return res.status(400).json({ 
+          message: `License limit exceeded. You can only invite ${licenseInfo.availableSlots} more users.`,
+          availableSlots: licenseInfo.availableSlots 
+        });
+      }
+
+      const results = [];
+      let successCount = 0;
+
+      // Process each invitation
+      for (const invite of invites) {
+        try {
+          // Create invitation with multiple roles
+          const inviteData = {
+            email: invite.email,
+            roles: invite.roles,
+            organizationId: req.user.organizationId,
+            invitedBy: req.user.id,
+            invitedByName: `${req.user.firstName} ${req.user.lastName}`,
+            organizationName: req.user.organizationName || "Organization"
+          };
+
+          await storage.inviteUserToOrganization(inviteData);
+          results.push({ email: invite.email, status: "success" });
+          successCount++;
+        } catch (error) {
+          console.error(`Failed to invite ${invite.email}:`, error);
+          results.push({ email: invite.email, status: "failed", error: error.message });
+        }
+      }
+
+      res.json({
+        message: `${successCount} out of ${invites.length} invitations sent successfully`,
+        successCount,
+        totalCount: invites.length,
+        results
+      });
+
+    } catch (error) {
+      console.error("Multi-user invitation error:", error);
+      res.status(500).json({ message: "Failed to send invitations" });
+    }
+  });
+
+  // Get organization license information
+  app.get("/api/organization/license", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
+    try {
+      const licenseInfo = await storage.getOrganizationLicenseInfo(req.user.organizationId);
+      res.json(licenseInfo);
+    } catch (error) {
+      console.error("Get license info error:", error);
+      res.status(500).json({ message: "Failed to get license information" });
+    }
+  });
+
+  // Get detailed organization users
+  app.get("/api/organization/users-detailed", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
+    try {
+      const users = await storage.getOrganizationUsersDetailed(req.user.organizationId);
+      res.json(users);
+    } catch (error) {
+      console.error("Get organization users detailed error:", error);
+      res.status(500).json({ message: "Failed to get organization users" });
+    }
+  });
+
   app.get("/api/organization/usage", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const months = parseInt(req.query.months) || 12;
