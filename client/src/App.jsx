@@ -49,6 +49,7 @@ import Login from './pages/auth/Login';
 import CreatePassword from './pages/auth/CreatePassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import { AcceptInvite } from './pages/AcceptInvite';
+import { SimpleAcceptInvite } from './pages/SimpleAcceptInvite';
 import { TestInvite } from './pages/TestInvite';
 import VerifyAndSetPassword from './pages/auth/VerifyAndSetPassword';
 import RegistrationSuccess from './pages/auth/RegistrationSuccess';
@@ -219,9 +220,9 @@ function App() {
         <Route path="/registration-success" component={RegistrationSuccess} />
         <Route path="/create-password" component={CreatePassword} />
         <Route path="/reset-password" component={ResetPassword} />
-        <Route path="/accept-invitation" component={AcceptInvite} />
-        <Route path="/accept-invite" component={AcceptInvite} />
-        <Route path="/register/invite/:token" component={AcceptInvite} />
+        <Route path="/accept-invitation" component={SimpleAcceptInvite} />
+        <Route path="/accept-invite" component={SimpleAcceptInvite} />
+        <Route path="/register/invite/:token" component={SimpleAcceptInvite} />
         <Route path="/test-invite" component={TestInvite} />
         <Route path="/forbidden" component={ForbiddenPage} />
         <Route path="/test-auth" component={TestAuth} />
