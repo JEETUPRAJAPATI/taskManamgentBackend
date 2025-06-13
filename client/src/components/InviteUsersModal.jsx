@@ -30,7 +30,10 @@ export function InviteUsersModal({ isOpen, onClose }) {
       email: "", 
       roles: ["member"], 
       emailError: "",
-      isValid: false 
+      existsError: "",
+      licenseError: "",
+      isValid: false,
+      isChecking: false
     }
   ]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,7 +54,10 @@ export function InviteUsersModal({ isOpen, onClose }) {
           email: "", 
           roles: ["member"], 
           emailError: "",
-          isValid: false 
+          existsError: "",
+          licenseError: "",
+          isValid: false,
+          isChecking: false
         }
       ]);
       setIsSubmitting(false);
@@ -70,20 +76,147 @@ export function InviteUsersModal({ isOpen, onClose }) {
     return "";
   };
 
-  // Update email and validate
-  const updateInviteEmail = (index, email) => {
+  // Check email uniqueness
+  const checkEmailExists = async (email, organizationId) => {
+    try {
+      const response = await fetch(`/api/organization/check-email-exists`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ email, organizationId })
+      });
+      
+      if (!response.ok) {
+        return false;
+      }
+      
+      const data = await response.json();
+      return data.exists;
+    } catch (error) {
+      console.error("Error checking email existence:", error);
+      return false;
+    }
+  };
+
+  // Calculate license requirements for roles
+  const calculateLicenseRequirement = (roles) => {
+    // Member role is always included and counts as 1 license
+    // Additional roles like admin, manager might require additional licenses
+    const additionalRoles = roles.filter(role => role !== "member");
+    return 1 + (additionalRoles.length * 0); // For now, each user needs 1 license regardless of roles
+  };
+
+  // Validate license availability
+  const validateLicenseAvailability = (currentInvites, licenseInfo) => {
+    if (!licenseInfo) return true;
+    
+    const totalLicensesNeeded = currentInvites.reduce((total, invite) => {
+      if (invite.email && !invite.emailError && !invite.existsError) {
+        return total + calculateLicenseRequirement(invite.roles);
+      }
+      return total;
+    }, 0);
+    
+    return totalLicensesNeeded <= licenseInfo.availableSlots;
+  };
+
+  // Update email and validate comprehensively
+  const updateInviteEmail = async (index, email) => {
+    // First, update the email and set checking state
+    setInviteList(prev => prev.map((invite, i) => 
+      i === index 
+        ? { 
+            ...invite, 
+            email, 
+            emailError: "",
+            existsError: "",
+            licenseError: "",
+            isValid: false,
+            isChecking: true
+          }
+        : invite
+    ));
+
+    // Basic email format validation
     const emailError = validateEmail(email);
-    const isValid = !emailError && email.trim() !== "";
+    
+    if (emailError || !email.trim()) {
+      setInviteList(prev => prev.map((invite, i) => 
+        i === index 
+          ? { 
+              ...invite, 
+              emailError, 
+              isValid: false,
+              isChecking: false
+            }
+          : invite
+      ));
+      return;
+    }
+
+    // Check for duplicates within current invite list
+    const currentEmails = inviteList.map(invite => invite.email.toLowerCase());
+    const isDuplicate = currentEmails.filter(e => e === email.toLowerCase()).length > 1;
+    
+    if (isDuplicate) {
+      setInviteList(prev => prev.map((invite, i) => 
+        i === index 
+          ? { 
+              ...invite, 
+              existsError: "Email already added in this invitation",
+              isValid: false,
+              isChecking: false
+            }
+          : invite
+      ));
+      return;
+    }
+
+    // Check if email exists in organization
+    const emailExists = await checkEmailExists(email, licenseInfo?.organizationId);
+    
+    if (emailExists) {
+      setInviteList(prev => prev.map((invite, i) => 
+        i === index 
+          ? { 
+              ...invite, 
+              existsError: `${email} already exists. That user will not be reinvited.`,
+              isValid: false,
+              isChecking: false
+            }
+          : invite
+      ));
+      return;
+    }
+
+    // Validate license availability
+    const updatedInvites = [...inviteList];
+    updatedInvites[index] = { ...updatedInvites[index], email, emailError: "", existsError: "" };
+    
+    const licenseValid = validateLicenseAvailability(updatedInvites, licenseInfo);
+    const licenseError = licenseValid ? "" : "Not enough licenses available for the selected role(s).";
+
+    // Final validation state
+    const isValid = !emailError && !emailExists && licenseValid && email.trim() !== "";
     
     setInviteList(prev => prev.map((invite, i) => 
       i === index 
-        ? { ...invite, email, emailError, isValid }
+        ? { 
+            ...invite, 
+            emailError,
+            existsError: emailExists ? `${email} already exists. That user will not be reinvited.` : "",
+            licenseError,
+            isValid,
+            isChecking: false
+          }
         : invite
     ));
   };
 
-  // Toggle role selection
-  const toggleRole = (index, role) => {
+  // Toggle role selection with license validation
+  const toggleRole = async (index, role) => {
     setInviteList(prev => prev.map((invite, i) => {
       if (i !== index) return invite;
       
@@ -98,7 +231,21 @@ export function InviteUsersModal({ isOpen, onClose }) {
         ? currentRoles.filter(r => r !== role)
         : [...currentRoles, role];
       
-      return { ...invite, roles: newRoles };
+      // Validate license requirements with new roles
+      const updatedInvites = [...prev];
+      updatedInvites[index] = { ...invite, roles: newRoles };
+      
+      const licenseValid = validateLicenseAvailability(updatedInvites, licenseInfo);
+      const licenseError = licenseValid ? "" : "Not enough licenses available for the selected role(s).";
+      
+      const isValid = invite.email && !invite.emailError && !invite.existsError && licenseValid;
+      
+      return { 
+        ...invite, 
+        roles: newRoles,
+        licenseError,
+        isValid
+      };
     }));
   };
 
@@ -110,7 +257,10 @@ export function InviteUsersModal({ isOpen, onClose }) {
         email: "", 
         roles: ["member"], 
         emailError: "",
-        isValid: false 
+        existsError: "",
+        licenseError: "",
+        isValid: false,
+        isChecking: false
       }
     ]);
   };
@@ -159,18 +309,39 @@ export function InviteUsersModal({ isOpen, onClose }) {
     },
   });
 
-  // Submit invitations
+  // Submit invitations with comprehensive validation
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate all rows
-    const validInvites = inviteList.filter(invite => invite.isValid);
-    const invalidInvites = inviteList.filter(invite => !invite.isValid);
+    // Separate valid and invalid invites
+    const validInvites = inviteList.filter(invite => 
+      invite.isValid && 
+      invite.email.trim() !== "" && 
+      !invite.emailError && 
+      !invite.existsError && 
+      !invite.licenseError
+    );
     
+    const invalidInvites = inviteList.filter(invite => 
+      invite.email.trim() !== "" && 
+      (!invite.isValid || invite.emailError || invite.existsError || invite.licenseError)
+    );
+    
+    const emptyInvites = inviteList.filter(invite => invite.email.trim() === "");
+
+    // Show validation summary
     if (invalidInvites.length > 0) {
+      const errorMessages = [];
+      
+      invalidInvites.forEach(invite => {
+        if (invite.emailError) errorMessages.push(`${invite.email}: ${invite.emailError}`);
+        if (invite.existsError) errorMessages.push(`${invite.email}: Already exists in organization`);
+        if (invite.licenseError) errorMessages.push(`${invite.email}: ${invite.licenseError}`);
+      });
+
       toast({
-        title: "Please fix validation errors",
-        description: "Some email addresses are invalid or empty",
+        title: "Validation Errors Found",
+        description: `${invalidInvites.length} invitation(s) have errors. Please fix them before submitting.`,
         variant: "destructive",
       });
       return;
@@ -179,17 +350,21 @@ export function InviteUsersModal({ isOpen, onClose }) {
     if (validInvites.length === 0) {
       toast({
         title: "No valid invitations",
-        description: "Please enter at least one valid email address",
+        description: "Please enter at least one valid email address with proper roles assigned.",
         variant: "destructive",
       });
       return;
     }
 
-    // Check license limits
-    if (licenseInfo && validInvites.length > licenseInfo.availableSlots) {
+    // Final license check
+    const totalLicensesNeeded = validInvites.reduce((total, invite) => 
+      total + calculateLicenseRequirement(invite.roles), 0
+    );
+    
+    if (licenseInfo && totalLicensesNeeded > licenseInfo.availableSlots) {
       toast({
         title: "License limit exceeded",
-        description: `You can only invite ${licenseInfo.availableSlots} more users. Upgrade your plan for more licenses.`,
+        description: `You need ${totalLicensesNeeded} licenses but only have ${licenseInfo.availableSlots} available. Upgrade your plan or reduce invitations.`,
         variant: "destructive",
       });
       return;
@@ -197,7 +372,21 @@ export function InviteUsersModal({ isOpen, onClose }) {
 
     setIsSubmitting(true);
     try {
-      await inviteUsersMutation.mutateAsync(validInvites);
+      const result = await inviteUsersMutation.mutateAsync(validInvites);
+      
+      // Show success message with details
+      const skippedCount = inviteList.length - emptyInvites.length - validInvites.length;
+      let successMessage = `${result.successCount} invitation(s) sent successfully`;
+      
+      if (skippedCount > 0) {
+        successMessage += `. ${skippedCount} invitation(s) were skipped due to errors.`;
+      }
+      
+      toast({
+        title: "Invitations Processed",
+        description: successMessage,
+      });
+      
     } finally {
       setIsSubmitting(false);
     }
@@ -277,26 +466,48 @@ export function InviteUsersModal({ isOpen, onClose }) {
                         placeholder="Enter email address"
                         value={invite.email}
                         onChange={(e) => updateInviteEmail(index, e.target.value)}
+                        disabled={invite.isChecking}
                         className={`pl-10 ${
-                          invite.emailError 
+                          invite.emailError || invite.existsError || invite.licenseError
                             ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
                             : invite.isValid 
                               ? 'border-green-300 focus:border-green-500 focus:ring-green-500'
                               : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
                         }`}
                       />
-                      {invite.isValid && (
+                      {invite.isChecking && (
+                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                        </div>
+                      )}
+                      {invite.isValid && !invite.isChecking && (
                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                           <Check className="h-4 w-4 text-green-500" />
                         </div>
                       )}
                     </div>
-                    {invite.emailError && (
-                      <p className="mt-1 text-sm text-red-600 flex items-center">
-                        <AlertCircle className="h-3 w-3 mr-1" />
-                        {invite.emailError}
-                      </p>
-                    )}
+                    
+                    {/* Display all validation errors */}
+                    <div className="space-y-1">
+                      {invite.emailError && (
+                        <p className="text-sm text-red-600 flex items-center">
+                          <AlertCircle className="h-3 w-3 mr-1" />
+                          {invite.emailError}
+                        </p>
+                      )}
+                      {invite.existsError && (
+                        <p className="text-sm text-orange-600 flex items-center">
+                          <AlertCircle className="h-3 w-3 mr-1" />
+                          {invite.existsError}
+                        </p>
+                      )}
+                      {invite.licenseError && (
+                        <p className="text-sm text-red-600 flex items-center">
+                          <AlertCircle className="h-3 w-3 mr-1" />
+                          {invite.licenseError}
+                        </p>
+                      )}
+                    </div>
                   </div>
                   
                   {/* Role Selection */}

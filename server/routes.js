@@ -1036,23 +1036,64 @@ export async function registerRoutes(app) {
         return res.status(400).json({ message: "Invalid invitation data" });
       }
 
-      // Validate each invitation
+      // Validate each invitation with comprehensive checks
+      const validationErrors = [];
+      const validInvites = [];
+      
       for (const invite of invites) {
+        const errors = [];
+        
+        // Basic structure validation
         if (!invite.email || !invite.roles || !Array.isArray(invite.roles)) {
-          return res.status(400).json({ message: "Each invitation must have email and roles" });
+          errors.push("Email and roles are required");
         }
         
-        // Check if email is valid
+        // Email format validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(invite.email)) {
-          return res.status(400).json({ message: `Invalid email format: ${invite.email}` });
+        if (invite.email && !emailRegex.test(invite.email.trim())) {
+          errors.push("Invalid email format");
         }
         
-        // Check if user already exists
-        const existingUser = await storage.getUserByEmail(invite.email);
-        if (existingUser) {
-          return res.status(400).json({ message: `User with email ${invite.email} already exists` });
+        // Check if user already exists in organization
+        if (invite.email) {
+          const existingUser = await storage.getUserByEmail(invite.email.trim());
+          if (existingUser && existingUser.organizationId === req.user.organizationId) {
+            errors.push("User already exists in organization");
+          }
         }
+        
+        // Role validation - ensure member role is included
+        if (invite.roles && Array.isArray(invite.roles)) {
+          if (!invite.roles.includes("member")) {
+            errors.push("Member role is required");
+          }
+          
+          // Validate role names
+          const validRoles = ["member", "manager", "admin"];
+          const invalidRoles = invite.roles.filter(role => !validRoles.includes(role));
+          if (invalidRoles.length > 0) {
+            errors.push(`Invalid roles: ${invalidRoles.join(", ")}`);
+          }
+        }
+        
+        if (errors.length > 0) {
+          validationErrors.push({
+            email: invite.email,
+            errors: errors
+          });
+        } else {
+          validInvites.push(invite);
+        }
+      }
+      
+      // If there are validation errors, return them
+      if (validationErrors.length > 0) {
+        return res.status(400).json({ 
+          message: "Validation errors found",
+          errors: validationErrors,
+          validCount: validInvites.length,
+          errorCount: validationErrors.length
+        });
       }
 
       // Check license limits
@@ -1110,6 +1151,26 @@ export async function registerRoutes(app) {
     } catch (error) {
       console.error("Get license info error:", error);
       res.status(500).json({ message: "Failed to get license information" });
+    }
+  });
+
+  // Check if email exists in organization
+  app.post("/api/organization/check-email-exists", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+
+      // Check if user exists in the organization
+      const existingUser = await storage.getUserByEmail(email);
+      const exists = existingUser && existingUser.organizationId === req.user.organizationId;
+      
+      res.json({ exists, email });
+    } catch (error) {
+      console.error("Check email exists error:", error);
+      res.status(500).json({ message: "Failed to check email existence" });
     }
   });
 
