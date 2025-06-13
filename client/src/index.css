@@ -1530,7 +1530,7 @@ article[style*="yellow"] {
 }
 
 .form-textarea-professional {
-  @apply form-input-professional resize-vertical min-h-[100px];
+  @apply form-input-professional resize-y min-h-[100px];
 }
 
 .form-select-professional {
