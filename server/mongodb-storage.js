@@ -404,7 +404,7 @@ export class MongoStorage {
           isActive: false,
           emailVerified: false,
           status: 'invited',
-          inviteToken: inviteToken2,
+          inviteToken: inviteToken4,
           inviteTokenExpiry: new Date(Date.now() + 48 * 60 * 60 * 1000),
           invitedBy: johnAdmin._id,
           invitedAt: new Date('2024-06-12'),
@@ -474,8 +474,8 @@ export class MongoStorage {
       );
 
       // Add invited users to show different statuses in subscription table
-      const inviteToken1 = this.generateEmailVerificationToken();
-      const inviteToken2 = this.generateEmailVerificationToken();
+      const inviteToken5 = this.generateEmailVerificationToken();
+      const inviteToken6 = this.generateEmailVerificationToken();
       
       // TechCorp invited users
       await User.create({
@@ -483,7 +483,7 @@ export class MongoStorage {
         roles: ['member'],
         status: 'invited',
         organization: organizations[0]._id,
-        inviteToken: inviteToken1,
+        inviteToken: inviteToken5,
         inviteTokenExpiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         invitedBy: sampleUsers[0]._id,
         invitedAt: new Date('2024-06-15'),
@@ -497,7 +497,7 @@ export class MongoStorage {
         roles: ['member'],
         status: 'invited',
         organization: organizations[0]._id,
-        inviteToken: inviteToken2,
+        inviteToken: inviteToken6,
         inviteTokenExpiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         invitedBy: sampleUsers[0]._id,
         invitedAt: new Date('2024-06-18'),
