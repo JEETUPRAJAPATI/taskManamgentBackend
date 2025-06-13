@@ -1310,12 +1310,12 @@ export async function registerRoutes(app) {
       }
 
       // Check if invitation has expired
-      if (invitedUser.inviteExpires && new Date() > new Date(invitedUser.inviteExpires)) {
+      if (invitedUser.inviteTokenExpiry && new Date() > new Date(invitedUser.inviteTokenExpiry)) {
         return res.status(400).json({ message: "Invitation has expired" });
       }
 
       // Get organization details
-      const organization = await storage.getOrganization(invitedUser.organizationId);
+      const organization = await storage.getOrganization(invitedUser.organization);
       
       res.json({
         email: invitedUser.email,
@@ -1347,7 +1347,7 @@ export async function registerRoutes(app) {
       }
 
       // Check if invitation has expired
-      if (invitedUser.inviteExpires && new Date() > new Date(invitedUser.inviteExpires)) {
+      if (invitedUser.inviteTokenExpiry && new Date() > new Date(invitedUser.inviteTokenExpiry)) {
         return res.status(400).json({ message: "Invitation has expired" });
       }
 

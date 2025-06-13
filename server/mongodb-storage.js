@@ -1347,19 +1347,19 @@ export class MongoStorage {
 
     // Generate invitation token (48 hours expiry as requested)
     const inviteToken = crypto.randomBytes(32).toString('hex');
-    const inviteExpires = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48 hours
+    const inviteTokenExpiry = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48 hours
 
     // Create invited user record with proper status
     const invitedUser = new User({
       email,
       role: roles.includes('admin') || roles.includes('org_admin') ? 'admin' : 'member',
       roles: roles, // Store full roles array
-      organizationId,
+      organization: organizationId, // Use 'organization' field from schema
       status: 'invited', // Use 'invited' status to avoid validation requirements
       isActive: false,
       emailVerified: false,
       inviteToken,
-      inviteExpires,
+      inviteTokenExpiry,
       invitedBy,
       invitedAt: new Date()
       // firstName, lastName, and passwordHash not required for invited status
@@ -1376,7 +1376,7 @@ export class MongoStorage {
   async getInvitedUser(token) {
     return await User.findOne({
       inviteToken: token,
-      inviteExpires: { $gt: new Date() },
+      inviteTokenExpiry: { $gt: new Date() },
       status: 'invited'
     });
   }
@@ -1449,7 +1449,7 @@ export class MongoStorage {
     return await User.findOne({ 
       inviteToken: token,
       status: 'invited',
-      inviteExpires: { $gt: new Date() }
+      inviteTokenExpiry: { $gt: new Date() }
     });
   }
 
