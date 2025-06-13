@@ -469,20 +469,20 @@ export function InviteUsersModal({ isOpen, onClose }) {
                         disabled={invite.isChecking}
                         className={`pl-10 ${
                           invite.emailError || invite.existsError || invite.licenseError
-                            ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
+                            ? 'border-red-300 focus:border-red-400 focus:ring-red-200' 
                             : invite.isValid 
-                              ? 'border-green-300 focus:border-green-500 focus:ring-green-500'
-                              : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                              ? 'border-emerald-300 focus:border-emerald-400 focus:ring-emerald-200'
+                              : 'border-gray-300 focus:border-slate-400 focus:ring-slate-200'
                         }`}
                       />
                       {invite.isChecking && (
                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-slate-400"></div>
                         </div>
                       )}
                       {invite.isValid && !invite.isChecking && (
                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                          <Check className="h-4 w-4 text-green-500" />
+                          <Check className="h-4 w-4 text-emerald-600" />
                         </div>
                       )}
                     </div>
@@ -490,19 +490,19 @@ export function InviteUsersModal({ isOpen, onClose }) {
                     {/* Display all validation errors */}
                     <div className="space-y-1">
                       {invite.emailError && (
-                        <p className="text-sm text-red-600 flex items-center">
+                        <p className="text-sm text-red-700 flex items-center mt-1">
                           <AlertCircle className="h-3 w-3 mr-1" />
                           {invite.emailError}
                         </p>
                       )}
                       {invite.existsError && (
-                        <p className="text-sm text-orange-600 flex items-center">
+                        <p className="text-sm text-amber-700 flex items-center mt-1">
                           <AlertCircle className="h-3 w-3 mr-1" />
                           {invite.existsError}
                         </p>
                       )}
                       {invite.licenseError && (
-                        <p className="text-sm text-red-600 flex items-center">
+                        <p className="text-sm text-red-700 flex items-center mt-1">
                           <AlertCircle className="h-3 w-3 mr-1" />
                           {invite.licenseError}
                         </p>
@@ -541,7 +541,7 @@ export function InviteUsersModal({ isOpen, onClose }) {
                           className="mr-3"
                         />
                         <div className="flex items-center">
-                          <Users className="h-4 w-4 text-blue-500 mr-2" />
+                          <Users className="h-4 w-4 text-slate-600 mr-2" />
                           <Label htmlFor={`manager-${index}`} className="text-sm text-gray-700">
                             Manager
                           </Label>
@@ -557,7 +557,7 @@ export function InviteUsersModal({ isOpen, onClose }) {
                           className="mr-3"
                         />
                         <div className="flex items-center">
-                          <Shield className="h-4 w-4 text-orange-500 mr-2" />
+                          <Shield className="h-4 w-4 text-slate-600 mr-2" />
                           <Label htmlFor={`admin-${index}`} className="text-sm text-gray-700">
                             Admin
                           </Label>
