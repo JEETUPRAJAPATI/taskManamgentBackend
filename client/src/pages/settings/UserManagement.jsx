@@ -48,9 +48,11 @@ export default function UserManagement() {
     queryKey: ["/api/organization/license"],
   });
 
-  // Get organization users
+  // Get organization users with periodic refresh to catch registration completions
   const { data: users = [], isLoading: usersLoading } = useQuery({
     queryKey: ["/api/organization/users-detailed"],
+    refetchInterval: 30000, // Refresh every 30 seconds to catch status changes
+    refetchIntervalInBackground: true,
   });
 
   // Deactivate user mutation
@@ -126,10 +128,13 @@ export default function UserManagement() {
     switch (status?.toLowerCase()) {
       case "active":
         return <Badge variant="secondary" className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>;
+      case "invited":
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800"><Mail className="h-3 w-3 mr-1" />Invited</Badge>;
       case "pending":
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800"><Clock className="h-3 w-3 mr-1" />Pending Invite</Badge>;
+        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
+      case "inactive":
       case "deactivated":
-        return <Badge variant="secondary" className="bg-red-100 text-red-800"><UserX className="h-3 w-3 mr-1" />Deactivated</Badge>;
+        return <Badge variant="secondary" className="bg-red-100 text-red-800"><UserX className="h-3 w-3 mr-1" />Inactive</Badge>;
       default:
         return <Badge variant="secondary">{status || "Unknown"}</Badge>;
     }
