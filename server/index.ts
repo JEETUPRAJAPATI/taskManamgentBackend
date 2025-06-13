@@ -34,8 +34,6 @@ async function initializeSampleData() {
       console.log('Sample data already exists, skipping initialization');
       return;
     }
-    
-    console.log('Initializing sample data...');
 
     try {
     // Create sample organizations
