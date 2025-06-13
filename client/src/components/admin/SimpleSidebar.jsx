@@ -15,7 +15,8 @@ import {
   ChevronRight,
   HelpCircle,
   Bell,
-  Database
+  Database,
+  CreditCard
 } from "lucide-react";
 
 export function SimpleSidebar() {
@@ -103,6 +104,12 @@ export function SimpleSidebar() {
         href: "/admin/invite-users", 
         icon: UserPlus,
         description: "Invite new team members"
+      },
+      { 
+        name: "Plans & Licenses", 
+        href: "/admin/plans", 
+        icon: CreditCard,
+        description: "License management"
       },
       { 
         name: "Role Management", 

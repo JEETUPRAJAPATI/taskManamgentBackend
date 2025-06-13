@@ -22,6 +22,7 @@ import Roles from './pages/admin/Roles';
 import Reports from './pages/admin/Reports';
 import { InviteUsers } from './pages/InviteUsers';
 import { RoleManagement } from './pages/RoleManagement';
+import { PlansLicenses } from './pages/admin/PlansLicenses';
 import { AdminLayout } from './components/admin/AdminLayout';
 import SettingsLayout from './components/settings/SettingsLayout';
 import GeneralSettings from './pages/settings/GeneralSettings';
@@ -306,6 +307,11 @@ function App() {
         <Route path="/admin/invite-users">
           <AdminLayout>
             <ProtectedRoute component={InviteUsers} allowedRoles={["org_admin", "admin"]} />
+          </AdminLayout>
+        </Route>
+        <Route path="/admin/plans">
+          <AdminLayout>
+            <ProtectedRoute component={PlansLicenses} allowedRoles={["org_admin", "admin"]} />
           </AdminLayout>
         </Route>
         <Route path="/roles">
