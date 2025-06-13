@@ -112,6 +112,7 @@ export default function UserManagement() {
       toast({
         title: "Invite resent",
         description: "Invitation email has been resent successfully",
+        className: "border-emerald-200 bg-emerald-50 text-emerald-800",
       });
     },
     onError: (error) => {
@@ -127,14 +128,14 @@ export default function UserManagement() {
   const getStatusBadge = (status) => {
     switch (status?.toLowerCase()) {
       case "active":
-        return <Badge variant="secondary" className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>;
+        return <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-200"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>;
       case "invited":
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800"><Mail className="h-3 w-3 mr-1" />Invited</Badge>;
+        return <Badge variant="secondary" className="bg-slate-50 text-slate-700 border-slate-200"><Mail className="h-3 w-3 mr-1" />Invited</Badge>;
       case "pending":
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
+        return <Badge variant="secondary" className="bg-amber-50 text-amber-700 border-amber-200"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
       case "inactive":
       case "deactivated":
-        return <Badge variant="secondary" className="bg-red-100 text-red-800"><UserX className="h-3 w-3 mr-1" />Inactive</Badge>;
+        return <Badge variant="secondary" className="bg-gray-50 text-gray-700 border-gray-200"><UserX className="h-3 w-3 mr-1" />Inactive</Badge>;
       default:
         return <Badge variant="secondary">{status || "Unknown"}</Badge>;
     }
@@ -145,9 +146,9 @@ export default function UserManagement() {
     switch (role?.toLowerCase()) {
       case "admin":
       case "org_admin":
-        return <Shield className="h-3 w-3 text-orange-500" />;
+        return <Shield className="h-3 w-3 text-slate-600" />;
       case "manager":
-        return <Crown className="h-3 w-3 text-blue-500" />;
+        return <Crown className="h-3 w-3 text-slate-600" />;
       case "member":
         return <User className="h-3 w-3 text-gray-500" />;
       default:

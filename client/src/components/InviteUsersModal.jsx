@@ -293,8 +293,9 @@ export function InviteUsersModal({ isOpen, onClose }) {
     },
     onSuccess: (data) => {
       toast({
-        title: "Invitations sent successfully",
-        description: `${data.successCount || 0} invitations were sent`,
+        title: "Invitations sent",
+        description: `${data.successCount || 0} invitations were sent successfully`,
+        className: "border-emerald-200 bg-emerald-50 text-emerald-800",
       });
       onClose();
       queryClient.invalidateQueries({ queryKey: ["/api/organization/users-detailed"] });
@@ -339,11 +340,7 @@ export function InviteUsersModal({ isOpen, onClose }) {
         if (invite.licenseError) errorMessages.push(`${invite.email}: ${invite.licenseError}`);
       });
 
-      toast({
-        title: "Validation Errors Found",
-        description: `${invalidInvites.length} invitation(s) have errors. Please fix them before submitting.`,
-        variant: "destructive",
-      });
+      // Don't show toast for validation errors - they're already shown inline
       return;
     }
 
@@ -385,6 +382,7 @@ export function InviteUsersModal({ isOpen, onClose }) {
       toast({
         title: "Invitations Processed",
         description: successMessage,
+        className: "border-emerald-200 bg-emerald-50 text-emerald-800",
       });
       
     } finally {
@@ -413,12 +411,12 @@ export function InviteUsersModal({ isOpen, onClose }) {
 
         {/* License Information */}
         {licenseInfo && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
             <div className="flex items-center space-x-3">
-              <Users className="h-5 w-5 text-blue-600" />
+              <Users className="h-5 w-5 text-slate-600" />
               <div>
-                <h3 className="text-sm font-medium text-blue-800">License Usage</h3>
-                <p className="text-sm text-blue-700">
+                <h3 className="text-sm font-medium text-slate-800">License Usage</h3>
+                <p className="text-sm text-slate-700">
                   {licenseInfo.usedLicenses} of {licenseInfo.totalLicenses} licenses used • 
                   {licenseInfo.availableSlots} slots available
                 </p>
@@ -576,7 +574,7 @@ export function InviteUsersModal({ isOpen, onClose }) {
               type="button"
               variant="outline"
               onClick={addInviteRow}
-              className="flex items-center space-x-2 border-dashed border-2 border-gray-300 hover:border-blue-400 hover:bg-blue-50"
+              className="flex items-center space-x-2 border-dashed border-2 border-gray-300 hover:border-slate-400 hover:bg-slate-50"
             >
               <Plus className="h-4 w-4" />
               <span>Add Another User</span>
