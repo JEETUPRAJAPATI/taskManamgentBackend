@@ -324,11 +324,6 @@ function App() {
             <ProtectedRoute component={PlansAndLicenses} allowedRoles={["org_admin", "admin"]} />
           </AdminLayout>
         </Route>
-        <Route path="/admin/plans-licenses">
-          <AdminLayout>
-            <ProtectedRoute component={PlansAndLicenses} allowedRoles={["org_admin", "admin"]} />
-          </AdminLayout>
-        </Route>
         <Route path="/projects">
           <AdminLayout>
             <ProtectedRoute component={Projects} />

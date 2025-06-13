@@ -176,95 +176,9 @@
 }
 
 /* Fix card backgrounds without breaking other components */
-.card-enhanced, .card, [data-card], .Card {
+.card-enhanced, .card {
   background-color: rgb(255 255 255) !important;
   border: 1px solid rgb(226 232 240) !important;
-}
-
-/* Force all card content areas to white background */
-.card-content, .CardContent, [data-card-content] {
-  background-color: rgb(255 255 255) !important;
-}
-
-/* Force all card header areas to white background */
-.card-header, .CardHeader, [data-card-header] {
-  background-color: rgb(255 255 255) !important;
-}
-
-/* Override any remaining bright yellow backgrounds globally */
-*[style*="background-color: rgb(255, 255, 0)"],
-*[style*="background-color: yellow"],
-*[style*="background: yellow"],
-*[class*="bg-yellow"] {
-  background-color: rgb(255 255 255) !important;
-}
-
-/* Specific override for shadcn card components */
-.bg-card {
-  background-color: rgb(255 255 255) !important;
-}
-
-/* Additional comprehensive yellow elimination */
-div[style*="yellow"], 
-section[style*="yellow"],
-article[style*="yellow"],
-aside[style*="yellow"] {
-  background-color: rgb(255 255 255) !important;
-  background: rgb(255 255 255) !important;
-}
-
-/* Force override all possible yellow class combinations */
-.bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400, .bg-yellow-500,
-.bg-yellow-600, .bg-yellow-700, .bg-yellow-800, .bg-yellow-900,
-.bg-amber-50, .bg-amber-100, .bg-amber-200, .bg-amber-300, .bg-amber-400, .bg-amber-500,
-.bg-amber-600, .bg-amber-700, .bg-amber-800, .bg-amber-900 {
-  background-color: rgb(255 255 255) !important;
-  background: rgb(255 255 255) !important;
-}
-
-/* Force white background on all components */
-.lucide-users + span,
-.lucide-users ~ * {
-  background-color: rgb(255 255 255) !important;
-}
-
-/* Target specific problematic selectors */
-* {
-  --background: 255 255 255 !important;
-  --card: 255 255 255 !important;
-  --card-foreground: 15 23 42 !important;
-}
-
-/* Override any CSS custom properties that might be causing yellow */
-:root {
-  --background: 255 255 255 !important;
-  --card: 255 255 255 !important;
-  --card-foreground: 15 23 42 !important;
-}
-
-/* Force all divs and sections to white unless specifically styled */
-div:not([class*="bg-"]):not([class*="text-"]):not(.sidebar):not(.bg-slate-800):not(.bg-slate-900):not(.bg-primary):not(.bg-secondary) {
-  background-color: rgb(255 255 255) !important;
-}
-
-/* Override tailwind's automatic color application */
-.bg-card,
-[data-theme] .bg-card,
-.dark .bg-card,
-.light .bg-card {
-  background-color: rgb(255 255 255) !important;
-}
-
-/* Targeted card component fixes */
-.card, .Card, [data-testid*="card"], [role="region"] {
-  background-color: rgb(255 255 255) !important;
-  background: rgb(255 255 255) !important;
-  border: 1px solid rgb(226 232 240) !important;
-}
-
-.card-content, .CardContent, .card-header, .CardHeader {
-  background-color: rgb(255 255 255) !important;
-  background: rgb(255 255 255) !important;
 }
 
 /* Enhanced toast positioning and sizing */
