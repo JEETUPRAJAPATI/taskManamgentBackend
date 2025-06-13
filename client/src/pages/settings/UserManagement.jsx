@@ -324,7 +324,7 @@ export default function UserManagement() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          {user.status === "pending" && (
+                          {user.status === "invited" && (
                             <DropdownMenuItem
                               onClick={() => resendInviteMutation.mutate(user._id || user.id)}
                               disabled={resendInviteMutation.isPending}

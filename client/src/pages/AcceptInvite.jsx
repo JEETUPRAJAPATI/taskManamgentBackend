@@ -81,11 +81,25 @@ export function AcceptInvite() {
       }
     },
     onError: (error) => {
-      toast({
-        title: "Registration failed",
-        description: error.message,
-        variant: "destructive",
-      });
+      const isAlreadyRegistered = error.message?.includes("already been accepted") || 
+                                 error.message?.includes("already registered");
+      
+      if (isAlreadyRegistered) {
+        toast({
+          title: "Already Registered",
+          description: "This invitation has already been used. Please log in instead.",
+          variant: "destructive",
+        });
+        
+        // Redirect to login after showing the error
+        setTimeout(() => navigate('/login'), 2000);
+      } else {
+        toast({
+          title: "Registration failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
     },
   });
 
@@ -169,26 +183,44 @@ export function AcceptInvite() {
 
   // Error state
   if (error || !inviteData) {
+    const isAlreadyRegistered = error?.message?.includes("already been accepted") || 
+                               error?.message?.includes("already registered");
+    
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <AlertCircle className="h-6 w-6 text-red-600" />
+            <div className={`w-12 h-12 ${isAlreadyRegistered ? 'bg-blue-100' : 'bg-red-100'} rounded-full flex items-center justify-center mx-auto mb-4`}>
+              {isAlreadyRegistered ? (
+                <CheckCircle className="h-6 w-6 text-blue-600" />
+              ) : (
+                <AlertCircle className="h-6 w-6 text-red-600" />
+              )}
             </div>
-            <CardTitle className="text-red-600">Invalid Invitation</CardTitle>
+            <CardTitle className={isAlreadyRegistered ? "text-blue-600" : "text-red-600"}>
+              {isAlreadyRegistered ? "Already Registered" : "Invalid Invitation"}
+            </CardTitle>
             <CardDescription>
               {error?.message || "This invitation link is invalid or has expired."}
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
             <Button 
               onClick={() => navigate('/login')} 
               className="w-full"
-              variant="outline"
+              variant={isAlreadyRegistered ? "default" : "outline"}
             >
-              Go to Login
+              {isAlreadyRegistered ? "Log In" : "Go to Login"}
             </Button>
+            {isAlreadyRegistered && (
+              <Button 
+                onClick={() => navigate('/')} 
+                className="w-full"
+                variant="outline"
+              >
+                Go to Dashboard
+              </Button>
+            )}
           </CardContent>
         </Card>
       </div>

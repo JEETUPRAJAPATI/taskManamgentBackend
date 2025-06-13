@@ -1306,12 +1306,28 @@ export async function registerRoutes(app) {
 
       const invitedUser = await storage.getUserByInviteToken(token);
       if (!invitedUser) {
-        return res.status(404).json({ message: "Invalid or expired invitation token" });
+        return res.status(410).json({ message: "Invite link is invalid or expired" });
       }
 
       // Check if invitation has expired
       if (invitedUser.inviteTokenExpiry && new Date() > new Date(invitedUser.inviteTokenExpiry)) {
-        return res.status(400).json({ message: "Invitation has expired" });
+        return res.status(410).json({ message: "Invite link is invalid or expired" });
+      }
+
+      // Check if invitation has already been accepted
+      if (invitedUser.status === 'active') {
+        return res.status(409).json({ 
+          message: "This invitation has already been accepted",
+          alreadyRegistered: true
+        });
+      }
+
+      // Additional check: if user has password hash, they're already registered
+      if (invitedUser.passwordHash) {
+        return res.status(409).json({ 
+          message: "You are already registered. Please log in.",
+          alreadyRegistered: true
+        });
       }
 
       // Get organization details
@@ -1322,7 +1338,7 @@ export async function registerRoutes(app) {
         roles: invitedUser.roles || [invitedUser.role],
         role: invitedUser.role,
         organizationName: organization?.name || "Organization",
-        organizationId: invitedUser.organizationId,
+        organizationId: invitedUser.organization,
         invitedByName: invitedUser.invitedByName,
         invitedAt: invitedUser.invitedAt
       });
@@ -1343,12 +1359,28 @@ export async function registerRoutes(app) {
 
       const invitedUser = await storage.getUserByInviteToken(token);
       if (!invitedUser) {
-        return res.status(404).json({ message: "Invalid or expired invitation token" });
+        return res.status(410).json({ message: "Invite link is invalid or expired" });
       }
 
       // Check if invitation has expired
       if (invitedUser.inviteTokenExpiry && new Date() > new Date(invitedUser.inviteTokenExpiry)) {
-        return res.status(400).json({ message: "Invitation has expired" });
+        return res.status(410).json({ message: "Invite link is invalid or expired" });
+      }
+
+      // Final check: ensure invitation hasn't already been accepted
+      if (invitedUser.status === 'active') {
+        return res.status(409).json({ 
+          message: "This invitation has already been accepted",
+          alreadyRegistered: true
+        });
+      }
+
+      // Additional check: if user has password hash, they're already registered
+      if (invitedUser.passwordHash) {
+        return res.status(409).json({ 
+          message: "You are already registered. Please log in.",
+          alreadyRegistered: true
+        });
       }
 
       // Complete the user invitation
@@ -1370,7 +1402,7 @@ export async function registerRoutes(app) {
           firstName: completedUser.firstName,
           lastName: completedUser.lastName,
           role: completedUser.role,
-          organizationId: completedUser.organizationId
+          organizationId: completedUser.organization
         }
       });
 

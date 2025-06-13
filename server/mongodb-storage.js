@@ -1392,7 +1392,7 @@ export class MongoStorage {
     // Hash password
     const passwordHash = await this.hashPassword(password);
 
-    // Update user to active status
+    // Update user to active status and invalidate token
     const updatedUser = await User.findByIdAndUpdate(user._id, {
       firstName,
       lastName,
@@ -1401,7 +1401,7 @@ export class MongoStorage {
       isActive: true,
       emailVerified: true,
       inviteToken: null,
-      inviteExpires: null,
+      inviteTokenExpiry: null,
       completedAt: new Date()
     }, { new: true });
 
@@ -1444,12 +1444,13 @@ export class MongoStorage {
     return await PendingUser.find({});
   }
 
-  // Get user by invite token
+  // Get user by invite token - only return if still pending invitation
   async getUserByInviteToken(token) {
     return await User.findOne({ 
       inviteToken: token,
-      status: 'invited',
-      inviteTokenExpiry: { $gt: new Date() }
+      status: 'invited', // Must be invited status
+      inviteTokenExpiry: { $gt: new Date() }, // Token not expired
+      passwordHash: { $exists: false } // No password set yet
     });
   }
 
