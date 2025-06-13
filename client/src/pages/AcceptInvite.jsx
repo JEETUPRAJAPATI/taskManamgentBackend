@@ -67,14 +67,17 @@ export function AcceptInvite() {
   const { data: inviteData, isLoading, error } = useQuery({
     queryKey: ["/api/auth/validate-invite", token],
     queryFn: async () => {
-      if (!token) throw new Error("No invitation token provided");
-      
+      console.log('Fetching invitation data for token:', token);
       const response = await fetch(`/api/auth/validate-invite?token=${token}`);
+      console.log('Response status:', response.status);
       if (!response.ok) {
         const error = await response.json();
+        console.log('Error response:', error);
         throw new Error(error.message || "Invalid or expired invitation");
       }
-      return response.json();
+      const data = await response.json();
+      console.log('Invitation data received:', data);
+      return data;
     },
     enabled: !!token,
     retry: false,
