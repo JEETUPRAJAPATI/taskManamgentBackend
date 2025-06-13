@@ -1276,7 +1276,28 @@ article[style*="background: yellow"],
 .border-yellow-500, .border-yellow-600, .border-yellow-700, .border-yellow-800, .border-yellow-900,
 .border-amber-50, .border-amber-100, .border-amber-200, .border-amber-300, .border-amber-400,
 .border-amber-500, .border-amber-600, .border-amber-700, .border-amber-800, .border-amber-900 {
-  border-color: rgb(203 213 225) !important; /* slate-300 */
+  border-color: rgb(71 85 105) !important; /* slate-600 - Professional dark border */
+}
+
+/* ADDITIONAL PROFESSIONAL BORDER OVERRIDES */
+.border-yellow, .border-amber {
+  border-color: rgb(71 85 105) !important; /* slate-600 */
+}
+
+/* Ring (focus) colors override */
+.ring-yellow-50, .ring-yellow-100, .ring-yellow-200, .ring-yellow-300, .ring-yellow-400,
+.ring-yellow-500, .ring-yellow-600, .ring-yellow-700, .ring-yellow-800, .ring-yellow-900,
+.ring-amber-50, .ring-amber-100, .ring-amber-200, .ring-amber-300, .ring-amber-400,
+.ring-amber-500, .ring-amber-600, .ring-amber-700, .ring-amber-800, .ring-amber-900 {
+  --tw-ring-color: rgb(59 130 246) !important; /* blue-500 */
+}
+
+/* Outline colors override */
+.outline-yellow-50, .outline-yellow-100, .outline-yellow-200, .outline-yellow-300, .outline-yellow-400,
+.outline-yellow-500, .outline-yellow-600, .outline-yellow-700, .outline-yellow-800, .outline-yellow-900,
+.outline-amber-50, .outline-amber-100, .outline-amber-200, .outline-amber-300, .outline-amber-400,
+.outline-amber-500, .outline-amber-600, .outline-amber-700, .outline-amber-800, .outline-amber-900 {
+  outline-color: rgb(59 130 246) !important; /* blue-500 */
 }
 
 /* Force override any CSS custom properties with yellow/amber */
@@ -1467,6 +1488,7 @@ article[style*="yellow"] {
   *[style*="#ffff00"], *[style*="#FFFF00"], *[style*="#yellow"] {
     background-color: rgb(248 250 252) !important;
     color: rgb(51 65 85) !important;
+    border-color: rgb(71 85 105) !important;
   }
 }
 
@@ -1474,5 +1496,134 @@ article[style*="yellow"] {
 [data-dynamic-yellow-override] * {
   background-color: rgb(248 250 252) !important;
   color: rgb(71 85 105) !important;
-  border-color: rgb(203 213 225) !important;
+  border-color: rgb(71 85 105) !important;
+}
+
+/* PROFESSIONAL BORDER SYSTEM - COMPREHENSIVE OVERRIDE */
+
+/* Default professional borders for all components */
+.border, [class*="border-"] {
+  border-color: rgb(203 213 225) !important; /* slate-300 - light professional border */
+}
+
+/* Enhanced borders for interactive elements */
+button, .btn, .button, input, textarea, select {
+  border-color: rgb(148 163 184) !important; /* slate-400 - medium contrast */
+}
+
+/* Focus states - professional blue */
+button:focus, .btn:focus, .button:focus, input:focus, textarea:focus, select:focus,
+*:focus-visible, *[data-state="focused"] {
+  border-color: rgb(59 130 246) !important; /* blue-500 */
+  outline-color: rgb(59 130 246) !important;
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1) !important;
+}
+
+/* Card and container borders */
+.card, [role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"] {
+  border-color: rgb(203 213 225) !important; /* slate-300 */
+}
+
+/* Table borders - professional hierarchy */
+table, th, td, .table th, .table td {
+  border-color: rgb(226 232 240) !important; /* slate-200 - subtle table borders */
+}
+
+/* Divider and separator borders */
+hr, .separator, [role="separator"] {
+  border-color: rgb(203 213 225) !important; /* slate-300 */
+}
+
+/* Dropdown and popover borders */
+.dropdown-content, [data-radix-popper-content-wrapper], [data-radix-select-content],
+[data-radix-dropdown-menu-content], [data-radix-popover-content] {
+  border-color: rgb(148 163 184) !important; /* slate-400 - visible dropdown borders */
+}
+
+/* PROFESSIONAL SHADOW SYSTEM */
+
+/* Remove yellow-tinted shadows */
+.shadow, .shadow-sm, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl {
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important;
+}
+
+.shadow-md {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+}
+
+/* Professional focus shadows */
+.focus\:shadow:focus, .focus-visible\:shadow:focus-visible {
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.12) !important;
+}
+
+/* PROFESSIONAL COLOR PATTERNS - FINAL CLEANUP */
+
+/* Force any remaining yellow-based classes to professional alternatives */
+[class*="yellow"], [class*="amber"] {
+  background-color: rgb(248 250 252) !important;
+  color: rgb(71 85 105) !important;
+  border-color: rgb(148 163 184) !important;
+}
+
+/* Warning states - use professional orange instead of yellow */
+.warning, .alert-warning, .text-warning, .bg-warning {
+  background-color: rgb(254 243 199) !important; /* amber-100 alternative */
+  color: rgb(146 64 14) !important; /* amber-800 alternative */
+  border-color: rgb(245 158 11) !important; /* amber-500 alternative */
+}
+
+/* Status indicators - professional color hierarchy */
+.status-pending, .badge-pending {
+  background-color: rgb(219 234 254) !important; /* blue-100 */
+  color: rgb(30 64 175) !important; /* blue-800 */
+  border-color: rgb(147 197 253) !important; /* blue-300 */
+}
+
+.status-active, .badge-active {
+  background-color: rgb(220 252 231) !important; /* green-100 */
+  color: rgb(22 101 52) !important; /* green-800 */
+  border-color: rgb(134 239 172) !important; /* green-300 */
+}
+
+/* COMPREHENSIVE UTILITY OVERRIDES */
+
+/* Hover states - professional */
+.hover\:bg-yellow-50:hover, .hover\:bg-yellow-100:hover, .hover\:bg-yellow-200:hover,
+.hover\:bg-yellow-300:hover, .hover\:bg-yellow-400:hover, .hover\:bg-yellow-500:hover,
+.hover\:bg-amber-50:hover, .hover\:bg-amber-100:hover, .hover\:bg-amber-200:hover,
+.hover\:bg-amber-300:hover, .hover\:bg-amber-400:hover, .hover\:bg-amber-500:hover {
+  background-color: rgb(241 245 249) !important; /* slate-100 */
+}
+
+/* Active states - professional */
+.active\:bg-yellow-50:active, .active\:bg-yellow-100:active, .active\:bg-yellow-200:active,
+.active\:bg-yellow-300:active, .active\:bg-yellow-400:active, .active\:bg-yellow-500:active,
+.active\:bg-amber-50:active, .active\:bg-amber-100:active, .active\:bg-amber-200:active,
+.active\:bg-amber-300:active, .active\:bg-amber-400:active, .active\:bg-amber-500:active {
+  background-color: rgb(226 232 240) !important; /* slate-200 */
+}
+
+/* Gradient overrides - remove yellow gradients */
+.bg-gradient-to-r, .bg-gradient-to-l, .bg-gradient-to-t, .bg-gradient-to-b,
+.bg-gradient-to-br, .bg-gradient-to-bl, .bg-gradient-to-tr, .bg-gradient-to-tl {
+  background-image: linear-gradient(to right, rgb(248 250 252), rgb(241 245 249)) !important;
+}
+
+/* From and to gradient colors override */
+.from-yellow-50, .from-yellow-100, .from-yellow-200, .from-yellow-300, .from-yellow-400,
+.from-yellow-500, .from-yellow-600, .from-yellow-700, .from-yellow-800, .from-yellow-900,
+.from-amber-50, .from-amber-100, .from-amber-200, .from-amber-300, .from-amber-400,
+.from-amber-500, .from-amber-600, .from-amber-700, .from-amber-800, .from-amber-900 {
+  --tw-gradient-from: rgb(248 250 252) !important;
+}
+
+.to-yellow-50, .to-yellow-100, .to-yellow-200, .to-yellow-300, .to-yellow-400,
+.to-yellow-500, .to-yellow-600, .to-yellow-700, .to-yellow-800, .to-yellow-900,
+.to-amber-50, .to-amber-100, .to-amber-200, .to-amber-300, .to-amber-400,
+.to-amber-500, .to-amber-600, .to-amber-700, .to-amber-800, .to-amber-900 {
+  --tw-gradient-to: rgb(241 245 249) !important;
 }
