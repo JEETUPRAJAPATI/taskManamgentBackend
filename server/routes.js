@@ -1295,6 +1295,91 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Invitation validation and completion endpoints
+  app.get("/api/auth/validate-invite", async (req, res) => {
+    try {
+      const { token } = req.query;
+      
+      if (!token) {
+        return res.status(400).json({ message: "Invitation token is required" });
+      }
+
+      const invitedUser = await storage.getUserByInviteToken(token);
+      if (!invitedUser) {
+        return res.status(404).json({ message: "Invalid or expired invitation token" });
+      }
+
+      // Check if invitation has expired
+      if (invitedUser.inviteExpires && new Date() > new Date(invitedUser.inviteExpires)) {
+        return res.status(400).json({ message: "Invitation has expired" });
+      }
+
+      // Get organization details
+      const organization = await storage.getOrganization(invitedUser.organizationId);
+      
+      res.json({
+        email: invitedUser.email,
+        roles: invitedUser.roles || [invitedUser.role],
+        role: invitedUser.role,
+        organizationName: organization?.name || "Organization",
+        organizationId: invitedUser.organizationId,
+        invitedByName: invitedUser.invitedByName,
+        invitedAt: invitedUser.invitedAt
+      });
+
+    } catch (error) {
+      console.error("Validate invite error:", error);
+      res.status(500).json({ message: "Failed to validate invitation" });
+    }
+  });
+
+  app.post("/api/auth/complete-invite", async (req, res) => {
+    try {
+      const { token, firstName, lastName, password } = req.body;
+      
+      if (!token || !firstName || !lastName || !password) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+
+      const invitedUser = await storage.getUserByInviteToken(token);
+      if (!invitedUser) {
+        return res.status(404).json({ message: "Invalid or expired invitation token" });
+      }
+
+      // Check if invitation has expired
+      if (invitedUser.inviteExpires && new Date() > new Date(invitedUser.inviteExpires)) {
+        return res.status(400).json({ message: "Invitation has expired" });
+      }
+
+      // Complete the user invitation
+      const completedUser = await storage.completeUserInvitation(token, {
+        firstName,
+        lastName,
+        password
+      });
+
+      // Generate authentication token
+      const authToken = storage.generateToken(completedUser);
+      
+      res.json({
+        message: "Registration completed successfully",
+        token: authToken,
+        user: {
+          id: completedUser._id,
+          email: completedUser.email,
+          firstName: completedUser.firstName,
+          lastName: completedUser.lastName,
+          role: completedUser.role,
+          organizationId: completedUser.organizationId
+        }
+      });
+
+    } catch (error) {
+      console.error("Complete invite error:", error);
+      res.status(500).json({ message: error.message || "Failed to complete registration" });
+    }
+  });
+
   // Projects routes
   app.get("/api/projects", authenticateToken, async (req, res) => {
     try {

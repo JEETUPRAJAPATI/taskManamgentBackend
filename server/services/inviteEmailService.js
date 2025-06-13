@@ -91,9 +91,10 @@ class InviteEmailService {
             </div>
             
             <div class="footer">
-              <p>This email was sent by TaskSetu on behalf of ${organizationName}</p>
-              <p>If you didn't expect this invitation, you can safely ignore this email.</p>
-              <p>&copy; 2024 TaskSetu. All rights reserved.</p>
+              <p>See you inside,<br>— Team TaskSetu</p>
+              <br>
+              <p style="font-size: 12px;">This email was sent by TaskSetu on behalf of ${organizationName}</p>
+              <p style="font-size: 12px;">If you didn't expect this invitation, you can safely ignore this email.</p>
             </div>
           </div>
         </body>
