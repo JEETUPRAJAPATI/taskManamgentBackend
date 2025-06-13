@@ -20,6 +20,7 @@ import FormBuilder from './pages/admin/FormBuilder';
 import Integrations from './pages/admin/Integrations';
 import Roles from './pages/admin/Roles';
 import Reports from './pages/admin/Reports';
+import PlansAndLicenses from './pages/admin/PlansAndLicenses';
 import { InviteUsers } from './pages/InviteUsers';
 import { RoleManagement } from './pages/RoleManagement';
 import { AdminLayout } from './components/admin/AdminLayout';
@@ -316,6 +317,11 @@ function App() {
         <Route path="/admin/role-management">
           <AdminLayout>
             <ProtectedRoute component={RoleManagement} allowedRoles={["org_admin", "admin"]} />
+          </AdminLayout>
+        </Route>
+        <Route path="/admin/plans">
+          <AdminLayout>
+            <ProtectedRoute component={PlansAndLicenses} allowedRoles={["org_admin", "admin"]} />
           </AdminLayout>
         </Route>
         <Route path="/projects">
