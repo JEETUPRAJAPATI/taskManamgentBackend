@@ -242,7 +242,7 @@ export class MongoStorage {
   async initializeSampleData() {
     try {
       // Clear existing data for regeneration
-      console.log('Cleared existing data for regeneration');
+      console.log('Clearing existing data for Plans & Licenses testing...');
       await Promise.all([
         Organization.deleteMany({}),
         User.deleteMany({}),
@@ -255,39 +255,57 @@ export class MongoStorage {
         Notification.deleteMany({})
       ]);
 
-      console.log('Initializing comprehensive sample data...');
+      console.log('Creating realistic sample organizations with license data...');
 
-      // Create sample organizations with license information
+      // Create sample organizations with diverse license plans
       const organizations = await Organization.insertMany([
         {
           name: 'TechCorp Solutions',
           slug: 'techcorp-solutions',
-          description: 'Leading technology solutions provider',
+          description: 'Leading technology solutions provider with enterprise needs',
           isActive: true,
-          maxUsers: 25,
-          subscriptionType: 'Pro',
-          planType: 'Professional',
+          maxUsers: 50,
+          subscriptionType: 'Enterprise',
+          planType: 'Enterprise',
+          licenseType: 'Annual',
           createdAt: new Date('2024-01-15'),
+          settings: {
+            allowGuestAccess: false,
+            requireApproval: true,
+            defaultTaskStatus: 'todo'
+          }
         },
         {
-          name: 'Digital Innovations',
-          slug: 'digital-innovations',
-          description: 'Cutting-edge digital transformation company',
+          name: 'Creative Studio',
+          slug: 'creative-studio',
+          description: 'Digital design agency serving mid-market clients',
+          isActive: true,
+          maxUsers: 25,
+          subscriptionType: 'Professional',
+          planType: 'Professional',
+          licenseType: 'Monthly',
+          createdAt: new Date('2024-02-10'),
+          settings: {
+            allowGuestAccess: true,
+            requireApproval: false,
+            defaultTaskStatus: 'todo'
+          }
+        },
+        {
+          name: 'Startup Labs',
+          slug: 'startup-labs',
+          description: 'Innovation lab for emerging technology startups',
           isActive: true,
           maxUsers: 15,
           subscriptionType: 'Standard',
           planType: 'Standard',
-          createdAt: new Date('2024-02-10'),
-        },
-        {
-          name: 'StartupX',
-          slug: 'startupx',
-          description: 'Fast-growing startup in fintech space',
-          isActive: true,
-          maxUsers: 10,
-          subscriptionType: 'Basic',
-          planType: 'Basic',
+          licenseType: 'Monthly',
           createdAt: new Date('2024-03-05'),
+          settings: {
+            allowGuestAccess: false,
+            requireApproval: true,
+            defaultTaskStatus: 'todo'
+          }
         }
       ]);
 
@@ -304,133 +322,176 @@ export class MongoStorage {
         createdAt: new Date('2024-01-01'),
       });
 
-      // Create comprehensive sample users for each organization
+      console.log('Creating diverse test users with realistic license scenarios...');
       const sampleUsers = [];
       
-      // TechCorp Solutions users (Professional Plan - 25 licenses)
-      const techCorpPasswordHash = await this.hashPassword('password123');
+      // TechCorp Solutions users (Enterprise Plan - 50 licenses)
+      const passwordHash = await this.hashPassword('password123');
       
-      // Admin user who invites others
+      // Organization Admin
       const johnAdmin = await User.create({
         firstName: 'John',
         lastName: 'Doe',
         email: 'john.doe@techcorp.com',
-        passwordHash: techCorpPasswordHash,
-        role: 'admin',
+        passwordHash: passwordHash,
+        role: 'org_admin',
+        roles: ['org_admin'],
         organization: organizations[0]._id,
         isActive: true,
         emailVerified: true,
-        lastLoginAt: new Date('2024-06-15'),
+        status: 'active',
+        lastLoginAt: new Date('2024-06-15T09:30:00Z'),
         createdAt: new Date('2024-01-16'),
       });
       sampleUsers.push(johnAdmin);
 
-      // Active team members
-      sampleUsers.push(
-        await User.create({
+      // Active TechCorp team members (Enterprise - 50 licenses)
+      const activeUsers = [
+        {
           firstName: 'Sarah',
           lastName: 'Wilson',
           email: 'sarah.wilson@techcorp.com',
-          passwordHash: techCorpPasswordHash,
-          role: 'member',
-          roles: ['member'],
-          organization: organizations[0]._id,
-          isActive: true,
-          emailVerified: true,
-          status: 'active',
-          lastLoginAt: new Date('2024-06-14'),
-          invitedBy: johnAdmin._id,
+          role: 'admin',
+          roles: ['admin', 'project_manager'],
+          lastLoginAt: new Date('2024-06-14T14:22:00Z'),
           invitedAt: new Date('2024-01-18'),
           createdAt: new Date('2024-01-20'),
-        }),
-        await User.create({
+        },
+        {
           firstName: 'Michael',
           lastName: 'Chen',
           email: 'michael.chen@techcorp.com',
-          passwordHash: techCorpPasswordHash,
-          role: 'member',
-          roles: ['member', 'developer'],
-          organization: organizations[0]._id,
-          isActive: true,
-          emailVerified: true,
-          status: 'active',
-          lastLoginAt: new Date('2024-06-13'),
-          invitedBy: johnAdmin._id,
+          role: 'employee',
+          roles: ['employee', 'developer'],
+          lastLoginAt: new Date('2024-06-13T11:45:00Z'),
           invitedAt: new Date('2024-02-01'),
           createdAt: new Date('2024-02-03'),
-        }),
-        await User.create({
+        },
+        {
           firstName: 'Emily',
           lastName: 'Rodriguez',
           email: 'emily.rodriguez@techcorp.com',
-          passwordHash: techCorpPasswordHash,
-          role: 'member',
-          roles: ['member', 'designer'],
-          organization: organizations[0]._id,
-          isActive: true,
-          emailVerified: true,
-          status: 'active',
-          lastLoginAt: new Date('2024-06-12'),
-          invitedBy: johnAdmin._id,
+          role: 'employee',
+          roles: ['employee', 'designer'],
+          lastLoginAt: new Date('2024-06-12T16:30:00Z'),
           invitedAt: new Date('2024-02-15'),
           createdAt: new Date('2024-02-17'),
-        })
-      );
+        },
+        {
+          firstName: 'Robert',
+          lastName: 'Taylor',
+          email: 'robert.taylor@techcorp.com',
+          role: 'employee',
+          roles: ['employee', 'analyst'],
+          lastLoginAt: new Date('2024-06-11T10:15:00Z'),
+          invitedAt: new Date('2024-03-10'),
+          createdAt: new Date('2024-03-12'),
+        },
+        {
+          firstName: 'Lisa',
+          lastName: 'Anderson',
+          email: 'lisa.anderson@techcorp.com',
+          role: 'member',
+          roles: ['member'],
+          lastLoginAt: new Date('2024-06-10T13:20:00Z'),
+          invitedAt: new Date('2024-04-05'),
+          createdAt: new Date('2024-04-07'),
+        }
+      ];
 
-      // Invited users (pending)
-      const inviteToken3 = this.generatePasswordResetToken();
-      const inviteToken4 = this.generatePasswordResetToken();
-      
-      sampleUsers.push(
-        await User.create({
+      for (const userData of activeUsers) {
+        sampleUsers.push(
+          await User.create({
+            ...userData,
+            passwordHash,
+            organization: organizations[0]._id,
+            isActive: true,
+            emailVerified: true,
+            status: 'active',
+            invitedBy: johnAdmin._id,
+          })
+        );
+      }
+
+      // Pending invitations (realistic scenarios)
+      const pendingInvitations = [
+        {
           email: 'alex.thompson@techcorp.com',
+          role: 'employee',
+          roles: ['employee', 'qa_engineer'],
+          invitedAt: new Date('2024-06-10T09:15:00Z'),
+          createdAt: new Date('2024-06-10T09:15:00Z'),
+        },
+        {
+          email: 'jennifer.martinez@techcorp.com',
+          role: 'admin',
+          roles: ['admin', 'hr_manager'],
+          invitedAt: new Date('2024-06-12T14:30:00Z'),
+          createdAt: new Date('2024-06-12T14:30:00Z'),
+        },
+        {
+          email: 'david.kim@techcorp.com',
           role: 'member',
-          roles: ['member'],
-          organization: organizations[0]._id,
-          isActive: false,
-          emailVerified: false,
-          status: 'invited',
-          inviteToken: inviteToken3,
-          inviteTokenExpiry: new Date(Date.now() + 48 * 60 * 60 * 1000),
-          invitedBy: johnAdmin._id,
-          invitedAt: new Date('2024-06-10'),
-          createdAt: new Date('2024-06-10'),
-        }),
-        await User.create({
-          email: 'lisa.kim@techcorp.com',
-          role: 'member',
-          roles: ['member', 'manager'],
-          organization: organizations[0]._id,
-          isActive: false,
-          emailVerified: false,
-          status: 'invited',
-          inviteToken: inviteToken4,
-          inviteTokenExpiry: new Date(Date.now() + 48 * 60 * 60 * 1000),
-          invitedBy: johnAdmin._id,
-          invitedAt: new Date('2024-06-12'),
-          createdAt: new Date('2024-06-12'),
-        })
-      );
+          roles: ['member', 'intern'],
+          invitedAt: new Date('2024-06-13T11:45:00Z'),
+          createdAt: new Date('2024-06-13T11:45:00Z'),
+        }
+      ];
 
-      // Deactivated user
-      sampleUsers.push(
-        await User.create({
-          firstName: 'David',
-          lastName: 'Brown',
-          email: 'david.brown@techcorp.com',
-          passwordHash: techCorpPasswordHash,
+      for (const inviteData of pendingInvitations) {
+        const token = this.generatePasswordResetToken();
+        sampleUsers.push(
+          await User.create({
+            ...inviteData,
+            organization: organizations[0]._id,
+            isActive: false,
+            emailVerified: false,
+            status: 'invited',
+            inviteToken: token,
+            inviteTokenExpiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+            invitedBy: johnAdmin._id,
+          })
+        );
+      }
+
+      // Inactive/Suspended users
+      const inactiveUsers = [
+        {
+          firstName: 'Mark',
+          lastName: 'Johnson',
+          email: 'mark.johnson@techcorp.com',
           role: 'member',
           roles: ['member'],
-          organization: organizations[0]._id,
-          isActive: false,
-          emailVerified: true,
           status: 'inactive',
-          lastLoginAt: new Date('2024-05-15'),
-          invitedBy: johnAdmin._id,
+          lastLoginAt: new Date('2024-04-20T08:30:00Z'),
+          invitedAt: new Date('2024-02-15'),
+          createdAt: new Date('2024-02-17'),
+        },
+        {
+          firstName: 'Jessica',
+          lastName: 'Brown',
+          email: 'jessica.brown@techcorp.com',
+          role: 'employee',
+          roles: ['employee', 'contractor'],
+          status: 'suspended',
+          lastLoginAt: new Date('2024-05-10T16:45:00Z'),
           invitedAt: new Date('2024-03-01'),
           createdAt: new Date('2024-03-03'),
-        })
-      );
+        }
+      ];
+
+      for (const userData of inactiveUsers) {
+        sampleUsers.push(
+          await User.create({
+            ...userData,
+            passwordHash,
+            organization: organizations[0]._id,
+            isActive: false,
+            emailVerified: true,
+            invitedBy: johnAdmin._id,
+          })
+        );
+      }
 
       // Digital Innovations users
       sampleUsers.push(

@@ -28,12 +28,11 @@ async function initializeSampleData() {
   try {
     const { Organization, User, Project, Task, TaskStatus, Form, ProcessFlow, FormResponse } = await import('./models.js');
     
-    // Check if sample data already exists
-    const existingOrgs = await Organization.countDocuments();
-    if (existingOrgs > 0) {
-      console.log('Sample data already exists, skipping initialization');
-      return;
-    }
+    // Force regeneration for Plans & Licenses testing
+    console.log('Force regenerating enhanced sample data...');
+    const { storage } = await import('./mongodb-storage.js');
+    await storage.initializeSampleData();
+    return;
 
     try {
     // Create sample organizations
