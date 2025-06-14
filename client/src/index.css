@@ -46,10 +46,58 @@
   color: rgb(15 23 42) !important;
 }
 
+/* Comprehensive Sidebar Styling */
+[data-sidebar="sidebar"],
+.sidebar,
+.admin-sidebar {
+  background-color: rgb(30 41 59) !important; /* slate-800 */
+  border-right: 1px solid rgb(51 65 85) !important; /* slate-700 */
+  min-height: 100vh !important;
+}
+
 /* Sidebar text visibility */
 [data-sidebar="sidebar"] *,
 .sidebar *,
 .admin-sidebar * {
+  color: rgb(248 250 252) !important; /* slate-50 */
+}
+
+/* Sidebar menu items */
+[data-sidebar="menu-item"],
+.sidebar-menu-item,
+.admin-sidebar .nav-item {
+  background-color: transparent !important;
+  color: rgb(248 250 252) !important;
+  border-radius: 0.375rem !important;
+  padding: 0.5rem 0.75rem !important;
+  margin: 0.125rem 0.5rem !important;
+  transition: all 0.2s ease !important;
+}
+
+[data-sidebar="menu-item"]:hover,
+.sidebar-menu-item:hover,
+.admin-sidebar .nav-item:hover {
+  background-color: rgb(51 65 85) !important; /* slate-700 */
+  color: rgb(255 255 255) !important;
+}
+
+[data-sidebar="menu-item"][data-active="true"],
+.sidebar-menu-item.active,
+.admin-sidebar .nav-item.active {
+  background-color: rgb(59 130 246) !important; /* blue-500 */
+  color: rgb(255 255 255) !important;
+}
+
+/* Sidebar icons */
+[data-sidebar="menu-item"] svg,
+.sidebar-menu-item svg,
+.admin-sidebar svg {
+  color: rgb(203 213 225) !important; /* slate-300 */
+}
+
+[data-sidebar="menu-item"]:hover svg,
+.sidebar-menu-item:hover svg,
+.admin-sidebar .nav-item:hover svg {
   color: rgb(255 255 255) !important;
 }
 
@@ -110,14 +158,14 @@
   --ring: 30 64 175; /* Strong blue focus ring #1e40af */
   --radius: 0.5rem;
   
-  /* Sidebar colors - Professional Navy & Blue */
-  --sidebar-background: 15 23 42; /* Dark navy sidebar #0f172a */
-  --sidebar-foreground: 255 255 255; /* White sidebar text #ffffff */
+  /* Sidebar colors - Professional Dark Theme */
+  --sidebar-background: 30 41 59; /* Professional slate-800 #1e293b */
+  --sidebar-foreground: 248 250 252; /* Light text #f8fafc */
   --sidebar-primary: 59 130 246; /* Professional blue-500 #3b82f6 */
   --sidebar-primary-foreground: 255 255 255; /* White text on primary #ffffff */
   --sidebar-accent: 96 165 250; /* Light blue-400 #60a5fa */
   --sidebar-accent-foreground: 255 255 255; /* White text on blue #ffffff */
-  --sidebar-border: 30 41 59; /* Dark border #1e293b */
+  --sidebar-border: 51 65 85; /* Lighter border #334155 */
   --sidebar-ring: 59 130 246; /* Blue focus ring #3b82f6 */
   
   /* Chart colors - Professional Business palette */
