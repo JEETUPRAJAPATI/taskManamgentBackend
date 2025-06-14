@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Mail, Eye, EyeOff, LogIn, AlertCircle, CheckCircle2 } from "lucide-react";
+import {
+  Mail,
+  Eye,
+  EyeOff,
+  LogIn,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 
@@ -10,7 +17,7 @@ export default function Login() {
   const [successMessage, setSuccessMessage] = useState("");
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,11 +29,11 @@ export default function Login() {
   // Check for success message in URL params
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const message = urlParams.get('message');
+    const message = urlParams.get("message");
     if (message) {
       setSuccessMessage(message);
       // Clean up URL without the message parameter
-      window.history.replaceState({}, '', '/login');
+      window.history.replaceState({}, "", "/login");
     }
   }, []);
 
@@ -36,9 +43,9 @@ export default function Login() {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: "" }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
@@ -68,16 +75,16 @@ export default function Login() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: formData.email,
-          password: formData.password
-        })
+          password: formData.password,
+        }),
       });
 
       const result = await response.json();
-      
+
       if (response.ok) {
         localStorage.setItem("token", result.token);
         localStorage.setItem("user", JSON.stringify(result.user));
-        
+
         // Set user data in cache immediately to prevent loading state
         queryClient.setQueryData(["/api/auth/verify"], {
           ...result.user,
@@ -85,16 +92,16 @@ export default function Login() {
           role: result.user.role,
           email: result.user.email,
           firstName: result.user.firstName,
-          lastName: result.user.lastName
+          lastName: result.user.lastName,
         });
-        
+
         toast({
           title: "Welcome back!",
-          description: "You have successfully signed in"
+          description: "You have successfully signed in",
         });
 
         // Use role-based redirection from server response
-        const redirectPath = result.redirectTo || '/dashboard';
+        const redirectPath = result.redirectTo || "/dashboard";
         window.location.href = redirectPath;
       } else {
         setErrors({ submit: result.message || "Invalid email or password" });
@@ -108,12 +115,12 @@ export default function Login() {
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
-    
+
     if (!resetEmail.trim()) {
       setErrors({ resetEmail: "Email is required" });
       return;
     }
-    
+
     if (!validateEmail(resetEmail)) {
       setErrors({ resetEmail: "Please enter a valid email address" });
       return;
@@ -124,19 +131,22 @@ export default function Login() {
       const response = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: resetEmail })
+        body: JSON.stringify({ email: resetEmail }),
       });
 
       const result = await response.json();
-      
+
       if (response.ok) {
         setResetSent(true);
         toast({
           title: "Reset link sent",
-          description: "Please check your email for password reset instructions"
+          description:
+            "Please check your email for password reset instructions",
         });
       } else {
-        setErrors({ resetEmail: result.message || "Failed to send reset email" });
+        setErrors({
+          resetEmail: result.message || "Failed to send reset email",
+        });
       }
     } catch (error) {
       setErrors({ resetEmail: "Network error. Please try again." });
@@ -156,9 +166,12 @@ export default function Login() {
                   <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Mail className="h-6 w-6 text-blue-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Reset Password</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Reset Password
+                  </h2>
                   <p className="text-gray-600 mt-2">
-                    Enter your email address and we'll send you a link to reset your password
+                    Enter your email address and we'll send you a link to reset
+                    your password
                   </p>
                 </div>
 
@@ -175,17 +188,21 @@ export default function Login() {
                         onChange={(e) => {
                           setResetEmail(e.target.value);
                           if (errors.resetEmail) {
-                            setErrors(prev => ({ ...prev, resetEmail: "" }));
+                            setErrors((prev) => ({ ...prev, resetEmail: "" }));
                           }
                         }}
                         className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                          errors.resetEmail ? 'border-red-300' : 'border-gray-300'
+                          errors.resetEmail
+                            ? "border-red-300"
+                            : "border-gray-300"
                         }`}
                         placeholder="Enter your email"
                       />
                     </div>
                     {errors.resetEmail && (
-                      <p className="text-red-500 text-xs mt-1">{errors.resetEmail}</p>
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.resetEmail}
+                      </p>
                     )}
                   </div>
 
@@ -211,9 +228,12 @@ export default function Login() {
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Mail className="h-6 w-6 text-green-600" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Check Your Email</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  Check Your Email
+                </h2>
                 <p className="text-gray-600 mb-6">
-                  We've sent a password reset link to <span className="font-medium">{resetEmail}</span>
+                  We've sent a password reset link to{" "}
+                  <span className="font-medium">{resetEmail}</span>
                 </p>
                 <p className="text-sm text-gray-500 mb-6">
                   The link will expire in 30 minutes for security reasons.
@@ -245,7 +265,9 @@ export default function Login() {
             <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
               <div className="flex items-center">
                 <CheckCircle2 className="h-5 w-5 text-green-600 mr-3" />
-                <span className="text-green-800 text-sm font-medium">{successMessage}</span>
+                <span className="text-green-800 text-sm font-medium">
+                  {successMessage}
+                </span>
               </div>
             </div>
           )}
@@ -255,7 +277,9 @@ export default function Login() {
               <LogIn className="h-6 w-6 text-blue-600" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900">Welcome Back</h2>
-            <p className="text-gray-600 mt-2">Sign in to your TaskSetu account</p>
+            <p className="text-gray-600 mt-2">
+              Sign in to your TaskSetu account
+            </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
@@ -268,9 +292,9 @@ export default function Login() {
                 <input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
                   className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.email ? 'border-red-300' : 'border-gray-300'
+                    errors.email ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="Enter your email"
                 />
@@ -288,9 +312,11 @@ export default function Login() {
                 <input
                   type={showPassword ? "text" : "password"}
                   value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("password", e.target.value)
+                  }
                   className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.password ? 'border-red-300' : 'border-gray-300'
+                    errors.password ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="Enter your password"
                 />
@@ -299,7 +325,11 @@ export default function Login() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
               {errors.password && (
@@ -315,7 +345,10 @@ export default function Login() {
                   type="checkbox"
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-sm text-gray-700"
+                >
                   Remember me
                 </label>
               </div>
@@ -338,7 +371,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isLoading ? "Signing in..." : "Sign In"}
             </button>
@@ -347,7 +380,10 @@ export default function Login() {
           <div className="text-center mt-6 pt-6 border-t border-gray-200">
             <p className="text-gray-600 text-sm">
               Don't have an account?{" "}
-              <Link href="/register" className="text-blue-600 hover:text-blue-700 font-medium">
+              <Link
+                href="/register"
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
                 Create one here
               </Link>
             </p>
