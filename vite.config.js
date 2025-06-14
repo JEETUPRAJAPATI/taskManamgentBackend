@@ -11,13 +11,13 @@ export default defineConfig({
   root: "./client",
   build: {
     outDir: "dist",
-    emptyOutDir: true
+    emptyOutDir: true,
   },
   server: {
     allowedHosts: [
       "25b3cec7-b6b2-48b7-a8f4-7ee8a9c12574-00-36vzyej2u9kbm.kirk.replit.dev",
       ".replit.dev",
-      "localhost"
+      "localhost",
     ],
     host: "0.0.0.0",
     port: 5173,

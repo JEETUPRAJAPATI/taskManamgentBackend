@@ -1,40 +1,40 @@
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { 
-  Plus, 
-  Mail, 
-  X, 
-  UserPlus, 
-  Check, 
+import {
+  Plus,
+  Mail,
+  X,
+  UserPlus,
+  Check,
   AlertCircle,
   Users,
   Shield,
-  User
+  User,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export function InviteUsersModal({ isOpen, onClose }) {
   const [inviteList, setInviteList] = useState([
-    { 
-      email: "", 
-      roles: ["member"], 
+    {
+      email: "",
+      roles: ["member"],
       emailError: "",
       existsError: "",
       licenseError: "",
       isValid: false,
-      isChecking: false
-    }
+      isChecking: false,
+    },
   ]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -50,15 +50,15 @@ export function InviteUsersModal({ isOpen, onClose }) {
   useEffect(() => {
     if (isOpen) {
       setInviteList([
-        { 
-          email: "", 
-          roles: ["member"], 
+        {
+          email: "",
+          roles: ["member"],
           emailError: "",
           existsError: "",
           licenseError: "",
           isValid: false,
-          isChecking: false
-        }
+          isChecking: false,
+        },
       ]);
       setIsSubmitting(false);
     }
@@ -83,15 +83,15 @@ export function InviteUsersModal({ isOpen, onClose }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ email, organizationId })
+        body: JSON.stringify({ email, organizationId }),
       });
-      
+
       if (!response.ok) {
         return false;
       }
-      
+
       const data = await response.json();
       return data.exists;
     } catch (error) {
@@ -104,176 +104,218 @@ export function InviteUsersModal({ isOpen, onClose }) {
   const calculateLicenseRequirement = (roles) => {
     // Member role is always included and counts as 1 license
     // Additional roles like admin, manager might require additional licenses
-    const additionalRoles = roles.filter(role => role !== "member");
-    return 1 + (additionalRoles.length * 0); // For now, each user needs 1 license regardless of roles
+    const additionalRoles = roles.filter((role) => role !== "member");
+    return 1 + additionalRoles.length * 0; // For now, each user needs 1 license regardless of roles
   };
 
   // Validate license availability
   const validateLicenseAvailability = (currentInvites, licenseInfo) => {
     if (!licenseInfo) return true;
-    
+
     const totalLicensesNeeded = currentInvites.reduce((total, invite) => {
       if (invite.email && !invite.emailError && !invite.existsError) {
         return total + calculateLicenseRequirement(invite.roles);
       }
       return total;
     }, 0);
-    
+
     return totalLicensesNeeded <= licenseInfo.availableSlots;
   };
 
   // Update email and validate comprehensively
   const updateInviteEmail = async (index, email) => {
     // First, update the email and set checking state
-    setInviteList(prev => prev.map((invite, i) => 
-      i === index 
-        ? { 
-            ...invite, 
-            email, 
-            emailError: "",
-            existsError: "",
-            licenseError: "",
-            isValid: false,
-            isChecking: true
-          }
-        : invite
-    ));
+    setInviteList((prev) =>
+      prev.map((invite, i) =>
+        i === index
+          ? {
+              ...invite,
+              email,
+              emailError: "",
+              existsError: "",
+              licenseError: "",
+              isValid: false,
+              isChecking: true,
+            }
+          : invite,
+      ),
+    );
 
     // Basic email format validation
     const emailError = validateEmail(email);
-    
+
     if (emailError || !email.trim()) {
-      setInviteList(prev => prev.map((invite, i) => 
-        i === index 
-          ? { 
-              ...invite, 
-              emailError, 
-              isValid: false,
-              isChecking: false
-            }
-          : invite
-      ));
+      setInviteList((prev) =>
+        prev.map((invite, i) =>
+          i === index
+            ? {
+                ...invite,
+                emailError,
+                isValid: false,
+                isChecking: false,
+              }
+            : invite,
+        ),
+      );
       return;
     }
 
     // Check for duplicates within current invite list
     const currentEmails = inviteList
-      .map((invite, i) => ({ email: invite.email.toLowerCase().trim(), index: i }))
-      .filter(item => item.email !== ""); // Only check non-empty emails
-    
-    const duplicateExists = currentEmails.some(item => 
-      item.email === email.toLowerCase().trim() && item.index !== index
+      .map((invite, i) => ({
+        email: invite.email.toLowerCase().trim(),
+        index: i,
+      }))
+      .filter((item) => item.email !== ""); // Only check non-empty emails
+
+    const duplicateExists = currentEmails.some(
+      (item) =>
+        item.email === email.toLowerCase().trim() && item.index !== index,
     );
-    
+
     if (duplicateExists) {
-      setInviteList(prev => prev.map((invite, i) => 
-        i === index 
-          ? { 
-              ...invite, 
-              existsError: "This email is already added in another invitation row",
-              isValid: false,
-              isChecking: false
-            }
-          : invite
-      ));
+      setInviteList((prev) =>
+        prev.map((invite, i) =>
+          i === index
+            ? {
+                ...invite,
+                existsError:
+                  "This email is already added in another invitation row",
+                isValid: false,
+                isChecking: false,
+              }
+            : invite,
+        ),
+      );
       return;
     }
 
     // Check if email exists in organization
-    const emailExists = await checkEmailExists(email, licenseInfo?.organizationId);
-    
+    const emailExists = await checkEmailExists(
+      email,
+      licenseInfo?.organizationId,
+    );
+
     if (emailExists) {
-      setInviteList(prev => prev.map((invite, i) => 
-        i === index 
-          ? { 
-              ...invite, 
-              existsError: `${email} already exists. That user will not be reinvited.`,
-              isValid: false,
-              isChecking: false
-            }
-          : invite
-      ));
+      setInviteList((prev) =>
+        prev.map((invite, i) =>
+          i === index
+            ? {
+                ...invite,
+                existsError: `${email} already exists. That user will not be reinvited.`,
+                isValid: false,
+                isChecking: false,
+              }
+            : invite,
+        ),
+      );
       return;
     }
 
     // Validate license availability
     const updatedInvites = [...inviteList];
-    updatedInvites[index] = { ...updatedInvites[index], email, emailError: "", existsError: "" };
-    
-    const licenseValid = validateLicenseAvailability(updatedInvites, licenseInfo);
-    const licenseError = licenseValid ? "" : "Not enough licenses available for the selected role(s).";
+    updatedInvites[index] = {
+      ...updatedInvites[index],
+      email,
+      emailError: "",
+      existsError: "",
+    };
+
+    const licenseValid = validateLicenseAvailability(
+      updatedInvites,
+      licenseInfo,
+    );
+    const licenseError = licenseValid
+      ? ""
+      : "Not enough licenses available for the selected role(s).";
 
     // Final validation state
-    const isValid = !emailError && !emailExists && licenseValid && email.trim() !== "";
-    
-    setInviteList(prev => prev.map((invite, i) => 
-      i === index 
-        ? { 
-            ...invite, 
-            emailError,
-            existsError: emailExists ? `${email} already exists. That user will not be reinvited.` : "",
-            licenseError,
-            isValid,
-            isChecking: false
-          }
-        : invite
-    ));
+    const isValid =
+      !emailError && !emailExists && licenseValid && email.trim() !== "";
+
+    setInviteList((prev) =>
+      prev.map((invite, i) =>
+        i === index
+          ? {
+              ...invite,
+              emailError,
+              existsError: emailExists
+                ? `${email} already exists. That user will not be reinvited.`
+                : "",
+              licenseError,
+              isValid,
+              isChecking: false,
+            }
+          : invite,
+      ),
+    );
   };
 
   // Toggle role selection with license validation
   const toggleRole = async (index, role) => {
-    setInviteList(prev => prev.map((invite, i) => {
-      if (i !== index) return invite;
-      
-      const currentRoles = invite.roles;
-      if (role === "member") {
-        // Member role cannot be removed
-        return invite;
-      }
-      
-      const hasRole = currentRoles.includes(role);
-      const newRoles = hasRole 
-        ? currentRoles.filter(r => r !== role)
-        : [...currentRoles, role];
-      
-      // Validate license requirements with new roles
-      const updatedInvites = [...prev];
-      updatedInvites[index] = { ...invite, roles: newRoles };
-      
-      const licenseValid = validateLicenseAvailability(updatedInvites, licenseInfo);
-      const licenseError = licenseValid ? "" : "Not enough licenses available for the selected role(s).";
-      
-      const isValid = invite.email && !invite.emailError && !invite.existsError && licenseValid;
-      
-      return { 
-        ...invite, 
-        roles: newRoles,
-        licenseError,
-        isValid
-      };
-    }));
+    setInviteList((prev) =>
+      prev.map((invite, i) => {
+        if (i !== index) return invite;
+
+        const currentRoles = invite.roles;
+        if (role === "member") {
+          // Member role cannot be removed
+          return invite;
+        }
+
+        const hasRole = currentRoles.includes(role);
+        const newRoles = hasRole
+          ? currentRoles.filter((r) => r !== role)
+          : [...currentRoles, role];
+
+        // Validate license requirements with new roles
+        const updatedInvites = [...prev];
+        updatedInvites[index] = { ...invite, roles: newRoles };
+
+        const licenseValid = validateLicenseAvailability(
+          updatedInvites,
+          licenseInfo,
+        );
+        const licenseError = licenseValid
+          ? ""
+          : "Not enough licenses available for the selected role(s).";
+
+        const isValid =
+          invite.email &&
+          !invite.emailError &&
+          !invite.existsError &&
+          licenseValid;
+
+        return {
+          ...invite,
+          roles: newRoles,
+          licenseError,
+          isValid,
+        };
+      }),
+    );
   };
 
   // Add new invite row
   const addInviteRow = () => {
-    setInviteList(prev => [
-      ...prev, 
-      { 
-        email: "", 
-        roles: ["member"], 
+    setInviteList((prev) => [
+      ...prev,
+      {
+        email: "",
+        roles: ["member"],
         emailError: "",
         existsError: "",
         licenseError: "",
         isValid: false,
-        isChecking: false
-      }
+        isChecking: false,
+      },
     ]);
   };
 
   // Remove invite row
   const removeInviteRow = (index) => {
     if (inviteList.length > 1) {
-      setInviteList(prev => prev.filter((_, i) => i !== index));
+      setInviteList((prev) => prev.filter((_, i) => i !== index));
     }
   };
 
@@ -284,45 +326,50 @@ export function InviteUsersModal({ isOpen, onClose }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ invites: inviteData })
+        body: JSON.stringify({ invites: inviteData }),
       });
-      
+
       const result = await response.json();
-      
+
       if (!response.ok) {
         // Handle server errors with context
         if (result.errors && result.errors.length > 0) {
-          const errorDetails = result.errors.map(err => `${err.email}: ${err.error}`).join('\n');
+          const errorDetails = result.errors
+            .map((err) => `${err.email}: ${err.error}`)
+            .join("\n");
           throw new Error(`${result.message}\n\nDetails:\n${errorDetails}`);
         }
         throw new Error(result.message || "Failed to send invitations");
       }
-      
+
       return result;
     },
     onSuccess: (data) => {
       console.log("Invite success response:", data);
-      
+
       // Handle partial success cases
       if (data.errors && data.errors.length > 0) {
         // Partial success - some failed
-        const errorList = data.errors.map(err => `• ${err.email}: ${err.error}`).join('\n');
-        
+        const errorList = data.errors
+          .map((err) => `• ${err.email}: ${err.error}`)
+          .join("\n");
+
         console.log("Showing partial success toast");
         toast({
           title: "Partial Success",
-          description: `${data.successCount} invitation${data.successCount !== 1 ? 's' : ''} sent successfully, but ${data.errors.length} failed:\n\n${errorList}`,
+          description: `${data.successCount} invitation${data.successCount !== 1 ? "s" : ""} sent successfully, but ${data.errors.length} failed:\n\n${errorList}`,
           variant: "default",
           duration: 8000,
         });
       } else {
         // Complete success
-        const successMessage = data.successCount === 1 
-          ? `1 invitation sent successfully`
-          : `${data.successCount} invitations sent successfully`;
-        
+        const successMessage =
+          data.successCount === 1
+            ? `1 invitation sent successfully`
+            : `${data.successCount} invitations sent successfully`;
+
         console.log("Showing success toast:", successMessage);
         toast({
           title: "Invitations Sent!",
@@ -331,10 +378,14 @@ export function InviteUsersModal({ isOpen, onClose }) {
           duration: 5000,
         });
       }
-      
+
       onClose();
-      queryClient.invalidateQueries({ queryKey: ["/api/organization/users-detailed"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/organization/license"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/organization/users-detailed"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/organization/license"],
+      });
     },
     onError: (error) => {
       console.log("Invite error:", error);
@@ -352,7 +403,8 @@ export function InviteUsersModal({ isOpen, onClose }) {
     console.log("Testing toast functionality");
     toast({
       title: "Test Toast",
-      description: "If you can see this, the toast system is working correctly.",
+      description:
+        "If you can see this, the toast system is working correctly.",
       variant: "default",
       duration: 3000,
     });
@@ -361,37 +413,47 @@ export function InviteUsersModal({ isOpen, onClose }) {
   // Submit invitations with comprehensive validation
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Separate valid and invalid invites
-    const validInvites = inviteList.filter(invite => 
-      invite.isValid && 
-      invite.email.trim() !== "" && 
-      !invite.emailError && 
-      !invite.existsError && 
-      !invite.licenseError
+    const validInvites = inviteList.filter(
+      (invite) =>
+        invite.isValid &&
+        invite.email.trim() !== "" &&
+        !invite.emailError &&
+        !invite.existsError &&
+        !invite.licenseError,
     );
-    
-    const invalidInvites = inviteList.filter(invite => 
-      invite.email.trim() !== "" && 
-      (!invite.isValid || invite.emailError || invite.existsError || invite.licenseError)
+
+    const invalidInvites = inviteList.filter(
+      (invite) =>
+        invite.email.trim() !== "" &&
+        (!invite.isValid ||
+          invite.emailError ||
+          invite.existsError ||
+          invite.licenseError),
     );
-    
-    const emptyInvites = inviteList.filter(invite => invite.email.trim() === "");
+
+    const emptyInvites = inviteList.filter(
+      (invite) => invite.email.trim() === "",
+    );
 
     // Show validation summary
     if (invalidInvites.length > 0) {
       const errorMessages = [];
-      
-      invalidInvites.forEach(invite => {
-        if (invite.emailError) errorMessages.push(`${invite.email}: ${invite.emailError}`);
-        if (invite.existsError) errorMessages.push(`${invite.email}: ${invite.existsError}`);
-        if (invite.licenseError) errorMessages.push(`${invite.email}: ${invite.licenseError}`);
+
+      invalidInvites.forEach((invite) => {
+        if (invite.emailError)
+          errorMessages.push(`${invite.email}: ${invite.emailError}`);
+        if (invite.existsError)
+          errorMessages.push(`${invite.email}: ${invite.existsError}`);
+        if (invite.licenseError)
+          errorMessages.push(`${invite.email}: ${invite.licenseError}`);
       });
 
       // Show toast with validation errors summary
       toast({
         title: "Please fix the following errors",
-        description: `${invalidInvites.length} invitation${invalidInvites.length > 1 ? 's have' : ' has'} validation errors. Check the form above for details.`,
+        description: `${invalidInvites.length} invitation${invalidInvites.length > 1 ? "s have" : " has"} validation errors. Check the form above for details.`,
         variant: "destructive",
         className: "border-red-200 bg-red-50 text-red-800 shadow-lg",
         duration: 5000,
@@ -402,7 +464,8 @@ export function InviteUsersModal({ isOpen, onClose }) {
     if (validInvites.length === 0) {
       toast({
         title: "No valid invitations to send",
-        description: "Please enter at least one valid email address with proper roles assigned.",
+        description:
+          "Please enter at least one valid email address with proper roles assigned.",
         variant: "destructive",
         className: "border-red-200 bg-red-50 text-red-800 shadow-lg",
         duration: 5000,
@@ -411,10 +474,11 @@ export function InviteUsersModal({ isOpen, onClose }) {
     }
 
     // Final license check
-    const totalLicensesNeeded = validInvites.reduce((total, invite) => 
-      total + calculateLicenseRequirement(invite.roles), 0
+    const totalLicensesNeeded = validInvites.reduce(
+      (total, invite) => total + calculateLicenseRequirement(invite.roles),
+      0,
     );
-    
+
     if (licenseInfo && totalLicensesNeeded > licenseInfo.availableSlots) {
       toast({
         title: "License limit exceeded",
@@ -436,8 +500,9 @@ export function InviteUsersModal({ isOpen, onClose }) {
   };
 
   // Check if form is valid
-  const isFormValid = inviteList.some(invite => invite.isValid) && 
-                     inviteList.every(invite => invite.email === "" || invite.isValid);
+  const isFormValid =
+    inviteList.some((invite) => invite.isValid) &&
+    inviteList.every((invite) => invite.email === "" || invite.isValid);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -450,7 +515,8 @@ export function InviteUsersModal({ isOpen, onClose }) {
             Invite Users
           </DialogTitle>
           <DialogDescription className="text-base text-gray-600 mt-2">
-            Send invitations to new team members. They'll receive an email with instructions to join your organization.
+            Send invitations to new team members. They'll receive an email with
+            instructions to join your organization.
           </DialogDescription>
         </DialogHeader>
 
@@ -460,10 +526,12 @@ export function InviteUsersModal({ isOpen, onClose }) {
             <div className="flex items-center space-x-3">
               <Users className="h-5 w-5 text-slate-600" />
               <div>
-                <h3 className="text-sm font-medium text-slate-800">License Usage</h3>
+                <h3 className="text-sm font-medium text-slate-800">
+                  License Usage
+                </h3>
                 <p className="text-sm text-slate-700">
-                  {licenseInfo.usedLicenses} of {licenseInfo.totalLicenses} licenses used • 
-                  {licenseInfo.availableSlots} slots available
+                  {licenseInfo.usedLicenses} of {licenseInfo.totalLicenses}{" "}
+                  licenses used •{licenseInfo.availableSlots} slots available
                 </p>
               </div>
             </div>
@@ -474,14 +542,24 @@ export function InviteUsersModal({ isOpen, onClose }) {
           {/* Invitation Rows */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Team Members to Invite</h3>
-              <span className="text-sm text-gray-500">{inviteList.length} invitation{inviteList.length !== 1 ? 's' : ''}</span>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Team Members to Invite
+              </h3>
+              <span className="text-sm text-gray-500">
+                {inviteList.length} invitation
+                {inviteList.length !== 1 ? "s" : ""}
+              </span>
             </div>
 
             {inviteList.map((invite, index) => (
-              <div key={index} className="border border-gray-200 rounded-lg p-4 space-y-4">
+              <div
+                key={index}
+                className="border border-gray-200 rounded-lg p-4 space-y-4"
+              >
                 <div className="flex items-center justify-between">
-                  <h4 className="text-md font-medium text-gray-700">Invitation #{index + 1}</h4>
+                  <h4 className="text-md font-medium text-gray-700">
+                    Invitation #{index + 1}
+                  </h4>
                   {inviteList.length > 1 && (
                     <button
                       type="button"
@@ -492,11 +570,14 @@ export function InviteUsersModal({ isOpen, onClose }) {
                     </button>
                   )}
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Email Input */}
                   <div>
-                    <Label htmlFor={`email-${index}`} className="block text-sm font-medium text-gray-700 mb-2">
+                    <Label
+                      htmlFor={`email-${index}`}
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       Email Address
                     </Label>
                     <div className="relative">
@@ -508,14 +589,18 @@ export function InviteUsersModal({ isOpen, onClose }) {
                         type="email"
                         placeholder="Enter email address"
                         value={invite.email}
-                        onChange={(e) => updateInviteEmail(index, e.target.value)}
+                        onChange={(e) =>
+                          updateInviteEmail(index, e.target.value)
+                        }
                         disabled={invite.isChecking}
                         className={`pl-10 ${
-                          invite.emailError || invite.existsError || invite.licenseError
-                            ? 'border-red-300 focus:border-red-400 focus:ring-red-200' 
-                            : invite.isValid 
-                              ? 'border-emerald-300 focus:border-emerald-400 focus:ring-emerald-200'
-                              : 'border-gray-300 focus:border-slate-400 focus:ring-slate-200'
+                          invite.emailError ||
+                          invite.existsError ||
+                          invite.licenseError
+                            ? "border-red-300 focus:border-red-400 focus:ring-red-200"
+                            : invite.isValid
+                              ? "border-emerald-300 focus:border-emerald-400 focus:ring-emerald-200"
+                              : "border-gray-300 focus:border-slate-400 focus:ring-slate-200"
                         }`}
                       />
                       {invite.isChecking && (
@@ -529,7 +614,7 @@ export function InviteUsersModal({ isOpen, onClose }) {
                         </div>
                       )}
                     </div>
-                    
+
                     {/* Display all validation errors */}
                     <div className="space-y-1">
                       {invite.emailError && (
@@ -558,7 +643,7 @@ export function InviteUsersModal({ isOpen, onClose }) {
                       )}
                     </div>
                   </div>
-                  
+
                   {/* Role Selection */}
                   <div>
                     <Label className="block text-sm font-medium text-gray-700 mb-2">
@@ -575,12 +660,18 @@ export function InviteUsersModal({ isOpen, onClose }) {
                         />
                         <div className="flex items-center">
                           <User className="h-4 w-4 text-gray-500 mr-2" />
-                          <Label htmlFor={`member-${index}`} className="text-sm text-gray-700">
-                            Member <span className="text-xs text-gray-500">(Required)</span>
+                          <Label
+                            htmlFor={`member-${index}`}
+                            className="text-sm text-gray-700"
+                          >
+                            Member{" "}
+                            <span className="text-xs text-gray-500">
+                              (Required)
+                            </span>
                           </Label>
                         </div>
                       </div>
-                      
+
                       {/* Manager Role (Optional) */}
                       <div className="flex items-center">
                         <Checkbox
@@ -591,12 +682,15 @@ export function InviteUsersModal({ isOpen, onClose }) {
                         />
                         <div className="flex items-center">
                           <Users className="h-4 w-4 text-slate-600 mr-2" />
-                          <Label htmlFor={`manager-${index}`} className="text-sm text-gray-700">
+                          <Label
+                            htmlFor={`manager-${index}`}
+                            className="text-sm text-gray-700"
+                          >
                             Manager
                           </Label>
                         </div>
                       </div>
-                      
+
                       {/* Admin Role (Optional) */}
                       <div className="flex items-center">
                         <Checkbox
@@ -607,7 +701,10 @@ export function InviteUsersModal({ isOpen, onClose }) {
                         />
                         <div className="flex items-center">
                           <Shield className="h-4 w-4 text-slate-600 mr-2" />
-                          <Label htmlFor={`admin-${index}`} className="text-sm text-gray-700">
+                          <Label
+                            htmlFor={`admin-${index}`}
+                            className="text-sm text-gray-700"
+                          >
                             Admin
                           </Label>
                         </div>
@@ -635,7 +732,12 @@ export function InviteUsersModal({ isOpen, onClose }) {
           {/* Form Actions */}
           <div className="flex items-center justify-between pt-6 border-t border-gray-200">
             <div className="text-sm text-gray-500">
-              {inviteList.filter(invite => invite.isValid).length} valid invitation{inviteList.filter(invite => invite.isValid).length !== 1 ? 's' : ''} ready to send
+              {inviteList.filter((invite) => invite.isValid).length} valid
+              invitation
+              {inviteList.filter((invite) => invite.isValid).length !== 1
+                ? "s"
+                : ""}{" "}
+              ready to send
             </div>
             <div className="flex space-x-3">
               <Button
