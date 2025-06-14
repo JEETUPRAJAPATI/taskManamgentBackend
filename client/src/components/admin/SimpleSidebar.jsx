@@ -169,7 +169,7 @@ export function SimpleSidebar() {
       <div className="mb-6">
         <button
           onClick={() => toggleSection(sectionKey)}
-          className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-300 transition-colors"
+          className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold text-blue-300 uppercase tracking-wider hover:text-blue-200 transition-colors"
         >
           {title}
           <ChevronRight className={`h-3 w-3 transition-transform ${
@@ -186,14 +186,14 @@ export function SimpleSidebar() {
   };
 
   return (
-    <div className="fixed inset-y-0 left-0 z-50 w-56 bg-black border-r border-gray-800 shadow-xl">
+    <div className="fixed inset-y-0 left-0 z-50 w-56 bg-blue-900 border-r border-blue-800 shadow-xl">
       <div className="flex flex-col h-full">
         {/* Logo */}
-        <div className="flex items-center h-16 px-4 border-b border-gray-800 bg-black">
-          <CheckSquare className="h-5 w-5 text-gray-400" />
+        <div className="flex items-center h-16 px-4 border-b border-blue-800 bg-blue-900">
+          <CheckSquare className="h-5 w-5 text-blue-300" />
           <div className="ml-3">
-            <h1 className="text-sm font-semibold text-gray-100">TaskSetu</h1>
-            <p className="text-xs text-gray-500">
+            <h1 className="text-sm font-semibold text-blue-100">TaskSetu</h1>
+            <p className="text-xs text-blue-400">
               {isIndividualUser ? 'Personal' : 'Admin Panel'}
             </p>
           </div>
@@ -203,7 +203,7 @@ export function SimpleSidebar() {
         <div className="flex-1 px-3 py-4 overflow-y-auto">
           {/* Main Features */}
           <div className="mb-6">
-            <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            <div className="px-3 py-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
               Main
             </div>
             <div className="mt-2 space-y-1">
@@ -213,7 +213,7 @@ export function SimpleSidebar() {
 
           {/* Workflow Features */}
           <div className="mb-6">
-            <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            <div className="px-3 py-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
               Workflow
             </div>
             <div className="mt-2 space-y-1">
