@@ -473,7 +473,7 @@ export default function UserManagement() {
                 <div className="p-2 bg-green-100 rounded-lg">
                   <CheckCircle className="h-5 w-5 text-green-600" />
                 </div>
-                <span className="text-2xl font-bold text-green-600">{licenseInfo.usedLicenses || 0}</span>
+                <span className="text-2xl font-bold text-green-600">{orgLicenseInfo?.usedLicenses || 0}</span>
               </div>
               <h4 className="font-semibold text-gray-900 mb-1">Active Users</h4>
               <p className="text-sm text-gray-600">Currently using licenses</p>
@@ -484,7 +484,7 @@ export default function UserManagement() {
                 <div className="p-2 bg-orange-100 rounded-lg">
                   <AlertCircle className="h-5 w-5 text-orange-600" />
                 </div>
-                <span className="text-2xl font-bold text-orange-600">{licenseInfo.availableLicenses || 0}</span>
+                <span className="text-2xl font-bold text-orange-600">{orgLicenseInfo?.availableSlots || 0}</span>
               </div>
               <h4 className="font-semibold text-gray-900 mb-1">Available</h4>
               <p className="text-sm text-gray-600">Ready for new team members</p>
@@ -495,7 +495,7 @@ export default function UserManagement() {
                 <div className="p-2 bg-purple-100 rounded-lg">
                   <Shield className="h-5 w-5 text-purple-600" />
                 </div>
-                <span className="text-lg font-bold text-purple-600">{licenseInfo.licenseType || 'Standard'}</span>
+                <span className="text-lg font-bold text-purple-600">{orgLicenseInfo?.licenseType || 'Standard'}</span>
               </div>
               <h4 className="font-semibold text-gray-900 mb-1">Plan Type</h4>
               <p className="text-sm text-gray-600">Current subscription</p>
@@ -507,14 +507,14 @@ export default function UserManagement() {
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm font-medium text-gray-700">License Usage</span>
               <span className="text-sm text-gray-600">
-                {licenseInfo.usedLicenses || 0} of {licenseInfo.totalLicenses || 0} used
+                {orgLicenseInfo?.usedLicenses || 0} of {orgLicenseInfo?.totalLicenses || 0} used
               </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div 
                 className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300" 
                 style={{ 
-                  width: `${licenseInfo.totalLicenses > 0 ? (licenseInfo.usedLicenses / licenseInfo.totalLicenses) * 100 : 0}%` 
+                  width: `${orgLicenseInfo?.totalLicenses > 0 ? (orgLicenseInfo.usedLicenses / orgLicenseInfo.totalLicenses) * 100 : 0}%` 
                 }}
               ></div>
             </div>
