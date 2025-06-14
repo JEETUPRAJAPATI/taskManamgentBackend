@@ -186,10 +186,10 @@ export function SimpleSidebar() {
   };
 
   return (
-    <div className="fixed inset-y-0 left-0 z-50 w-56 bg-blue-900 border-r border-blue-800 shadow-xl">
+    <div className="fixed inset-y-0 left-0 z-50 w-56 bg-blue-900 border-r border-blue-800 shadow-xl blue-sidebar" style={{backgroundColor: '#1e3a8a'}}>
       <div className="flex flex-col h-full">
         {/* Logo */}
-        <div className="flex items-center h-16 px-4 border-b border-blue-800 bg-blue-900">
+        <div className="flex items-center h-16 px-4 border-b border-blue-800 bg-blue-900" style={{backgroundColor: '#1e3a8a'}}>
           <CheckSquare className="h-5 w-5 text-blue-300" />
           <div className="ml-3">
             <h1 className="text-sm font-semibold text-blue-100">TaskSetu</h1>
@@ -200,7 +200,7 @@ export function SimpleSidebar() {
         </div>
 
         {/* Navigation */}
-        <div className="flex-1 px-3 py-4 overflow-y-auto">
+        <div className="flex-1 px-3 py-4 overflow-y-auto" style={{backgroundColor: '#1e3a8a'}}>
           {/* Main Features */}
           <div className="mb-6">
             <div className="px-3 py-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">

@@ -40,12 +40,23 @@
   z-index: 9998 !important;
 }
 
-/* Force sidebar to be solid black */
+/* Force sidebar to be solid blue */
 [data-sidebar="sidebar"],
 .sidebar,
-.admin-sidebar {
-  background-color: rgb(0 0 0) !important;
+.admin-sidebar,
+.blue-sidebar {
+  background-color: #1e3a8a !important; /* blue-900 */
   opacity: 1 !important;
+}
+
+/* Additional sidebar styling overrides */
+.blue-sidebar * {
+  color: #dbeafe !important; /* blue-100 text */
+}
+
+.blue-sidebar .text-gray-400,
+.blue-sidebar .text-gray-500 {
+  color: #93c5fd !important; /* blue-300 */
 }
 
 /* Ensure text is visible in popups */
@@ -95,9 +106,11 @@
 /* Comprehensive Blue Sidebar Styling */
 [data-sidebar="sidebar"],
 .sidebar,
-.admin-sidebar {
-  background-color: rgb(30 58 138) !important; /* blue-900 */
-  border-right: 1px solid rgb(30 64 175) !important; /* blue-800 */
+.admin-sidebar,
+.fixed.inset-y-0.left-0,
+div[class*="fixed"][class*="inset-y-0"][class*="left-0"] {
+  background-color: #1e3a8a !important; /* blue-900 */
+  border-right: 1px solid #1e40af !important; /* blue-800 */
   min-height: 100vh !important;
 }
 
