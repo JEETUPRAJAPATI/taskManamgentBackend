@@ -630,28 +630,28 @@ div.fixed.inset-y-0.left-0.z-50.w-56 {
   .bg-primary,
   [data-variant="default"],
   .btn-primary {
-    @apply bg-blue-600 text-white hover:bg-blue-700 focus:bg-blue-700 border border-blue-600;
+    @apply bg-blue-600 text-white focus:bg-blue-700 border border-blue-600;
   }
 
   .bg-secondary,
   [data-variant="secondary"],
   .btn-secondary {
-    @apply bg-blue-100 text-blue-900 hover:bg-blue-200 focus:bg-blue-200 border border-blue-200;
+    @apply bg-blue-100 text-blue-900 focus:bg-blue-200 border border-blue-200;
   }
 
   [data-variant="outline"],
   .btn-outline {
-    @apply bg-white text-blue-600 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white border-2 border-blue-600;
+    @apply bg-white text-blue-600 focus:bg-blue-600 focus:text-white border-2 border-blue-600;
   }
 
   [data-variant="destructive"],
   .btn-destructive {
-    @apply bg-red-600 text-white hover:bg-red-700 focus:bg-red-700 border border-red-600;
+    @apply bg-red-600 text-white focus:bg-red-700 border border-red-600;
   }
 
   [data-variant="ghost"],
   .btn-ghost {
-    @apply text-blue-600 hover:bg-blue-50 hover:text-blue-700 focus:bg-blue-50 focus:text-blue-700;
+    @apply text-blue-600 focus:bg-blue-50 focus:text-blue-700;
   }
 
   /* Blue Theme Form controls */
@@ -1014,7 +1014,7 @@ div.fixed.inset-y-0.left-0.z-50.w-56 {
   }
 
   .btn-professional {
-    @apply bg-blue-500 hover:bg-blue-600 text-white border-0 transition-all duration-200 font-medium rounded-lg px-4 py-2 shadow-sm hover:shadow-md;
+    @apply bg-blue-500 text-white border-0 transition-all duration-200 font-medium rounded-lg px-4 py-2 shadow-sm;
   }
 
   /* Override any existing button styles */
@@ -1027,35 +1027,35 @@ div.fixed.inset-y-0.left-0.z-50.w-56 {
   /* Primary button override */
   .bg-primary,
   button.bg-primary {
-    @apply bg-blue-500 hover:bg-blue-600 text-white;
+    @apply bg-blue-500 text-white;
   }
 
   /* Secondary button override */
   .bg-secondary,
   button.bg-secondary {
-    @apply bg-gray-100 hover:bg-gray-200 text-gray-900;
+    @apply bg-gray-100 text-gray-900;
   }
 
   /* Destructive button override */
   .bg-destructive,
   button.bg-destructive {
-    @apply bg-red-500 hover:bg-red-600 text-white;
+    @apply bg-red-500 text-white;
   }
 
   .btn-primary {
-    @apply bg-slate-900 text-white hover:bg-slate-800 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-sm hover:shadow-md border border-slate-900;
+    @apply bg-slate-900 text-white focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-sm border border-slate-900;
   }
 
   .btn-secondary {
-    @apply bg-white text-slate-900 hover:bg-slate-50 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-sm hover:shadow-md border-2 border-slate-300;
+    @apply bg-white text-slate-900 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-sm border-2 border-slate-300;
   }
 
   .btn-accent {
-    @apply bg-blue-700 text-white hover:bg-blue-800 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-sm hover:shadow-md border border-blue-700;
+    @apply bg-blue-700 text-white focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-sm border border-blue-700;
   }
 
   .btn-outline {
-    @apply bg-white text-slate-900 hover:bg-slate-900 hover:text-white focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200 border-2 border-slate-900;
+    @apply bg-white text-slate-900 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200 border-2 border-slate-900;
   }
 
   /* Force all buttons to have high contrast text */
@@ -1069,26 +1069,26 @@ div.fixed.inset-y-0.left-0.z-50.w-56 {
   button[data-variant="default"],
   .bg-primary,
   .btn-primary {
-    @apply bg-slate-900 text-white hover:bg-slate-800 border border-slate-900 font-semibold;
+    @apply bg-slate-900 text-white border border-slate-900 font-semibold;
   }
 
   /* Secondary buttons - Light background with dark text */
   button[data-variant="secondary"],
   .bg-secondary,
   .btn-secondary {
-    @apply bg-white text-slate-900 hover:bg-slate-50 border-2 border-slate-300 font-semibold;
+    @apply bg-white text-slate-900 border-2 border-slate-300 font-semibold;
   }
 
   /* Outline buttons - High contrast borders */
   button[data-variant="outline"],
   .btn-outline {
-    @apply bg-white text-slate-900 hover:bg-slate-900 hover:text-white border-2 border-slate-900 font-semibold;
+    @apply bg-white text-slate-900 border-2 border-slate-900 font-semibold;
   }
 
   /* Destructive buttons - Red with white text */
   button[data-variant="destructive"],
   .bg-destructive {
-    @apply bg-red-700 text-white hover:bg-red-800 border border-red-700 font-semibold;
+    @apply bg-red-700 text-white border border-red-700 font-semibold;
   }
 
   /* Form inputs - High contrast with dark text and borders */
@@ -1165,7 +1165,7 @@ div.fixed.inset-y-0.left-0.z-50.w-56 {
   /* Specific button color fixes */
   .bg-blue-600,
   .bg-blue-700 {
-    @apply bg-slate-900 text-white hover:bg-slate-800;
+    @apply bg-slate-900 text-white;
   }
 
   .text-blue-600,
@@ -1326,23 +1326,23 @@ div.fixed.inset-y-0.left-0.z-50.w-56 {
   }
 
   .btn-primary {
-    @apply btn-base bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white border-blue-600 hover:border-blue-700 focus:ring-blue-500/30 shadow-sm hover:shadow;
+    @apply btn-base bg-blue-600 active:bg-blue-800 text-white border-blue-600 focus:ring-blue-500/30 shadow-sm;
   }
 
   .btn-secondary {
-    @apply btn-base bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 border-slate-300 hover:border-slate-400 focus:ring-slate-500/30 shadow-sm hover:shadow dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 dark:border-slate-600 dark:hover:border-slate-500;
+    @apply btn-base bg-white active:bg-slate-100 text-slate-700 border-slate-300 focus:ring-slate-500/30 shadow-sm dark:bg-slate-800 dark:text-slate-200 dark:border-slate-600;
   }
 
   .btn-success {
-    @apply btn-base bg-green-600 hover:bg-green-700 active:bg-green-800 text-white border-green-600 hover:border-green-700 focus:ring-green-500/30 shadow-sm hover:shadow;
+    @apply btn-base bg-green-600 active:bg-green-800 text-white border-green-600 focus:ring-green-500/30 shadow-sm;
   }
 
   .btn-warning {
-    @apply btn-base bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white border-orange-600 hover:border-orange-700 focus:ring-orange-500/30 shadow-sm hover:shadow;
+    @apply btn-base bg-orange-600 active:bg-orange-800 text-white border-orange-600 focus:ring-orange-500/30 shadow-sm;
   }
 
   .btn-danger {
-    @apply btn-base bg-red-600 hover:bg-red-700 active:bg-red-800 text-white border-red-600 hover:border-red-700 focus:ring-red-500/30 shadow-sm hover:shadow;
+    @apply btn-base bg-red-600 active:bg-red-800 text-white border-red-600 focus:ring-red-500/30 shadow-sm;
   }
 
   /* Button Sizes */
@@ -1356,7 +1356,7 @@ div.fixed.inset-y-0.left-0.z-50.w-56 {
 
   /* Card Components */
   .card {
-    @apply bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200;
+    @apply bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm transition-shadow duration-200;
   }
 
   .card-header {
