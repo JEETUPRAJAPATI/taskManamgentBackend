@@ -187,6 +187,7 @@ export function SimpleAcceptInvite() {
                   <Input
                     id="firstName"
                     type="text"
+                    placeholder="Enter first name"
                     value={formData.firstName}
                     onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
                     required
@@ -197,6 +198,7 @@ export function SimpleAcceptInvite() {
                   <Input
                     id="lastName"
                     type="text"
+                    placeholder="Enter last name"
                     value={formData.lastName}
                     onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
                     required
