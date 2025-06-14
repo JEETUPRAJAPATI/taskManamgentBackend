@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useLocation, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Menu, Bell, Search, User, Settings, LogOut, Edit, Shield, Key, Palette, HelpCircle, ChevronDown, UserPlus } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
