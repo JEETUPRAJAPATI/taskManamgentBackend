@@ -16,7 +16,7 @@ export default function TeamMembersWidget({ showActions = true, maxItems = 5 }) 
     try {
       setIsLoading(true);
       const token = localStorage.getItem('token');
-
+      
       if (!token) {
         throw new Error('No authentication token found');
       }
@@ -54,7 +54,7 @@ export default function TeamMembersWidget({ showActions = true, maxItems = 5 }) 
     // Set working authentication token
     const workingToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGNmMTc3NzExYzc5ZTFiOWMwZGQwMCIsImVtYWlsIjoiYWRtaW5AZGVtby5jb20iLCJyb2xlIjoiYWRtaW4iLCJvcmdhbml6YXRpb25JZCI6IjY4NGNmMTc2NzExYzc5ZTFiOWMwZGNmZCIsImlhdCI6MTc0OTg3ODk0MiwiZXhwIjoxNzQ5OTY1MzQyfQ.6EEYrb-746zK0tyCIcrD-qtn7daucV3P1fSPWJnvOsM';
     localStorage.setItem('token', workingToken);
-
+    
     fetchTeamMembers();
   }, []);
 
@@ -192,7 +192,7 @@ export default function TeamMembersWidget({ showActions = true, maxItems = 5 }) 
               </div>
             </div>
           ))}
-
+          
           {users.length > maxItems && (
             <div className="text-center pt-2">
               <Button
@@ -206,7 +206,7 @@ export default function TeamMembersWidget({ showActions = true, maxItems = 5 }) 
             </div>
           )}
         </div>
-
+        
         {showActions && (
           <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-600">
             <div className="flex gap-2">
