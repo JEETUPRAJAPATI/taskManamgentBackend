@@ -20,40 +20,59 @@ export default function UserManagement() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch organization users and license info
+  // Fetch organization users with detailed information including invited users
   const { data: userData, isLoading } = useQuery({
-    queryKey: ["/api/users/organization"],
+    queryKey: ["/api/organization/users-detailed"],
+    enabled: true
+  });
+
+  // Fetch organization license info
+  const { data: orgLicenseInfo } = useQuery({
+    queryKey: ["/api/organization/license"],
     enabled: true
   });
 
   // Invite users mutation
   const inviteUsersMutation = useMutation({
-    mutationFn: (users) => apiRequest("POST", "/api/users/invite", { users }),
+    mutationFn: (invites) => apiRequest("/api/organization/invite-users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ invites })
+    }),
     onSuccess: (data) => {
       setInviteModalOpen(false);
       setInviteUsers([{ email: "", roles: ["member"] }]);
-      queryClient.invalidateQueries({ queryKey: ["/api/users/organization"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/organization/users-detailed"] });
       
       if (data.errors && data.errors.length > 0) {
         toast({
           title: "Partial Success",
-          description: `${data.invited.length} users invited successfully. ${data.errors.length} errors occurred.`,
+          description: `${data.successCount} users invited successfully. ${data.errors.length} errors occurred.`,
           variant: "default"
         });
       } else {
         toast({
-          title: "Success",
-          description: `Successfully invited ${data.invited.length} users`,
+          title: "Invitation sent successfully",
+          description: `Successfully invited ${data.successCount} users`,
           variant: "default"
         });
       }
     },
     onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to invite users",
-        variant: "destructive"
-      });
+      // Handle duplicate invite error specifically
+      if (error.message && error.message.includes("already invited")) {
+        toast({
+          title: "User already invited or registered",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to invite users",
+          variant: "destructive"
+        });
+      }
     }
   });
 
@@ -250,7 +269,7 @@ export default function UserManagement() {
     );
   }
 
-  const { users = [], licenseInfo = {} } = userData || {};
+  const users = userData || [];
 
   return (
     <div className="p-6 space-y-6">
@@ -443,7 +462,7 @@ export default function UserManagement() {
                 <div className="p-2 bg-blue-100 rounded-lg">
                   <Users className="h-5 w-5 text-blue-600" />
                 </div>
-                <span className="text-2xl font-bold text-blue-600">{licenseInfo.totalLicenses || 0}</span>
+                <span className="text-2xl font-bold text-blue-600">{orgLicenseInfo?.totalLicenses || 0}</span>
               </div>
               <h4 className="font-semibold text-gray-900 mb-1">Total Licenses</h4>
               <p className="text-sm text-gray-600">Maximum team size</p>
