@@ -303,15 +303,18 @@ export function InviteUsersModal({ isOpen, onClose }) {
       return result;
     },
     onSuccess: (data) => {
+      console.log("Invite success response:", data);
+      
       // Handle partial success cases
       if (data.errors && data.errors.length > 0) {
         // Partial success - some failed
         const errorList = data.errors.map(err => `• ${err.email}: ${err.error}`).join('\n');
         
+        console.log("Showing partial success toast");
         toast({
-          title: "⚠️ Partial Success",
+          title: "Partial Success",
           description: `${data.successCount} invitation${data.successCount !== 1 ? 's' : ''} sent successfully, but ${data.errors.length} failed:\n\n${errorList}`,
-          className: "border-amber-200 bg-amber-50 text-amber-800 shadow-lg",
+          variant: "default",
           duration: 8000,
         });
       } else {
@@ -320,10 +323,11 @@ export function InviteUsersModal({ isOpen, onClose }) {
           ? `1 invitation sent successfully`
           : `${data.successCount} invitations sent successfully`;
         
+        console.log("Showing success toast:", successMessage);
         toast({
-          title: "✅ Invitations Sent!",
+          title: "Invitations Sent!",
           description: successMessage,
-          className: "border-emerald-200 bg-emerald-50 text-emerald-800 shadow-lg",
+          variant: "default",
           duration: 5000,
         });
       }
@@ -333,15 +337,26 @@ export function InviteUsersModal({ isOpen, onClose }) {
       queryClient.invalidateQueries({ queryKey: ["/api/organization/license"] });
     },
     onError: (error) => {
+      console.log("Invite error:", error);
       toast({
-        title: "❌ Failed to send invitations",
+        title: "Failed to send invitations",
         description: error.message,
         variant: "destructive",
-        className: "border-red-200 bg-red-50 text-red-800 shadow-lg",
         duration: 8000,
       });
     },
   });
+
+  // Test toast function
+  const testToast = () => {
+    console.log("Testing toast functionality");
+    toast({
+      title: "Test Toast",
+      description: "If you can see this, the toast system is working correctly.",
+      variant: "default",
+      duration: 3000,
+    });
+  };
 
   // Submit invitations with comprehensive validation
   const handleSubmit = async (e) => {
