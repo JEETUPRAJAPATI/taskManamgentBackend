@@ -3,6 +3,7 @@ import cors from "cors";
 import express from "express";
 import { storage } from "./mongodb-storage.js";
 import { authenticateToken, requireRole } from "./middleware/roleAuth.js";
+import { authService } from "./services/authService.js";
 
 export async function registerRoutes(app) {
   // Configure CORS
