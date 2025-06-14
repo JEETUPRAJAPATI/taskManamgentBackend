@@ -91,6 +91,17 @@ export class MongoStorage {
       userData.firstName = userData.firstName || '';
       userData.lastName = userData.lastName || '';
       userData.passwordHash = userData.passwordHash || 'temp_invite_placeholder';
+      userData.isActive = false;
+      userData.emailVerified = false;
+      userData.inviteToken = this.generateEmailVerificationToken();
+      userData.inviteTokenExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+      userData.invitedAt = new Date();
+    }
+    
+    // Hash password if provided for non-invited users
+    if (userData.password && !userData.passwordHash && userData.status !== 'invited') {
+      userData.passwordHash = await this.hashPassword(userData.password);
+      delete userData.password;
     }
     
     const user = new User(userData);
