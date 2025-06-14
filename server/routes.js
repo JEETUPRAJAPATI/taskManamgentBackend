@@ -513,7 +513,7 @@ export async function registerRoutes(app) {
           // Check if user already exists
           const existingUser = await storage.getUserByEmail(userData.email);
           if (existingUser && existingUser.organization?.toString() === req.user.organizationId) {
-            errors.push(`${userData.email} already exists. That user will not be reinvited.`);
+            errors.push(userData.email + " already exists. That user will not be reinvited.");
             continue;
           }
 
@@ -997,7 +997,7 @@ export async function registerRoutes(app) {
             user: userId,
             type: "mention",
             title: "You were mentioned",
-            message: `You were mentioned in a comment on task: ${task.title}`,
+            message: "You were mentioned in a comment on task: " + task.title,
             data: { taskId: task._id, commentId: comment._id },
           });
         }
@@ -1084,7 +1084,7 @@ export async function registerRoutes(app) {
         if (invite.email) {
           const existingUser = await storage.getUserByEmail(invite.email.trim());
           if (existingUser && existingUser.organization?.toString() === req.user.organizationId) {
-            errors.push(`${invite.email} already exists. That user will not be reinvited.`);
+            errors.push(invite.email + " already exists. That user will not be reinvited.");
           }
         }
 
