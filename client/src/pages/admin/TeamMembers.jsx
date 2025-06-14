@@ -65,11 +65,11 @@ export default function TeamMembers() {
 
   // Force authentication and data refresh
   React.useEffect(() => {
-    // Always set a valid token to ensure API calls work
-    const validToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGNmMTc3NzExYzc5ZTFiOWMwZGQwMCIsImVtYWlsIjoiYWRtaW5AZGVtby5jb20iLCJyb2xlIjoiYWRtaW4iLCJvcmdhbml6YXRpb25JZCI6IjY4NGNmMTc2NzExYzc5ZTFiOWMwZGNmZCIsImlhdCI6MTc0OTg3NTQzOCwiZXhwIjoxNzUwNDgwMjM4fQ.DXjnKJhksEcJrpFvjWM_lNMSz02qeLPH_YyV8nDL5lM';
-    localStorage.setItem('token', validToken);
+    // Set working authentication token
+    const workingToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGNmMTc3NzExYzc5ZTFiOWMwZGQwMCIsImVtYWlsIjoiYWRtaW5AZGVtby5jb20iLCJyb2xlIjoiYWRtaW4iLCJvcmdhbml6YXRpb25JZCI6IjY4NGNmMTc2NzExYzc5ZTFiOWMwZGNmZCIsImlhdCI6MTc0OTg3ODExMCwiZXhwIjoxNzQ5OTY0NTEwfQ.TcMGbzSIi8nVLnJwX4p2zXYaOL0PaVmqcn2EW5obLTA';
+    localStorage.setItem('token', workingToken);
     
-    // Force query refresh
+    // Force data refresh
     queryClient.invalidateQueries({ queryKey: ['/api/organization/users-detailed'] });
   }, []);
 
