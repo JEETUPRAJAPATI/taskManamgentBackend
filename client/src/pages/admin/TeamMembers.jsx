@@ -42,10 +42,14 @@ export default function TeamMembers() {
     { email: '', roles: ['employee'], firstName: '', lastName: '' }
   ]);
 
-  // Fetch team members
-  const { data: users = [], isLoading, error } = useQuery({
+  // Fetch team members with forced refetch
+  const { data: users = [], isLoading, error, refetch } = useQuery({
     queryKey: ['/api/organization/users-detailed'],
-    enabled: true
+    enabled: true,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0, // Always consider data stale
+    cacheTime: 0  // Don't cache data
   });
 
   // Fetch license info
@@ -69,44 +73,32 @@ export default function TeamMembers() {
     console.error('Query error:', error);
   }
 
-  // Manual data refresh function for debugging
+  // Enhanced data refresh function
   const refreshData = async () => {
     try {
-      const token = localStorage.getItem('token');
-      console.log('Manually fetching data with token:', token ? 'present' : 'missing');
+      console.log('Refreshing team members data...');
       
-      const response = await fetch('/api/organization/users-detailed', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      // Clear the cache and refetch
+      queryClient.removeQueries({ queryKey: ['/api/organization/users-detailed'] });
+      await refetch();
       
-      console.log('Manual fetch response status:', response.status);
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Manual fetch data:', data);
-        queryClient.setQueryData(['/api/organization/users-detailed'], data);
-      } else {
-        const error = await response.text();
-        console.error('Manual fetch error:', error);
-      }
+      console.log('Data refresh completed');
     } catch (error) {
-      console.error('Manual fetch exception:', error);
+      console.error('Refresh error:', error);
     }
   };
 
-  // Force authentication and data refresh
+  // Force authentication and immediate data load
   React.useEffect(() => {
     // Set working authentication token
     const workingToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGNmMTc3NzExYzc5ZTFiOWMwZGQwMCIsImVtYWlsIjoiYWRtaW5AZGVtby5jb20iLCJyb2xlIjoiYWRtaW4iLCJvcmdhbml6YXRpb25JZCI6IjY4NGNmMTc2NzExYzc5ZTFiOWMwZGNmZCIsImlhdCI6MTc0OTg3ODM4NSwiZXhwIjoxNzQ5OTY0Nzg1fQ.FQ03sfD01_znKAj98VwwljHllFnZHKDCajZsSNEQq9s';
     localStorage.setItem('token', workingToken);
     
-    // Refresh data manually and via query client
+    // Force immediate data fetch
     setTimeout(() => {
-      refreshData();
-      queryClient.invalidateQueries({ queryKey: ['/api/organization/users-detailed'] });
-    }, 1000);
-  }, []);
+      refetch();
+    }, 500);
+  }, [refetch]);
 
   // Test login function
   const testLogin = async () => {
