@@ -22,9 +22,32 @@ export default function TeamMembers() {
   // Fetch organization users with detailed information including invited users
   const { data: users = [], isLoading, error } = useQuery({
     queryKey: ["/api/organization/users-detailed"],
-    enabled: true,
+    enabled: !!localStorage.getItem('token'),
     retry: false,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      const token = localStorage.getItem('token');
+      console.log('Making API request with token:', token?.substring(0, 20) + '...');
+      
+      const response = await fetch('/api/organization/users-detailed', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('API response status:', response.status);
+      
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('API error:', errorData);
+        throw new Error(`API Error: ${response.status} ${errorData}`);
+      }
+      
+      const data = await response.json();
+      console.log('API response data:', data);
+      return data;
+    }
   });
 
   // Fetch organization license info
