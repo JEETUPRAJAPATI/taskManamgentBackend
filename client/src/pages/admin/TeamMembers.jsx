@@ -1,121 +1,115 @@
-import { useState, useMemo } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import { Users, UserPlus, Mail, Plus, Shield, Clock, CheckCircle, XCircle, AlertCircle, MoreHorizontal, RefreshCw, UserX, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useState, useMemo } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
+import { 
+  Users, 
+  UserPlus, 
+  Search, 
+  Filter, 
+  MoreHorizontal, 
+  RefreshCw, 
+  UserX, 
+  ChevronLeft, 
+  ChevronRight,
+  Shield,
+  UserCheck,
+  Clock,
+  Crown,
+  User
+} from 'lucide-react';
 
 export default function TeamMembers() {
-  const [inviteModalOpen, setInviteModalOpen] = useState(false);
-  const [inviteUsers, setInviteUsers] = useState([{ email: "", roles: ["member"] }]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [roleFilter, setRoleFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [roleFilter, setRoleFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  // Fetch organization users with detailed information including invited users
+  const [inviteUsers, setInviteUsers] = useState([
+    { email: '', roles: ['employee'], firstName: '', lastName: '' }
+  ]);
+
+  // Fetch team members
   const { data: users = [], isLoading, error } = useQuery({
-    queryKey: ["/api/organization/users-detailed"],
-    enabled: !!localStorage.getItem('token'),
-    retry: false,
-    refetchOnWindowFocus: false,
-    queryFn: async () => {
-      const token = localStorage.getItem('token');
-      console.log('Making API request with token:', token?.substring(0, 20) + '...');
-      
-      const response = await fetch('/api/organization/users-detailed', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      console.log('API response status:', response.status);
-      
-      if (!response.ok) {
-        const errorData = await response.text();
-        console.error('API error:', errorData);
-        throw new Error(`API Error: ${response.status} ${errorData}`);
-      }
-      
-      const data = await response.json();
-      console.log('API response data:', data);
-      return data;
-    }
-  });
-
-  // Fetch organization license info
-  const { data: licenseInfo } = useQuery({
-    queryKey: ["/api/organization/license"],
+    queryKey: ['/api/organization/users'],
     enabled: true
   });
 
-  // Invite users mutation
-  const inviteUsersMutation = useMutation({
-    mutationFn: (invites) => apiRequest("/api/organization/invite-users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ invites })
-    }),
-    onSuccess: (data) => {
-      setInviteModalOpen(false);
-      setInviteUsers([{ email: "", roles: ["member"] }]);
-      queryClient.invalidateQueries({ queryKey: ["/api/organization/users-detailed"] });
+  // Fetch license info
+  const { data: licenseInfo } = useQuery({
+    queryKey: ['/api/organization/license-info'],
+    enabled: true
+  });
+
+  console.log('TeamMembers component state:', { isLoading, users, error });
+
+  // Test login function
+  const testLogin = async () => {
+    try {
+      const response = await apiRequest('/api/auth/login', {
+        method: 'POST',
+        body: { email: 'admin@demo.com', password: 'admin123' }
+      });
       
-      if (data.errors && data.errors.length > 0) {
-        toast({
-          title: "Partial Success",
-          description: `${data.successCount} users invited successfully. ${data.errors.length} errors occurred.`,
-          variant: "default"
-        });
-      } else {
-        toast({
-          title: "Invitation sent successfully",
-          description: `Successfully invited ${data.successCount} users`,
-          variant: "default"
-        });
+      if (response.token) {
+        localStorage.setItem('token', response.token);
+        window.location.reload();
       }
+    } catch (error) {
+      console.log('Test login failed:', error);
+      toast({
+        title: "Login Failed",
+        description: "Could not log in as demo admin",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Mutations
+  const inviteUsersMutation = useMutation({
+    mutationFn: (inviteData) => apiRequest('/api/organization/invite-users', {
+      method: 'POST',
+      body: { users: inviteData }
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/organization/users'] });
+      setInviteModalOpen(false);
+      setInviteUsers([{ email: '', roles: ['employee'], firstName: '', lastName: '' }]);
+      toast({
+        title: "Invitations sent",
+        description: "Team member invitations have been sent successfully"
+      });
     },
     onError: (error) => {
-      if (error.message && error.message.includes("already invited")) {
-        toast({
-          title: "User already invited or registered",
-          description: error.message,
-          variant: "destructive"
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: error.message || "Failed to invite users",
-          variant: "destructive"
-        });
-      }
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send invitations",
+        variant: "destructive"
+      });
     }
   });
 
-  // Resend invitation mutation
   const resendInviteMutation = useMutation({
-    mutationFn: (userId) => apiRequest(`/api/organization/resend-invite/${userId}`, {
-      method: "POST"
+    mutationFn: (userId) => apiRequest(`/api/organization/users/${userId}/resend-invite`, {
+      method: 'POST'
     }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/organization/users-detailed"] });
+      queryClient.invalidateQueries({ queryKey: ['/api/organization/users'] });
       toast({
-        title: "Invitation resent successfully",
-        description: "The user will receive a new invitation email",
-        variant: "default"
+        title: "Invitation resent",
+        description: "The invitation has been resent successfully"
       });
     },
     onError: (error) => {
@@ -127,17 +121,15 @@ export default function TeamMembers() {
     }
   });
 
-  // Revoke invitation mutation
   const revokeInviteMutation = useMutation({
-    mutationFn: (userId) => apiRequest(`/api/organization/revoke-invite/${userId}`, {
-      method: "DELETE"
+    mutationFn: (userId) => apiRequest(`/api/organization/users/${userId}/revoke-invite`, {
+      method: 'DELETE'
     }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/organization/users-detailed"] });
+      queryClient.invalidateQueries({ queryKey: ['/api/organization/users'] });
       toast({
-        title: "Invitation revoked successfully",
-        description: "The invitation has been cancelled",
-        variant: "default"
+        title: "Invitation revoked",
+        description: "The invitation has been revoked successfully"
       });
     },
     onError: (error) => {
@@ -149,169 +141,102 @@ export default function TeamMembers() {
     }
   });
 
-  const handleAddUserRow = () => {
-    setInviteUsers([...inviteUsers, { email: "", roles: ["member"] }]);
-  };
+  // Filter and pagination logic
+  const filteredAndPaginatedData = useMemo(() => {
+    let filtered = users.filter(user => {
+      const matchesSearch = searchTerm === '' || 
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.lastName?.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
+      const userRoles = user.roles || [user.role];
+      const matchesRole = roleFilter === 'all' || userRoles.includes(roleFilter);
+      
+      return matchesSearch && matchesStatus && matchesRole;
+    });
 
-  const handleRemoveUserRow = (index) => {
-    if (inviteUsers.length > 1) {
-      setInviteUsers(inviteUsers.filter((_, i) => i !== index));
-    }
-  };
+    const totalItems = filtered.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedUsers = filtered.slice(startIndex, endIndex);
 
-  const handleUserChange = (index, field, value) => {
-    const updated = [...inviteUsers];
-    updated[index][field] = value;
-    setInviteUsers(updated);
-  };
-
-  const handleRoleChange = (index, role, checked) => {
-    const updated = [...inviteUsers];
-    if (checked && !updated[index].roles.includes(role)) {
-      updated[index].roles.push(role);
-    } else if (!checked) {
-      updated[index].roles = updated[index].roles.filter(r => r !== role);
-    }
-    if (!updated[index].roles.includes('member')) {
-      updated[index].roles.push('member');
-    }
-    setInviteUsers(updated);
-  };
-
-  const handleInviteSubmit = () => {
-    const validUsers = inviteUsers.filter(user => user.email.trim() !== "");
-    
-    if (validUsers.length === 0) {
-      toast({
-        title: "Error",
-        description: "Please add at least one valid email address",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    inviteUsersMutation.mutate(validUsers);
-  };
-
-  const getStatusBadge = (status) => {
-    const statusConfig = {
-      active: { 
-        icon: CheckCircle, 
-        color: "text-green-600 bg-green-50 border-green-200",
-        label: "Active"
-      },
-      invited: { 
-        icon: Mail, 
-        color: "text-blue-600 bg-blue-50 border-blue-200",
-        label: "Invited"
-      },
-      pending: { 
-        icon: Clock, 
-        color: "text-slate-700 bg-slate-100 border-slate-300",
-        label: "Pending"
-      },
-      inactive: { 
-        icon: XCircle, 
-        color: "text-red-600 bg-red-50 border-red-200",
-        label: "Inactive"
-      }
+    return {
+      users: paginatedUsers,
+      totalItems,
+      totalPages,
+      hasNextPage: currentPage < totalPages,
+      hasPrevPage: currentPage > 1
     };
+  }, [users, searchTerm, statusFilter, roleFilter, currentPage]);
 
-    const config = statusConfig[status] || statusConfig.pending;
-    const Icon = config.icon;
-    
-    return (
-      <Badge className={`inline-flex items-center gap-1 px-2 py-1 text-xs border ${config.color}`}>
-        <Icon className="h-3 w-3" />
-        {config.label}
-      </Badge>
-    );
-  };
-
-  const getRoleIcon = (roles) => {
-    if (roles.includes("admin")) {
-      return <Shield className="h-4 w-4 text-red-500" />;
-    } else if (roles.includes("manager")) {
-      return <Users className="h-4 w-4 text-blue-500" />;
-    } else {
-      return <Users className="h-4 w-4 text-gray-500" />;
-    }
-  };
-
+  // Helper functions
   const getDisplayName = (user) => {
     if (user.firstName && user.lastName) {
       return `${user.firstName} ${user.lastName}`;
     }
-    return user.email.split('@')[0];
+    return user.email?.split('@')[0] || 'Unknown User';
   };
 
   const getInitials = (user) => {
     if (user.firstName && user.lastName) {
       return `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
     }
-    return user.email[0].toUpperCase();
+    const email = user.email || '';
+    return email.substring(0, 2).toUpperCase();
   };
 
-  // Filter and paginate users
-  const filteredAndPaginatedData = useMemo(() => {
-    let filteredUsers = users.filter(user => {
-      const matchesSearch = searchTerm === "" || 
-        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesStatus = statusFilter === "all" || user.status === statusFilter;
-      
-      const matchesRole = roleFilter === "all" || 
-        (user.roles && user.roles.includes(roleFilter)) ||
-        user.role === roleFilter;
-      
-      return matchesSearch && matchesStatus && matchesRole;
-    });
+  const getRoleIcon = (roles) => {
+    if (roles.includes('admin')) return <Crown className="h-4 w-4 text-yellow-600" />;
+    if (roles.includes('employee')) return <UserCheck className="h-4 w-4 text-blue-600" />;
+    return <User className="h-4 w-4 text-gray-600" />;
+  };
 
-    const totalItems = filteredUsers.length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+  const getStatusIcon = (status) => {
+    if (status === 'active') return <UserCheck className="h-4 w-4 text-green-600" />;
+    return <Clock className="h-4 w-4 text-orange-600" />;
+  };
 
-    return {
-      users: paginatedUsers,
-      totalItems,
-      totalPages,
-      currentPage,
-      hasNextPage: currentPage < totalPages,
-      hasPrevPage: currentPage > 1
-    };
-  }, [users, searchTerm, statusFilter, roleFilter, currentPage, itemsPerPage]);
+  const getStatusColor = (status) => {
+    if (status === 'active') return 'text-green-600';
+    return 'text-orange-600';
+  };
 
-  console.log('TeamMembers component state:', { isLoading, users, error });
-  console.log('Current token:', localStorage.getItem('token'));
+  const addInviteUser = () => {
+    setInviteUsers([...inviteUsers, { email: '', roles: ['employee'], firstName: '', lastName: '' }]);
+  };
 
-  // Test login function for demo purposes
-  const testLogin = async () => {
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: 'admin@demo.com', password: 'secret' })
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('token', data.token);
-        window.location.reload();
-      }
-    } catch (error) {
-      console.error('Test login failed:', error);
+  const removeInviteUser = (index) => {
+    if (inviteUsers.length > 1) {
+      setInviteUsers(inviteUsers.filter((_, i) => i !== index));
     }
+  };
+
+  const updateInviteUser = (index, field, value) => {
+    const updated = [...inviteUsers];
+    updated[index] = { ...updated[index], [field]: value };
+    setInviteUsers(updated);
+  };
+
+  const handleInviteSubmit = () => {
+    const validUsers = inviteUsers.filter(user => user.email.trim());
+    if (validUsers.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please enter at least one email address",
+        variant: "destructive"
+      });
+      return;
+    }
+    inviteUsersMutation.mutate(validUsers);
   };
 
   if (isLoading) {
     return (
-      <div className="p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-          <div className="h-32 bg-gray-200 rounded"></div>
+      <div className="space-y-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
           <div className="h-64 bg-gray-200 rounded"></div>
         </div>
       </div>
@@ -319,84 +244,56 @@ export default function TeamMembers() {
   }
 
   if (error) {
-    console.error('TeamMembers error:', error);
     return (
-      <div className="p-6">
-        <div className="text-center py-12">
-          <div className="text-red-600 mb-4">Error loading team members: {error.message}</div>
-          <div className="space-x-4">
-            <button onClick={testLogin} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-              Login as Demo Admin
-            </button>
-            <button onClick={() => window.location.reload()} className="text-blue-600 hover:underline">
-              Refresh Page
-            </button>
-          </div>
-        </div>
+      <div className="text-center py-12">
+        <div className="text-red-600 mb-4">Error loading team members</div>
+        <Button onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/organization/users'] })}>
+          Retry
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Team Members</h1>
-          <p className="text-gray-600 mt-1">Manage your organization's team members and invitations</p>
-        </div>
-        <Button onClick={() => setInviteModalOpen(true)} className="bg-blue-600 hover:bg-blue-700">
-          <UserPlus className="h-4 w-4 mr-2" />
-          Invite Members
-        </Button>
-      </div>
-
+    <div className="space-y-6">
       {/* License Information Card */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            License Overview
+          <CardTitle className="flex items-center gap-3">
+            <Shield className="h-6 w-6 text-blue-600" />
+            License Information
           </CardTitle>
-          <CardDescription>Current license usage and availability</CardDescription>
+          <CardDescription>
+            Current subscription and usage details
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Users className="h-5 w-5 text-blue-600" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-blue-600 rounded-lg">
+                  <Users className="h-5 w-5 text-white" />
                 </div>
-                <span className="text-2xl font-bold text-blue-600">{licenseInfo?.totalLicenses || 0}</span>
-              </div>
-              <h4 className="font-semibold text-gray-900 mb-1">Total Licenses</h4>
-              <p className="text-sm text-gray-600">Maximum team size</p>
-            </div>
-
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                </div>
-                <span className="text-2xl font-bold text-green-600">{licenseInfo?.usedLicenses || 0}</span>
+                <span className="text-lg font-bold text-blue-600">{licenseInfo?.usedLicenses || 0}</span>
               </div>
               <h4 className="font-semibold text-gray-900 mb-1">Active Users</h4>
               <p className="text-sm text-gray-600">Currently using licenses</p>
             </div>
 
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-3">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <AlertCircle className="h-5 w-5 text-orange-600" />
+            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-green-600 rounded-lg">
+                  <Shield className="h-5 w-5 text-white" />
                 </div>
-                <span className="text-2xl font-bold text-orange-600">{licenseInfo?.availableSlots || 0}</span>
+                <span className="text-lg font-bold text-green-600">{licenseInfo?.totalLicenses || 0}</span>
               </div>
-              <h4 className="font-semibold text-gray-900 mb-1">Available</h4>
-              <p className="text-sm text-gray-600">Ready for new team members</p>
+              <h4 className="font-semibold text-gray-900 mb-1">Total Licenses</h4>
+              <p className="text-sm text-gray-600">Available for your organization</p>
             </div>
 
-            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-3">
-                <div className="p-2 bg-purple-100 rounded-lg">
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-purple-600 rounded-lg">
                   <Shield className="h-5 w-5 text-purple-600" />
                 </div>
                 <span className="text-lg font-bold text-purple-600">{licenseInfo?.licenseType || 'Standard'}</span>
@@ -444,7 +341,7 @@ export default function TeamMembers() {
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
-                    setCurrentPage(1); // Reset to first page when searching
+                    setCurrentPage(1);
                   }}
                   className="pl-10"
                 />
@@ -505,156 +402,144 @@ export default function TeamMembers() {
               </div>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role(s)</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Invited At</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredAndPaginatedData.users.map((user) => (
-                    <TableRow key={user._id}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs font-semibold">
-                              {getInitials(user)}
+            <>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Role(s)</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Invited At</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredAndPaginatedData.users.map((user) => (
+                      <TableRow key={user._id}>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                              <span className="text-white text-xs font-semibold">
+                                {getInitials(user)}
+                              </span>
+                            </div>
+                            <div>
+                              <div className="font-medium text-gray-900">
+                                {getDisplayName(user)}
+                              </div>
+                              {user.status === 'invited' && (
+                                <div className="text-xs text-gray-500">Pending registration</div>
+                              )}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm text-gray-900">{user.email}</div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {getRoleIcon(user.roles || [user.role])}
+                            <div className="flex flex-wrap gap-1">
+                              {(user.roles || [user.role]).map((role) => (
+                                <Badge key={role} variant="outline" className="text-xs">
+                                  {role}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {getStatusIcon(user.status)}
+                            <span className={`text-sm font-medium ${getStatusColor(user.status)}`}>
+                              {user.status === 'invited' ? 'Pending' : 'Active'}
                             </span>
                           </div>
-                          <div>
-                            <div className="font-medium text-gray-900">
-                              {getDisplayName(user)}
-                            </div>
-                            {user.status === 'invited' && (
-                              <div className="text-xs text-gray-500">Pending registration</div>
-                            )}
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm text-gray-600">
+                            {user.invitedAt ? new Date(user.invitedAt).toLocaleDateString() : 
+                             user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-'}
                           </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm text-gray-900">{user.email}</div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {getRoleIcon(user.roles || [user.role])}
-                          <div className="flex flex-wrap gap-1">
-                            {(user.roles || [user.role]).map((role) => (
-                              <Badge key={role} variant="outline" className="text-xs">
-                                {role}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {getStatusBadge(user.status)}
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm text-gray-600">
-                          {user.invitedAt ? new Date(user.invitedAt).toLocaleDateString() : 
-                           user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-'}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {user.status === 'invited' && (
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() => resendInviteMutation.mutate(user._id)}
-                                disabled={resendInviteMutation.isPending}
-                              >
-                                <RefreshCw className="h-4 w-4 mr-2" />
-                                Resend Invite
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => revokeInviteMutation.mutate(user._id)}
-                                disabled={revokeInviteMutation.isPending}
-                                className="text-red-600"
-                              >
-                                <UserX className="h-4 w-4 mr-2" />
-                                Revoke Invite
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-
-            {/* Pagination Controls */}
-            {filteredAndPaginatedData.totalPages > 1 && (
-              <div className="flex items-center justify-between pt-4 border-t">
-                <div className="text-sm text-gray-700">
-                  Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredAndPaginatedData.totalItems)} of {filteredAndPaginatedData.totalItems} results
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage(currentPage - 1)}
-                    disabled={!filteredAndPaginatedData.hasPrevPage}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                    Previous
-                  </Button>
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: filteredAndPaginatedData.totalPages }, (_, i) => i + 1).map((page) => (
-                      <Button
-                        key={page}
-                        variant={page === currentPage ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setCurrentPage(page)}
-                        className="w-8 h-8 p-0"
-                      >
-                        {page}
-                      </Button>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {user.status === 'invited' && (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onClick={() => resendInviteMutation.mutate(user._id)}
+                                  disabled={resendInviteMutation.isPending}
+                                >
+                                  <RefreshCw className="h-4 w-4 mr-2" />
+                                  Resend Invite
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => revokeInviteMutation.mutate(user._id)}
+                                  disabled={revokeInviteMutation.isPending}
+                                  className="text-red-600"
+                                >
+                                  <UserX className="h-4 w-4 mr-2" />
+                                  Revoke Invite
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          )}
+                        </TableCell>
+                      </TableRow>
                     ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Pagination Controls */}
+              {filteredAndPaginatedData.totalPages > 1 && (
+                <div className="flex items-center justify-between pt-4 border-t">
+                  <div className="text-sm text-gray-700">
+                    Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredAndPaginatedData.totalItems)} of {filteredAndPaginatedData.totalItems} results
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage(currentPage + 1)}
-                    disabled={!filteredAndPaginatedData.hasNextPage}
-                  >
-                    Next
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                      disabled={!filteredAndPaginatedData.hasPrevPage}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      Previous
+                    </Button>
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: filteredAndPaginatedData.totalPages }, (_, i) => i + 1).map((page) => (
+                        <Button
+                          key={page}
+                          variant={page === currentPage ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setCurrentPage(page)}
+                          className="w-8 h-8 p-0"
+                        >
+                          {page}
+                        </Button>
+                      ))}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                      disabled={!filteredAndPaginatedData.hasNextPage}
+                    >
+                      Next
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            )}
-          ) : (
-            <div className="text-center py-12">
-              <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                <Users className="h-12 w-12 text-gray-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No matching team members</h3>
-              <p className="text-gray-600 mb-4">Try adjusting your search or filter criteria.</p>
-              <Button
-                onClick={() => {
-                  setSearchTerm("");
-                  setStatusFilter("all");
-                  setRoleFilter("all");
-                  setCurrentPage(1);
-                }}
-                variant="outline"
-              >
-                Clear Filters
-              </Button>
-            </div>
+              )}
+            </>
           )}
         </CardContent>
       </Card>
@@ -678,115 +563,94 @@ export default function TeamMembers() {
                       <span className="text-white font-semibold text-sm">{index + 1}</span>
                     </div>
                     <div>
-                      <Label className="text-base font-semibold text-gray-900">Team Member {index + 1}</Label>
-                      <p className="text-sm text-gray-600">Configure access and permissions</p>
+                      <h4 className="font-medium text-gray-900">Team Member {index + 1}</h4>
+                      <p className="text-sm text-gray-600">Enter details for the new team member</p>
                     </div>
                   </div>
                   {inviteUsers.length > 1 && (
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => handleRemoveUserRow(index)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg"
+                      onClick={() => removeInviteUser(index)}
+                      className="text-red-600 hover:text-red-800 hover:bg-red-50"
                     >
-                      <XCircle className="h-4 w-4" />
+                      <UserX className="h-4 w-4" />
                     </Button>
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor={`email-${index}`} className="text-sm font-medium text-gray-700">
-                      Email Address <span className="text-red-500">*</span>
-                    </Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      First Name
+                    </label>
                     <Input
-                      id={`email-${index}`}
-                      type="email"
-                      value={user.email}
-                      onChange={(e) => handleUserChange(index, "email", e.target.value)}
-                      placeholder="Enter email address"
-                      className="h-11 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      placeholder="Enter first name"
+                      value={user.firstName}
+                      onChange={(e) => updateInviteUser(index, 'firstName', e.target.value)}
                     />
                   </div>
-
-                  <div className="space-y-3">
-                    <Label className="text-sm font-medium text-gray-700">Role Permissions</Label>
-                    <div className="space-y-3">
-                      <div className="flex items-center space-x-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                        <Checkbox
-                          id={`member-${index}`}
-                          checked={true}
-                          disabled={true}
-                          className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-                        />
-                        <div className="flex-1">
-                          <Label htmlFor={`member-${index}`} className="text-sm font-medium text-blue-700">
-                            Member
-                          </Label>
-                          <p className="text-xs text-blue-600">Basic access (Required)</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center space-x-3 p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                        <Checkbox
-                          id={`manager-${index}`}
-                          checked={user.roles.includes("manager")}
-                          onCheckedChange={(checked) => handleRoleChange(index, "manager", checked)}
-                          className="data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
-                        />
-                        <div className="flex-1">
-                          <Label htmlFor={`manager-${index}`} className="text-sm font-medium text-gray-700 cursor-pointer">
-                            Manager
-                          </Label>
-                          <p className="text-xs text-gray-500">Project oversight and team coordination</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center space-x-3 p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                        <Checkbox
-                          id={`admin-${index}`}
-                          checked={user.roles.includes("admin")}
-                          onCheckedChange={(checked) => handleRoleChange(index, "admin", checked)}
-                          className="data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
-                        />
-                        <div className="flex-1">
-                          <Label htmlFor={`admin-${index}`} className="text-sm font-medium text-gray-700 cursor-pointer">
-                            Administrator
-                          </Label>
-                          <p className="text-xs text-gray-500">Full system access and user management</p>
-                        </div>
-                      </div>
-                    </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Last Name
+                    </label>
+                    <Input
+                      placeholder="Enter last name"
+                      value={user.lastName}
+                      onChange={(e) => updateInviteUser(index, 'lastName', e.target.value)}
+                    />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email Address *
+                  </label>
+                  <Input
+                    type="email"
+                    placeholder="Enter email address"
+                    value={user.email}
+                    onChange={(e) => updateInviteUser(index, 'email', e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Role
+                  </label>
+                  <Select 
+                    value={user.roles[0]} 
+                    onValueChange={(value) => updateInviteUser(index, 'roles', [value])}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="employee">Employee</SelectItem>
+                      <SelectItem value="member">Member</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             ))}
 
-            <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gray-50 hover:bg-gray-100 transition-colors">
-              <Button
-                variant="ghost"
-                onClick={handleAddUserRow}
-                className="w-full h-auto py-4 text-gray-600 hover:text-gray-900 hover:bg-white"
-              >
-                <Plus className="h-5 w-5 mr-2" />
-                Add Another Team Member
-              </Button>
-            </div>
-
-            <div className="flex justify-end gap-3 pt-6 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 variant="outline"
-                onClick={() => setInviteModalOpen(false)}
-                disabled={inviteUsersMutation.isPending}
+                onClick={addInviteUser}
+                className="flex-1"
               >
-                Cancel
+                <UserPlus className="h-4 w-4 mr-2" />
+                Add Another Member
               </Button>
               <Button
                 onClick={handleInviteSubmit}
                 disabled={inviteUsersMutation.isPending}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="flex-1 bg-blue-600 hover:bg-blue-700"
               >
-                {inviteUsersMutation.isPending ? "Sending..." : `Send ${inviteUsers.length} Invitation${inviteUsers.length > 1 ? 's' : ''}`}
+                {inviteUsersMutation.isPending ? 'Sending...' : 'Send Invitations'}
               </Button>
             </div>
           </div>
