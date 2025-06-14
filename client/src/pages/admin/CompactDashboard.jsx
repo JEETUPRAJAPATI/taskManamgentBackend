@@ -235,32 +235,8 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         
-        {/* Task Overview Chart */}
-        <div className="lg:col-span-2">
-          <Card className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
-                <BarChart3 className="h-5 w-5 mr-2 text-blue-600" />
-                Task Progress Overview
-              </CardTitle>
-              <CardDescription className="text-sm text-slate-600 dark:text-slate-400">
-                Weekly task completion and progress tracking
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-3">
-              <div className="h-48 bg-slate-50 dark:bg-slate-700 rounded border border-slate-200 dark:border-slate-600 flex items-center justify-center">
-                <div className="text-center">
-                  <BarChart3 className="h-12 w-12 text-slate-400 mx-auto mb-2" />
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Chart visualization placeholder</p>
-                  <p className="text-xs text-slate-400 dark:text-slate-500">Task completion analytics</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Recent Activity */}
         <Card className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
           <CardHeader className="pb-2">
