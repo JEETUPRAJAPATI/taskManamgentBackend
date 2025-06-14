@@ -161,32 +161,34 @@ function ProtectedRoute({ component: Component, requiredRole, allowedRoles = [],
   };
 
   if (!hasAccess()) {
+    const isIndividualUser = user.role === 'individual';
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
-          <p className="text-gray-600">You don't have permission to access this area.</p>
-          <div className="mt-4 space-x-2">
+      <div className="flex items-center justify-center h-screen bg-slate-50">
+        <div className="text-center max-w-md mx-auto p-8 bg-white rounded-lg shadow-lg">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900 mb-3">Access Restricted</h2>
+          <p className="text-slate-600 mb-6">
+            {isIndividualUser 
+              ? "This feature is only available for organizational users. Individual accounts don't have access to team management features."
+              : "You don't have permission to access this area."
+            }
+          </p>
+          <div className="space-y-3">
             <button 
-              onClick={() => setLocation('/login')}
-              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+              onClick={() => setLocation('/dashboard')}
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Login as Different User
+              Return to Dashboard
             </button>
-            <button 
-              onClick={() => {
-                if (user.role === 'super_admin') {
-                  setLocation('/super-admin');
-                } else if (user.role === 'admin' || user.role === 'member') {
-                  setLocation('/dashboard');
-                } else {
-                  setLocation('/login');
-                }
-              }}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
-              Go to Dashboard
-            </button>
+            {isIndividualUser && (
+              <p className="text-xs text-slate-500 mt-3">
+                To access team features, you need an organizational account.
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -312,27 +314,27 @@ function App() {
         </Route>
         <Route path="/invite-users">
           <AdminLayout>
-            <ProtectedRoute component={InviteUsers} allowedRoles={["org_admin", "admin"]} />
+            <ProtectedRoute component={InviteUsers} allowedRoles={["superadmin", "org_admin", "admin"]} />
           </AdminLayout>
         </Route>
         <Route path="/admin/invite-users">
           <AdminLayout>
-            <ProtectedRoute component={InviteUsers} allowedRoles={["org_admin", "admin"]} />
+            <ProtectedRoute component={InviteUsers} allowedRoles={["superadmin", "org_admin", "admin"]} />
           </AdminLayout>
         </Route>
         <Route path="/admin/plans">
           <AdminLayout>
-            <ProtectedRoute component={PlansLicenses} allowedRoles={["org_admin", "admin"]} />
+            <ProtectedRoute component={PlansLicenses} allowedRoles={["superadmin", "org_admin", "admin"]} />
           </AdminLayout>
         </Route>
         <Route path="/roles">
           <AdminLayout>
-            <ProtectedRoute component={RoleManagement} allowedRoles={["org_admin", "admin"]} />
+            <ProtectedRoute component={RoleManagement} allowedRoles={["superadmin", "org_admin", "admin"]} />
           </AdminLayout>
         </Route>
         <Route path="/admin/role-management">
           <AdminLayout>
-            <ProtectedRoute component={RoleManagement} allowedRoles={["org_admin", "admin"]} />
+            <ProtectedRoute component={RoleManagement} allowedRoles={["superadmin", "org_admin", "admin"]} />
           </AdminLayout>
         </Route>
         <Route path="/projects">

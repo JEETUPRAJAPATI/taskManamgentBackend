@@ -39,11 +39,15 @@ export function SimpleSidebar() {
     }));
   };
 
-  // Check if user has organization management permissions (ONLY org_admin)
-  // Also check for 'admin' role as fallback for organization admins
-  const canManageOrganization = user?.role === 'org_admin' || user?.role === 'admin';
+  // Check if user has organization management permissions
+  // Individual users should NOT have access to organization features
+  const canManageOrganization = user?.role === 'org_admin' || user?.role === 'admin' || user?.role === 'superadmin';
   const isIndividualUser = user?.role === 'individual';
   const isSuperAdmin = user?.role === 'superadmin';
+  
+  // Individual users should be blocked from organizational features
+  const canInviteUsers = !isIndividualUser && canManageOrganization;
+  const canManageRoles = !isIndividualUser && canManageOrganization;
 
 
 
@@ -98,19 +102,23 @@ export function SimpleSidebar() {
   ];
 
   const adminNavigation = [
-    ...(canManageOrganization ? [
+    ...(canInviteUsers ? [
       { 
         name: "Invite Users", 
         href: "/admin/invite-users", 
         icon: UserPlus,
         description: "Invite new team members"
-      },
+      }
+    ] : []),
+    ...(canManageOrganization ? [
       { 
         name: "Plans & Licenses", 
         href: "/admin/plans", 
         icon: CreditCard,
         description: "License management"
-      },
+      }
+    ] : []),
+    ...(canManageRoles ? [
       { 
         name: "Role Management", 
         href: "/admin/role-management", 
