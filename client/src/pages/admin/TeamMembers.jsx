@@ -23,12 +23,8 @@ export default function TeamMembers() {
   const { data: users = [], isLoading, error } = useQuery({
     queryKey: ["/api/organization/users-detailed"],
     enabled: true,
-    onSuccess: (data) => {
-      console.log('Successfully fetched users:', data);
-    },
-    onError: (error) => {
-      console.error('Error fetching users:', error);
-    }
+    retry: false,
+    refetchOnWindowFocus: false
   });
 
   // Fetch organization license info

@@ -2299,6 +2299,100 @@ async function setupEmailCalendarRoutes(app) {
     }
   });
 
+  // Test endpoint to create sample data
+  app.post("/api/test/create-data", async (req, res) => {
+    try {
+      // Get or create organization
+      let organization = await storage.getOrganizationBySlug('demo-company');
+      if (!organization) {
+        organization = await storage.createOrganization({
+          name: 'Demo Company',
+          slug: 'demo-company',
+          type: 'company',
+          status: 'active',
+          settings: {
+            allowPublicSignup: false,
+            requireEmailVerification: true
+          }
+        });
+      }
+
+      // Create admin user
+      let adminUser = await storage.getUserByEmail('admin@demo.com');
+      if (!adminUser) {
+        adminUser = await storage.createUser({
+          firstName: 'Admin',
+          lastName: 'User',
+          email: 'admin@demo.com',
+          password: 'secret',
+          role: 'admin',
+          organization: organization._id,
+          status: 'active',
+          isActive: true,
+          emailVerified: true,
+          roles: ['admin']
+        });
+      }
+
+      // Create sample users with different statuses
+      const sampleUsers = [
+        {
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'john.doe@example.com',
+          roles: ['member'],
+          organization: organization._id,
+          status: 'invited',
+          invitedBy: adminUser._id,
+          isActive: false,
+          emailVerified: false
+        },
+        {
+          firstName: 'Jane',
+          lastName: 'Smith',
+          email: 'jane.smith@example.com',
+          roles: ['employee'],
+          organization: organization._id,
+          status: 'invited',
+          invitedBy: adminUser._id,
+          isActive: false,
+          emailVerified: false
+        },
+        {
+          firstName: 'Mike',
+          lastName: 'Johnson',
+          email: 'mike.johnson@example.com',
+          roles: ['member'],
+          organization: organization._id,
+          status: 'active',
+          invitedBy: adminUser._id,
+          isActive: true,
+          emailVerified: true,
+          password: 'user123'
+        }
+      ];
+
+      let created = 0;
+      for (const userData of sampleUsers) {
+        const existingUser = await storage.getUserByEmail(userData.email);
+        if (!existingUser) {
+          await storage.createUser(userData);
+          created++;
+        }
+      }
+
+      res.json({
+        message: `Test data created successfully. Admin: admin@demo.com / secret. Created ${created} new users.`,
+        organizationId: organization._id,
+        adminId: adminUser._id
+      });
+
+    } catch (error) {
+      console.error('Test data creation error:', error);
+      res.status(500).json({ message: 'Failed to create test data: ' + error.message });
+    }
+  });
+
   // Accept user invitation
   app.get("/api/auth/invitation/:token", async (req, res) => {
     try {
