@@ -53,14 +53,19 @@ export default function TeamMembers() {
     enabled: true
   });
 
-  console.log('TeamMembers component state:', { isLoading, users, error });
+  console.log('TeamMembers component state:', { 
+    isLoading, 
+    usersCount: users?.length || 0, 
+    users: users?.map(u => ({ email: u.email, status: u.status, roles: u.roles })) || [],
+    error 
+  });
   
   // Get current token for debugging
   const currentToken = localStorage.getItem('token');
-  console.log('Current token:', currentToken);
+  console.log('Current token present:', !!currentToken);
   
-  if (currentToken) {
-    console.log('Making API request with token:', currentToken.substring(0, 20) + '...');
+  if (error) {
+    console.error('Query error:', error);
   }
 
   // Force authentication and data refresh
