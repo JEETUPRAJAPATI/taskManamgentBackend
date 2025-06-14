@@ -185,19 +185,19 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="flex flex-col h-full bg-white dark:bg-slate-800 max-h-[calc(90vh-120px)]">
-          <ScrollArea className="flex-1 overflow-y-auto bg-white dark:bg-slate-800" style={{ maxHeight: 'calc(90vh - 200px)' }}>
+        <form onSubmit={handleSubmit} className="flex flex-col h-full bg-white max-h-[calc(90vh-120px)]">
+          <ScrollArea className="flex-1 overflow-y-auto bg-white" style={{ maxHeight: 'calc(90vh - 200px)' }}>
             <div className="space-y-6 p-6">
-              <Card className="border-slate-200 dark:border-slate-700">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white">
+              <Card className="border-slate-200 bg-white">
+                <CardHeader className="pb-4 bg-slate-50">
+                  <CardTitle className="text-lg font-semibold text-slate-900">
                     Role Information
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 bg-white">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                      <Label htmlFor="name" className="text-sm font-medium text-slate-700">
                         Role Name *
                       </Label>
                       <Input
@@ -211,7 +211,7 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                      <Label className="text-sm font-medium text-slate-700">
                         Permissions Selected
                       </Label>
                       <div className="flex items-center space-x-2">
@@ -240,7 +240,7 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="description" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    <Label htmlFor="description" className="text-sm font-medium text-slate-700">
                       Description
                     </Label>
                     <Textarea
@@ -255,16 +255,16 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
                 </CardContent>
               </Card>
 
-              <Card className="border-slate-200 dark:border-slate-700">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white">
+              <Card className="border-slate-200 bg-white">
+                <CardHeader className="pb-4 bg-slate-50">
+                  <CardTitle className="text-lg font-semibold text-slate-900">
                     Permissions & Access Control
                   </CardTitle>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                  <p className="text-sm text-slate-600">
                     Select the permissions this role should have access to
                   </p>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-6 bg-white">
                   {PERMISSION_MODULES.map((module) => {
                     const IconComponent = module.icon;
                     const selectionState = getModuleSelectionState(module.permissions);
@@ -277,10 +277,10 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
                               <IconComponent className={`h-5 w-5 ${module.color}`} />
                             </div>
                             <div>
-                              <h4 className="font-semibold text-slate-900 dark:text-white">
+                              <h4 className="font-semibold text-slate-900">
                                 {module.name}
                               </h4>
-                              <p className="text-xs text-slate-500 dark:text-slate-400">
+                              <p className="text-xs text-slate-600">
                                 {module.permissions.length} permissions available
                               </p>
                             </div>
@@ -322,7 +322,7 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
                           {module.permissions.map((permission) => (
                             <div 
                               key={permission.id} 
-                              className="flex items-start space-x-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                              className="flex items-start space-x-3 p-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors"
                             >
                               <Checkbox
                                 id={permission.id}
@@ -333,11 +333,11 @@ export function RoleForm({ isOpen, onClose, onSubmit, initialData, isLoading = f
                               <div className="flex-1 min-w-0">
                                 <label 
                                   htmlFor={permission.id}
-                                  className="block font-medium text-sm text-slate-900 dark:text-white cursor-pointer"
+                                  className="block font-medium text-sm text-slate-900 cursor-pointer"
                                 >
                                   {permission.name}
                                 </label>
-                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                <p className="text-xs text-slate-600 mt-1">
                                   {permission.description}
                                 </p>
                               </div>
