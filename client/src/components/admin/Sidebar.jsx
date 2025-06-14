@@ -33,12 +33,12 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-30 bg-slate-800 dark:bg-slate-900 border-r border-slate-700 dark:border-slate-800 transition-all duration-300 shadow-xl ${
+      <div className={`fixed inset-y-0 left-0 z-30 bg-black border-r border-gray-800 transition-all duration-300 shadow-xl ${
         isOpen ? 'w-64' : 'w-16'
       } hidden lg:block`}>
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center h-12 px-3 border-b border-slate-700 dark:border-slate-800 bg-slate-900 dark:bg-slate-950">
+          <div className="flex items-center h-12 px-3 border-b border-gray-800 bg-black">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <CheckSquare className="h-6 w-6 text-blue-400" />

@@ -178,10 +178,10 @@ export function SimpleSidebar() {
   };
 
   return (
-    <div className="fixed inset-y-0 left-0 z-50 w-56 bg-gray-900 border-r border-gray-800 shadow-xl">
+    <div className="fixed inset-y-0 left-0 z-50 w-56 bg-black border-r border-gray-800 shadow-xl">
       <div className="flex flex-col h-full">
         {/* Logo */}
-        <div className="flex items-center h-16 px-4 border-b border-gray-800 bg-gray-950">
+        <div className="flex items-center h-16 px-4 border-b border-gray-800 bg-black">
           <CheckSquare className="h-5 w-5 text-gray-400" />
           <div className="ml-3">
             <h1 className="text-sm font-semibold text-gray-100">TaskSetu</h1>

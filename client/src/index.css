@@ -1,3 +1,57 @@
+
+/* TRANSPARENCY FIXES - Force solid backgrounds for all interactive elements */
+/* Critical: All dialogs, modals, popups, dropdowns MUST have solid backgrounds */
+
+/* Universal popup/modal background override */
+[role="dialog"],
+[role="menu"],
+[role="listbox"],
+[role="combobox"],
+[data-radix-dialog-content],
+[data-radix-popover-content],
+[data-radix-dropdown-menu-content],
+[data-radix-select-content],
+[data-radix-context-menu-content],
+[data-radix-menubar-content],
+[data-radix-tooltip-content],
+.modal,
+.popup,
+.dropdown,
+.tooltip,
+.popover {
+  background-color: rgb(255 255 255) !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  border: 1px solid rgb(203 213 225) !important;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+}
+
+/* Force sidebar to be solid black */
+[data-sidebar="sidebar"],
+.sidebar,
+.admin-sidebar {
+  background-color: rgb(0 0 0) !important;
+  opacity: 1 !important;
+}
+
+/* Ensure text is visible in popups */
+[role="dialog"] *,
+[role="menu"] *,
+[role="listbox"] *,
+[data-radix-dialog-content] *,
+[data-radix-popover-content] *,
+[data-radix-dropdown-menu-content] * {
+  color: rgb(15 23 42) !important;
+}
+
+/* Sidebar text visibility */
+[data-sidebar="sidebar"] *,
+.sidebar *,
+.admin-sidebar * {
+  color: rgb(255 255 255) !important;
+}
+
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
@@ -319,9 +373,10 @@
   [data-radix-select-content],
   [data-radix-dropdown-menu-content],
   [data-radix-popover-content] {
-    @apply bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg rounded-md !important;
+    @apply bg-white border border-slate-300 shadow-lg rounded-md !important;
     backdrop-filter: none !important;
     background-color: rgb(255 255 255) !important;
+    opacity: 1 !important;
   }
 
   .dark .dropdown-content,
@@ -381,17 +436,16 @@
   .popup-content,
   .dropdown-menu,
   .select-content,
-  .popover-content {
-    @apply bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg rounded-md !important;
+  .popover-content,
+  [role="dialog"],
+  [role="menu"],
+  [role="listbox"],
+  [data-state="open"] {
+    @apply bg-white border border-slate-300 shadow-xl rounded-md !important;
     backdrop-filter: none !important;
     background-color: rgb(255 255 255) !important;
-  }
-
-  .dark .popup-content,
-  .dark .dropdown-menu,
-  .dark .select-content,
-  .dark .popover-content {
-    background-color: rgb(30 41 59) !important;
+    opacity: 1 !important;
+    z-index: 9999 !important;
   }
 
   /* Select Item Focus States */

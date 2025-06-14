@@ -59,7 +59,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
 
       {/* Desktop Sidebar */}
       <div 
-        className="fixed inset-y-0 left-0 z-[1000] bg-slate-800 w-56 border-r border-slate-700 shadow-xl"
+        className="fixed inset-y-0 left-0 z-[1000] bg-black w-56 border-r border-gray-800 shadow-xl"
         style={{ 
           display: 'block !important', 
           visibility: 'visible !important',
@@ -74,7 +74,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center h-12 px-3 border-b border-slate-600 bg-slate-900">
+          <div className="flex items-center h-12 px-3 border-b border-gray-800 bg-black">
             <CheckSquare className="h-6 w-6 text-blue-400" />
             <div className="ml-3">
               <h1 className="text-lg font-bold text-white">TaskSetu</h1>
