@@ -20,7 +20,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/login", async (req, res) => {
     try {
       const { email, password } = req.body;
-      const result = await storage.loginUser(email, password);
+      const result = await authService.login(email, password);
       res.json(result);
     } catch (error) {
       console.error("Login error:", error);
