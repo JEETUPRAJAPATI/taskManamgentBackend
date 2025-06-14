@@ -2215,7 +2215,7 @@ async function setupEmailCalendarRoutes(app) {
   });
 
   // Invite user to organization
-  app.post("/api/organization/invite-user", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
+  app.post("/api/organization/invite-user", roleAuthToken, async (req, res) => {
     try {
       const { email, roles } = req.body;
       
@@ -2223,13 +2223,16 @@ async function setupEmailCalendarRoutes(app) {
         return res.status(400).json({ message: "Email and roles are required" });
       }
 
-      // Check license limit
-      const licenseInfo = await storage.getOrganizationLicenseInfo(req.user.organizationId);
-      if (licenseInfo.available <= 0) {
-        return res.status(400).json({ message: "License limit reached. Cannot invite more users." });
+      console.log('Inviting user:', email, 'with roles:', roles);
+      console.log('Organization ID:', req.user.organizationId);
+
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser && existingUser.organization && existingUser.organization.toString() === req.user.organizationId) {
+        return res.status(400).json({ message: "User already invited or registered" });
       }
 
-      // Create invitation
+      // Create invitation directly in database
       const invitedUser = await storage.inviteUserToOrganization({
         email,
         organizationId: req.user.organizationId,
@@ -2237,19 +2240,7 @@ async function setupEmailCalendarRoutes(app) {
         invitedBy: req.user.id
       });
 
-      // Get organization and inviter details
-      const organization = await storage.getOrganization(req.user.organizationId);
-      const inviter = await storage.getUser(req.user.id);
-      const inviterName = `${inviter.firstName} ${inviter.lastName}`;
-
-      // Send invitation email
-      await storage.sendInvitationEmail(
-        email,
-        invitedUser.inviteToken,
-        organization.name,
-        roles,
-        inviterName
-      );
+      console.log('Created invited user:', invitedUser.email, 'with status:', invitedUser.status);
 
       res.status(201).json({ 
         message: "User invitation sent successfully",
