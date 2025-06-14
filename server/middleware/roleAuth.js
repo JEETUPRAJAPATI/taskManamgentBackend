@@ -21,9 +21,12 @@ export const authenticateToken = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, JWT_SECRET);
+    console.log('Token decoded:', decoded);
     
     // Get fresh user data to ensure role/organization info is current
     const user = await storage.getUser(decoded.id);
+    console.log('User from DB:', user ? { id: user._id, email: user.email, role: user.role, org: user.organization, isActive: user.isActive } : 'NOT FOUND');
+    
     if (!user || !user.isActive) {
       return res.status(401).json({ error: 'Invalid or inactive user' });
     }
@@ -36,31 +39,42 @@ export const authenticateToken = async (req, res, next) => {
       permissions: user.permissions || []
     };
 
+    console.log('Request user set:', req.user);
     next();
   } catch (error) {
+    console.error('Token authentication error:', error);
     return res.status(403).json({ error: 'Invalid token' });
   }
 };
 
 export const requireRole = (allowedRoles) => {
   return (req, res, next) => {
+    console.log('=== ROLE CHECK ===');
+    console.log('Required roles:', allowedRoles);
+    console.log('User object:', req.user);
+    
     if (!req.user) {
+      console.log('NO USER FOUND');
       return res.status(401).json({ error: 'Authentication required' });
     }
 
     const userRole = req.user.role;
+    console.log('User role:', userRole);
+    console.log('Role included?:', allowedRoles.includes(userRole));
     
     if (allowedRoles.includes(userRole)) {
+      console.log('ROLE CHECK PASSED');
       return next();
     }
 
+    console.log('ROLE CHECK FAILED');
     return res.status(403).json({ error: 'Insufficient permissions' });
   };
 };
 
 export const requireSuperAdmin = requireRole(['superadmin']);
 
-export const requireOrgAdminOrAbove = requireRole(['superadmin', 'org_admin']);
+export const requireOrgAdminOrAbove = requireRole(['superadmin', 'org_admin', 'admin']);
 
 export const requireEmployee = requireRole(['superadmin', 'org_admin', 'employee']);
 
@@ -87,8 +101,8 @@ export const requireOrganizationManagement = (req, res, next) => {
     return res.status(403).json({ error: 'Individual users cannot access organization management features' });
   }
   
-  // Allow superadmin and org_admin roles
-  return requireRole(['superadmin', 'org_admin'])(req, res, next);
+  // Allow superadmin, org_admin, and admin roles
+  return requireRole(['superadmin', 'org_admin', 'admin'])(req, res, next);
 };
 
 export const requireOrganizationAccess = async (req, res, next) => {
