@@ -94,13 +94,13 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                       className={`group flex items-center px-2 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ease-in-out relative ${
                         isActive(item.href)
                           ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
-                          : 'text-slate-300 hover:bg-slate-700/70 hover:text-white hover:shadow-md'
+                          : 'text-slate-300 '
                       }`}
                     >
                       <Icon className={`flex-shrink-0 h-4 w-4 transition-colors duration-200 ${
                         isActive(item.href)
                           ? 'text-blue-100'
-                          : 'text-slate-400 group-hover:text-blue-400'
+                          : 'text-slate-400 '
                       } ${isOpen ? 'mr-2' : ''}`} />
 
                       {isOpen && (
@@ -141,13 +141,13 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                       className={`group flex items-center px-2 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ease-in-out relative ${
                         isActive(item.href)
                           ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
-                          : 'text-slate-300 hover:bg-slate-700/70 hover:text-white hover:shadow-md'
+                          : 'text-slate-300 '
                       }`}
                     >
                       <Icon className={`flex-shrink-0 h-4 w-4 transition-colors duration-200 ${
                         isActive(item.href)
                           ? 'text-blue-100'
-                          : 'text-slate-400 group-hover:text-blue-400'
+                          : 'text-slate-400 '
                       } ${isOpen ? 'mr-2' : ''}`} />
 
                       {isOpen && (
@@ -189,13 +189,13 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                       className={`group flex items-center px-2 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ease-in-out relative ${
                         isActive(item.href)
                           ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
-                          : 'text-slate-300 hover:bg-slate-700/70 hover:text-white hover:shadow-md'
+                          : 'text-slate-300 '
                       }`}
                     >
                       <Icon className={`flex-shrink-0 h-4 w-4 transition-colors duration-200 ${
                         isActive(item.href)
                           ? 'text-blue-100'
-                          : 'text-slate-400 group-hover:text-blue-400'
+                          : 'text-slate-400 '
                       } ${isOpen ? 'mr-2' : ''}`} />
 
                       {isOpen && (
@@ -234,7 +234,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
               </div>
               <button
                 onClick={onMobileToggle}
-                className="p-1 rounded-md text-slate-400 hover:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                className="p-1 rounded-md text-slate-400  dark:hover:bg-slate-800"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -250,7 +250,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                     className={`group flex items-center px-2 py-1.5 text-sm font-medium rounded-md transition-colors ${
                       isActive(item.href)
                         ? 'bg-blue-100 text-blue-900 dark:bg-blue-900/20 dark:text-blue-300'
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'
+                        : 'text-slate-600  dark:text-slate-300 dark:'
                     }`}
                   >
                     <Icon className={`flex-shrink-0 h-4 w-4 ${

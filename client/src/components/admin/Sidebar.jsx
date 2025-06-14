@@ -75,7 +75,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                       className={`group flex items-center px-3 py-3 text-sm font-semibold rounded-lg transition-all duration-200 ease-in-out relative ${
                         isActive(item.href)
                           ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
-                          : 'text-slate-300 hover:bg-slate-700/70 hover:text-white hover:shadow-md'
+                          : 'text-slate-300 '
                       }`}
                     >
                       <Icon className={`flex-shrink-0 h-5 w-5 transition-colors duration-200 ${
@@ -128,7 +128,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                       className={`group flex items-center px-3 py-3 text-sm font-semibold rounded-lg transition-all duration-200 ease-in-out relative ${
                         isActive(item.href)
                           ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
-                          : 'text-slate-300 hover:bg-slate-700/70 hover:text-white hover:shadow-md'
+                          : 'text-slate-300 '
                       }`}
                     >
                       <Icon className={`flex-shrink-0 h-5 w-5 transition-colors duration-200 ${
@@ -181,7 +181,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                       className={`group flex items-center px-3 py-3 text-sm font-semibold rounded-lg transition-all duration-200 ease-in-out relative ${
                         isActive(item.href)
                           ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
-                          : 'text-slate-300 hover:bg-slate-700/70 hover:text-white hover:shadow-md'
+                          : 'text-slate-300 '
                       }`}
                     >
                       <Icon className={`flex-shrink-0 h-5 w-5 transition-colors duration-200 ${
