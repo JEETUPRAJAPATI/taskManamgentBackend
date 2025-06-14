@@ -21,9 +21,10 @@ const SheetOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Overlay
     className={cn(
-      "fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
+    style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', opacity: 1 }}
     {...props}
     ref={ref}
   />
@@ -62,6 +63,12 @@ const SheetContent = React.forwardRef<
     <SheetPrimitive.Content
       ref={ref}
       className={cn(sheetVariants({ side }), className)}
+      style={{ 
+        backgroundColor: 'rgb(255 255 255)', 
+        opacity: 1, 
+        border: '1px solid rgb(203 213 225)',
+        boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.25)'
+      }}
       {...props}
     >
       {children}

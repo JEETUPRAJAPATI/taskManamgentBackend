@@ -16,6 +16,8 @@
 [data-radix-context-menu-content],
 [data-radix-menubar-content],
 [data-radix-tooltip-content],
+[data-radix-alert-dialog-content],
+[data-radix-sheet-content],
 .modal,
 .popup,
 .dropdown,
@@ -26,6 +28,16 @@
   backdrop-filter: none !important;
   border: 1px solid rgb(203 213 225) !important;
   box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+  z-index: 9999 !important;
+}
+
+/* Fix modal overlays */
+[data-radix-dialog-overlay],
+[data-radix-alert-dialog-overlay],
+[data-radix-sheet-overlay] {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  opacity: 1 !important;
+  z-index: 9998 !important;
 }
 
 /* Force sidebar to be solid black */
@@ -42,8 +54,42 @@
 [role="listbox"] *,
 [data-radix-dialog-content] *,
 [data-radix-popover-content] *,
-[data-radix-dropdown-menu-content] * {
+[data-radix-dropdown-menu-content] *,
+[data-radix-alert-dialog-content] *,
+[data-radix-sheet-content] * {
   color: rgb(15 23 42) !important;
+}
+
+/* Additional fixes for specific modal elements */
+.dialog-content,
+.alert-dialog-content,
+.sheet-content {
+  background: white !important;
+  opacity: 1 !important;
+  color: rgb(15 23 42) !important;
+}
+
+/* Button visibility in modals */
+[data-radix-dialog-content] button,
+[data-radix-alert-dialog-content] button,
+[data-radix-sheet-content] button {
+  background-color: rgb(59 130 246) !important;
+  color: white !important;
+  border: 1px solid rgb(59 130 246) !important;
+  opacity: 1 !important;
+}
+
+/* Form elements in modals */
+[data-radix-dialog-content] input,
+[data-radix-dialog-content] textarea,
+[data-radix-dialog-content] select,
+[data-radix-alert-dialog-content] input,
+[data-radix-alert-dialog-content] textarea,
+[data-radix-alert-dialog-content] select {
+  background-color: white !important;
+  border: 1px solid rgb(203 213 225) !important;
+  color: rgb(15 23 42) !important;
+  opacity: 1 !important;
 }
 
 /* Comprehensive Sidebar Styling */
