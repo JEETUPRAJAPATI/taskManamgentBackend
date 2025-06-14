@@ -43,17 +43,25 @@ export default function TeamMembers() {
 
   // Fetch team members
   const { data: users = [], isLoading, error } = useQuery({
-    queryKey: ['/api/organization/users'],
+    queryKey: ['/api/organization/users-detailed'],
     enabled: true
   });
 
   // Fetch license info
   const { data: licenseInfo } = useQuery({
-    queryKey: ['/api/organization/license-info'],
+    queryKey: ['/api/organization/license'],
     enabled: true
   });
 
   console.log('TeamMembers component state:', { isLoading, users, error });
+  
+  // Get current token for debugging
+  const currentToken = localStorage.getItem('token');
+  console.log('Current token:', currentToken);
+  
+  if (currentToken) {
+    console.log('Making API request with token:', currentToken.substring(0, 20) + '...');
+  }
 
   // Test login function
   const testLogin = async () => {
@@ -84,7 +92,7 @@ export default function TeamMembers() {
       body: { users: inviteData }
     }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/organization/users'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/organization/users-detailed'] });
       setInviteModalOpen(false);
       setInviteUsers([{ email: '', roles: ['employee'], firstName: '', lastName: '' }]);
       toast({
@@ -106,7 +114,7 @@ export default function TeamMembers() {
       method: 'POST'
     }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/organization/users'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/organization/users-detailed'] });
       toast({
         title: "Invitation resent",
         description: "The invitation has been resent successfully"
@@ -126,7 +134,7 @@ export default function TeamMembers() {
       method: 'DELETE'
     }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/organization/users'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/organization/users-detailed'] });
       toast({
         title: "Invitation revoked",
         description: "The invitation has been revoked successfully"
