@@ -157,15 +157,17 @@ export function InviteUsersModal({ isOpen, onClose }) {
     }
 
     // Check for duplicates within current invite list
-    const currentEmails = inviteList.map(invite => invite.email.toLowerCase());
-    const isDuplicate = currentEmails.filter(e => e === email.toLowerCase()).length > 1;
+    const currentEmails = inviteList.map((invite, i) => ({ email: invite.email.toLowerCase(), index: i }));
+    const duplicateIndexes = currentEmails
+      .filter(item => item.email === email.toLowerCase() && item.index !== index)
+      .map(item => item.index);
     
-    if (isDuplicate) {
+    if (duplicateIndexes.length > 0) {
       setInviteList(prev => prev.map((invite, i) => 
         i === index 
           ? { 
               ...invite, 
-              existsError: "Email already added in this invitation",
+              existsError: "This email is already added in another invitation row",
               isValid: false,
               isChecking: false
             }
@@ -292,9 +294,13 @@ export function InviteUsersModal({ isOpen, onClose }) {
       return response.json();
     },
     onSuccess: (data) => {
+      const successMessage = data.successCount === 1 
+        ? `1 invitation sent successfully`
+        : `${data.successCount} invitations sent successfully`;
+      
       toast({
-        title: "Invitations sent successfully",
-        description: `${data.successCount || 0} invitation${data.successCount === 1 ? '' : 's'} sent to new users`,
+        title: "✅ Invitations Sent!",
+        description: successMessage,
         className: "border-emerald-200 bg-emerald-50 text-emerald-800 shadow-lg",
         duration: 5000,
       });
@@ -304,7 +310,7 @@ export function InviteUsersModal({ isOpen, onClose }) {
     },
     onError: (error) => {
       toast({
-        title: "Failed to send invitations",
+        title: "❌ Failed to send invitations",
         description: error.message,
         variant: "destructive",
         className: "border-red-200 bg-red-50 text-red-800 shadow-lg",
@@ -339,11 +345,18 @@ export function InviteUsersModal({ isOpen, onClose }) {
       
       invalidInvites.forEach(invite => {
         if (invite.emailError) errorMessages.push(`${invite.email}: ${invite.emailError}`);
-        if (invite.existsError) errorMessages.push(`${invite.email}: Already exists in organization`);
+        if (invite.existsError) errorMessages.push(`${invite.email}: ${invite.existsError}`);
         if (invite.licenseError) errorMessages.push(`${invite.email}: ${invite.licenseError}`);
       });
 
-      // Don't show toast for validation errors - they're already shown inline
+      // Show toast with validation errors summary
+      toast({
+        title: "Please fix the following errors",
+        description: `${invalidInvites.length} invitation${invalidInvites.length > 1 ? 's have' : ' has'} validation errors. Check the form above for details.`,
+        variant: "destructive",
+        className: "border-red-200 bg-red-50 text-red-800 shadow-lg",
+        duration: 5000,
+      });
       return;
     }
 
@@ -376,22 +389,8 @@ export function InviteUsersModal({ isOpen, onClose }) {
 
     setIsSubmitting(true);
     try {
-      const result = await inviteUsersMutation.mutateAsync(validInvites);
-      
-      // Show success message with details
-      const skippedCount = inviteList.length - emptyInvites.length - validInvites.length;
-      let successMessage = `${result.successCount} invitation(s) sent successfully`;
-      
-      if (skippedCount > 0) {
-        successMessage += `. ${skippedCount} invitation(s) were skipped due to errors.`;
-      }
-      
-      toast({
-        title: "Invitations Processed",
-        description: successMessage,
-        className: "border-emerald-200 bg-emerald-50 text-emerald-800",
-      });
-      
+      await inviteUsersMutation.mutateAsync(validInvites);
+      // Success handling is done in the mutation's onSuccess callback
     } finally {
       setIsSubmitting(false);
     }
