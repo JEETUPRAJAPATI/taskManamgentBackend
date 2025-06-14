@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,14 +8,20 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Users, UserPlus, Mail, Plus, Shield, Clock, CheckCircle, XCircle, AlertCircle, MoreHorizontal, RefreshCw, UserX } from "lucide-react";
+import { Users, UserPlus, Mail, Plus, Shield, Clock, CheckCircle, XCircle, AlertCircle, MoreHorizontal, RefreshCw, UserX, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function TeamMembers() {
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [inviteUsers, setInviteUsers] = useState([{ email: "", roles: ["member"] }]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -246,6 +252,38 @@ export default function TeamMembers() {
     return user.email[0].toUpperCase();
   };
 
+  // Filter and paginate users
+  const filteredAndPaginatedData = useMemo(() => {
+    let filteredUsers = users.filter(user => {
+      const matchesSearch = searchTerm === "" || 
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesStatus = statusFilter === "all" || user.status === statusFilter;
+      
+      const matchesRole = roleFilter === "all" || 
+        (user.roles && user.roles.includes(roleFilter)) ||
+        user.role === roleFilter;
+      
+      return matchesSearch && matchesStatus && matchesRole;
+    });
+
+    const totalItems = filteredUsers.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+
+    return {
+      users: paginatedUsers,
+      totalItems,
+      totalPages,
+      currentPage,
+      hasNextPage: currentPage < totalPages,
+      hasPrevPage: currentPage > 1
+    };
+  }, [users, searchTerm, statusFilter, roleFilter, currentPage, itemsPerPage]);
+
   console.log('TeamMembers component state:', { isLoading, users, error });
   console.log('Current token:', localStorage.getItem('token'));
 
@@ -396,7 +434,54 @@ export default function TeamMembers() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {users.length === 0 ? (
+          {/* Filter Controls */}
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder="Search by name or email..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1); // Reset to first page when searching
+                  }}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Select value={statusFilter} onValueChange={(value) => {
+                setStatusFilter(value);
+                setCurrentPage(1);
+              }}>
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="invited">Invited</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={roleFilter} onValueChange={(value) => {
+                setRoleFilter(value);
+                setCurrentPage(1);
+              }}>
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="Role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Roles</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="employee">Employee</SelectItem>
+                  <SelectItem value="member">Member</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {filteredAndPaginatedData.users.length === 0 ? (
             <div className="text-center py-12">
               <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                 <Users className="h-12 w-12 text-gray-400" />
@@ -433,7 +518,7 @@ export default function TeamMembers() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {users.map((user) => (
+                  {filteredAndPaginatedData.users.map((user) => (
                     <TableRow key={user._id}>
                       <TableCell>
                         <div className="flex items-center gap-3">
@@ -508,6 +593,67 @@ export default function TeamMembers() {
                   ))}
                 </TableBody>
               </Table>
+            </div>
+
+            {/* Pagination Controls */}
+            {filteredAndPaginatedData.totalPages > 1 && (
+              <div className="flex items-center justify-between pt-4 border-t">
+                <div className="text-sm text-gray-700">
+                  Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredAndPaginatedData.totalItems)} of {filteredAndPaginatedData.totalItems} results
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    disabled={!filteredAndPaginatedData.hasPrevPage}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Previous
+                  </Button>
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: filteredAndPaginatedData.totalPages }, (_, i) => i + 1).map((page) => (
+                      <Button
+                        key={page}
+                        variant={page === currentPage ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(page)}
+                        className="w-8 h-8 p-0"
+                      >
+                        {page}
+                      </Button>
+                    ))}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={!filteredAndPaginatedData.hasNextPage}
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          ) : (
+            <div className="text-center py-12">
+              <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                <Users className="h-12 w-12 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No matching team members</h3>
+              <p className="text-gray-600 mb-4">Try adjusting your search or filter criteria.</p>
+              <Button
+                onClick={() => {
+                  setSearchTerm("");
+                  setStatusFilter("all");
+                  setRoleFilter("all");
+                  setCurrentPage(1);
+                }}
+                variant="outline"
+              >
+                Clear Filters
+              </Button>
             </div>
           )}
         </CardContent>
