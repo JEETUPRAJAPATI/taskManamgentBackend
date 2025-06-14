@@ -65,7 +65,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/register-individual", async (req, res) => {
     try {
       const { email, firstName, lastName } = req.body;
-      
+
       if (!email || !firstName || !lastName) {
         return res.status(400).json({ message: "All fields are required" });
       }
@@ -82,7 +82,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/register/individual", async (req, res) => {
     try {
       const { email, firstName, lastName } = req.body;
-      
+
       if (!email || !firstName || !lastName) {
         return res.status(400).json({ message: "All fields are required" });
       }
@@ -99,7 +99,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/register-organization", async (req, res) => {
     try {
       const { organizationName, organizationSlug, email, firstName, lastName } = req.body;
-      
+
       if (!organizationName || !email || !firstName || !lastName) {
         return res.status(400).json({ message: "All fields are required" });
       }
@@ -122,7 +122,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/register/organization", async (req, res) => {
     try {
       const { organizationName, email, firstName, lastName } = req.body;
-      
+
       if (!organizationName || !email || !firstName || !lastName) {
         return res.status(400).json({ message: "All fields are required" });
       }
@@ -143,7 +143,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/resend-verification", async (req, res) => {
     try {
       const { email } = req.body;
-      
+
       if (!email) {
         return res.status(400).json({ message: "Email is required" });
       }
@@ -160,7 +160,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/complete-registration", async (req, res) => {
     try {
       const { email, password } = req.body;
-      
+
       if (!email || !password) {
         return res.status(400).json({ message: "Email and password are required" });
       }
@@ -177,7 +177,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/complete-organization-registration", async (req, res) => {
     try {
       const { email, password } = req.body;
-      
+
       if (!email || !password) {
         return res.status(400).json({ message: "Email and password are required" });
       }
@@ -194,7 +194,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/forgot-password", async (req, res) => {
     try {
       const { email } = req.body;
-      
+
       if (!email) {
         return res.status(400).json({ message: "Email is required" });
       }
@@ -211,7 +211,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/validate-reset-token", async (req, res) => {
     try {
       const { token } = req.body;
-      
+
       if (!token) {
         return res.status(400).json({ message: "Reset token is required" });
       }
@@ -228,7 +228,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/reset-password", async (req, res) => {
     try {
       const { token, password } = req.body;
-      
+
       if (!token || !password) {
         return res.status(400).json({ message: "Token and password are required" });
       }
@@ -245,7 +245,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/validate-reset-token", async (req, res) => {
     try {
       const { token } = req.body;
-      
+
       if (!token) {
         return res.status(400).json({ message: "Token is required" });
       }
@@ -262,7 +262,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/verify-token", async (req, res) => {
     try {
       const { token } = req.body;
-      
+
       if (!token) {
         return res.status(400).json({ message: "Token is required" });
       }
@@ -279,7 +279,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/set-password", async (req, res) => {
     try {
       const { token, password } = req.body;
-      
+
       if (!token || !password) {
         return res.status(400).json({ message: "Token and password are required" });
       }
@@ -296,7 +296,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/reset-password", async (req, res) => {
     try {
       const { token, password } = req.body;
-      
+
       if (!token || !password) {
         return res.status(400).json({ message: "Token and password are required" });
       }
@@ -316,7 +316,7 @@ export async function registerRoutes(app) {
       if (!user) {
         return res.status(401).json({ message: 'User not found' });
       }
-      
+
       // Return consistent user data structure
       const userData = {
         id: user._id,
@@ -329,7 +329,7 @@ export async function registerRoutes(app) {
         isActive: user.isActive,
         emailVerified: user.emailVerified
       };
-      
+
       res.json(userData);
     } catch (error) {
       console.error('Auth verification error:', error);
@@ -341,7 +341,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/resend-verification", async (req, res) => {
     try {
       const { email } = req.body;
-      
+
       if (!email) {
         return res.status(400).json({ message: "Email is required" });
       }
@@ -358,7 +358,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/login", async (req, res) => {
     try {
       const { email, password } = req.body;
-      
+
       if (!email || !password) {
         return res.status(400).json({ message: "Email and password are required" });
       }
@@ -375,7 +375,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/register", validateBody(registerSchema), async (req, res) => {
     try {
       const { email, password, firstName, lastName, organizationName } = req.body;
-      
+
       const existingUser = await storage.getUserByEmail(email);
       if (existingUser) {
         return res.status(400).json({ message: "User already exists" });
@@ -435,7 +435,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/login", validateBody(loginSchema), async (req, res) => {
     try {
       const { email, password } = req.body;
-      
+
       const user = await storage.getUserByEmail(email);
       if (!user) {
         return res.status(401).json({ message: "Invalid credentials" });
@@ -500,7 +500,7 @@ export async function registerRoutes(app) {
   app.post("/api/users/invite", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const { users } = req.body;
-      
+
       if (!users || !Array.isArray(users) || users.length === 0) {
         return res.status(400).json({ message: "Users array is required" });
       }
@@ -538,7 +538,7 @@ export async function registerRoutes(app) {
           // Send invitation email
           const adminUser = await storage.getUser(req.user.id);
           const organization = await storage.getOrganization(req.user.organizationId);
-          
+
           if (inviteEmailService.isServiceAvailable()) {
             await inviteEmailService.sendInvitationEmail(
               userData.email,
@@ -577,7 +577,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/validate-invite-token", async (req, res) => {
     try {
       const { token } = req.body;
-      
+
       if (!token) {
         return res.status(400).json({ message: "Token is required" });
       }
@@ -594,7 +594,7 @@ export async function registerRoutes(app) {
 
       // Get organization details
       const organization = await storage.getOrganization(user.organization);
-      
+
       res.json({
         email: user.email,
         role: user.role,
@@ -611,7 +611,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/accept-invite", async (req, res) => {
     try {
       const { token, firstName, lastName, password } = req.body;
-      
+
       if (!token || !firstName || !lastName || !password) {
         return res.status(400).json({ message: "All fields are required" });
       }
@@ -664,7 +664,7 @@ export async function registerRoutes(app) {
   app.get("/api/auth/invite/:token", async (req, res) => {
     try {
       const { token } = req.params;
-      
+
       const user = await storage.getUserByInviteToken(token);
       if (!user) {
         return res.status(400).json({ message: "Invalid invitation" });
@@ -675,7 +675,7 @@ export async function registerRoutes(app) {
       }
 
       const organization = await storage.getOrganization(user.organization);
-      
+
       res.json({
         email: user.email,
         roles: user.roles || ['member'],
@@ -693,7 +693,7 @@ export async function registerRoutes(app) {
     try {
       const users = await storage.getOrganizationUsersDetailed(req.user.organizationId);
       const organization = await storage.getOrganization(req.user.organizationId);
-      
+
       const licenseInfo = {
         totalLicenses: organization?.maxUsers || 10,
         licenseType: 'Standard',
@@ -715,7 +715,7 @@ export async function registerRoutes(app) {
   app.patch("/api/users/:id/deactivate", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const { id } = req.params;
-      
+
       const user = await storage.getUser(id);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -741,7 +741,7 @@ export async function registerRoutes(app) {
   app.post("/api/users/:id/resend-invite", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const { id } = req.params;
-      
+
       const user = await storage.getUser(id);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -768,7 +768,7 @@ export async function registerRoutes(app) {
       // Resend invitation email
       const adminUser = await storage.getUser(req.user.id);
       const organization = await storage.getOrganization(req.user.organizationId);
-      
+
       await storage.sendInvitationEmail(
         user.email,
         inviteToken,
@@ -788,7 +788,7 @@ export async function registerRoutes(app) {
   app.delete("/api/organization/revoke-invite/:userId", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
     try {
       const { userId } = req.params;
-      
+
       // Get user details
       const user = await storage.getUser(userId);
       if (!user || user.organization.toString() !== req.user.organizationId) {
@@ -850,7 +850,7 @@ export async function registerRoutes(app) {
       };
 
       const task = await storage.createTask(taskData);
-      
+
       // Create notification for assignee if different from creator
       if (task.assignedTo && task.assignedTo.toString() !== task.createdBy.toString()) {
         await storage.createNotification({
@@ -872,9 +872,9 @@ export async function registerRoutes(app) {
   app.post("/api/tasks/smart-create", authenticateToken, validateBody(smartTaskInputSchema), async (req, res) => {
     try {
       const { input, projectId } = req.body;
-      
+
       const parsed = parseSmartTaskInput(input);
-      
+
       const taskData = {
         title: parsed.title,
         description: parsed.description,
@@ -930,7 +930,8 @@ export async function registerRoutes(app) {
         completedAt: req.body.completed ? new Date() : null,
       };
 
-      const updatedTask = await storage.updateTask(req.params.id, updateData);
+      const updatedTask = await storage```python
+.updateTask(req.params.id, updateData);
       res.json(updatedTask);
     } catch (error) {
       console.error("Update task error:", error);
@@ -988,7 +989,7 @@ export async function registerRoutes(app) {
       };
 
       const comment = await storage.createTaskComment(commentData);
-      
+
       // Create notifications for mentions
       if (commentData.mentions?.length > 0) {
         for (const userId of commentData.mentions) {
@@ -1056,7 +1057,7 @@ export async function registerRoutes(app) {
   app.post("/api/organization/invite-users", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
     try {
       const { invites } = req.body;
-      
+
       if (!invites || !Array.isArray(invites) || invites.length === 0) {
         return res.status(400).json({ message: "Invalid invitation data" });
       }
@@ -1064,21 +1065,21 @@ export async function registerRoutes(app) {
       // Validate each invitation with comprehensive checks
       const validationErrors = [];
       const validInvites = [];
-      
+
       for (const invite of invites) {
         const errors = [];
-        
+
         // Basic structure validation
         if (!invite.email || !invite.roles || !Array.isArray(invite.roles)) {
           errors.push("Email and roles are required");
         }
-        
+
         // Email format validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (invite.email && !emailRegex.test(invite.email.trim())) {
           errors.push("Invalid email format");
         }
-        
+
         // Check if user already exists in organization
         if (invite.email) {
           const existingUser = await storage.getUserByEmail(invite.email.trim());
@@ -1086,13 +1087,13 @@ export async function registerRoutes(app) {
             errors.push(`${invite.email} already exists. That user will not be reinvited.`);
           }
         }
-        
+
         // Role validation - ensure member role is included
         if (invite.roles && Array.isArray(invite.roles)) {
           if (!invite.roles.includes("member")) {
             errors.push("Member role is required");
           }
-          
+
           // Validate role names
           const validRoles = ["member", "manager", "admin"];
           const invalidRoles = invite.roles.filter(role => !validRoles.includes(role));
@@ -1100,7 +1101,7 @@ export async function registerRoutes(app) {
             errors.push(`Invalid roles: ${invalidRoles.join(", ")}`);
           }
         }
-        
+
         if (errors.length > 0) {
           validationErrors.push({
             email: invite.email,
@@ -1110,7 +1111,7 @@ export async function registerRoutes(app) {
           validInvites.push(invite);
         }
       }
-      
+
       // If there are validation errors, return them
       if (validationErrors.length > 0) {
         return res.status(400).json({ 
@@ -1132,6 +1133,8 @@ export async function registerRoutes(app) {
 
       const results = [];
       let successCount = 0;
+      let failureCount = 0;
+      const invitationErrors = [];
 
       // Process each invitation
       for (const invite of invites) {
@@ -1152,14 +1155,44 @@ export async function registerRoutes(app) {
         } catch (error) {
           console.error(`Failed to invite ${invite.email}:`, error);
           results.push({ email: invite.email, status: "failed", error: error.message });
+          failureCount++;
+
+          if (error.code === 11000 && error.keyPattern && error.keyPattern.email) {
+            invitationErrors.push({
+              email: invite.email,
+              error: "Email already exists in the system"
+            });
+          } else {
+            invitationErrors.push({
+              email: invite.email,
+              error: error.message
+            });
+          }
         }
       }
 
+      if (successCount === 0 && failureCount > 0) {
+         return res.status(400).json({
+            message: `Failed to invite all users.`,
+            successCount,
+            totalCount: invites.length,
+            errors: invitationErrors
+         });
+      }
+
+      // Return a summary toast message
+      let toastMessage = `${successCount} out of ${invites.length} invitations sent successfully.`;
+
+      if(failureCount > 0){
+         toastMessage = `${successCount} out of ${invites.length} invitations sent successfully, ${failureCount} failed.`;
+      }
+
       res.json({
-        message: `${successCount} out of ${invites.length} invitations sent successfully`,
+        message: toastMessage,
         successCount,
         totalCount: invites.length,
-        results
+        results,
+        errors: invitationErrors.length > 0 ? invitationErrors : undefined
       });
 
     } catch (error) {
@@ -1183,7 +1216,7 @@ export async function registerRoutes(app) {
   app.post("/api/organization/check-email-exists", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
     try {
       const { email } = req.body;
-      
+
       if (!email) {
         return res.status(400).json({ message: "Email is required" });
       }
@@ -1191,7 +1224,7 @@ export async function registerRoutes(app) {
       // Check if user exists in the organization (including invited users)
       const existingUser = await storage.getUserByEmail(email);
       const exists = existingUser && existingUser.organization?.toString() === req.user.organizationId;
-      
+
       res.json({ exists, email });
     } catch (error) {
       console.error("Check email exists error:", error);
@@ -1214,7 +1247,7 @@ export async function registerRoutes(app) {
   app.put("/api/organization/users/:userId/deactivate", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
     try {
       const { userId } = req.params;
-      
+
       if (!userId) {
         return res.status(400).json({ message: "User ID is required" });
       }
@@ -1256,7 +1289,7 @@ export async function registerRoutes(app) {
   app.post("/api/organization/users/:userId/resend-invite", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
     try {
       const { userId } = req.params;
-      
+
       if (!userId) {
         return res.status(400).json({ message: "User ID is required" });
       }
@@ -1277,7 +1310,7 @@ export async function registerRoutes(app) {
 
       // Generate new invite token
       const inviteToken = storage.generateEmailVerificationToken();
-      
+
       // Update user with new invite token
       await storage.updateUser(userId, { 
         inviteToken: inviteToken,
@@ -1288,7 +1321,7 @@ export async function registerRoutes(app) {
       // Send invitation email
       const organizationName = req.user.organizationName || "Organization";
       const invitedByName = `${req.user.firstName} ${req.user.lastName}`;
-      
+
       await storage.sendInvitationEmail(
         user.email, 
         inviteToken, 
@@ -1324,7 +1357,7 @@ export async function registerRoutes(app) {
   app.get("/api/auth/validate-invite", async (req, res) => {
     try {
       const { token } = req.query;
-      
+
       if (!token) {
         return res.status(400).json({ message: "Invitation token is required" });
       }
@@ -1357,7 +1390,7 @@ export async function registerRoutes(app) {
 
       // Get organization details
       const organization = await storage.getOrganization(invitedUser.organization);
-      
+
       res.json({
         email: invitedUser.email,
         roles: invitedUser.roles || [invitedUser.role],
@@ -1377,7 +1410,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/complete-invite", async (req, res) => {
     try {
       const { token, firstName, lastName, password } = req.body;
-      
+
       if (!token || !firstName || !lastName || !password) {
         return res.status(400).json({ message: "All fields are required" });
       }
@@ -1417,7 +1450,7 @@ export async function registerRoutes(app) {
 
       // Generate authentication token
       const authToken = storage.generateToken(completedUser);
-      
+
       res.json({
         message: "Registration completed successfully",
         token: authToken,
@@ -1485,14 +1518,14 @@ export async function registerRoutes(app) {
 // Smart task input parsing function
 function parseSmartTaskInput(input) {
   const result = { tags: [] };
-  
+
   // Extract due date patterns
   const dueDatePatterns = [
     /(?:due|by|until)\s+(\d{1,2}\/\d{1,2}\/\d{4})/i,
     /(?:due|by|until)\s+(today|tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|sunday)/i,
     /(?:due|by|until)\s+(\d{1,2}\/\d{1,2})/i,
   ];
-  
+
   for (const pattern of dueDatePatterns) {
     const match = input.match(pattern);
     if (match) {
@@ -1501,37 +1534,37 @@ function parseSmartTaskInput(input) {
       break;
     }
   }
-  
+
   // Extract priority
   const priorityMatch = input.match(/(?:priority|pri)\s+(low|medium|high|urgent)/i);
   if (priorityMatch) {
     result.priority = priorityMatch[1].toLowerCase();
     input = input.replace(priorityMatch[0], '').trim();
   }
-  
+
   // Extract tags
   const tagMatches = input.match(/#[\w-]+/g);
   if (tagMatches) {
     result.tags = tagMatches.map(tag => tag.substring(1));
     input = input.replace(/#[\w-]+/g, '').trim();
   }
-  
+
   // Extract mentions
   const mentionMatches = input.match(/@[\w-]+/g);
   if (mentionMatches) {
     result.mentions = mentionMatches.map(mention => mention.substring(1));
     input = input.replace(/@[\w-]+/g, '').trim();
   }
-  
+
   // The remaining text is the title
   result.title = input.trim();
-  
+
   return result;
 }
 
 function parseDateString(dateStr) {
   const today = new Date();
-  
+
   switch (dateStr.toLowerCase()) {
     case 'today':
       return today;
@@ -1570,7 +1603,7 @@ async function setupEmailCalendarRoutes(app) {
     gmail: null,
     imapConfig: null
   };
-  
+
   const calendarService = {
     initializeGoogleCalendar: () => false,
     initializeOutlook: () => false,
@@ -1583,7 +1616,7 @@ async function setupEmailCalendarRoutes(app) {
   app.post("/api/integrations/email/setup", authenticateToken, async (req, res) => {
     try {
       const { type, credentials } = req.body;
-      
+
       if (type === 'gmail') {
         const success = await emailService.initializeGmail(credentials);
         if (success) {
@@ -1623,7 +1656,7 @@ async function setupEmailCalendarRoutes(app) {
   app.post("/api/integrations/calendar/setup", authenticateToken, async (req, res) => {
     try {
       const { type, credentials } = req.body;
-      
+
       if (type === 'google') {
         const success = await calendarService.initializeGoogleCalendar(credentials);
         if (success) {
@@ -1669,7 +1702,7 @@ async function setupEmailCalendarRoutes(app) {
     try {
       const { sources = ['google'], outlookAccessToken } = req.query;
       const sourcesArray = typeof sources === 'string' ? [sources] : sources;
-      
+
       const events = await calendarService.getUpcomingEvents(
         req.user.organizationId,
         req.user.id,
@@ -1701,7 +1734,7 @@ async function setupEmailCalendarRoutes(app) {
   });
 
   // Role Management API Routes
-  
+
   // Get all roles
   app.get("/api/roles", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
     try {
@@ -1717,7 +1750,7 @@ async function setupEmailCalendarRoutes(app) {
   app.post("/api/roles", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
     try {
       const { name, description, permissions = [] } = req.body;
-      
+
       if (!name || name.trim() === '') {
         return res.status(400).json({ message: "Role name is required" });
       }
@@ -1748,7 +1781,7 @@ async function setupEmailCalendarRoutes(app) {
     try {
       const { id } = req.params;
       const { name, description, permissions } = req.body;
-      
+
       if (!name || name.trim() === '') {
         return res.status(400).json({ message: "Role name is required" });
       }
@@ -1782,8 +1815,7 @@ async function setupEmailCalendarRoutes(app) {
     } catch (error) {
       console.error("Update role error:", error);
       res.status(500).json({ message: "Failed to update role" });
-    }
-  });
+    }  });
 
   // Delete a role
   app.delete("/api/roles/:id", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
@@ -1820,7 +1852,7 @@ async function setupEmailCalendarRoutes(app) {
   app.get("/api/roles/:id", authenticateToken, requireOrganization, async (req, res) => {
     try {
       const { id } = req.params;
-      
+
       const role = await storage.getRole(id);
       if (!role) {
         return res.status(404).json({ message: "Role not found" });
@@ -1871,7 +1903,7 @@ async function setupEmailCalendarRoutes(app) {
   app.get("/api/roles/:id/users", authenticateToken, requireOrganization, async (req, res) => {
     try {
       const { id } = req.params;
-      
+
       // Verify role exists and belongs to organization
       const role = await storage.getRole(id);
       if (!role || role.organizationId !== req.user.organizationId) {
@@ -1887,7 +1919,7 @@ async function setupEmailCalendarRoutes(app) {
   });
 
   // Reports API Routes
-  
+
   // Get report data
   app.get("/api/reports", async (req, res) => {
     try {
@@ -2030,7 +2062,7 @@ async function setupEmailCalendarRoutes(app) {
 "John Doe","john@example.com","Engineering",15,12,2,1,"80%","45h"
 "Jane Smith","jane@example.com","Design",12,9,2,1,"75%","38h"
 "Mike Johnson","mike@example.com","Marketing",10,7,2,1,"70%","32h"`;
-        
+
         res.setHeader('Content-Type', 'text/csv');
         res.setHeader('Content-Disposition', 'attachment; filename="user-reports.csv"');
         res.send(csvData);
@@ -2046,7 +2078,7 @@ async function setupEmailCalendarRoutes(app) {
   });
 
   // Super Admin API Routes
-  
+
   // Get platform analytics
   app.get("/api/super-admin/analytics", authenticateToken, requireSuperAdmin, async (req, res) => {
     try {
@@ -2074,11 +2106,11 @@ async function setupEmailCalendarRoutes(app) {
     try {
       const { id } = req.params;
       const company = await storage.getCompanyDetails(id);
-      
+
       if (!company) {
         return res.status(404).json({ message: "Company not found" });
       }
-      
+
       res.json(company);
     } catch (error) {
       console.error("Get company details error:", error);
@@ -2091,13 +2123,13 @@ async function setupEmailCalendarRoutes(app) {
     try {
       const { id } = req.params;
       const { isActive } = req.body;
-      
+
       const company = await storage.updateCompanyStatus(id, isActive);
-      
+
       if (!company) {
         return res.status(404).json({ message: "Company not found" });
       }
-      
+
       res.json(company);
     } catch (error) {
       console.error("Update company status error:", error);
@@ -2120,17 +2152,17 @@ async function setupEmailCalendarRoutes(app) {
   app.post("/api/super-admin/assign-admin", authenticateToken, requireSuperAdmin, async (req, res) => {
     try {
       const { companyId, userId } = req.body;
-      
+
       if (!companyId || !userId) {
         return res.status(400).json({ message: "Company ID and User ID are required" });
       }
-      
+
       const user = await storage.assignCompanyAdmin(companyId, userId);
-      
+
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      
+
       res.json({ message: "Admin assigned successfully", user });
     } catch (error) {
       console.error("Assign admin error:", error);
@@ -2154,18 +2186,18 @@ async function setupEmailCalendarRoutes(app) {
   app.post("/api/super-admin/create-super-admin", authenticateToken, requireSuperAdmin, async (req, res) => {
     try {
       const { email, firstName, lastName, password } = req.body;
-      
+
       if (!email || !firstName || !lastName || !password) {
         return res.status(400).json({ message: "All fields are required" });
       }
-      
+
       const superAdmin = await storage.createSuperAdmin({
         email,
         firstName,
         lastName,
         password
       });
-      
+
       res.status(201).json({ 
         message: "Super admin created successfully", 
         user: { 
@@ -2397,14 +2429,14 @@ async function setupEmailCalendarRoutes(app) {
   app.get("/api/auth/invitation/:token", async (req, res) => {
     try {
       const { token } = req.params;
-      
+
       const invitedUser = await storage.getInvitedUser(token);
       if (!invitedUser) {
         return res.status(404).json({ message: "Invalid or expired invitation" });
       }
 
       const organization = await storage.getOrganization(invitedUser.organizationId);
-      
+
       res.json({
         message: "Invitation found",
         invitation: {
@@ -2424,13 +2456,13 @@ async function setupEmailCalendarRoutes(app) {
   app.post("/api/auth/complete-invitation", async (req, res) => {
     try {
       const { token, firstName, lastName, password } = req.body;
-      
+
       if (!token || !firstName || !lastName || !password) {
         return res.status(400).json({ message: "All fields are required" });
       }
 
       const user = await storage.completeUserInvitation(token, { firstName, lastName, password });
-      
+
       // Generate auth token
       const authToken = storage.generateToken(user);
 
@@ -2456,14 +2488,14 @@ async function setupEmailCalendarRoutes(app) {
   app.patch("/api/organization/users/:userId/deactivate", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const { userId } = req.params;
-      
+
       // Prevent self-deactivation
       if (userId === req.user.id) {
         return res.status(400).json({ message: "Cannot deactivate your own account" });
       }
 
       const user = await storage.updateUser(userId, { isActive: false });
-      
+
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -2479,9 +2511,9 @@ async function setupEmailCalendarRoutes(app) {
   app.patch("/api/organization/users/:userId/activate", roleAuthToken, requireOrganizationManagement, async (req, res) => {
     try {
       const { userId } = req.params;
-      
+
       const user = await storage.updateUser(userId, { isActive: true });
-      
+
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -2498,7 +2530,7 @@ async function setupEmailCalendarRoutes(app) {
     try {
       const { userId } = req.params;
       const { role } = req.body;
-      
+
       if (!role || !['admin', 'member'].includes(role)) {
         return res.status(400).json({ message: "Valid role is required (admin or member)" });
       }
@@ -2509,7 +2541,7 @@ async function setupEmailCalendarRoutes(app) {
       }
 
       const user = await storage.updateUser(userId, { role });
-      
+
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -2531,7 +2563,7 @@ async function setupEmailCalendarRoutes(app) {
   });
 
   // Role-based Dashboard API Routes
-  
+
   // Super Admin Dashboard Routes
   app.get("/api/superadmin/platform-stats", roleAuthToken, roleRequireSuperAdmin, async (req, res) => {
     try {
@@ -2608,7 +2640,7 @@ async function setupEmailCalendarRoutes(app) {
   app.post("/api/admin/invite-user", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
     try {
       const { email, role = 'employee' } = req.body;
-      
+
       if (!email) {
         return res.status(400).json({ message: "Email is required" });
       }
@@ -2654,7 +2686,7 @@ async function setupEmailCalendarRoutes(app) {
         assignedTo: req.user.id,
         organizationId: req.user.organizationId 
       });
-      
+
       const stats = {
         totalTasks: tasks.length,
         completedTasks: tasks.filter(t => t.status === 'completed').length,
@@ -2671,7 +2703,7 @@ async function setupEmailCalendarRoutes(app) {
           return new Date(t.dueDate) < new Date() && t.status !== 'completed';
         }).length
       };
-      
+
       res.json(stats);
     } catch (error) {
       console.error("Get my stats error:", error);
@@ -2685,10 +2717,10 @@ async function setupEmailCalendarRoutes(app) {
         assignedTo: req.user.id,
         organizationId: req.user.organizationId 
       });
-      
+
       const projectIds = [...new Set(tasks.map(t => t.project).filter(Boolean))];
       const projects = [];
-      
+
       for (const projectId of projectIds) {
         const project = await storage.getProject(projectId);
         if (project) {
@@ -2701,7 +2733,7 @@ async function setupEmailCalendarRoutes(app) {
           });
         }
       }
-      
+
       res.json(projects);
     } catch (error) {
       console.error("Get my projects error:", error);

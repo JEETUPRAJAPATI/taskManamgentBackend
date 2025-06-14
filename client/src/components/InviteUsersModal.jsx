@@ -157,12 +157,15 @@ export function InviteUsersModal({ isOpen, onClose }) {
     }
 
     // Check for duplicates within current invite list
-    const currentEmails = inviteList.map((invite, i) => ({ email: invite.email.toLowerCase(), index: i }));
-    const duplicateIndexes = currentEmails
-      .filter(item => item.email === email.toLowerCase() && item.index !== index)
-      .map(item => item.index);
+    const currentEmails = inviteList
+      .map((invite, i) => ({ email: invite.email.toLowerCase().trim(), index: i }))
+      .filter(item => item.email !== ""); // Only check non-empty emails
     
-    if (duplicateIndexes.length > 0) {
+    const duplicateExists = currentEmails.some(item => 
+      item.email === email.toLowerCase().trim() && item.index !== index
+    );
+    
+    if (duplicateExists) {
       setInviteList(prev => prev.map((invite, i) => 
         i === index 
           ? { 
@@ -286,24 +289,45 @@ export function InviteUsersModal({ isOpen, onClose }) {
         body: JSON.stringify({ invites: inviteData })
       });
       
+      const result = await response.json();
+      
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to send invitations");
+        // Handle server errors with context
+        if (result.errors && result.errors.length > 0) {
+          const errorDetails = result.errors.map(err => `${err.email}: ${err.error}`).join('\n');
+          throw new Error(`${result.message}\n\nDetails:\n${errorDetails}`);
+        }
+        throw new Error(result.message || "Failed to send invitations");
       }
       
-      return response.json();
+      return result;
     },
     onSuccess: (data) => {
-      const successMessage = data.successCount === 1 
-        ? `1 invitation sent successfully`
-        : `${data.successCount} invitations sent successfully`;
+      // Handle partial success cases
+      if (data.errors && data.errors.length > 0) {
+        // Partial success - some failed
+        const errorList = data.errors.map(err => `• ${err.email}: ${err.error}`).join('\n');
+        
+        toast({
+          title: "⚠️ Partial Success",
+          description: `${data.successCount} invitation${data.successCount !== 1 ? 's' : ''} sent successfully, but ${data.errors.length} failed:\n\n${errorList}`,
+          className: "border-amber-200 bg-amber-50 text-amber-800 shadow-lg",
+          duration: 8000,
+        });
+      } else {
+        // Complete success
+        const successMessage = data.successCount === 1 
+          ? `1 invitation sent successfully`
+          : `${data.successCount} invitations sent successfully`;
+        
+        toast({
+          title: "✅ Invitations Sent!",
+          description: successMessage,
+          className: "border-emerald-200 bg-emerald-50 text-emerald-800 shadow-lg",
+          duration: 5000,
+        });
+      }
       
-      toast({
-        title: "✅ Invitations Sent!",
-        description: successMessage,
-        className: "border-emerald-200 bg-emerald-50 text-emerald-800 shadow-lg",
-        duration: 5000,
-      });
       onClose();
       queryClient.invalidateQueries({ queryKey: ["/api/organization/users-detailed"] });
       queryClient.invalidateQueries({ queryKey: ["/api/organization/license"] });
@@ -314,7 +338,7 @@ export function InviteUsersModal({ isOpen, onClose }) {
         description: error.message,
         variant: "destructive",
         className: "border-red-200 bg-red-50 text-red-800 shadow-lg",
-        duration: 6000,
+        duration: 8000,
       });
     },
   });
