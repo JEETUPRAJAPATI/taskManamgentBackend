@@ -1336,9 +1336,7 @@ export class MongoStorage {
 
   // User Invitation and Management Methods
   async inviteUserToOrganization(inviteData) {
-    const { email, organizationId, roles, invitedBy } = inviteData;
-    
-    console.log('Creating invitation for:', email, 'in organization:', organizationId);
+    const { email, organizationId, roles, invitedBy, invitedByName, organizationName } = inviteData;
     
     // Check if user already exists in this organization (active or invited)
     const existingUser = await User.findOne({ 
@@ -1347,46 +1345,34 @@ export class MongoStorage {
     });
     
     if (existingUser) {
-      console.log('User already exists:', existingUser.email, 'status:', existingUser.status);
+      // Return error for duplicate validation
       throw new Error(`${email} is already invited to your organization.`);
     }
 
-    // Generate invitation token (48 hours expiry)
+    // Generate invitation token (48 hours expiry as requested)
     const inviteToken = crypto.randomBytes(32).toString('hex');
-    const inviteTokenExpiry = new Date(Date.now() + 48 * 60 * 60 * 1000);
+    const inviteTokenExpiry = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48 hours
 
-    // Get organization and inviter details for email
-    const organization = await Organization.findById(organizationId);
-    const inviter = await User.findById(invitedBy);
-    
     // Create invited user record with proper status
     const invitedUser = new User({
-      email: email.toLowerCase(),
+      email,
       role: roles.includes('admin') || roles.includes('org_admin') ? 'admin' : 'member',
-      roles: roles,
-      organization: organizationId,
-      status: 'invited',
+      roles: roles, // Store full roles array
+      organization: organizationId, // Use 'organization' field from schema
+      status: 'invited', // Use 'invited' status to avoid validation requirements
       isActive: false,
       emailVerified: false,
       inviteToken,
       inviteTokenExpiry,
       invitedBy,
       invitedAt: new Date()
+      // firstName, lastName, and passwordHash not required for invited status
     });
 
     const savedUser = await invitedUser.save();
-    console.log('Successfully created invited user:', savedUser.email, 'with ID:', savedUser._id);
 
-    // Send invitation email if organization and inviter exist
-    if (organization && inviter) {
-      const inviterName = `${inviter.firstName || ''} ${inviter.lastName || ''}`.trim() || inviter.email;
-      try {
-        await this.sendInvitationEmail(email, inviteToken, organization.name, roles, inviterName);
-        console.log('Invitation email sent to:', email);
-      } catch (emailError) {
-        console.log('Email sending failed but user invitation created:', emailError.message);
-      }
-    }
+    // Send invitation email
+    await this.sendInvitationEmail(email, inviteToken, organizationName, roles, invitedByName);
 
     return savedUser;
   }
