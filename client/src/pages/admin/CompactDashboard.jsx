@@ -15,6 +15,7 @@ import {
   CheckCircle,
   Plus
 } from "lucide-react";
+import TeamMembersWidget from "@/components/admin/TeamMembersWidget";
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -347,38 +348,8 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
-        <Card className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
-              <TrendingUp className="h-5 w-5 mr-2 text-purple-600" />
-              Quick Actions
-            </CardTitle>
-            <CardDescription className="text-sm text-slate-600 dark:text-slate-400">
-              Common workflow shortcuts
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-3">
-            <div className="grid grid-cols-2 gap-2">
-              <Button variant="outline" size="sm" className="flex items-center justify-center gap-2 h-16 text-sm">
-                <Plus className="h-4 w-4" />
-                <span>New Task</span>
-              </Button>
-              <Button variant="outline" size="sm" className="flex items-center justify-center gap-2 h-16 text-sm">
-                <FolderOpen className="h-4 w-4" />
-                <span>New Project</span>
-              </Button>
-              <Button variant="outline" size="sm" className="flex items-center justify-center gap-2 h-16 text-sm">
-                <Users className="h-4 w-4" />
-                <span>Add User</span>
-              </Button>
-              <Button variant="outline" size="sm" className="flex items-center justify-center gap-2 h-16 text-sm">
-                <BarChart3 className="h-4 w-4" />
-                <span>View Reports</span>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Team Members Widget */}
+        <TeamMembersWidget showActions={true} maxItems={5} />
       </div>
     </div>
   );
