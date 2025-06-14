@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,12 @@ import {
 import TeamMembersWidget from "@/components/admin/TeamMembersWidget";
 
 export default function Dashboard() {
+  // Get current user data to check role
+  const { data: user } = useQuery({
+    queryKey: ["/api/auth/verify"],
+    enabled: !!localStorage.getItem('token'),
+  });
+
   const [stats, setStats] = useState({
     totalTasks: 0,
     completedTasks: 0,
@@ -28,6 +35,10 @@ export default function Dashboard() {
   });
 
   const [loading, setLoading] = useState(true);
+
+  // Check if user can access organizational features
+  const isIndividualUser = user?.role === 'individual';
+  const canAccessTeamFeatures = !isIndividualUser && (user?.role === 'org_admin' || user?.role === 'admin' || user?.role === 'superadmin');
 
   useEffect(() => {
     setTimeout(() => {
@@ -308,7 +319,7 @@ export default function Dashboard() {
       </div>
 
       {/* Bottom Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className={`grid grid-cols-1 gap-4 ${canAccessTeamFeatures ? 'lg:grid-cols-2' : 'lg:grid-cols-1 max-w-4xl mx-auto'}`}>
         
         {/* Upcoming Deadlines */}
         <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
@@ -363,8 +374,8 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Team Members Widget */}
-        <TeamMembersWidget showActions={true} maxItems={5} />
+        {/* Team Members Widget - Only show for organizational users */}
+        {canAccessTeamFeatures && <TeamMembersWidget showActions={true} maxItems={5} />}
       </div>
     </div>
   );
