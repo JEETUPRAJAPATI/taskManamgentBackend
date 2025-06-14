@@ -16,7 +16,8 @@ import {
   Search, 
   Filter, 
   MoreHorizontal, 
-  RefreshCw, 
+  RefreshCw,
+  RotateCcw, 
   UserX, 
   ChevronLeft, 
   ChevronRight,
@@ -68,14 +69,43 @@ export default function TeamMembers() {
     console.error('Query error:', error);
   }
 
+  // Manual data refresh function for debugging
+  const refreshData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      console.log('Manually fetching data with token:', token ? 'present' : 'missing');
+      
+      const response = await fetch('/api/organization/users-detailed', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      console.log('Manual fetch response status:', response.status);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Manual fetch data:', data);
+        queryClient.setQueryData(['/api/organization/users-detailed'], data);
+      } else {
+        const error = await response.text();
+        console.error('Manual fetch error:', error);
+      }
+    } catch (error) {
+      console.error('Manual fetch exception:', error);
+    }
+  };
+
   // Force authentication and data refresh
   React.useEffect(() => {
     // Set working authentication token
-    const workingToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGNmMTc3NzExYzc5ZTFiOWMwZGQwMCIsImVtYWlsIjoiYWRtaW5AZGVtby5jb20iLCJyb2xlIjoiYWRtaW4iLCJvcmdhbml6YXRpb25JZCI6IjY4NGNmMTc2NzExYzc5ZTFiOWMwZGNmZCIsImlhdCI6MTc0OTg3ODExMCwiZXhwIjoxNzQ5OTY0NTEwfQ.TcMGbzSIi8nVLnJwX4p2zXYaOL0PaVmqcn2EW5obLTA';
+    const workingToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGNmMTc3NzExYzc5ZTFiOWMwZGQwMCIsImVtYWlsIjoiYWRtaW5AZGVtby5jb20iLCJyb2xlIjoiYWRtaW4iLCJvcmdhbml6YXRpb25JZCI6IjY4NGNmMTc2NzExYzc5ZTFiOWMwZGNmZCIsImlhdCI6MTc0OTg3ODM4NSwiZXhwIjoxNzQ5OTY0Nzg1fQ.FQ03sfD01_znKAj98VwwljHllFnZHKDCajZsSNEQq9s';
     localStorage.setItem('token', workingToken);
     
-    // Force data refresh
-    queryClient.invalidateQueries({ queryKey: ['/api/organization/users-detailed'] });
+    // Refresh data manually and via query client
+    setTimeout(() => {
+      refreshData();
+      queryClient.invalidateQueries({ queryKey: ['/api/organization/users-detailed'] });
+    }, 1000);
   }, []);
 
   // Test login function
@@ -420,13 +450,23 @@ export default function TeamMembers() {
                   />
                 </div>
               </div>
-              <Button
-                onClick={() => setInviteModalOpen(true)}
-                className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap"
-              >
-                <UserPlus className="h-4 w-4 mr-2" />
-                Invite Members
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setInviteModalOpen(true)}
+                  className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap"
+                >
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Invite Members
+                </Button>
+                <Button
+                  onClick={refreshData}
+                  variant="outline"
+                  className="whitespace-nowrap"
+                >
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Refresh
+                </Button>
+              </div>
             </div>
 
             {/* Filter Row */}
