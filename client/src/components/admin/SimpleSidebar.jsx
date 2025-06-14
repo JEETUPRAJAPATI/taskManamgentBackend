@@ -70,7 +70,7 @@ export function SimpleSidebar() {
     },
     ...(canManageOrganization ? [{ 
       name: "Team Members", 
-      href: "/users", 
+      href: "/admin/team-members", 
       icon: Users,
       description: "Manage team and users"
     }] : []),
