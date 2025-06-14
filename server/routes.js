@@ -2208,55 +2208,94 @@ async function setupEmailCalendarRoutes(app) {
     }
   });
 
-  // Invite user to organization
-  app.post("/api/organization/invite-user", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
+  // Invite users to organization (supports multiple users)
+  app.post("/api/organization/invite-user", roleAuthToken, requireOrgAdminOrAbove, async (req, res) => {
     try {
-      const { email, roles } = req.body;
-      
-      if (!email || !roles || !Array.isArray(roles)) {
-        return res.status(400).json({ message: "Email and roles are required" });
+      const { inviteUsers } = req.body;
+      const invitedBy = req.user.id;
+      const organizationId = req.user.organizationId;
+
+      console.log('Invite request:', { inviteUsers, invitedBy, organizationId });
+
+      // Handle both single user and multiple users
+      const usersToInvite = Array.isArray(inviteUsers) ? inviteUsers : [{ email: req.body.email, roles: req.body.roles }];
+
+      if (!usersToInvite || usersToInvite.length === 0) {
+        return res.status(400).json({ message: "Invalid invite data" });
       }
 
-      // Check license limit
-      const licenseInfo = await storage.getOrganizationLicenseInfo(req.user.organizationId);
-      if (licenseInfo.available <= 0) {
-        return res.status(400).json({ message: "License limit reached. Cannot invite more users." });
-      }
+      const results = [];
+      const errors = [];
 
-      // Create invitation
-      const invitedUser = await storage.inviteUserToOrganization({
-        email,
-        organizationId: req.user.organizationId,
-        roles,
-        invitedBy: req.user.id
-      });
+      for (const userData of usersToInvite) {
+        try {
+          if (!userData.email || !userData.roles) {
+            errors.push(`Missing email or roles for invitation`);
+            continue;
+          }
 
-      // Get organization and inviter details
-      const organization = await storage.getOrganization(req.user.organizationId);
-      const inviter = await storage.getUser(req.user.id);
-      const inviterName = `${inviter.firstName} ${inviter.lastName}`;
+          // Check if user already exists
+          const existingUser = await storage.getUserByEmail(userData.email);
+          if (existingUser && existingUser.organization?.toString() === organizationId) {
+            errors.push(`User ${userData.email} is already invited or registered with this organization`);
+            continue;
+          }
 
-      // Send invitation email
-      await storage.sendInvitationEmail(
-        email,
-        invitedUser.inviteToken,
-        organization.name,
-        roles,
-        inviterName
-      );
+          // Create invitation
+          const invitedUser = await storage.inviteUserToOrganization({
+            email: userData.email,
+            organizationId: organizationId,
+            roles: userData.roles,
+            invitedBy: invitedBy
+          });
 
-      res.status(201).json({ 
-        message: "User invitation sent successfully",
-        user: {
-          id: invitedUser._id,
-          email: invitedUser.email,
-          role: invitedUser.role,
-          status: "invited"
+          // Get organization and inviter details
+          const organization = await storage.getOrganization(organizationId);
+          const inviter = await storage.getUser(invitedBy);
+          const inviterName = `${inviter.firstName} ${inviter.lastName}`;
+
+          // Send invitation email
+          try {
+            await storage.sendInvitationEmail(
+              userData.email,
+              invitedUser.inviteToken,
+              organization.name,
+              userData.roles,
+              inviterName
+            );
+          } catch (emailError) {
+            console.error('Email sending failed:', emailError);
+            // Continue even if email fails - user is still invited
+          }
+
+          results.push({
+            email: userData.email,
+            status: 'invited',
+            invitedAt: new Date()
+          });
+
+        } catch (userError) {
+          console.error(`Error inviting user ${userData.email}:`, userError);
+          errors.push(`Failed to invite ${userData.email}: ${userError.message}`);
         }
+      }
+
+      if (errors.length > 0 && results.length === 0) {
+        return res.status(400).json({ 
+          message: "All invitations failed", 
+          errors 
+        });
+      }
+
+      res.json({
+        message: `Successfully invited ${results.length} user(s)`,
+        invited: results,
+        errors: errors.length > 0 ? errors : undefined
       });
+
     } catch (error) {
-      console.error("Invite user error:", error);
-      res.status(400).json({ message: error.message });
+      console.error("Invite users error:", error);
+      res.status(500).json({ message: "Failed to invite users" });
     }
   });
 
