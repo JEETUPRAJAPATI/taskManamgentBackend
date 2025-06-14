@@ -160,7 +160,7 @@ export default function TeamMembersWidget({
               <Button
                 onClick={() => (window.location.href = "/admin/invite-users")}
                 size="sm"
-                className="mt-3 bg-blue-600 hover:bg-blue-700"
+                className="mt-3 bg-blue-600 "
               >
                 <UserPlus className="h-4 w-4 mr-2" />
                 Invite Members
@@ -192,7 +192,7 @@ export default function TeamMembersWidget({
               onClick={() => (window.location.href = "/admin/team-members")}
               variant="ghost"
               size="sm"
-              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+              className="text-blue-600 "
             >
               <Eye className="h-4 w-4 mr-1" />
               View All
@@ -251,7 +251,7 @@ export default function TeamMembersWidget({
               <Button
                 onClick={() => (window.location.href = "/admin/invite-users")}
                 size="sm"
-                className="flex-1 bg-blue-600 hover:bg-blue-700"
+                className="flex-1 bg-blue-600 "
               >
                 <UserPlus className="h-4 w-4 mr-2" />
                 Invite Members

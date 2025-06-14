@@ -86,7 +86,7 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
           {/* Mobile menu button */}
           <button
             onClick={onMenuClick}
-            className="p-2 rounded-md text-blue-200 hover:text-white hover:bg-blue-800 lg:hidden"
+            className="p-2 rounded-md text-blue-200  lg:hidden"
           >
             <Menu className="h-4 w-4" />
           </button>
@@ -94,7 +94,7 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
           {/* Desktop sidebar toggle */}
           <button
             onClick={onSidebarToggle}
-            className="hidden lg:block p-2 rounded-md text-blue-200 hover:text-white hover:bg-blue-800"
+            className="hidden lg:block p-2 rounded-md text-blue-200 "
           >
             <Menu className="h-4 w-4" />
           </button>
@@ -118,7 +118,7 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
           {/* Invite User Button - Only for organization admins */}
           {canInviteUsers && (
             <Link href="/invite-users">
-              <button className="flex items-center px-3 py-2 text-sm font-medium text-blue-200 hover:text-white hover:bg-blue-800 rounded-md transition-colors">
+              <button className="flex items-center px-3 py-2 text-sm font-medium text-blue-200  rounded-md transition-colors">
                 <UserPlus className="h-4 w-4 mr-2" />
                 Invite User
               </button>
@@ -126,7 +126,7 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
           )}
 
           {/* Notifications */}
-          <button className="p-2 rounded-md text-blue-200 hover:text-white hover:bg-blue-800 relative">
+          <button className="p-2 rounded-md text-blue-200  relative">
             <Bell className="h-5 w-5" />
             <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
           </button>
@@ -135,7 +135,7 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
           <div className="relative" ref={dropdownRef}>
             <button 
               onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-              className="flex items-center p-2 rounded-md text-blue-200 hover:text-white hover:bg-blue-800 transition-colors"
+              className="flex items-center p-2 rounded-md text-blue-200  transition-colors"
             >
               <div className="flex items-center">
                 <div className="relative">
@@ -185,7 +185,7 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
                       <button
                         key={index}
                         onClick={item.action}
-                        className="w-full flex items-start p-3 rounded-lg hover:bg-blue-700 transition-colors text-left group"
+                        className="w-full flex items-start p-3 rounded-lg  transition-colors text-left group"
                       >
                         <div className="flex-shrink-0">
                           <Icon className="h-5 w-5 text-blue-300 group-hover:text-blue-200 transition-colors" />

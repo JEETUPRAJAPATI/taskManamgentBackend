@@ -144,7 +144,7 @@ export function SimpleSidebar() {
 
   const renderNavItem = (item) => (
     <Link key={item.name} href={item.href}>
-      <div className={`flex items-center px-3 py-2.5 text-sm rounded-lg transition-all duration-200 group hover:bg-blue-800 ${
+      <div className={`flex items-center px-3 py-2.5 text-sm rounded-lg transition-all duration-200 group  ${
         isActive(item.href) 
           ? 'bg-blue-600 text-white shadow-lg' 
           : 'text-blue-200 hover:text-white'
