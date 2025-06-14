@@ -235,7 +235,7 @@ export default function AcceptInvitation() {
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                     errors.firstName ? 'border-red-300' : 'border-gray-300'
                   }`}
-                  placeholder="John"
+                  placeholder="Enter first name"
                 />
                 {errors.firstName && (
                   <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
@@ -252,7 +252,7 @@ export default function AcceptInvitation() {
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                     errors.lastName ? 'border-red-300' : 'border-gray-300'
                   }`}
-                  placeholder="Doe"
+                  placeholder="Enter last name"
                 />
                 {errors.lastName && (
                   <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>

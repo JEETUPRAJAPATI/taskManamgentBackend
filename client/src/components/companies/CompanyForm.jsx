@@ -229,7 +229,7 @@ export function CompanyForm({ isOpen, onClose, company, subscriptionPlans = [] }
                 <Input
                   id="adminFirstName"
                   {...register("adminFirstName")}
-                  placeholder="John"
+                  placeholder="Enter first name"
                   className={`bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white h-12 px-4 ${errors.adminFirstName ? 'border-red-500 dark:border-red-400' : ''}`}
                 />
                 {errors.adminFirstName && (
@@ -247,7 +247,7 @@ export function CompanyForm({ isOpen, onClose, company, subscriptionPlans = [] }
                 <Input
                   id="adminLastName"
                   {...register("adminLastName")}
-                  placeholder="Doe"
+                  placeholder="Enter last name"
                   className={`bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white h-12 px-4 ${errors.adminLastName ? 'border-red-500 dark:border-red-400' : ''}`}
                 />
                 {errors.adminLastName && (
