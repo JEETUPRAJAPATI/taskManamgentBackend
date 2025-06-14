@@ -103,10 +103,10 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
           <div className="ml-4 flex items-center">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-gray-400" />
+                <Search className="h-4 w-4 text-blue-400" />
               </div>
               <input
-                className="block w-64 pl-10 pr-3 py-2 border border-gray-600 rounded-md bg-gray-700 placeholder-gray-400 text-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 text-sm"
+                className="block w-64 pl-10 pr-3 py-2 border border-blue-700 rounded-md bg-blue-800 placeholder-blue-300 text-blue-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
                 placeholder="Search..."
                 type="search"
               />
@@ -118,7 +118,7 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
           {/* Invite User Button - Only for organization admins */}
           {canInviteUsers && (
             <Link href="/invite-users">
-              <button className="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:text-gray-100 hover:bg-gray-700 rounded-md transition-colors">
+              <button className="flex items-center px-3 py-2 text-sm font-medium text-blue-200 hover:text-white hover:bg-blue-800 rounded-md transition-colors">
                 <UserPlus className="h-4 w-4 mr-2" />
                 Invite User
               </button>
@@ -126,7 +126,7 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
           )}
 
           {/* Notifications */}
-          <button className="p-2 rounded-md text-gray-300 hover:text-gray-100 hover:bg-gray-700 relative">
+          <button className="p-2 rounded-md text-blue-200 hover:text-white hover:bg-blue-800 relative">
             <Bell className="h-5 w-5" />
             <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
           </button>
@@ -135,7 +135,7 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
           <div className="relative" ref={dropdownRef}>
             <button 
               onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-              className="flex items-center p-2 rounded-md text-gray-300 hover:text-gray-100 hover:bg-gray-700 transition-colors"
+              className="flex items-center p-2 rounded-md text-blue-200 hover:text-white hover:bg-blue-800 transition-colors"
             >
               <div className="flex items-center">
                 <div className="relative">
@@ -153,19 +153,19 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
 
             {/* Profile Dropdown Menu */}
             {profileDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-lg border border-gray-700 py-2 z-50">
+              <div className="absolute right-0 mt-2 w-80 bg-blue-800 rounded-lg shadow-lg border border-blue-700 py-2 z-50">
                 {/* Profile Header */}
-                <div className="px-4 py-3 border-b border-gray-700">
+                <div className="px-4 py-3 border-b border-blue-700">
                   <div className="flex items-center">
                     <div className="relative">
-                      <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center text-gray-100 font-semibold">
+                      <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-blue-100 font-semibold">
                         AU
                       </div>
-                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-gray-800 rounded-full"></div>
+                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-blue-800 rounded-full"></div>
                     </div>
                     <div className="ml-3">
-                      <p className="text-sm font-medium text-gray-100">Admin User</p>
-                      <p className="text-xs text-gray-400">admin@tasksetu.com</p>
+                      <p className="text-sm font-medium text-blue-100">Admin User</p>
+                      <p className="text-xs text-blue-300">admin@tasksetu.com</p>
                       <p className="text-xs text-green-400">● Online</p>
                     </div>
                   </div>
@@ -174,7 +174,7 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
                 {/* Profile Setup Options */}
                 <div className="px-2 py-2">
                   <div className="px-3 py-2">
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    <p className="text-xs font-semibold text-blue-300 uppercase tracking-wider">
                       Profile Setup
                     </p>
                   </div>
@@ -185,16 +185,16 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
                       <button
                         key={index}
                         onClick={item.action}
-                        className="w-full flex items-start p-3 rounded-lg hover:bg-gray-700 transition-colors text-left group"
+                        className="w-full flex items-start p-3 rounded-lg hover:bg-blue-700 transition-colors text-left group"
                       >
                         <div className="flex-shrink-0">
-                          <Icon className="h-5 w-5 text-gray-400 group-hover:text-gray-300 transition-colors" />
+                          <Icon className="h-5 w-5 text-blue-300 group-hover:text-blue-200 transition-colors" />
                         </div>
                         <div className="ml-3 min-w-0 flex-1">
-                          <p className="text-sm font-medium text-gray-100 group-hover:text-gray-50">
+                          <p className="text-sm font-medium text-blue-100 group-hover:text-white">
                             {item.label}
                           </p>
-                          <p className="text-xs text-gray-400 mt-1">
+                          <p className="text-xs text-blue-300 mt-1">
                             {item.description}
                           </p>
                         </div>
