@@ -40,22 +40,28 @@
   z-index: 9998 !important;
 }
 
-/* Force sidebar to be solid blue */
+/* Force sidebar to be solid blue - Most aggressive override */
 [data-sidebar="sidebar"],
 .sidebar,
 .admin-sidebar,
-.blue-sidebar {
+.blue-sidebar,
+div[class*="w-56"][class*="fixed"],
+div[class*="sidebar"] {
   background-color: #1e3a8a !important; /* blue-900 */
+  background: #1e3a8a !important;
   opacity: 1 !important;
 }
 
 /* Additional sidebar styling overrides */
-.blue-sidebar * {
+.blue-sidebar *,
+div[class*="w-56"][class*="fixed"] * {
   color: #dbeafe !important; /* blue-100 text */
 }
 
 .blue-sidebar .text-gray-400,
-.blue-sidebar .text-gray-500 {
+.blue-sidebar .text-gray-500,
+div[class*="w-56"][class*="fixed"] .text-gray-400,
+div[class*="w-56"][class*="fixed"] .text-gray-500 {
   color: #93c5fd !important; /* blue-300 */
 }
 
