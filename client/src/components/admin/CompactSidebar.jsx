@@ -16,12 +16,12 @@ import {
 
 export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) {
   const [location] = useLocation();
-  
+
   const { data: user, isLoading } = useQuery({
     queryKey: ["/api/auth/me"],
     retry: false,
   });
-  
+
   // Debug logging
   console.log('Sidebar render - user:', user, 'isLoading:', isLoading, 'isOpen:', isOpen);
   console.log('Navigation items:', navigation.length);
@@ -56,7 +56,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
       <div className="fixed top-0 left-0 z-[9999] bg-red-500 text-white p-2 text-xs">
         Sidebar Loading: {isLoading ? 'Yes' : 'No'} | Open: {isOpen ? 'Yes' : 'No'}
       </div>
-      
+
       {/* Desktop Sidebar */}
       <div 
         className="fixed inset-y-0 left-0 z-[1000] bg-slate-800 w-56 border-r border-slate-700 shadow-xl"
@@ -102,17 +102,17 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                           ? 'text-blue-100'
                           : 'text-slate-400 group-hover:text-blue-400'
                       } ${isOpen ? 'mr-2' : ''}`} />
-                      
+
                       {isOpen && (
                         <span className="font-medium text-sm">{item.name}</span>
                       )}
-                      
+
                       {!isOpen && (
                         <div className="absolute left-14 bg-slate-900 text-white px-2 py-1 rounded-md text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap shadow-lg">
                           {item.name}
                         </div>
                       )}
-                      
+
                       {isActive(item.href) && (
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-400 rounded-r-full"></div>
                       )}
@@ -131,7 +131,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                   </p>
                 )}
               </div>
-              
+
               {navigation.slice(3, 7).map((item, index) => {
                 const Icon = item.icon;
                 return (
@@ -149,17 +149,17 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                           ? 'text-blue-100'
                           : 'text-slate-400 group-hover:text-blue-400'
                       } ${isOpen ? 'mr-2' : ''}`} />
-                      
+
                       {isOpen && (
                         <span className="font-medium text-sm">{item.name}</span>
                       )}
-                      
+
                       {!isOpen && (
                         <div className="absolute left-14 bg-slate-900 text-white px-2 py-1 rounded-md text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap shadow-lg">
                           {item.name}
                         </div>
                       )}
-                      
+
                       {isActive(item.href) && (
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-400 rounded-r-full"></div>
                       )}
@@ -178,7 +178,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                   </p>
                 )}
               </div>
-              
+
               {navigation.slice(7).map((item, index) => {
                 const Icon = item.icon;
                 const isLast = index === navigation.slice(7).length - 1;
@@ -197,17 +197,17 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                           ? 'text-blue-100'
                           : 'text-slate-400 group-hover:text-blue-400'
                       } ${isOpen ? 'mr-2' : ''}`} />
-                      
+
                       {isOpen && (
                         <span className="font-medium text-sm">{item.name}</span>
                       )}
-                      
+
                       {!isOpen && (
                         <div className="absolute left-14 bg-slate-900 text-white px-2 py-1 rounded-md text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap shadow-lg">
                           {item.name}
                         </div>
                       )}
-                      
+
                       {isActive(item.href) && (
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-400 rounded-r-full"></div>
                       )}
@@ -267,5 +267,46 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
         </div>
       </div>
     </>
+  );
+}
+
+// Sample menu items for CompactSidebar (replace with your actual menu items)
+const menuItems = [
+    { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+    { name: "Tasks", path: "/tasks", icon: CheckSquare },
+    // ... other menu items
+];
+
+// Adding CompactSidebar component with updated styles
+export function CompactSidebar() {
+  const location = useLocation(); // Corrected from useLocation() to useLocation
+
+  return (
+    <div className="h-full w-16 bg-black border-r border-gray-800 flex flex-col items-center py-4">
+      {/* Logo */}
+      <div className="mb-8">
+        <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+          <span className="text-white font-bold text-sm">TS</span>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 flex flex-col space-y-4">
+        {menuItems.map((item) => (
+          <Link
+            key={item.name}
+            to={item.path}
+            className={`p-3 rounded-lg transition-all duration-200 group relative ${
+              location[0] === item.path
+                ? 'bg-blue-500 text-white'
+                : 'text-white hover:bg-gray-800 hover:text-white'
+            }`}
+            title={item.name}
+          >
+            <item.icon className="h-5 w-5" />
+          </Link>
+        ))}
+      </nav>
+    </div>
   );
 }

@@ -491,6 +491,38 @@
   
   /* Button variants - High Contrast Professional with WCAG AAA compliance */
   .btn-primary {
+    @apply bg-blue-500 hover:bg-blue-600 text-white border-0 transition-all duration-200 font-medium rounded-lg px-4 py-2;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-500 hover:bg-gray-600 text-white border-0 transition-all duration-200 font-medium rounded-lg px-4 py-2;
+  }
+  
+  .btn-professional {
+    @apply bg-blue-500 hover:bg-blue-600 text-white border-0 transition-all duration-200 font-medium rounded-lg px-4 py-2 shadow-sm hover:shadow-md;
+  }
+  
+  /* Override any existing button styles */
+  button, .button, [role="button"] {
+    @apply transition-all duration-200;
+  }
+  
+  /* Primary button override */
+  .bg-primary, button.bg-primary {
+    @apply bg-blue-500 hover:bg-blue-600 text-white !important;
+  }
+  
+  /* Secondary button override */
+  .bg-secondary, button.bg-secondary {
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-900 !important;
+  }
+  
+  /* Destructive button override */
+  .bg-destructive, button.bg-destructive {
+    @apply bg-red-500 hover:bg-red-600 text-white !important;
+  }
+  
+  .btn-primary {
     @apply bg-slate-900 text-white hover:bg-slate-800 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-sm hover:shadow-md border border-slate-900;
   }
   

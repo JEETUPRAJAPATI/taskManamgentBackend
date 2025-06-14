@@ -44,9 +44,9 @@ export function SimpleSidebar() {
   const canManageOrganization = user?.role === 'org_admin' || user?.role === 'admin';
   const isIndividualUser = user?.role === 'individual';
   const isSuperAdmin = user?.role === 'superadmin';
-  
 
-  
+
+
 
 
   const mainNavigation = [
@@ -156,7 +156,7 @@ export function SimpleSidebar() {
 
   const renderSection = (title, items, sectionKey) => {
     if (items.length === 0) return null;
-    
+
     return (
       <div className="mb-6">
         <button

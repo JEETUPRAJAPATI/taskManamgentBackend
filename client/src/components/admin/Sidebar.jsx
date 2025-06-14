@@ -65,7 +65,7 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                   </p>
                 )}
               </div>
-              
+
               {navigation.slice(0, 3).map((item, index) => {
                 const Icon = item.icon;
                 return (
@@ -83,22 +83,22 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                           ? 'text-blue-100'
                           : 'text-slate-400 group-hover:text-blue-400'
                       } ${isOpen ? 'mr-3' : ''}`} />
-                      
+
                       {isOpen && (
                         <span className="font-medium">{item.name}</span>
                       )}
-                      
+
                       {!isOpen && (
                         <div className="absolute left-16 bg-slate-900 text-white px-2 py-1 rounded-md text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap shadow-lg">
                           {item.name}
                         </div>
                       )}
-                      
+
                       {isActive(item.href) && (
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-400 rounded-r-full"></div>
                       )}
                     </Link>
-                    
+
                     {index < 3 && (
                       <div className="my-2 mx-3 border-t border-slate-700/50 dark:border-slate-800/50"></div>
                     )}
@@ -136,22 +136,22 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                           ? 'text-blue-100'
                           : 'text-slate-400 group-hover:text-blue-400'
                       } ${isOpen ? 'mr-3' : ''}`} />
-                      
+
                       {isOpen && (
                         <span className="font-medium">{item.name}</span>
                       )}
-                      
+
                       {!isOpen && (
                         <div className="absolute left-16 bg-slate-900 text-white px-2 py-1 rounded-md text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap shadow-lg">
                           {item.name}
                         </div>
                       )}
-                      
+
                       {isActive(item.href) && (
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-400 rounded-r-full"></div>
                       )}
                     </Link>
-                    
+
                     {index < 3 && (
                       <div className="my-2 mx-3 border-t border-slate-700/50 dark:border-slate-800/50"></div>
                     )}
@@ -189,22 +189,22 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                           ? 'text-blue-100'
                           : 'text-slate-400 group-hover:text-blue-400'
                       } ${isOpen ? 'mr-3' : ''}`} />
-                      
+
                       {isOpen && (
                         <span className="font-medium">{item.name}</span>
                       )}
-                      
+
                       {!isOpen && (
                         <div className="absolute left-16 bg-slate-900 text-white px-2 py-1 rounded-md text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap shadow-lg">
                           {item.name}
                         </div>
                       )}
-                      
+
                       {isActive(item.href) && (
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-400 rounded-r-full"></div>
                       )}
                     </Link>
-                    
+
                     {index < navigation.slice(7).length - 1 && (
                       <div className="my-2 mx-3 border-t border-slate-700/50 dark:border-slate-800/50"></div>
                     )}
