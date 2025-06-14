@@ -57,7 +57,7 @@ export default function Dashboard() {
         <div className="animate-pulse">
           <div className="h-8 bg-slate-200 rounded w-1/3 mb-2"></div>
           <div className="h-5 bg-slate-200 rounded w-1/2 mb-8"></div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
@@ -67,7 +67,7 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="bg-white p-6 rounded-lg border border-slate-200">
               <div className="h-6 bg-slate-200 rounded w-1/2 mb-4"></div>
@@ -146,6 +146,36 @@ export default function Dashboard() {
       icon: TrendingUp,
       color: "text-indigo-600",
       bgColor: "bg-indigo-50"
+    }
+  ];
+
+  const recentTasks = [
+    {
+      _id: "1",
+      title: "Design a landing page",
+      description: "Create a visually appealing landing page for our new product.",
+      status: "in-progress",
+      priority: "high",
+      assignedTo: { email: "john.doe@example.com" },
+      createdAt: new Date()
+    },
+    {
+      _id: "2",
+      title: "Implement user authentication",
+      description: "Set up a secure user authentication system.",
+      status: "completed",
+      priority: "medium",
+      assignedTo: { email: "jane.smith@example.com" },
+      createdAt: new Date()
+    },
+    {
+      _id: "3",
+      title: "Write API documentation",
+      description: "Document all the API endpoints for external developers.",
+      status: "in-progress",
+      priority: "low",
+      assignedTo: { email: "sarah.wilson@example.com" },
+      createdAt: new Date()
     }
   ];
 
