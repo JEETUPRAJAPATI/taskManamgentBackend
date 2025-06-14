@@ -224,6 +224,26 @@ export default function TeamMembers() {
   };
 
   console.log('TeamMembers component state:', { isLoading, users, error });
+  console.log('Current token:', localStorage.getItem('token'));
+
+  // Test login function for demo purposes
+  const testLogin = async () => {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: 'admin@demo.com', password: 'secret' })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('token', data.token);
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Test login failed:', error);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -243,9 +263,14 @@ export default function TeamMembers() {
       <div className="p-6">
         <div className="text-center py-12">
           <div className="text-red-600 mb-4">Error loading team members: {error.message}</div>
-          <button onClick={() => window.location.reload()} className="text-blue-600 hover:underline">
-            Refresh Page
-          </button>
+          <div className="space-x-4">
+            <button onClick={testLogin} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+              Login as Demo Admin
+            </button>
+            <button onClick={() => window.location.reload()} className="text-blue-600 hover:underline">
+              Refresh Page
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -355,13 +380,21 @@ export default function TeamMembers() {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">No team members yet</h3>
               <p className="text-gray-600 mb-4">Start building your team by inviting members to collaborate.</p>
-              <Button
-                onClick={() => setInviteModalOpen(true)}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                <UserPlus className="h-4 w-4 mr-2" />
-                Invite First Member
-              </Button>
+              <div className="space-y-3">
+                <Button
+                  onClick={testLogin}
+                  className="bg-green-600 hover:bg-green-700 mr-3"
+                >
+                  Login as Demo Admin
+                </Button>
+                <Button
+                  onClick={() => setInviteModalOpen(true)}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Invite First Member
+                </Button>
+              </div>
             </div>
           ) : (
             <div className="overflow-x-auto">
