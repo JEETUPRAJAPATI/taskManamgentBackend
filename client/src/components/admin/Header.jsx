@@ -80,13 +80,13 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
   ];
 
   return (
-    <header className="bg-gray-800 border-b border-gray-700 h-14">
+    <header className="bg-blue-900 border-b border-blue-800 h-14">
       <div className="flex items-center justify-between h-full px-4">
         <div className="flex items-center">
           {/* Mobile menu button */}
           <button
             onClick={onMenuClick}
-            className="p-2 rounded-md text-gray-300 hover:text-gray-100 hover:bg-gray-700 lg:hidden"
+            className="p-2 rounded-md text-blue-200 hover:text-white hover:bg-blue-800 lg:hidden"
           >
             <Menu className="h-4 w-4" />
           </button>
@@ -94,7 +94,7 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
           {/* Desktop sidebar toggle */}
           <button
             onClick={onSidebarToggle}
-            className="hidden lg:block p-2 rounded-md text-gray-300 hover:text-gray-100 hover:bg-gray-700"
+            className="hidden lg:block p-2 rounded-md text-blue-200 hover:text-white hover:bg-blue-800"
           >
             <Menu className="h-4 w-4" />
           </button>

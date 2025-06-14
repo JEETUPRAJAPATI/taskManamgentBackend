@@ -92,12 +92,12 @@
   opacity: 1 !important;
 }
 
-/* Comprehensive Sidebar Styling */
+/* Comprehensive Blue Sidebar Styling */
 [data-sidebar="sidebar"],
 .sidebar,
 .admin-sidebar {
-  background-color: rgb(30 41 59) !important; /* slate-800 */
-  border-right: 1px solid rgb(51 65 85) !important; /* slate-700 */
+  background-color: rgb(30 58 138) !important; /* blue-900 */
+  border-right: 1px solid rgb(30 64 175) !important; /* blue-800 */
   min-height: 100vh !important;
 }
 
@@ -123,7 +123,7 @@
 [data-sidebar="menu-item"]:hover,
 .sidebar-menu-item:hover,
 .admin-sidebar .nav-item:hover {
-  background-color: rgb(51 65 85) !important; /* slate-700 */
+  background-color: rgb(30 64 175) !important; /* blue-800 */
   color: rgb(255 255 255) !important;
 }
 
@@ -138,7 +138,7 @@
 [data-sidebar="menu-item"] svg,
 .sidebar-menu-item svg,
 .admin-sidebar svg {
-  color: rgb(203 213 225) !important; /* slate-300 */
+  color: rgb(147 197 253) !important; /* blue-300 */
 }
 
 [data-sidebar="menu-item"]:hover svg,
@@ -180,20 +180,20 @@
 }
 
 :root {
-  /* Professional High-Contrast Theme - WCAG AA/AAA Compliant */
-  --background: 250 251 252; /* Modern light background #fafbfc */
+  /* Professional Blue Theme - Consistent Blue Palette */
+  --background: 248 250 252; /* Light blue-gray background #f8fafc */
   --foreground: 15 23 42; /* High contrast dark text #0f172a */
   --card: 255 255 255; /* Pure white cards #ffffff */
   --card-foreground: 30 41 59; /* Rich dark text #1e293b */
   --popover: 255 255 255; /* White popover #ffffff */
   --popover-foreground: 15 23 42; /* High contrast popover text #0f172a */
-  --primary: 59 130 246; /* Modern blue-500 #3b82f6 */
+  --primary: 37 99 235; /* Blue-600 #2563eb */
   --primary-foreground: 255 255 255; /* White text on primary #ffffff */
-  --secondary: 248 250 252; /* Light background #f8fafc */
-  --secondary-foreground: 30 41 59; /* Rich text #1e293b */
+  --secondary: 219 234 254; /* Blue-100 #dbeafe */
+  --secondary-foreground: 30 58 138; /* Blue-900 #1e3a8a */
   --muted: 241 245 249; /* Light muted background #f1f5f9 */
-  --muted-foreground: 100 116 139; /* Balanced gray text #64748b */
-  --accent: 34 197 94; /* Success green #22c55e */
+  --muted-foreground: 71 85 105; /* Slate-600 #475569 */
+  --accent: 59 130 246; /* Blue-500 #3b82f6 */
   --accent-foreground: 255 255 255; /* White text on blue #ffffff */
   --destructive: 185 28 28; /* Professional red #b91c1c */
   --destructive-foreground: 255 255 255; /* White text on red #ffffff */
@@ -201,17 +201,17 @@
   --success-foreground: 255 255 255; /* White text on green #ffffff */
   --border: 203 213 225; /* Clear border #cbd5e1 */
   --input: 255 255 255; /* White input background #ffffff */
-  --ring: 30 64 175; /* Strong blue focus ring #1e40af */
+  --ring: 37 99 235; /* Blue-600 focus ring #2563eb */
   --radius: 0.5rem;
   
-  /* Sidebar colors - Professional Dark Theme */
-  --sidebar-background: 30 41 59; /* Professional slate-800 #1e293b */
+  /* Sidebar colors - Dark Blue Theme */
+  --sidebar-background: 30 58 138; /* Blue-900 #1e3a8a */
   --sidebar-foreground: 248 250 252; /* Light text #f8fafc */
-  --sidebar-primary: 59 130 246; /* Professional blue-500 #3b82f6 */
+  --sidebar-primary: 59 130 246; /* Blue-500 #3b82f6 */
   --sidebar-primary-foreground: 255 255 255; /* White text on primary #ffffff */
-  --sidebar-accent: 96 165 250; /* Light blue-400 #60a5fa */
+  --sidebar-accent: 96 165 250; /* Blue-400 #60a5fa */
   --sidebar-accent-foreground: 255 255 255; /* White text on blue #ffffff */
-  --sidebar-border: 51 65 85; /* Lighter border #334155 */
+  --sidebar-border: 30 64 175; /* Blue-800 border #1e40af */
   --sidebar-ring: 59 130 246; /* Blue focus ring #3b82f6 */
   
   /* Chart colors - Professional Business palette */
@@ -420,35 +420,40 @@
     @apply font-semibold !important;
   }
   
-  /* Shadcn Button component overrides */
+  /* Blue Theme Button component overrides */
   .bg-primary,
-  [data-variant="default"] {
-    @apply bg-slate-900 text-white hover:bg-slate-800 border border-slate-900 !important;
+  [data-variant="default"],
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700 focus:bg-blue-700 border border-blue-600 !important;
   }
   
   .bg-secondary,
-  [data-variant="secondary"] {
-    @apply bg-white text-slate-900 hover:bg-slate-50 border-2 border-slate-300 !important;
+  [data-variant="secondary"],
+  .btn-secondary {
+    @apply bg-blue-100 text-blue-900 hover:bg-blue-200 focus:bg-blue-200 border border-blue-200 !important;
   }
   
-  [data-variant="outline"] {
-    @apply bg-white text-slate-900 hover:bg-slate-900 hover:text-white border-2 border-slate-900 !important;
+  [data-variant="outline"],
+  .btn-outline {
+    @apply bg-white text-blue-600 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white border-2 border-blue-600 !important;
   }
   
-  [data-variant="destructive"] {
-    @apply bg-red-700 text-white hover:bg-red-800 border border-red-700 !important;
+  [data-variant="destructive"],
+  .btn-destructive {
+    @apply bg-red-600 text-white hover:bg-red-700 focus:bg-red-700 border border-red-600 !important;
   }
   
-  [data-variant="ghost"] {
-    @apply text-slate-900 hover:bg-slate-100 hover:text-slate-900 !important;
+  [data-variant="ghost"],
+  .btn-ghost {
+    @apply text-blue-600 hover:bg-blue-50 hover:text-blue-700 focus:bg-blue-50 focus:text-blue-700 !important;
   }
   
-  /* Form controls high contrast */
+  /* Blue Theme Form controls */
   input,
   textarea,
   select,
   .input {
-    @apply bg-white text-slate-900 border-2 border-slate-300 focus:border-slate-900 focus:ring-2 focus:ring-slate-500 placeholder:text-slate-600 !important;
+    @apply bg-white text-slate-900 border-2 border-blue-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-500 placeholder:text-slate-600 !important;
   }
   
   /* High contrast placeholders */
