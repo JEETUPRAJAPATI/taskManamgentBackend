@@ -2195,12 +2195,18 @@ async function setupEmailCalendarRoutes(app) {
   });
 
   // Get organization users with detailed information
-  app.get("/api/organization/users-detailed", roleAuthToken, requireOrgAdminOrAbove, async (req, res) => {
+  app.get("/api/organization/users-detailed", roleAuthToken, async (req, res) => {
     try {
       console.log('Fetching users for organization:', req.user.organizationId);
       console.log('User role:', req.user.role);
+      
+      if (!req.user.organizationId) {
+        return res.status(400).json({ message: "User is not associated with any organization" });
+      }
+      
       const users = await storage.getOrganizationUsersDetailed(req.user.organizationId);
       console.log('Found users:', users.length);
+      console.log('Users data:', users.map(u => ({ email: u.email, status: u.status, roles: u.roles })));
       res.json(users);
     } catch (error) {
       console.error("Get organization users error:", error);
