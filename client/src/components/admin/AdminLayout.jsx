@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { SimpleSidebar } from "./SimpleSidebar";
 import { Header } from "./Header";
+import { ThemeProvider } from "@mui/material/styles";
 
 export function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -15,22 +16,34 @@ export function AdminLayout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <SimpleSidebar />
-      
-      <div className="ml-56">
-        <Header 
+    <ThemeProvider>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 text-foreground">
+        <div className="flex">
+          {/* Sidebar */}
+          <div className="sidebar-modern sticky top-0">
+            <SimpleSidebar />
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1 flex flex-col">
+            {/* Header */}
+            <div className="nav-modern sticky top-0 z-40">
+              <Header 
           onMenuClick={toggleMobileMenu}
           onSidebarToggle={toggleSidebar}
           sidebarOpen={sidebarOpen}
         />
-        
-        <main className="px-6 py-6 min-h-screen bg-gray-50">
-          <div className="max-w-full mx-auto">
-            {children}
+            </div>
+
+            {/* Page Content */}
+            <main className="flex-1 p-6 layout-modern-container">
+              <div className="animate-fade-in-up">
+                {children}
+              </div>
+            </main>
           </div>
-        </main>
+        </div>
       </div>
-    </div>
+    </ThemeProvider>
   );
 }

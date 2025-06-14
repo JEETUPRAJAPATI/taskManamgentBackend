@@ -80,144 +80,90 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
   ];
 
   return (
-    <header className="bg-gray-800 border-b border-gray-700 h-14">
-      <div className="flex items-center justify-between h-full px-4">
-        <div className="flex items-center">
-          {/* Mobile menu button */}
-          <button
-            onClick={onMenuClick}
-            className="p-2 rounded-md text-gray-300 hover:text-gray-100 hover:bg-gray-700 lg:hidden"
-          >
-            <Menu className="h-4 w-4" />
-          </button>
-
-          {/* Desktop sidebar toggle */}
-          <button
-            onClick={onSidebarToggle}
-            className="hidden lg:block p-2 rounded-md text-gray-300 hover:text-gray-100 hover:bg-gray-700"
-          >
-            <Menu className="h-4 w-4" />
-          </button>
-
-          {/* Search */}
-          <div className="ml-4 flex items-center">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-gray-400" />
-              </div>
-              <input
-                className="block w-64 pl-10 pr-3 py-2 border border-gray-600 rounded-md bg-gray-700 placeholder-gray-400 text-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 text-sm"
-                placeholder="Search..."
-                type="search"
-              />
-            </div>
-          </div>
+    <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50 px-6 py-4 shadow-sm">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
+            {getPageTitle()}
+          </h2>
         </div>
 
-        <div className="flex items-center space-x-2">
-          {/* Invite User Button - Only for organization admins */}
-          {canInviteUsers && (
-            <Link href="/invite-users">
-              <button className="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:text-gray-100 hover:bg-gray-700 rounded-md transition-colors">
-                <UserPlus className="h-4 w-4 mr-2" />
-                Invite User
-              </button>
-            </Link>
-          )}
+        <div className="flex items-center space-x-4">
+          {/* Search */}
+          <div className="relative group">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 group-focus-within:text-blue-600 transition-colors" />
+            <Input
+              type="search"
+              placeholder="Search..."
+              className="input-modern pl-10 w-64"
+            />
+          </div>
 
           {/* Notifications */}
-          <button className="p-2 rounded-md text-gray-300 hover:text-gray-100 hover:bg-gray-700 relative">
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
-          </button>
+          <Button variant="ghost" size="icon" className="relative hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 hover:scale-105">
+            <Bell className="w-5 h-5" />
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-red-500 to-rose-500 rounded-full animate-pulse"></span>
+          </Button>
 
-          {/* Profile Dropdown */}
-          <div className="relative" ref={dropdownRef}>
-            <button 
-              onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-              className="flex items-center p-2 rounded-md text-gray-300 hover:text-gray-100 hover:bg-gray-700 transition-colors"
-            >
-              <div className="flex items-center">
-                <div className="relative">
-                  <User className="h-5 w-5" />
-                  <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-green-500 border border-gray-800 rounded-full"></div>
-                </div>
-                <span className="ml-2 text-sm font-medium text-gray-100 hidden sm:block">
-                  Admin
-                </span>
-                <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-200 ${
-                  profileDropdownOpen ? 'rotate-180' : ''
-                }`} />
-              </div>
-            </button>
-
-            {/* Profile Dropdown Menu */}
-            {profileDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-lg border border-gray-700 py-2 z-50">
-                {/* Profile Header */}
-                <div className="px-4 py-3 border-b border-gray-700">
-                  <div className="flex items-center">
-                    <div className="relative">
-                      <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center text-gray-100 font-semibold">
-                        AU
-                      </div>
-                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-gray-800 rounded-full"></div>
-                    </div>
-                    <div className="ml-3">
-                      <p className="text-sm font-medium text-gray-100">Admin User</p>
-                      <p className="text-xs text-gray-400">admin@tasksetu.com</p>
-                      <p className="text-xs text-green-400">● Online</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Profile Setup Options */}
-                <div className="px-2 py-2">
-                  <div className="px-3 py-2">
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                      Profile Setup
-                    </p>
-                  </div>
-                  
-                  {profileMenuItems.map((item, index) => {
-                    const Icon = item.icon;
-                    return (
-                      <button
-                        key={index}
-                        onClick={item.action}
-                        className="w-full flex items-start p-3 rounded-lg hover:bg-gray-700 transition-colors text-left group"
-                      >
-                        <div className="flex-shrink-0">
-                          <Icon className="h-5 w-5 text-gray-400 group-hover:text-gray-300 transition-colors" />
-                        </div>
-                        <div className="ml-3 min-w-0 flex-1">
-                          <p className="text-sm font-medium text-gray-100 group-hover:text-gray-50">
-                            {item.label}
-                          </p>
-                          <p className="text-xs text-gray-400 mt-1">
-                            {item.description}
-                          </p>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Logout Section */}
-                <div className="border-t border-gray-700 px-2 py-2">
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center p-3 rounded-lg hover:bg-red-900/20 transition-colors text-left group"
-                  >
-                    <LogOut className="h-5 w-5 text-gray-400 group-hover:text-red-400 transition-colors" />
-                    <span className="ml-3 text-sm font-medium text-gray-100 group-hover:text-red-400">
-                      Sign Out
-                    </span>
-                  </button>
-                </div>
-              </div>
+          {/* Theme Toggle */}
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={toggleTheme}
+            className="hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 hover:scale-105"
+          >
+            {theme === 'light' ? (
+              <Moon className="w-5 h-5" />
+            ) : (
+              <Sun className="w-5 h-5" />
             )}
-          </div>
+          </Button>
+
+          {/* User Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="flex items-center space-x-3 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl px-4 py-2 transition-all duration-200 hover:scale-105">
+                <Avatar className="w-8 h-8 ring-2 ring-slate-200 dark:ring-slate-700">
+                  <AvatarImage src="https://github.com/shadcn.png" alt="User" />
+                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-semibold">AD</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col items-start">
+                  <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">Admin User</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">Administrator</span>
+                </div>
+                <ChevronDown className="w-4 h-4 text-slate-500" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-64 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl">
+              <DropdownMenuLabel className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+                <div className="flex items-center space-x-3">
+                  <Avatar className="w-10 h-10">
+                    <AvatarImage src="https://github.com/shadcn.png" alt="User" />
+                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white">AD</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">Admin User</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">admin@taskflow.com</p>
+                  </div>
+                </div>
+              </DropdownMenuLabel>
+              <div className="p-2">
+                <DropdownMenuItem className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                  <User className="w-4 h-4 text-slate-500" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                  <Settings className="w-4 h-4 text-slate-500" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="my-2" />
+                <DropdownMenuItem className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition-colors">
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </DropdownMenuItem>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>

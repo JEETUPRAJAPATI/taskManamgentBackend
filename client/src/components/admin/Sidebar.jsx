@@ -38,21 +38,19 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
       } hidden lg:block`}>
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center h-12 px-3 border-b border-gray-800 bg-black">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <CheckSquare className="h-6 w-6 text-blue-400" />
-              </div>
-              {isOpen && (
-                <div className="ml-2">
-                  <h1 className="text-lg font-bold text-white">
-                    TaskSetu
-                  </h1>
-                  <p className="text-xs text-slate-400">Professional Edition</p>
-                </div>
-              )}
-            </div>
+          <div className="sidebar-modern-header">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-lg">
+            <CheckSquare className="w-6 h-6 text-white" />
           </div>
+          <div>
+            <h1 className="text-xl font-bold bg-gradient-to-r from-slate-900 to-blue-800 dark:from-slate-100 dark:to-blue-300 bg-clip-text text-transparent">
+              TaskSetu
+            </h1>
+            <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Admin Panel</p>
+          </div>
+        </div>
+      </div>
 
           {/* Navigation */}
           <nav className="flex-1 px-2 py-3 space-y-1 overflow-y-auto">
@@ -263,5 +261,22 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
         </div>
       </div>
     </>
+  );
+}
+
+function SidebarItem({ icon: Icon, label, path, isActive }) {
+  return (
+    <Link
+      to={path}
+      className={`nav-item-modern group ${isActive ? 'active' : ''}`}
+    >
+      <Icon className={`w-5 h-5 transition-transform duration-200 group-hover:scale-110 ${
+        isActive ? 'text-blue-600 dark:text-blue-400' : ''
+      }`} />
+      <span className="relative z-10">{label}</span>
+      {isActive && (
+        <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-blue-500 to-blue-600 rounded-l-full" />
+      )}
+    </Link>
   );
 }
