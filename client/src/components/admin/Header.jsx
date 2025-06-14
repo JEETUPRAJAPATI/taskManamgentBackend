@@ -5,8 +5,28 @@ import { Menu, Bell, Search, User, Settings, LogOut, Edit, Shield, Key, Palette,
 
 export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const dropdownRef = useRef(null);
+
+  // Function to get page title based on current location
+  const getPageTitle = () => {
+    const path = location;
+    
+    if (path === "/admin" || path === "/admin/") return "Dashboard";
+    if (path === "/admin/dashboard") return "Dashboard";
+    if (path === "/admin/team-members") return "Team Members";
+    if (path === "/admin/invite-users") return "Invite Users";
+    if (path === "/admin/user-management") return "User Management";
+    if (path === "/admin/tasks") return "Tasks";
+    if (path === "/admin/projects") return "Projects";
+    if (path === "/admin/reports") return "Reports";
+    if (path === "/admin/settings") return "Settings";
+    if (path === "/admin/analytics") return "Analytics";
+    if (path === "/profile") return "Profile";
+    
+    // Default fallback
+    return "Dashboard";
+  };
 
   // Get current user data to check role
   const { data: user } = useQuery({
