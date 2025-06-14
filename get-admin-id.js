@@ -1,11 +1,12 @@
 import mongoose from 'mongoose';
+import { User } from './server/models.js';
 
 async function getAdminId() {
   try {
     const dbUrl = 'mongodb+srv://jeeturadicalloop:Mjvesqnj8gY3t0zP@cluster0.by2xy6x.mongodb.net/TaskSetu';
     await mongoose.connect(dbUrl);
     
-    const adminUser = await mongoose.model('User').findOne({ email: 'admin@demo.com' });
+    const adminUser = await User.findOne({ email: 'admin@demo.com' });
     if (adminUser) {
       console.log(adminUser._id.toString());
     } else {

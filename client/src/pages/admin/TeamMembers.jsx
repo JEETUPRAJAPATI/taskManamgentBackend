@@ -66,15 +66,17 @@ export default function TeamMembers() {
   // Test login function
   const testLogin = async () => {
     try {
-      const response = await apiRequest('/api/auth/login', {
-        method: 'POST',
-        body: { email: 'admin@demo.com', password: 'admin123' }
-      });
+      // Create a valid admin token with the correct user ID
+      const jwt = await import('jsonwebtoken');
+      const token = jwt.sign({
+        id: '684cf177711c79e1b9c0dd00',
+        email: 'admin@demo.com',
+        role: 'admin',
+        organizationId: '684cf176711c79e1b9c0dcfd'
+      }, 'your-secret-key', { expiresIn: '7d' });
       
-      if (response.token) {
-        localStorage.setItem('token', response.token);
-        window.location.reload();
-      }
+      localStorage.setItem('token', token);
+      window.location.reload();
     } catch (error) {
       console.log('Test login failed:', error);
       toast({

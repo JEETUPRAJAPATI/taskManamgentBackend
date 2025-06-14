@@ -1202,20 +1202,7 @@ export async function registerRoutes(app) {
   // Get detailed organization users
   app.get("/api/organization/users-detailed", roleAuthToken, requireOrgAdminOrAbove, async (req, res) => {
     try {
-      console.log('=== FETCHING ORGANIZATION USERS ===');
-      console.log('Organization ID:', req.user.organizationId);
-      console.log('User role:', req.user.role);
-      console.log('User ID:', req.user.id);
-      
       const users = await storage.getOrganizationUsersDetailed(req.user.organizationId);
-      console.log('Found users count:', users.length);
-      console.log('Users data:', users.map(u => ({ 
-        id: u._id, 
-        email: u.email, 
-        status: u.status, 
-        organization: u.organization 
-      })));
-      
       res.json(users);
     } catch (error) {
       console.error("Get organization users detailed error:", error);
