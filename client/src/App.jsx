@@ -302,7 +302,12 @@ function App() {
         </Route>
         <Route path="/team-members">
           <AdminLayout>
-            <ProtectedRoute component={TeamMembers} allowedRoles={["org_admin", "admin"]} />
+            <ProtectedRoute component={TeamMembers} allowedRoles={["org_admin", "admin", "member"]} />
+          </AdminLayout>
+        </Route>
+        <Route path="/admin/team-members">
+          <AdminLayout>
+            <ProtectedRoute component={TeamMembers} allowedRoles={["org_admin", "admin", "member"]} />
           </AdminLayout>
         </Route>
         <Route path="/invite-users">
