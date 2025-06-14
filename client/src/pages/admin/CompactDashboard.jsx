@@ -203,9 +203,22 @@ export default function Dashboard() {
   return (
     <div className="space-y-3">
       {/* Header */}
-      <div className="bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-700 shadow-sm">
-        <h1 className="text-xl font-bold text-slate-900 dark:text-white mb-1">Dashboard</h1>
-        <p className="text-sm text-slate-600 dark:text-slate-300">TaskSetu - Comprehensive task management</p>
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 p-6 rounded-xl shadow-sm">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 mb-1 flex items-center">
+              <div className="w-2 h-8 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full mr-3"></div>
+              Dashboard
+            </h1>
+            <p className="text-slate-600">Welcome back! Here's what's happening with your team</p>
+          </div>
+          <div className="hidden md:flex items-center space-x-3">
+            <div className="text-right">
+              <p className="text-sm font-medium text-slate-900">Today</p>
+              <p className="text-xs text-slate-600">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -213,20 +226,27 @@ export default function Dashboard() {
         {statCards.map((card, index) => {
           const Icon = card.icon;
           return (
-            <Card key={index} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
-              <CardContent className="p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <div className={`p-1.5 rounded-md ${card.bgColor} dark:bg-slate-700`}>
-                    <Icon className={`h-4 w-4 ${card.color} dark:text-slate-300`} />
+            <Card key={index} className="bg-white border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group">
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`p-3 rounded-xl ${card.bgColor} group-hover:scale-110 transition-transform duration-200`}>
+                    <Icon className={`h-5 w-5 ${card.color}`} />
                   </div>
-                  <Badge variant={card.changeType === 'positive' ? 'default' : 'destructive'} className="text-xs px-1.5 py-0.5">
+                  <Badge 
+                    variant={card.changeType === 'positive' ? 'default' : 'destructive'} 
+                    className={`text-xs px-2 py-1 font-medium ${
+                      card.changeType === 'positive' 
+                        ? 'bg-green-100 text-green-700 border-green-200' 
+                        : 'bg-red-100 text-red-700 border-red-200'
+                    }`}
+                  >
                     {card.change}
                   </Badge>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-slate-900 dark:text-white mb-1">{card.title}</h3>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white mb-1">{card.value}</p>
-                  <p className="text-xs text-slate-600 dark:text-slate-400">{card.description}</p>
+                  <h3 className="text-sm font-semibold text-slate-700 mb-2">{card.title}</h3>
+                  <p className="text-3xl font-bold text-slate-900 mb-2 tracking-tight">{card.value}</p>
+                  <p className="text-xs text-slate-500 leading-relaxed">{card.description}</p>
                 </div>
               </CardContent>
             </Card>
@@ -238,34 +258,44 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         
         {/* Recent Activity */}
-        <Card className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
-              <Activity className="h-5 w-5 mr-2 text-green-600" />
+        <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+          <CardHeader className="pb-4 border-b border-slate-100">
+            <CardTitle className="text-lg font-semibold text-slate-900 flex items-center">
+              <div className="p-2 bg-green-100 rounded-lg mr-3">
+                <Activity className="h-5 w-5 text-green-600" />
+              </div>
               Recent Activity
             </CardTitle>
-            <CardDescription className="text-sm text-slate-600 dark:text-slate-400">
+            <CardDescription className="text-sm text-slate-600 ml-12">
               Latest team actions and updates
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-3">
-            <div className="space-y-2">
+          <CardContent className="p-4">
+            <div className="space-y-3">
               {recentActivities.map((activity) => (
-                <div key={activity.id} className="flex items-start space-x-2 p-2 rounded bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors">
-                  <div className="flex-shrink-0 mt-1">
-                    {activity.type === 'completion' && <CheckCircle className="h-3 w-3 text-green-600" />}
-                    {activity.type === 'creation' && <Plus className="h-3 w-3 text-blue-600" />}
-                    {activity.type === 'assignment' && <Users className="h-3 w-3 text-purple-600" />}
-                    {activity.type === 'update' && <Activity className="h-3 w-3 text-blue-600" />}
-                    {activity.type === 'milestone' && <CheckSquare className="h-3 w-3 text-indigo-600" />}
+                <div key={activity.id} className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors border border-slate-100 hover:border-slate-200">
+                  <div className="flex-shrink-0 mt-0.5">
+                    <div className={`p-2 rounded-full ${
+                      activity.type === 'completion' ? 'bg-green-100' :
+                      activity.type === 'creation' ? 'bg-blue-100' :
+                      activity.type === 'assignment' ? 'bg-purple-100' :
+                      activity.type === 'update' ? 'bg-orange-100' :
+                      'bg-indigo-100'
+                    }`}>
+                      {activity.type === 'completion' && <CheckCircle className="h-4 w-4 text-green-600" />}
+                      {activity.type === 'creation' && <Plus className="h-4 w-4 text-blue-600" />}
+                      {activity.type === 'assignment' && <Users className="h-4 w-4 text-purple-600" />}
+                      {activity.type === 'update' && <Activity className="h-4 w-4 text-orange-600" />}
+                      {activity.type === 'milestone' && <CheckSquare className="h-4 w-4 text-indigo-600" />}
+                    </div>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm">
-                      <span className="font-medium text-slate-900 dark:text-white">{activity.user}</span>
-                      <span className="text-slate-600 dark:text-slate-300"> {activity.action} </span>
-                      <span className="font-medium text-slate-900 dark:text-white">{activity.target}</span>
+                    <div className="text-sm leading-relaxed">
+                      <span className="font-semibold text-slate-900">{activity.user}</span>
+                      <span className="text-slate-600"> {activity.action} </span>
+                      <span className="font-medium text-slate-800">{activity.target}</span>
                     </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center mt-1">
+                    <div className="text-xs text-slate-500 flex items-center mt-2">
                       <Clock className="h-3 w-3 mr-1" />
                       {activity.time}
                     </div>
@@ -281,42 +311,51 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         
         {/* Upcoming Deadlines */}
-        <Card className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
-              <Calendar className="h-5 w-5 mr-2 text-red-600" />
+        <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+          <CardHeader className="pb-4 border-b border-slate-100">
+            <CardTitle className="text-lg font-semibold text-slate-900 flex items-center">
+              <div className="p-2 bg-red-100 rounded-lg mr-3">
+                <Calendar className="h-5 w-5 text-red-600" />
+              </div>
               Upcoming Deadlines
             </CardTitle>
-            <CardDescription className="text-sm text-slate-600 dark:text-slate-400">
+            <CardDescription className="text-sm text-slate-600 ml-12">
               Tasks and projects requiring attention
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-3">
-            <div className="space-y-2">
+          <CardContent className="p-4">
+            <div className="space-y-3">
               {upcomingDeadlines.map((deadline) => (
-                <div key={deadline.id} className="flex items-center justify-between p-2 rounded bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors">
+                <div key={deadline.id} className="flex items-start justify-between p-4 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors border border-slate-100 hover:border-slate-200">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center space-x-2">
-                      <h4 className="text-sm font-medium text-slate-900 dark:text-white truncate">{deadline.task}</h4>
+                    <div className="flex items-center space-x-3 mb-2">
+                      <h4 className="text-sm font-semibold text-slate-900 truncate">{deadline.task}</h4>
                       <Badge 
-                        variant={deadline.priority === 'high' ? 'destructive' : 'secondary'}
-                        className="text-xs px-1.5 py-0.5"
+                        className={`text-xs px-2 py-1 font-medium ${
+                          deadline.priority === 'high' 
+                            ? 'bg-red-100 text-red-700 border-red-200' 
+                            : 'bg-blue-100 text-blue-700 border-blue-200'
+                        }`}
                       >
-                        {deadline.priority}
+                        {deadline.priority} priority
                       </Badge>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400">{deadline.project} • {deadline.assignee}</p>
-                    <div className="flex items-center text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    <p className="text-xs text-slate-600 mb-2">{deadline.project} • {deadline.assignee}</p>
+                    <div className="flex items-center text-xs text-slate-500">
                       <Calendar className="h-3 w-3 mr-1" />
-                      {deadline.dueDate}
+                      Due {deadline.dueDate}
                     </div>
                   </div>
-                  <div className="flex-shrink-0">
-                    {deadline.priority === 'high' ? (
-                      <AlertCircle className="h-4 w-4 text-red-500" />
-                    ) : (
-                      <Clock className="h-4 w-4 text-blue-500" />
-                    )}
+                  <div className="flex-shrink-0 ml-3">
+                    <div className={`p-2 rounded-full ${
+                      deadline.priority === 'high' ? 'bg-red-100' : 'bg-blue-100'
+                    }`}>
+                      {deadline.priority === 'high' ? (
+                        <AlertCircle className="h-4 w-4 text-red-600" />
+                      ) : (
+                        <Clock className="h-4 w-4 text-blue-600" />
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}

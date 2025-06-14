@@ -142,19 +142,26 @@ export default function TeamMembersWidget({ showActions = true, maxItems = 5 }) 
   }
 
   return (
-    <Card className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center justify-between">
+    <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+      <CardHeader className="pb-4 border-b border-slate-100">
+        <CardTitle className="text-lg font-semibold text-slate-900 flex items-center justify-between">
           <div className="flex items-center">
-            <Users className="h-5 w-5 mr-2 text-blue-600" />
-            Team Members ({users.length})
+            <div className="p-2 bg-blue-100 rounded-lg mr-3">
+              <Users className="h-5 w-5 text-blue-600" />
+            </div>
+            <div>
+              <span>Team Members</span>
+              <div className="text-sm font-normal text-slate-600">
+                {users.length} active members
+              </div>
+            </div>
           </div>
           {showActions && (
             <Button
               onClick={() => window.location.href = '/admin/team-members'}
               variant="ghost"
               size="sm"
-              className="text-blue-600 hover:text-blue-700"
+              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
             >
               <Eye className="h-4 w-4 mr-1" />
               View All
@@ -162,19 +169,26 @@ export default function TeamMembersWidget({ showActions = true, maxItems = 5 }) 
           )}
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-3">
-        <div className="space-y-2">
+      <CardContent className="p-4">
+        <div className="space-y-3">
           {displayUsers.map((user, index) => (
-            <div key={user._id || index} className="flex items-center justify-between p-2 rounded bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors">
+            <div key={user._id || index} className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors border border-slate-100 hover:border-slate-200">
+              <div className="flex-shrink-0">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xs font-semibold">
+                    {formatUserName(user).charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center space-x-2">
-                  <h4 className="text-sm font-medium text-slate-900 dark:text-white truncate">
+                <div className="flex items-center space-x-2 mb-1">
+                  <h4 className="text-sm font-semibold text-slate-900 truncate">
                     {formatUserName(user)}
                   </h4>
                   {getStatusBadge(user)}
                 </div>
-                <p className="text-xs text-slate-600 dark:text-slate-400 truncate">{user.email}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-500">{formatUserRole(user)}</p>
+                <p className="text-xs text-slate-600 truncate mb-1">{user.email}</p>
+                <p className="text-xs text-slate-500 capitalize">{formatUserRole(user)}</p>
               </div>
             </div>
           ))}
