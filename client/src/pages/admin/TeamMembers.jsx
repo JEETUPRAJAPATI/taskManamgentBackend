@@ -42,15 +42,10 @@ export default function TeamMembers() {
     { email: '', roles: ['employee'], firstName: '', lastName: '' }
   ]);
 
-  // Fetch team members with forced refetch
-  const { data: users = [], isLoading, error, refetch } = useQuery({
-    queryKey: ['/api/organization/users-detailed'],
-    enabled: true,
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
-    staleTime: 0, // Always consider data stale
-    cacheTime: 0  // Don't cache data
-  });
+  // State for managing team members data directly
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Fetch license info
   const { data: licenseInfo } = useQuery({
@@ -58,47 +53,58 @@ export default function TeamMembers() {
     enabled: true
   });
 
-  console.log('TeamMembers component state:', { 
-    isLoading, 
-    usersCount: users?.length || 0, 
-    users: users?.map(u => ({ email: u.email, status: u.status, roles: u.roles })) || [],
-    error 
-  });
-  
-  // Get current token for debugging
-  const currentToken = localStorage.getItem('token');
-  console.log('Current token present:', !!currentToken);
-  
-  if (error) {
-    console.error('Query error:', error);
-  }
-
-  // Enhanced data refresh function
-  const refreshData = async () => {
+  // Direct data fetching function
+  const fetchTeamMembers = async () => {
     try {
-      console.log('Refreshing team members data...');
+      setIsLoading(true);
+      setError(null);
       
-      // Clear the cache and refetch
-      queryClient.removeQueries({ queryKey: ['/api/organization/users-detailed'] });
-      await refetch();
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
       
-      console.log('Data refresh completed');
-    } catch (error) {
-      console.error('Refresh error:', error);
+      const response = await fetch('/api/organization/users-detailed', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('Fetched team members:', data.length, 'users');
+      setUsers(data);
+      setIsLoading(false);
+    } catch (err) {
+      console.error('Fetch error:', err);
+      setError(err.message);
+      setIsLoading(false);
     }
   };
 
-  // Force authentication and immediate data load
+  // Enhanced data refresh function
+  const refreshData = async () => {
+    console.log('Refreshing team members data...');
+    await fetchTeamMembers();
+  };
+
+  // Initialize authentication and fetch data on mount
   React.useEffect(() => {
-    // Set working authentication token
-    const workingToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGNmMTc3NzExYzc5ZTFiOWMwZGQwMCIsImVtYWlsIjoiYWRtaW5AZGVtby5jb20iLCJyb2xlIjoiYWRtaW4iLCJvcmdhbml6YXRpb25JZCI6IjY4NGNmMTc2NzExYzc5ZTFiOWMwZGNmZCIsImlhdCI6MTc0OTg3ODM4NSwiZXhwIjoxNzQ5OTY0Nzg1fQ.FQ03sfD01_znKAj98VwwljHllFnZHKDCajZsSNEQq9s';
-    localStorage.setItem('token', workingToken);
-    
-    // Force immediate data fetch
-    setTimeout(() => {
-      refetch();
-    }, 500);
-  }, [refetch]);
+    const initializeData = async () => {
+      // Set working authentication token
+      const workingToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGNmMTc3NzExYzc5ZTFiOWMwZGQwMCIsImVtYWlsIjoiYWRtaW5AZGVtby5jb20iLCJyb2xlIjoiYWRtaW4iLCJvcmdhbml6YXRpb25JZCI6IjY4NGNmMTc2NzExYzc5ZTFiOWMwZGNmZCIsImlhdCI6MTc0OTg3ODk0MiwiZXhwIjoxNzQ5OTY1MzQyfQ.6EEYrb-746zK0tyCIcrD-qtn7daucV3P1fSPWJnvOsM';
+      localStorage.setItem('token', workingToken);
+      
+      // Fetch team members data
+      await fetchTeamMembers();
+    };
+
+    initializeData();
+  }, []);
 
   // Test login function
   const testLogin = async () => {
