@@ -124,12 +124,29 @@ export default function TeamMembers() {
 
   // Mutations
   const inviteUsersMutation = useMutation({
-    mutationFn: (inviteData) => apiRequest('/api/organization/invite-users', {
-      method: 'POST',
-      body: { users: inviteData }
-    }),
+    mutationFn: async (inviteData) => {
+      console.log('Sending invitations:', inviteData);
+      
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/organization/invite-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ inviteUsers: inviteData })
+      });
+      
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || `Failed to send invitations: ${response.status}`);
+      }
+      
+      return await response.json();
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/organization/users-detailed'] });
+      console.log('Invitations sent successfully');
+      fetchTeamMembers(); // Refresh data after sending invitations
       setInviteModalOpen(false);
       setInviteUsers([{ email: '', roles: ['employee'], firstName: '', lastName: '' }]);
       toast({
@@ -138,6 +155,7 @@ export default function TeamMembers() {
       });
     },
     onError: (error) => {
+      console.error('Invitation error:', error);
       toast({
         title: "Error",
         description: error.message || "Failed to send invitations",
