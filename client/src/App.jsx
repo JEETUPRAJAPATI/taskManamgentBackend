@@ -14,7 +14,7 @@ import Dashboard from './pages/admin/CompactDashboard';
 import Tasks from './pages/admin/Tasks';
 import Users from './pages/admin/Users';
 import UserManagement from './pages/admin/UserManagement';
-import TeamMembers from './pages/admin/TeamMembers';
+import TeamMembers from './pages/admin/TeamMembersFixed';
 import SettingsUserManagement from './pages/settings/UserManagement';
 import Projects from './pages/admin/Projects';
 import FormBuilder from './pages/admin/FormBuilder';
