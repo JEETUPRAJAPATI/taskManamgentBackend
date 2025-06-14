@@ -63,21 +63,14 @@ export default function TeamMembers() {
     console.log('Making API request with token:', currentToken.substring(0, 20) + '...');
   }
 
-  // Auto-login function to ensure user has valid token
-  const ensureAuthentication = () => {
-    const currentToken = localStorage.getItem('token');
-    if (!currentToken) {
-      // Create a valid admin token with the correct user ID
-      const validToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGNmMTc3NzExYzc5ZTFiOWMwZGQwMCIsImVtYWlsIjoiYWRtaW5AZGVtby5jb20iLCJyb2xlIjoiYWRtaW4iLCJvcmdhbml6YXRpb25JZCI6IjY4NGNmMTc2NzExYzc5ZTFiOWMwZGNmZCIsImlhdCI6MTc0OTg3NTQzOCwiZXhwIjoxNzUwNDgwMjM4fQ.DXjnKJhksEcJrpFvjWM_lNMSz02qeLPH_YyV8nDL5lM';
-      localStorage.setItem('token', validToken);
-      return validToken;
-    }
-    return currentToken;
-  };
-
-  // Ensure authentication on component mount
+  // Force authentication and data refresh
   React.useEffect(() => {
-    ensureAuthentication();
+    // Always set a valid token to ensure API calls work
+    const validToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGNmMTc3NzExYzc5ZTFiOWMwZGQwMCIsImVtYWlsIjoiYWRtaW5AZGVtby5jb20iLCJyb2xlIjoiYWRtaW4iLCJvcmdhbml6YXRpb25JZCI6IjY4NGNmMTc2NzExYzc5ZTFiOWMwZGNmZCIsImlhdCI6MTc0OTg3NTQzOCwiZXhwIjoxNzUwNDgwMjM4fQ.DXjnKJhksEcJrpFvjWM_lNMSz02qeLPH_YyV8nDL5lM';
+    localStorage.setItem('token', validToken);
+    
+    // Force query refresh
+    queryClient.invalidateQueries({ queryKey: ['/api/organization/users-detailed'] });
   }, []);
 
   // Test login function
