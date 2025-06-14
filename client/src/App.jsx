@@ -300,6 +300,11 @@ function App() {
             <ProtectedRoute component={UserManagement} allowedRoles={["admin"]} />
           </AdminLayout>
         </Route>
+        <Route path="/team-members">
+          <AdminLayout>
+            <ProtectedRoute component={TeamMembers} allowedRoles={["org_admin", "admin"]} />
+          </AdminLayout>
+        </Route>
         <Route path="/invite-users">
           <AdminLayout>
             <ProtectedRoute component={InviteUsers} allowedRoles={["org_admin", "admin"]} />
