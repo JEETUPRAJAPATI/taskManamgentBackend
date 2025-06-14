@@ -1,6 +1,22 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* CRITICAL SIDEBAR FIX - Must come first to override all other styles */
+div[class*="fixed"][class*="inset-y-0"][class*="left-0"][class*="w-56"] {
+  background: #1e3a8a !important;
+  background-color: #1e3a8a !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+div[class*="fixed"][class*="inset-y-0"][class*="left-0"][class*="w-56"] * {
+  color: #dbeafe !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
 /* TRANSPARENCY FIXES - Force solid backgrounds for all interactive elements */
 /* Critical: All dialogs, modals, popups, dropdowns MUST have solid backgrounds */
 
@@ -46,23 +62,60 @@
 .admin-sidebar,
 .blue-sidebar,
 div[class*="w-56"][class*="fixed"],
-div[class*="sidebar"] {
+div[class*="sidebar"],
+.fixed.inset-y-0.left-0.z-50 {
   background-color: #1e3a8a !important; /* blue-900 */
   background: #1e3a8a !important;
   opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  filter: none !important;
 }
 
 /* Additional sidebar styling overrides */
 .blue-sidebar *,
-div[class*="w-56"][class*="fixed"] * {
+div[class*="w-56"][class*="fixed"] *,
+.fixed.inset-y-0.left-0.z-50 * {
   color: #dbeafe !important; /* blue-100 text */
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .blue-sidebar .text-gray-400,
 .blue-sidebar .text-gray-500,
 div[class*="w-56"][class*="fixed"] .text-gray-400,
-div[class*="w-56"][class*="fixed"] .text-gray-500 {
+div[class*="w-56"][class*="fixed"] .text-gray-500,
+.fixed.inset-y-0.left-0.z-50 .text-gray-400,
+.fixed.inset-y-0.left-0.z-50 .text-gray-500 {
   color: #93c5fd !important; /* blue-300 */
+}
+
+/* Force all sidebar children to be visible */
+[data-sidebar="sidebar"] > *,
+.sidebar > *,
+.admin-sidebar > *,
+.blue-sidebar > *,
+div[class*="w-56"][class*="fixed"] > *,
+.fixed.inset-y-0.left-0.z-50 > *,
+div.fixed.inset-y-0.left-0.z-50.w-56 > * {
+  background-color: #1e3a8a !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Specific fix for the transparent sidebar issue */
+.fixed.inset-y-0.left-0.z-50.w-56.bg-blue-900 {
+  background-color: #1e3a8a !important;
+  background: #1e3a8a !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateX(0) !important;
+}
+
+.fixed.inset-y-0.left-0.z-50.w-56.bg-blue-900 * {
+  color: #dbeafe !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 /* Ensure text is visible in popups */
@@ -114,10 +167,14 @@ div[class*="w-56"][class*="fixed"] .text-gray-500 {
 .sidebar,
 .admin-sidebar,
 .fixed.inset-y-0.left-0,
-div[class*="fixed"][class*="inset-y-0"][class*="left-0"] {
+div[class*="fixed"][class*="inset-y-0"][class*="left-0"],
+div.fixed.inset-y-0.left-0.z-50.w-56 {
   background-color: #1e3a8a !important; /* blue-900 */
+  background: #1e3a8a !important;
   border-right: 1px solid #1e40af !important; /* blue-800 */
   min-height: 100vh !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 /* Sidebar text visibility */
