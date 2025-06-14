@@ -2197,7 +2197,9 @@ async function setupEmailCalendarRoutes(app) {
   // Get organization users with detailed information
   app.get("/api/organization/users-detailed", roleAuthToken, requireOrgAdminOnly, async (req, res) => {
     try {
+      console.log('Fetching users for organization:', req.user.organizationId);
       const users = await storage.getOrganizationUsersDetailed(req.user.organizationId);
+      console.log('Found users:', users.length);
       res.json(users);
     } catch (error) {
       console.error("Get organization users error:", error);

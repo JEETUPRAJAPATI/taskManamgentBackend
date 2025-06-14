@@ -20,9 +20,15 @@ export default function TeamMembers() {
   const queryClient = useQueryClient();
 
   // Fetch organization users with detailed information including invited users
-  const { data: users = [], isLoading } = useQuery({
+  const { data: users = [], isLoading, error } = useQuery({
     queryKey: ["/api/organization/users-detailed"],
-    enabled: true
+    enabled: true,
+    onSuccess: (data) => {
+      console.log('Successfully fetched users:', data);
+    },
+    onError: (error) => {
+      console.error('Error fetching users:', error);
+    }
   });
 
   // Fetch organization license info
@@ -221,6 +227,8 @@ export default function TeamMembers() {
     return user.email[0].toUpperCase();
   };
 
+  console.log('TeamMembers component state:', { isLoading, users, error });
+
   if (isLoading) {
     return (
       <div className="p-6">
@@ -228,6 +236,20 @@ export default function TeamMembers() {
           <div className="h-4 bg-gray-200 rounded w-1/4"></div>
           <div className="h-32 bg-gray-200 rounded"></div>
           <div className="h-64 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error('TeamMembers error:', error);
+    return (
+      <div className="p-6">
+        <div className="text-center py-12">
+          <div className="text-red-600 mb-4">Error loading team members: {error.message}</div>
+          <button onClick={() => window.location.reload()} className="text-blue-600 hover:underline">
+            Refresh Page
+          </button>
         </div>
       </div>
     );
