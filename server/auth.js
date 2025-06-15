@@ -17,32 +17,46 @@ export function verifyToken(token) {
 }
 
 export async function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) {
-    return res.status(401).json({ message: 'Access token required' });
+    if (!token) {
+      return res.status(401).json({ message: 'Access token required' });
+    }
+
+    console.log('Authenticating token for request:', req.path);
+    
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      console.log('Token verification failed');
+      return res.status(403).json({ error: 'Invalid token' });
+    }
+
+    console.log('Token decoded successfully:', { id: decoded.id, email: decoded.email });
+
+    // Verify user still exists and is active
+    const user = await storage.getUser(decoded.id);
+    if (!user || !user.isActive) {
+      console.log('User not found or inactive:', decoded.id);
+      return res.status(403).json({ message: 'User not found or inactive' });
+    }
+
+    console.log('User found:', { id: user._id, email: user.email, organization: user.organization });
+
+    req.user = {
+      id: decoded.id,
+      email: decoded.email,
+      organizationId: decoded.organizationId || user.organization || user.organizationId,
+      role: decoded.role,
+    };
+
+    console.log('Authentication successful for user:', req.user);
+    next();
+  } catch (error) {
+    console.error('Authentication error:', error);
+    return res.status(403).json({ error: 'Authentication failed' });
   }
-
-  const decoded = verifyToken(token);
-  if (!decoded) {
-    return res.status(403).json({ message: 'Invalid or expired token' });
-  }
-
-  // Verify user still exists and is active
-  const user = await storage.getUser(decoded.id);
-  if (!user || !user.isActive) {
-    return res.status(403).json({ message: 'User not found or inactive' });
-  }
-
-  req.user = {
-    id: decoded.id,
-    email: decoded.email,
-    organizationId: decoded.organizationId || user.organization || user.organizationId,
-    role: decoded.role,
-  };
-
-  next();
 }
 
 export function requireRole(roles) {
