@@ -1187,13 +1187,11 @@ export class MongoStorage {
   // Super Admin Methods
   async getAllCompanies() {
     return await Organization.find({})
-      .populate('createdBy', 'firstName lastName email')
       .sort({ createdAt: -1 });
   }
 
   async getCompanyDetails(companyId) {
-    const company = await Organization.findById(companyId)
-      .populate('createdBy', 'firstName lastName email');
+    const company = await Organization.findById(companyId);
     
     if (!company) return null;
 
