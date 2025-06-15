@@ -53,13 +53,10 @@ export const getQueryFn = ({ on401: unauthorizedBehavior }) =>
 
     if (!res.ok) {
       const errorText = await res.text();
-      console.log('Request failed:', res.status, errorText);
-      console.log('Response headers:', [...res.headers.entries()]);
       throw new Error(`${res.status}: ${errorText}`);
     }
 
     const data = await res.json();
-    console.log('Response data for', queryKey[0], ':', Array.isArray(data) ? `Array with ${data.length} items` : typeof data);
     return data;
   };
 

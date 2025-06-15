@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
+import { setupTestAuth } from '@/utils/auth';
 import { 
   Users, 
   UserPlus, 
@@ -311,9 +312,22 @@ export default function TeamMembers() {
         <div className="text-red-600 mb-4">
           {error.message?.includes('401') ? 'Please log in to view team members' : 'Error loading team members'}
         </div>
-        <Button onClick={refreshData}>
-          Retry
-        </Button>
+        <div className="space-x-2">
+          <Button onClick={refreshData}>
+            Retry
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              setupTestAuth();
+              setTimeout(() => {
+                window.location.reload();
+              }, 500);
+            }}
+          >
+            Setup Test Auth
+          </Button>
+        </div>
       </div>
     );
   }
