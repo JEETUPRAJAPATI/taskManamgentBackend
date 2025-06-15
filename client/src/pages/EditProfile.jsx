@@ -1,15 +1,13 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import { User, Camera, Save, ArrowLeft, Upload, X } from "lucide-react";
+import { User, Camera, Save, ArrowLeft, X } from "lucide-react";
 
 export default function EditProfile() {
   const [, setLocation] = useLocation();
@@ -21,24 +19,24 @@ export default function EditProfile() {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    phone: "",
-    address: "",
-    bio: ""
+    address: ""
   });
 
   // Fetch current user profile
   const { data: user, isLoading } = useQuery({
     queryKey: ["/api/profile"],
-    onSuccess: (data) => {
+  });
+
+  // Update form data when user data is loaded
+  useEffect(() => {
+    if (user) {
       setFormData({
-        firstName: data.firstName || "",
-        lastName: data.lastName || "",
-        phone: data.phone || "",
-        address: data.address || "",
-        bio: data.bio || ""
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        address: user.address || ""
       });
     }
-  });
+  }, [user]);
 
   // Update profile mutation
   const updateProfile = useMutation({
@@ -202,7 +200,7 @@ export default function EditProfile() {
               Profile Information
             </CardTitle>
             <CardDescription>
-              Update your profile details. Email and password cannot be changed here.
+              Update your profile details. Email cannot be changed here.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -289,18 +287,6 @@ export default function EditProfile() {
               </div>
 
               <div>
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  placeholder="Enter your phone number"
-                />
-              </div>
-
-              <div>
                 <Label htmlFor="address">Address</Label>
                 <Input
                   id="address"
@@ -309,22 +295,6 @@ export default function EditProfile() {
                   onChange={handleInputChange}
                   placeholder="Enter your address"
                 />
-              </div>
-
-              <div>
-                <Label htmlFor="bio">Bio</Label>
-                <Textarea
-                  id="bio"
-                  name="bio"
-                  value={formData.bio}
-                  onChange={handleInputChange}
-                  placeholder="Tell us about yourself..."
-                  rows={4}
-                  maxLength={500}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  {formData.bio.length}/500 characters
-                </p>
               </div>
 
               {/* Submit Button */}

@@ -76,14 +76,12 @@ export async function registerRoutes(app) {
   app.put("/api/profile", authenticateToken, uploadProfileImage, processProfileImage, async (req, res) => {
     try {
       const userId = req.user.id;
-      const { firstName, lastName, phone, bio, address } = req.body;
+      const { firstName, lastName, address } = req.body;
       
       // Build update object with only allowed fields
       const updateData = {};
       if (firstName !== undefined) updateData.firstName = firstName;
       if (lastName !== undefined) updateData.lastName = lastName;
-      if (phone !== undefined) updateData.phone = phone;
-      if (bio !== undefined) updateData.bio = bio;
       if (address !== undefined) updateData.address = address;
 
       // Handle profile image upload
