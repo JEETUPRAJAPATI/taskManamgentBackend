@@ -7,6 +7,7 @@ import { storage } from "./mongodb-storage.js";
 import { authenticateToken, requireRole } from "./middleware/roleAuth.js";
 import { authService } from "./services/authService.js";
 import { uploadProfileImage, processProfileImage, deleteOldProfileImage } from "./middleware/upload.js";
+import { emailService } from "./services/emailService.js";
 
 export async function registerRoutes(app) {
   // Configure CORS
@@ -76,6 +77,28 @@ export async function registerRoutes(app) {
       
       console.log("Individual user created:", user._id);
 
+      // Generate verification token and send email
+      const verificationToken = storage.generateEmailVerificationToken();
+      
+      // Update user with verification token
+      await storage.updateUser(user._id, { 
+        emailVerificationToken: verificationToken,
+        emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+      });
+
+      // Send verification email
+      const emailSent = await emailService.sendVerificationEmail(
+        email, 
+        verificationToken, 
+        firstName
+      );
+
+      if (emailSent) {
+        console.log("Verification email sent successfully to:", email);
+      } else {
+        console.log("Failed to send verification email to:", email);
+      }
+
       res.status(201).json({
         message: "Registration successful. Please check your email for verification.",
         user: {
@@ -140,6 +163,29 @@ export async function registerRoutes(app) {
       const user = await storage.createUser(userData);
       
       console.log("Organization and admin user created:", { orgId: organization._id, userId: user._id });
+
+      // Generate verification token and send email
+      const verificationToken = storage.generateEmailVerificationToken();
+      
+      // Update user with verification token
+      await storage.updateUser(user._id, { 
+        emailVerificationToken: verificationToken,
+        emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+      });
+
+      // Send verification email with organization name
+      const emailSent = await emailService.sendVerificationEmail(
+        email, 
+        verificationToken, 
+        firstName,
+        organizationName
+      );
+
+      if (emailSent) {
+        console.log("Verification email sent successfully to:", email);
+      } else {
+        console.log("Failed to send verification email to:", email);
+      }
 
       res.status(201).json({
         message: "Organization registration successful. Please check your email for verification.",

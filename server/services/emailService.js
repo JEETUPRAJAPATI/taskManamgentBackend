@@ -1,15 +1,20 @@
-import { MailService } from '@sendgrid/mail';
+import nodemailer from 'nodemailer';
 
 class EmailService {
   constructor() {
-    // Initialize SendGrid
-    if (process.env.SENDGRID_API_KEY) {
-      this.mailService = new MailService();
-      this.mailService.setApiKey(process.env.SENDGRID_API_KEY);
+    if (process.env.MAILTRAP_HOST && process.env.MAILTRAP_PORT && process.env.MAILTRAP_USERNAME && process.env.MAILTRAP_PASSWORD) {
+      this.transporter = nodemailer.createTransport({
+        host: process.env.MAILTRAP_HOST,
+        port: parseInt(process.env.MAILTRAP_PORT),
+        auth: {
+          user: process.env.MAILTRAP_USERNAME,
+          pass: process.env.MAILTRAP_PASSWORD
+        }
+      });
       this.isConfigured = true;
-      console.log('SendGrid email service configured successfully');
+      console.log('Mailtrap email service configured successfully');
     } else {
-      console.warn('SendGrid API key not found - email service disabled');
+      console.warn('Mailtrap credentials not found - email service disabled');
       this.isConfigured = false;
     }
     
