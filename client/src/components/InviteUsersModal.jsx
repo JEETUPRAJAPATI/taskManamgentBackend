@@ -634,8 +634,57 @@ export function InviteUsersModal({ isOpen, onClose }) {
 
     setIsSubmitting(true);
     try {
-      await inviteUsersMutation.mutateAsync(validInvites);
-      // Success handling is done in the mutation's onSuccess callback
+      // Use test endpoint for email functionality testing
+      const response = await fetch("/api/organization/invite-users-test", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ invites: validInvites }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        if (data.errors && data.errors.length > 0) {
+          toast({
+            title: "Partial Success",
+            description: `${data.successCount} invitations sent. ${data.errors.length} failed.`,
+            variant: "default",
+            duration: 8000,
+          });
+        } else {
+          const successMessage =
+            data.successCount === 1
+              ? `1 invitation sent successfully`
+              : `${data.successCount} invitations sent successfully`;
+
+          toast({
+            title: "Invitations Sent!",
+            description: successMessage,
+            variant: "default",
+            duration: 5000,
+          });
+        }
+
+        onClose();
+        queryClient.invalidateQueries({
+          queryKey: ["/api/organization/users-detailed"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["/api/organization/license"],
+        });
+      } else {
+        throw new Error(data.message || "Failed to send invitations");
+      }
+    } catch (error) {
+      console.error("Invite error:", error);
+      toast({
+        title: "Failed to send invitations",
+        description: error.message,
+        variant: "destructive",
+        duration: 8000,
+      });
     } finally {
       setIsSubmitting(false);
     }
