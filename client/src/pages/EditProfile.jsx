@@ -20,6 +20,11 @@ export default function EditProfile() {
     firstName: "",
     lastName: ""
   });
+  const [originalData, setOriginalData] = useState({
+    firstName: "",
+    lastName: ""
+  });
+  const [hasChanges, setHasChanges] = useState(false);
 
   // Fetch current user profile - try auth/verify first as fallback
   const { data: authUser } = useQuery({
@@ -30,36 +35,31 @@ export default function EditProfile() {
   const { data: user, isLoading, error } = useQuery({
     queryKey: ["/api/profile"],
     retry: 1,
-    onError: (error) => {
-      console.error("Profile API error:", error);
-    },
-    onSuccess: (data) => {
-      console.log("Profile API success:", data);
-    }
   });
 
-  // Use authUser as fallback if profile API fails
+  // Use profile data primarily, fallback to auth data
   const currentUser = user || authUser;
 
   // Update form data when user data is loaded
   useEffect(() => {
-    console.log("EditProfile - Current user data:", currentUser);
-    console.log("EditProfile - Auth user data:", authUser);
-    console.log("EditProfile - Profile user data:", user);
-    console.log("EditProfile - Loading state:", isLoading);
-    console.log("EditProfile - Error state:", error);
-    
     if (currentUser) {
-      console.log("Setting form data:", {
+      const userData = {
         firstName: currentUser.firstName || "",
         lastName: currentUser.lastName || ""
-      });
-      setFormData({
-        firstName: currentUser.firstName || "",
-        lastName: currentUser.lastName || ""
-      });
+      };
+      setFormData(userData);
+      setOriginalData(userData);
     }
-  }, [currentUser, authUser, user, isLoading, error]);
+  }, [currentUser]);
+
+  // Check for changes
+  useEffect(() => {
+    const hasFormChanges = 
+      formData.firstName !== originalData.firstName ||
+      formData.lastName !== originalData.lastName ||
+      selectedFile !== null;
+    setHasChanges(hasFormChanges);
+  }, [formData, originalData, selectedFile]);
 
   // Update profile mutation
   const updateProfile = useMutation({
@@ -98,6 +98,18 @@ export default function EditProfile() {
         title: "Success",
         description: "Profile updated successfully",
       });
+      
+      // Update form state with new data
+      const newUserData = data.user;
+      const updatedFormData = {
+        firstName: newUserData.firstName || "",
+        lastName: newUserData.lastName || ""
+      };
+      setFormData(updatedFormData);
+      setOriginalData(updatedFormData);
+      setSelectedFile(null);
+      setImagePreview(null);
+      
       queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
       queryClient.invalidateQueries({ queryKey: ["/api/auth/verify"] });
       setLocation("/dashboard");
@@ -322,8 +334,8 @@ export default function EditProfile() {
                 </Button>
                 <Button
                   type="submit"
-                  disabled={updateProfile.isPending}
-                  className="bg-sidebarDark hover:bg-sidebarHover"
+                  disabled={updateProfile.isPending || !hasChanges}
+                  className="bg-sidebarDark hover:bg-sidebarHover disabled:opacity-50"
                 >
                   {updateProfile.isPending ? (
                     <>

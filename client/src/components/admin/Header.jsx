@@ -1,273 +1,132 @@
-import { useState, useRef, useEffect } from "react";
-import { useLocation, Link } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
+import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-  Menu,
-  Bell,
-  Search,
-  User,
-  Settings,
-  LogOut,
-  Edit,
-  Shield,
-  Key,
-  Palette,
-  HelpCircle,
-  ChevronDown,
-  UserPlus,
-} from "lucide-react";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Bell, Search, User, Settings, LogOut, Edit3 } from "lucide-react";
+import ProfileUpdateModal from "@/components/profile/ProfileUpdateModal";
 
-export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+export default function Header({ user }) {
   const [, setLocation] = useLocation();
-  const dropdownRef = useRef(null);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const queryClient = useQueryClient();
 
-  // Get current user data to check role
-  const { data: user } = useQuery({
-    queryKey: ["/api/auth/verify"],
-    enabled: !!localStorage.getItem("token"),
-  });
-
-  // Get current user profile data
-  const { data: userProfile } = useQuery({
+  // Fetch fresh user data for the header - prioritize profile API
+  const { data: profileUser } = useQuery({
     queryKey: ["/api/profile"],
-    enabled: !!localStorage.getItem("token"),
   });
 
-  // Check if user can invite users (organization admins only)
-  const canInviteUsers =
-    user?.role === "org_admin" || user?.role === "superadmin";
+  const { data: authUser } = useQuery({
+    queryKey: ["/api/auth/verify"],
+    initialData: user,
+  });
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setProfileDropdownOpen(false);
-      }
+  // Use profile data if available, fallback to auth data
+  const currentUser = profileUser || authUser || user;
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/logout', { method: 'POST' });
+      localStorage.removeItem('token');
+      queryClient.clear();
+      setLocation('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Force logout even if API call fails
+      localStorage.removeItem('token');
+      queryClient.clear();
+      setLocation('/login');
     }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const handleLogout = () => {
-    // Clear authentication token
-    localStorage.removeItem("token");
-    // Close dropdown
-    setProfileDropdownOpen(false);
-    // Redirect to login
-    setLocation("/login");
   };
 
-  const profileMenuItems = [
-    {
-      icon: Edit,
-      label: "Edit Profile",
-      description: "Update your personal information",
-      action: () => setLocation("/edit-profile"),
-    },
-    {
-      icon: Settings,
-      label: "Account Settings",
-      description: "Manage your account preferences",
-      action: () => console.log("Account settings clicked"),
-    },
-    {
-      icon: Shield,
-      label: "Security & Privacy",
-      description: "Two-factor auth and privacy settings",
-      action: () => console.log("Security settings clicked"),
-    },
-    {
-      icon: Key,
-      label: "API Keys",
-      description: "Manage your API access keys",
-      action: () => console.log("API keys clicked"),
-    },
-    {
-      icon: Palette,
-      label: "Appearance",
-      description: "Theme and display preferences",
-      action: () => console.log("Appearance clicked"),
-    },
-    {
-      icon: HelpCircle,
-      label: "Help & Support",
-      description: "Get help and contact support",
-      action: () => console.log("Help clicked"),
-    },
-  ];
-
   const getDisplayName = () => {
-    if (userProfile?.firstName && userProfile?.lastName) {
-      return `${userProfile.firstName} ${userProfile.lastName}`;
+    if (currentUser?.firstName && currentUser?.lastName) {
+      return `${currentUser.firstName} ${currentUser.lastName}`;
     }
-    return user?.email || "Admin";
+    return currentUser?.email?.split('@')[0] || 'User';
   };
 
   const getInitials = () => {
-    if (userProfile?.firstName && userProfile?.lastName) {
-      return `${userProfile.firstName.charAt(0)}${userProfile.lastName.charAt(0)}`.toUpperCase();
+    if (currentUser?.firstName && currentUser?.lastName) {
+      return `${currentUser.firstName.charAt(0)}${currentUser.lastName.charAt(0)}`.toUpperCase();
     }
-    return user?.email?.charAt(0).toUpperCase() || "A";
+    return currentUser?.email?.charAt(0).toUpperCase() || "U";
   };
 
   return (
-    <header className="bg-sidebarDark border-b border-gray-600/30 h-14">
-      <div className="flex items-center justify-between h-full px-4">
-        <div className="flex items-center">
-          {/* Mobile menu button */}
-          <button
-            onClick={onMenuClick}
-            className="p-2 rounded-md text-gray-300 hover:bg-sidebarHover lg:hidden"
-          >
-            <Menu className="h-4 w-4" />
-          </button>
-
-          {/* Desktop sidebar toggle */}
-          <button
-            onClick={onSidebarToggle}
-            className="hidden lg:block p-2 rounded-md text-gray-300 hover:bg-sidebarHover"
-          >
-            <Menu className="h-4 w-4" />
-          </button>
-
-          {/* Search */}
-          <div className="ml-4 flex items-center">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-gray-400" />
-              </div>
-              <input
-                className="block w-64 pl-10 pr-3 py-2 border border-gray-600/30 rounded-md bg-sidebarHover placeholder-gray-400 text-white focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 text-sm"
-                placeholder="Search..."
-                type="search"
-              />
-            </div>
+    <header className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <input
+              type="text"
+              placeholder="Search..."
+              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
           </div>
         </div>
 
-        <div className="flex items-center space-x-2">
-          {/* Invite User Button - Only for organization admins */}
-          {canInviteUsers && (
-            <Link href="/invite-users">
-              <button className="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:bg-sidebarHover hover:text-white rounded-md transition-colors">
-                <UserPlus className="h-4 w-4 mr-2" />
-                Invite User
-              </button>
-            </Link>
-          )}
+        <div className="flex items-center space-x-4">
+          <Button variant="ghost" size="sm">
+            <Bell className="h-4 w-4" />
+          </Button>
 
-          {/* Notifications */}
-          <button className="p-2 rounded-md text-gray-300 hover:bg-sidebarHover relative">
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
-          </button>
-
-          {/* Profile Dropdown */}
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-              className="flex items-center p-2 rounded-md text-gray-300 hover:bg-sidebarHover transition-colors"
-            >
-              <div className="flex items-center">
-                <div className="relative">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={userProfile?.profileImageUrl} />
-                    <AvatarFallback className="bg-sidebarHover text-white text-xs">
-                      {getInitials()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-green-500 border border-sidebarDark rounded-full"></div>
-                </div>
-                <span className="ml-2 text-sm font-medium text-white hidden sm:block">
-                  {getDisplayName()}
-                </span>
-                <ChevronDown
-                  className={`ml-1 h-4 w-4 transition-transform duration-200 ${
-                    profileDropdownOpen ? "rotate-180" : ""
-                  }`}
-                />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage 
+                    src={currentUser?.profileImageUrl} 
+                    alt={getDisplayName()} 
+                  />
+                  <AvatarFallback className="bg-sidebarDark text-white">
+                    {getInitials()}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <div className="flex flex-col space-y-1 p-2">
+                <p className="text-sm font-medium leading-none">{getDisplayName()}</p>
+                <p className="text-xs leading-none text-muted-foreground">
+                  {currentUser?.email}
+                </p>
               </div>
-            </button>
-
-            {/* Profile Dropdown Menu */}
-            {profileDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-80 bg-sidebarDark rounded-lg shadow-lg border border-gray-600/30 py-2 z-50">
-                {/* Profile Header */}
-                <div className="px-4 py-3 border-b border-gray-600/30">
-                  <div className="flex items-center">
-                    <div className="relative">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={userProfile?.profileImageUrl} />
-                        <AvatarFallback className="bg-sidebarHover text-white font-semibold">
-                          {getInitials()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-sidebarDark rounded-full"></div>
-                    </div>
-                    <div className="ml-3">
-                      <p className="text-sm font-medium text-white">
-                        {getDisplayName()}
-                      </p>
-                      <p className="text-xs text-gray-300">{user?.email}</p>
-                      <p className="text-xs text-green-400">● Online</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Profile Setup Options */}
-                <div className="px-2 py-2">
-                  <div className="px-3 py-2">
-                    <p className="text-xs font-semibold text-gray-300 uppercase tracking-wider">
-                      Profile Setup
-                    </p>
-                  </div>
-
-                  {profileMenuItems.map((item, index) => {
-                    const Icon = item.icon;
-                    return (
-                      <button
-                        key={index}
-                        onClick={item.action}
-                        className="w-full flex items-start p-3 rounded-lg hover:bg-sidebarHover transition-colors text-left group"
-                      >
-                        <div className="flex-shrink-0">
-                          <Icon className="h-5 w-5 text-gray-300 group-hover:text-white transition-colors" />
-                        </div>
-                        <div className="ml-3 min-w-0 flex-1">
-                          <p className="text-sm font-medium text-gray-300 group-hover:text-white">
-                            {item.label}
-                          </p>
-                          <p className="text-xs text-gray-400 mt-1">
-                            {item.description}
-                          </p>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Logout Section */}
-                <div className="border-t border-gray-600/30 px-2 py-2">
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center p-3 rounded-lg hover:bg-red-900/20 transition-colors text-left group"
-                  >
-                    <LogOut className="h-5 w-5 text-gray-400 group-hover:text-red-400 transition-colors" />
-                    <span className="ml-3 text-sm font-medium text-gray-300 group-hover:text-red-400">
-                      Sign Out
-                    </span>
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setLocation("/edit-profile")}>
+                <Edit3 className="mr-2 h-4 w-4" />
+                <span>Edit Profile</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setShowProfileModal(true)}>
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
+
+      <ProfileUpdateModal 
+        isOpen={showProfileModal} 
+        onClose={() => setShowProfileModal(false)} 
+      />
     </header>
   );
 }

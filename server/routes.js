@@ -66,13 +66,6 @@ export async function registerRoutes(app) {
       }
       
       console.log("Profile API - Raw user data:", user);
-      console.log("Profile API - User data:", {
-        id: user._id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        profileImageUrl: user.profileImageUrl
-      });
       
       // Remove sensitive data and return clean profile
       const userProfile = {
@@ -83,7 +76,7 @@ export async function registerRoutes(app) {
         lastName: user.lastName || '',
         profileImageUrl: user.profileImageUrl || null,
         role: user.role,
-        organizationId: user.organizationId,
+        organizationId: user.organizationId || user.organization,
         status: user.status,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt
@@ -109,11 +102,20 @@ export async function registerRoutes(app) {
         lastName,
         hasFile: !!req.file
       });
+
+      // Validate required fields
+      if (!firstName || !firstName.trim()) {
+        return res.status(400).json({ message: "First name is required" });
+      }
+      if (!lastName || !lastName.trim()) {
+        return res.status(400).json({ message: "Last name is required" });
+      }
       
       // Build update object with only allowed fields
-      const updateData = {};
-      if (firstName !== undefined) updateData.firstName = firstName;
-      if (lastName !== undefined) updateData.lastName = lastName;
+      const updateData = {
+        firstName: firstName.trim(),
+        lastName: lastName.trim()
+      };
 
       // Handle profile image upload
       if (req.file) {
@@ -134,8 +136,21 @@ export async function registerRoutes(app) {
         return res.status(404).json({ message: "User not found" });
       }
 
-      // Remove sensitive data
-      const { passwordHash, passwordResetToken, emailVerificationToken, ...userProfile } = updatedUser.toObject();
+      // Return clean user profile data
+      const userProfile = {
+        _id: updatedUser._id,
+        id: updatedUser._id,
+        email: updatedUser.email,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        profileImageUrl: updatedUser.profileImageUrl,
+        role: updatedUser.role,
+        organizationId: updatedUser.organizationId || updatedUser.organization,
+        status: updatedUser.status,
+        createdAt: updatedUser.createdAt,
+        updatedAt: updatedUser.updatedAt
+      };
+
       res.json({
         message: "Profile updated successfully",
         user: userProfile
