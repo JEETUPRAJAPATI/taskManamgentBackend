@@ -282,6 +282,165 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Validate invitation token
+  app.get("/api/auth/validate-invite", async (req, res) => {
+    try {
+      const { token } = req.query;
+      
+      if (!token) {
+        return res.status(400).json({ message: "Invitation token is required" });
+      }
+
+      // Get invitation details by token
+      const pendingUser = await storage.getUserByInviteToken(token);
+      
+      if (!pendingUser) {
+        return res.status(404).json({ message: "Invalid or expired invitation token" });
+      }
+
+      // Check if token is expired
+      if (pendingUser.inviteExpires && new Date() > new Date(pendingUser.inviteExpires)) {
+        return res.status(400).json({ message: "Invitation token has expired" });
+      }
+
+      // Get organization details
+      const organization = await storage.getOrganization(pendingUser.organizationId);
+      
+      res.json({
+        email: pendingUser.email,
+        roles: pendingUser.roles,
+        organization: {
+          name: organization?.name || "Unknown Organization",
+          id: organization?._id || pendingUser.organizationId
+        },
+        invitedBy: pendingUser.invitedBy
+      });
+    } catch (error) {
+      console.error("Validate invite error:", error);
+      res.status(500).json({ message: "Failed to validate invitation" });
+    }
+  });
+
+  // Accept invitation and complete registration
+  app.post("/api/auth/accept-invite", async (req, res) => {
+    try {
+      const { token, firstName, lastName, password } = req.body;
+      
+      if (!token || !firstName || !lastName || !password) {
+        return res.status(400).json({ 
+          message: "Token, first name, last name, and password are required" 
+        });
+      }
+
+      // Complete the invitation
+      const result = await storage.completeUserInvitation(token, {
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        password
+      });
+
+      if (!result.success) {
+        return res.status(400).json({ message: result.message });
+      }
+
+      // Generate auth token for the new user
+      const authToken = storage.generateToken(result.user);
+      
+      res.json({
+        message: "Account created successfully",
+        token: authToken,
+        user: {
+          id: result.user._id,
+          email: result.user.email,
+          firstName: result.user.firstName,
+          lastName: result.user.lastName,
+          role: result.user.role,
+          organizationId: result.user.organizationId
+        }
+      });
+    } catch (error) {
+      console.error("Accept invite error:", error);
+      res.status(500).json({ message: "Failed to accept invitation" });
+    }
+  });
+
+  // Alternative endpoint for validate-invite-token (used by auth/AcceptInvite.jsx)
+  app.post("/api/auth/validate-invite-token", async (req, res) => {
+    try {
+      const { token } = req.body;
+      
+      if (!token) {
+        return res.status(400).json({ message: "Invitation token is required" });
+      }
+
+      const pendingUser = await storage.getUserByInviteToken(token);
+      
+      if (!pendingUser) {
+        return res.status(404).json({ message: "Invalid or expired invitation token" });
+      }
+
+      if (pendingUser.inviteExpires && new Date() > new Date(pendingUser.inviteExpires)) {
+        return res.status(400).json({ message: "Invitation token has expired" });
+      }
+
+      const organization = await storage.getOrganization(pendingUser.organizationId);
+      
+      res.json({
+        email: pendingUser.email,
+        roles: pendingUser.roles,
+        organization: {
+          name: organization?.name || "Unknown Organization",
+          id: organization?._id || pendingUser.organizationId
+        },
+        invitedBy: pendingUser.invitedBy
+      });
+    } catch (error) {
+      console.error("Validate invite token error:", error);
+      res.status(500).json({ message: "Failed to validate invitation token" });
+    }
+  });
+
+  // Alternative endpoint for complete-invitation (used by auth/AcceptInvitation.jsx)
+  app.post("/api/auth/complete-invitation", async (req, res) => {
+    try {
+      const { token, firstName, lastName, password } = req.body;
+      
+      if (!token || !firstName || !lastName || !password) {
+        return res.status(400).json({ 
+          message: "Token, first name, last name, and password are required" 
+        });
+      }
+
+      const result = await storage.completeUserInvitation(token, {
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        password
+      });
+
+      if (!result.success) {
+        return res.status(400).json({ message: result.message });
+      }
+
+      const authToken = storage.generateToken(result.user);
+      
+      res.json({
+        message: "Account created successfully",
+        token: authToken,
+        user: {
+          id: result.user._id,
+          email: result.user.email,
+          firstName: result.user.firstName,
+          lastName: result.user.lastName,
+          role: result.user.role,
+          organizationId: result.user.organizationId
+        }
+      });
+    } catch (error) {
+      console.error("Complete invitation error:", error);
+      res.status(500).json({ message: "Failed to complete invitation" });
+    }
+  });
+
   // Health check endpoint
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
