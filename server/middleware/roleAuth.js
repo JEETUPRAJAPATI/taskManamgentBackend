@@ -21,21 +21,11 @@ export const authenticateToken = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, JWT_SECRET);
-    console.log("Token decoded:", { id: decoded.id, email: decoded.email });
     
     // Get fresh user data to ensure role/organization info is current
     const user = await storage.getUser(decoded.id);
-    console.log("User found in database:", user ? {
-      id: user._id,
-      email: user.email,
-      role: user.role,
-      organization: user.organization,
-      organizationId: user.organizationId,
-      isActive: user.isActive
-    } : 'No user found');
     
     if (!user || !user.isActive) {
-      console.log("User authentication failed - user not found or inactive");
       return res.status(401).json({ error: 'Invalid or inactive user' });
     }
 
@@ -49,7 +39,6 @@ export const authenticateToken = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.log("Token verification error:", error.message);
     return res.status(403).json({ error: 'Invalid token' });
   }
 };

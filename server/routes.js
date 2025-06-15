@@ -282,22 +282,12 @@ export async function registerRoutes(app) {
     try {
       const user = req.user;
       
-      console.log("Team members request - User info:", {
-        id: user.id,
-        email: user.email,
-        organizationId: user.organizationId,
-        role: user.role
-      });
-      
       if (!user.organizationId) {
-        console.log("No organizationId found for user:", user.id);
         return res.status(400).json({ message: "User not associated with any organization" });
       }
 
       // Get all users in the same organization
-      console.log("Fetching team members for organization:", user.organizationId);
       const teamMembers = await storage.getOrganizationUsersDetailed(user.organizationId);
-      console.log("Found team members:", teamMembers.length);
       
       // Format the response to include only necessary fields
       const formattedMembers = teamMembers.map(member => ({
