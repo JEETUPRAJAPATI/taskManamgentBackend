@@ -63,6 +63,14 @@ export async function registerRoutes(app) {
         return res.status(404).json({ message: "User not found" });
       }
       
+      console.log("Profile API - User data:", {
+        id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        profileImageUrl: user.profileImageUrl
+      });
+      
       // Remove sensitive data
       const { passwordHash, passwordResetToken, emailVerificationToken, ...userProfile } = user.toObject();
       res.json(userProfile);
@@ -77,6 +85,13 @@ export async function registerRoutes(app) {
     try {
       const userId = req.user.id;
       const { firstName, lastName } = req.body;
+      
+      console.log("Profile Update - Request data:", {
+        userId,
+        firstName,
+        lastName,
+        hasFile: !!req.file
+      });
       
       // Build update object with only allowed fields
       const updateData = {};
