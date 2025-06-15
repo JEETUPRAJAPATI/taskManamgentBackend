@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Building2, Users, Settings, BarChart3, UserPlus, Mail, Trash2, Crown, User } from 'lucide-react';
+import { Building2, Users, Settings, BarChart3, UserPlus, Mail, Trash2, Crown, User, AlertCircle } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -149,13 +149,34 @@ export default function AdminDashboard() {
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="user@example.com"
-                    value={inviteEmail}
-                    onChange={(e) => setInviteEmail(e.target.value)}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="user@example.com"
+                      value={inviteEmail}
+                      onChange={(e) => {
+                        setInviteEmail(e.target.value);
+                        if (emailError) setEmailError('');
+                      }}
+                      onBlur={(e) => checkExistingInvitation(e.target.value)}
+                      disabled={isCheckingEmail}
+                      className={emailError ? "border-red-300 focus:border-red-400 focus:ring-red-200" : ""}
+                    />
+                    {isCheckingEmail && (
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-slate-400"></div>
+                      </div>
+                    )}
+                  </div>
+                  {emailError && (
+                    <div className="bg-red-50 border border-red-200 rounded-md p-2 mt-1">
+                      <p className="text-sm text-red-700 flex items-center">
+                        <AlertCircle className="h-3 w-3 mr-1 text-red-500" />
+                        {emailError}
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="role">Role</Label>
