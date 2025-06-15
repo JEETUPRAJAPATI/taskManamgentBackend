@@ -16,8 +16,9 @@
   }
 
   body {
-    @apply bg-gray-50 text-navy-900 font-sans antialiased leading-relaxed;
+    @apply bg-gray-50 text-black font-sans antialiased leading-relaxed;
     font-feature-settings: 'rlig' 1, 'calt' 1;
+    color: #000000 !important;
   }
 
   /* Typography improvements */
@@ -27,7 +28,8 @@
   h4,
   h5,
   h6 {
-    @apply font-semibold text-navy-900 tracking-tight;
+    @apply font-semibold text-black tracking-tight;
+    color: #000000 !important;
   }
 
   h1 {
@@ -505,6 +507,24 @@
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+
+  /* Global text color override */
+  * {
+    color: #000000 !important;
+  }
+
+  /* Preserve specific colors for buttons and links */
+  .btn-primary, .btn-primary * {
+    color: white !important;
+  }
+
+  .btn-secondary, .btn-secondary * {
+    color: #374151 !important;
+  }
+
+  .text-white, .text-white * {
+    color: white !important;
   }
 }
 
