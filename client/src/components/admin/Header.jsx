@@ -101,6 +101,20 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
     },
   ];
 
+  const getDisplayName = () => {
+    if (userProfile?.firstName && userProfile?.lastName) {
+      return `${userProfile.firstName} ${userProfile.lastName}`;
+    }
+    return user?.email || "Admin";
+  };
+
+  const getInitials = () => {
+    if (userProfile?.firstName && userProfile?.lastName) {
+      return `${userProfile.firstName.charAt(0)}${userProfile.lastName.charAt(0)}`.toUpperCase();
+    }
+    return user?.email?.charAt(0).toUpperCase() || "A";
+  };
+
   return (
     <header className="bg-sidebarDark border-b border-gray-600/30 h-14">
       <div className="flex items-center justify-between h-full px-4">
@@ -161,11 +175,16 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
             >
               <div className="flex items-center">
                 <div className="relative">
-                  <User className="h-5 w-5" />
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={userProfile?.profileImageUrl} />
+                    <AvatarFallback className="bg-sidebarHover text-white text-xs">
+                      {getInitials()}
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-green-500 border border-sidebarDark rounded-full"></div>
                 </div>
                 <span className="ml-2 text-sm font-medium text-white hidden sm:block">
-                  Admin
+                  {getDisplayName()}
                 </span>
                 <ChevronDown
                   className={`ml-1 h-4 w-4 transition-transform duration-200 ${
@@ -182,14 +201,17 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
                 <div className="px-4 py-3 border-b border-gray-600/30">
                   <div className="flex items-center">
                     <div className="relative">
-                      <div className="w-10 h-10 bg-sidebarHover rounded-full flex items-center justify-center text-white font-semibold">
-                        AU
-                      </div>
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={userProfile?.profileImageUrl} />
+                        <AvatarFallback className="bg-sidebarHover text-white font-semibold">
+                          {getInitials()}
+                        </AvatarFallback>
+                      </Avatar>
                       <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-sidebarDark rounded-full"></div>
                     </div>
                     <div className="ml-3">
                       <p className="text-sm font-medium text-white">
-                        Admin User
+                        {getDisplayName()}
                       </p>
                       <p className="text-xs text-gray-300">{user?.email}</p>
                       <p className="text-xs text-green-400">● Online</p>
