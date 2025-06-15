@@ -300,8 +300,10 @@ export default function TeamMembers() {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-600 mb-4">Error loading team members</div>
-        <Button onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/organization/users'] })}>
+        <div className="text-red-600 mb-4">
+          {error.message?.includes('401') ? 'Please log in to view team members' : 'Error loading team members'}
+        </div>
+        <Button onClick={refreshData}>
           Retry
         </Button>
       </div>
@@ -515,11 +517,11 @@ export default function TeamMembers() {
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span>{users.filter(u => u.status === 'active').length} Active</span>
+                  <span>{teamMembers.filter(u => u.status === 'active').length} Active</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  <span>{users.filter(u => u.status === 'invited').length} Invited</span>
+                  <span>{teamMembers.filter(u => u.status === 'invited').length} Invited</span>
                 </div>
               </div>
             </div>
@@ -530,23 +532,15 @@ export default function TeamMembers() {
               <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                 <Users className="h-12 w-12 text-gray-400" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No team members yet</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No team members added yet</h3>
               <p className="text-gray-600 mb-4">Start building your team by inviting members to collaborate.</p>
-              <div className="space-y-3">
-                <Button
-                  onClick={testLogin}
-                  className="bg-green-600 hover:bg-green-700 mr-3"
-                >
-                  Login as Demo Admin
-                </Button>
-                <Button
-                  onClick={() => setInviteModalOpen(true)}
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Invite First Member
-                </Button>
-              </div>
+              <Button
+                onClick={() => setInviteModalOpen(true)}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <UserPlus className="h-4 w-4 mr-2" />
+                Invite First Member
+              </Button>
             </div>
           ) : (
             <>
