@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Menu,
   Bell,
@@ -25,6 +26,12 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
   // Get current user data to check role
   const { data: user } = useQuery({
     queryKey: ["/api/auth/verify"],
+    enabled: !!localStorage.getItem("token"),
+  });
+
+  // Get current user profile data
+  const { data: userProfile } = useQuery({
+    queryKey: ["/api/profile"],
     enabled: !!localStorage.getItem("token"),
   });
 
@@ -60,7 +67,7 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
       icon: Edit,
       label: "Edit Profile",
       description: "Update your personal information",
-      action: () => console.log("Edit profile clicked"),
+      action: () => setLocation("/edit-profile"),
     },
     {
       icon: Settings,

@@ -47,6 +47,7 @@ import RegistrationChoice from "./pages/auth/RegistrationChoice";
 import IndividualRegistration from "./pages/auth/IndividualRegistration";
 import OrganizationRegistration from "./pages/auth/OrganizationRegistration";
 import Login from "./pages/auth/Login";
+import EditProfile from "./pages/EditProfile";
 
 import CreatePassword from "./pages/auth/CreatePassword";
 import ResetPassword from "./pages/auth/ResetPassword";
@@ -377,6 +378,9 @@ function App() {
               allowedRoles={["superadmin", "org_admin", "admin"]}
             />
           </AdminLayout>
+        </Route>
+        <Route path="/edit-profile">
+          <ProtectedRoute component={EditProfile} />
         </Route>
         <Route path="/admin/invite-users">
           <AdminLayout>
