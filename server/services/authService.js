@@ -370,6 +370,16 @@ export class AuthService {
   async login(email, password) {
     const user = await storage.getUserByEmail(email);
     
+    console.log("Login debug - User object:", {
+      id: user?._id,
+      email: user?.email,
+      hasPasswordHash: !!user?.passwordHash,
+      passwordHashValue: user?.passwordHash ? 'Present' : 'Missing',
+      status: user?.status,
+      emailVerified: user?.emailVerified,
+      isActive: user?.isActive
+    });
+    
     if (!user) {
       throw new Error('Invalid email or password');
     }
@@ -380,6 +390,10 @@ export class AuthService {
 
     if (!user.emailVerified) {
       throw new Error('Email not verified');
+    }
+
+    if (!user.passwordHash) {
+      throw new Error('Password not set. Please complete email verification first.');
     }
 
     const isValidPassword = await this.verifyPassword(password, user.passwordHash);
