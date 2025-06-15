@@ -8,10 +8,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Building2, Users, Settings, BarChart3, UserPlus, Mail, Trash2, Crown } from 'lucide-react';
+import { Building2, Users, Settings, BarChart3, UserPlus, Mail, Trash2, Crown, User } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import ProfileWidget from '@/components/profile/ProfileWidget';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');

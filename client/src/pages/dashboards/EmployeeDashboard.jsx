@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle2, Clock, AlertCircle, User, Calendar, Target } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import ProfileWidget from '@/components/profile/ProfileWidget';
 
 export default function EmployeeDashboard() {
   const [activeTab, setActiveTab] = useState('tasks');
@@ -333,26 +334,7 @@ export default function EmployeeDashboard() {
 
           <TabsContent value="profile" className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Personal Information</CardTitle>
-                  <CardDescription>Your profile details</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                      <User className="h-8 w-8 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">Employee Profile</h3>
-                      <p className="text-sm text-muted-foreground">View and update your information</p>
-                    </div>
-                  </div>
-                  <Button variant="outline" className="w-full">
-                    Edit Profile
-                  </Button>
-                </CardContent>
-              </Card>
+              <ProfileWidget />
 
               <Card>
                 <CardHeader>
