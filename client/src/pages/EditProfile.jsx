@@ -21,20 +21,33 @@ export default function EditProfile() {
     lastName: ""
   });
 
-  // Fetch current user profile
-  const { data: user, isLoading } = useQuery({
-    queryKey: ["/api/profile"],
+  // Fetch current user profile - try auth/verify first as fallback
+  const { data: authUser } = useQuery({
+    queryKey: ["/api/auth/verify"],
+    retry: false,
   });
+
+  const { data: user, isLoading, error } = useQuery({
+    queryKey: ["/api/profile"],
+    retry: 1,
+    onError: (error) => {
+      console.error("Profile API error:", error);
+    }
+  });
+
+  // Use authUser as fallback if profile API fails
+  const currentUser = user || authUser;
 
   // Update form data when user data is loaded
   useEffect(() => {
-    if (user) {
+    if (currentUser) {
+      console.log("User data loaded:", currentUser); // Debug log
       setFormData({
-        firstName: user.firstName || "",
-        lastName: user.lastName || ""
+        firstName: currentUser.firstName || "",
+        lastName: currentUser.lastName || ""
       });
     }
-  }, [user]);
+  }, [currentUser]);
 
   // Update profile mutation
   const updateProfile = useMutation({
@@ -151,15 +164,15 @@ export default function EditProfile() {
   };
 
   const getInitials = () => {
-    if (user?.firstName && user?.lastName) {
-      return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
+    if (currentUser?.firstName && currentUser?.lastName) {
+      return `${currentUser.firstName.charAt(0)}${currentUser.lastName.charAt(0)}`.toUpperCase();
     }
-    return user?.email?.charAt(0).toUpperCase() || "U";
+    return currentUser?.email?.charAt(0).toUpperCase() || "U";
   };
 
   const getCurrentProfileImage = () => {
     if (imagePreview) return imagePreview;
-    if (user?.profileImageUrl) return user.profileImageUrl;
+    if (currentUser?.profileImageUrl) return currentUser.profileImageUrl;
     return null;
   };
 
@@ -277,7 +290,7 @@ export default function EditProfile() {
                 <Label htmlFor="email">Email Address</Label>
                 <Input
                   id="email"
-                  value={user?.email || ""}
+                  value={currentUser?.email || ""}
                   disabled
                   className="bg-gray-100 cursor-not-allowed"
                 />
