@@ -1,56 +1,39 @@
-import mongoose from 'mongoose';
 import { storage } from './server/mongodb-storage.js';
 
 async function checkData() {
   try {
-    const dbUrl = 'mongodb+srv://jeeturadicalloop:Mjvesqnj8gY3t0zP@cluster0.by2xy6x.mongodb.net/TaskSetu';
-    await mongoose.connect(dbUrl);
-    console.log('Connected to MongoDB');
+    console.log('=== Checking Database User Data ===');
+    const users = await storage.getUsers();
     
-    // Get all organizations
-    const orgs = await mongoose.model('Organization').find({}).select('_id name slug type status');
-    console.log('\n=== ORGANIZATIONS ===');
-    orgs.forEach(org => {
-      console.log(`ID: ${org._id}, Name: ${org.name}, Slug: ${org.slug}, Status: ${org.status}`);
-    });
+    console.log(`Found ${users.length} users in database:`);
     
-    // Get all users with their organization info
-    const users = await mongoose.model('User').find({}).select('_id email firstName lastName organization status roles inviteToken createdAt');
-    console.log('\n=== USERS ===');
-    users.forEach(user => {
-      console.log(`Email: ${user.email}, Org: ${user.organization}, Status: ${user.status}, Roles: ${user.roles}, HasInviteToken: ${!!user.inviteToken}`);
-    });
-    
-    // Check for pending users
-    const pendingUsers = await mongoose.model('PendingUser').find({}).select('email organizationId status verificationCode');
-    console.log('\n=== PENDING USERS ===');
-    pendingUsers.forEach(user => {
-      console.log(`Email: ${user.email}, Org: ${user.organizationId}, Status: ${user.status}, HasCode: ${!!user.verificationCode}`);
-    });
-    
-    // Check if there's an admin user and their organization
-    const adminUser = await mongoose.model('User').findOne({ email: 'admin@demo.com' });
-    if (adminUser) {
-      console.log('\n=== ADMIN USER INFO ===');
-      console.log(`Admin Email: ${adminUser.email}`);
-      console.log(`Admin Organization: ${adminUser.organization}`);
-      console.log(`Admin Role: ${adminUser.role || adminUser.roles}`);
+    users.forEach((user, index) => {
+      console.log(`\n--- User ${index + 1} ---`);
+      console.log(`ID: ${user._id}`);
+      console.log(`Email: ${user.email}`);
+      console.log(`First Name: "${user.firstName || 'EMPTY/NULL'}"`);
+      console.log(`Last Name: "${user.lastName || 'EMPTY/NULL'}"`);
+      console.log(`Profile Image: "${user.profileImageUrl || 'EMPTY/NULL'}"`);
+      console.log(`Role: ${user.role}`);
+      console.log(`Status: ${user.status}`);
       
-      // Get users from admin's organization
-      if (adminUser.organization) {
-        const orgUsers = await mongoose.model('User').find({ organization: adminUser.organization });
-        console.log(`\n=== USERS IN ADMIN'S ORGANIZATION (${adminUser.organization}) ===`);
-        orgUsers.forEach(user => {
-          console.log(`Email: ${user.email}, Status: ${user.status}, Roles: ${user.roles || user.role}, Created: ${user.createdAt}`);
-        });
-      }
+      // Check if the fields exist as properties
+      console.log(`Has firstName property: ${user.hasOwnProperty('firstName')}`);
+      console.log(`Has lastName property: ${user.hasOwnProperty('lastName')}`);
+    });
+    
+    // Check a specific user by email if exists
+    const testUser = users.find(u => u.email === 'org@gmail.com');
+    if (testUser) {
+      console.log('\n=== Detailed check for org@gmail.com ===');
+      console.log('Raw user object keys:', Object.keys(testUser.toObject()));
+      console.log('User data:', JSON.stringify(testUser.toObject(), null, 2));
     }
     
-    process.exit(0);
   } catch (error) {
-    console.error('Error:', error);
-    process.exit(1);
+    console.error('Error checking database:', error);
   }
+  process.exit(0);
 }
 
 checkData();
