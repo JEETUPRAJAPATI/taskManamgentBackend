@@ -22,14 +22,16 @@ export async function authenticateToken(req, res, next) {
     const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
+      console.log('No token provided');
       return res.status(401).json({ message: 'Access token required' });
     }
 
     console.log('Authenticating token for request:', req.path);
+    console.log('Token received:', token.substring(0, 20) + '...');
     
     const decoded = verifyToken(token);
     if (!decoded) {
-      console.log('Token verification failed');
+      console.log('Token verification failed - invalid or expired');
       return res.status(403).json({ error: 'Invalid token' });
     }
 
@@ -37,9 +39,9 @@ export async function authenticateToken(req, res, next) {
 
     // Verify user still exists and is active
     const user = await storage.getUser(decoded.id);
-    if (!user || !user.isActive) {
-      console.log('User not found or inactive:', decoded.id);
-      return res.status(403).json({ message: 'User not found or inactive' });
+    if (!user) {
+      console.log('User not found for ID:', decoded.id);
+      return res.status(403).json({ message: 'User not found' });
     }
 
     console.log('User found:', { id: user._id, email: user.email, organization: user.organization });
@@ -47,7 +49,7 @@ export async function authenticateToken(req, res, next) {
     req.user = {
       id: decoded.id,
       email: decoded.email,
-      organizationId: decoded.organizationId || user.organization || user.organizationId,
+      organizationId: decoded.organizationId || user.organization?.toString() || user.organizationId,
       role: decoded.role,
     };
 
