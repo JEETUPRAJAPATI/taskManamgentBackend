@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import {
   Dialog,
@@ -39,6 +39,7 @@ export function InviteUsersModal({ isOpen, onClose }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const validationTimers = useRef({});
 
   // Get organization license info
   const { data: licenseInfo } = useQuery({
@@ -63,6 +64,15 @@ export function InviteUsersModal({ isOpen, onClose }) {
       setIsSubmitting(false);
     }
   }, [isOpen]);
+
+  // Cleanup timers on component unmount
+  useEffect(() => {
+    return () => {
+      Object.values(validationTimers.current).forEach(timer => {
+        if (timer) clearTimeout(timer);
+      });
+    };
+  }, []);
 
   // Email validation function
   const validateEmail = (email) => {
@@ -122,20 +132,58 @@ export function InviteUsersModal({ isOpen, onClose }) {
     return totalLicensesNeeded <= licenseInfo.availableSlots;
   };
 
-  // Update email and validate comprehensively
-  const updateInviteEmail = async (index, email) => {
-    // First, update the email and set checking state
+  // Immediate email update without validation to prevent focus loss
+  const updateInviteEmailImmediate = (index, email) => {
     setInviteList((prev) =>
       prev.map((invite, i) =>
         i === index
           ? {
               ...invite,
               email,
+              // Clear errors only if email is being changed
               emailError: "",
               existsError: "",
               licenseError: "",
               isValid: false,
+              isChecking: false,
+            }
+          : invite,
+      ),
+    );
+  };
+
+  // Debounced validation function
+  const debouncedValidateEmail = useCallback(
+    async (index, email) => {
+      // Clear any existing timer for this index
+      if (validationTimers.current[index]) {
+        clearTimeout(validationTimers.current[index]);
+      }
+
+      // Set a new timer
+      validationTimers.current[index] = setTimeout(async () => {
+        await validateEmailAsync(index, email);
+      }, 800); // Wait 800ms after user stops typing
+    },
+    [inviteList, licenseInfo],
+  );
+
+  // Comprehensive email validation (async)
+  const validateEmailAsync = async (index, email) => {
+    if (!email.trim()) {
+      return;
+    }
+
+    // Set checking state
+    setInviteList((prev) =>
+      prev.map((invite, i) =>
+        i === index
+          ? {
+              ...invite,
               isChecking: true,
+              emailError: "",
+              existsError: "",
+              licenseError: "",
             }
           : invite,
       ),
@@ -144,7 +192,7 @@ export function InviteUsersModal({ isOpen, onClose }) {
     // Basic email format validation
     const emailError = validateEmail(email);
 
-    if (emailError || !email.trim()) {
+    if (emailError) {
       setInviteList((prev) =>
         prev.map((invite, i) =>
           i === index
@@ -166,7 +214,7 @@ export function InviteUsersModal({ isOpen, onClose }) {
         email: invite.email.toLowerCase().trim(),
         index: i,
       }))
-      .filter((item) => item.email !== ""); // Only check non-empty emails
+      .filter((item) => item.email !== "");
 
     const duplicateExists = currentEmails.some(
       (item) =>
@@ -230,8 +278,7 @@ export function InviteUsersModal({ isOpen, onClose }) {
       : "Not enough licenses available for the selected role(s).";
 
     // Final validation state
-    const isValid =
-      !emailError && !emailExists && licenseValid && email.trim() !== "";
+    const isValid = !emailError && !emailExists && licenseValid && email.trim() !== "";
 
     setInviteList((prev) =>
       prev.map((invite, i) =>
@@ -239,9 +286,7 @@ export function InviteUsersModal({ isOpen, onClose }) {
           ? {
               ...invite,
               emailError,
-              existsError: emailExists
-                ? `${email} already exists. That user will not be reinvited.`
-                : "",
+              existsError: "",
               licenseError,
               isValid,
               isChecking: false,
@@ -249,6 +294,16 @@ export function InviteUsersModal({ isOpen, onClose }) {
           : invite,
       ),
     );
+  };
+
+  // Validate email on blur
+  const handleEmailBlur = (index, email) => {
+    // Clear any pending debounced validation
+    if (validationTimers.current[index]) {
+      clearTimeout(validationTimers.current[index]);
+    }
+    // Immediately validate on blur
+    validateEmailAsync(index, email);
   };
 
   // Toggle role selection with license validation
@@ -589,9 +644,12 @@ export function InviteUsersModal({ isOpen, onClose }) {
                         type="email"
                         placeholder="Enter email address"
                         value={invite.email}
-                        onChange={(e) =>
-                          updateInviteEmail(index, e.target.value)
-                        }
+                        onChange={(e) => {
+                          const email = e.target.value;
+                          updateInviteEmailImmediate(index, email);
+                          debouncedValidateEmail(index, email);
+                        }}
+                        onBlur={(e) => handleEmailBlur(index, e.target.value)}
                         disabled={invite.isChecking}
                         className={`pl-10 ${
                           invite.emailError ||

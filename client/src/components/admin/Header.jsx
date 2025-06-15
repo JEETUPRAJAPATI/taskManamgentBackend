@@ -1,7 +1,21 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Menu, Bell, Search, User, Settings, LogOut, Edit, Shield, Key, Palette, HelpCircle, ChevronDown, UserPlus } from "lucide-react";
+import {
+  Menu,
+  Bell,
+  Search,
+  User,
+  Settings,
+  LogOut,
+  Edit,
+  Shield,
+  Key,
+  Palette,
+  HelpCircle,
+  ChevronDown,
+  UserPlus,
+} from "lucide-react";
 
 export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -11,11 +25,12 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
   // Get current user data to check role
   const { data: user } = useQuery({
     queryKey: ["/api/auth/verify"],
-    enabled: !!localStorage.getItem('token'),
+    enabled: !!localStorage.getItem("token"),
   });
 
   // Check if user can invite users (organization admins only)
-  const canInviteUsers = user?.role === 'org_admin' || user?.role === 'superadmin';
+  const canInviteUsers =
+    user?.role === "org_admin" || user?.role === "superadmin";
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -25,19 +40,19 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   const handleLogout = () => {
     // Clear authentication token
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     // Close dropdown
     setProfileDropdownOpen(false);
     // Redirect to login
-    setLocation('/login');
+    setLocation("/login");
   };
 
   const profileMenuItems = [
@@ -45,38 +60,38 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
       icon: Edit,
       label: "Edit Profile",
       description: "Update your personal information",
-      action: () => console.log("Edit profile clicked")
+      action: () => console.log("Edit profile clicked"),
     },
     {
       icon: Settings,
       label: "Account Settings",
       description: "Manage your account preferences",
-      action: () => console.log("Account settings clicked")
+      action: () => console.log("Account settings clicked"),
     },
     {
       icon: Shield,
       label: "Security & Privacy",
       description: "Two-factor auth and privacy settings",
-      action: () => console.log("Security settings clicked")
+      action: () => console.log("Security settings clicked"),
     },
     {
       icon: Key,
       label: "API Keys",
       description: "Manage your API access keys",
-      action: () => console.log("API keys clicked")
+      action: () => console.log("API keys clicked"),
     },
     {
       icon: Palette,
       label: "Appearance",
       description: "Theme and display preferences",
-      action: () => console.log("Appearance clicked")
+      action: () => console.log("Appearance clicked"),
     },
     {
       icon: HelpCircle,
       label: "Help & Support",
       description: "Get help and contact support",
-      action: () => console.log("Help clicked")
-    }
+      action: () => console.log("Help clicked"),
+    },
   ];
 
   return (
@@ -133,7 +148,7 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
 
           {/* Profile Dropdown */}
           <div className="relative" ref={dropdownRef}>
-            <button 
+            <button
               onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
               className="flex items-center p-2 rounded-md text-blue-200  transition-colors"
             >
@@ -145,9 +160,11 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
                 <span className="ml-2 text-sm font-medium text-gray-100 hidden sm:block">
                   Admin
                 </span>
-                <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-200 ${
-                  profileDropdownOpen ? 'rotate-180' : ''
-                }`} />
+                <ChevronDown
+                  className={`ml-1 h-4 w-4 transition-transform duration-200 ${
+                    profileDropdownOpen ? "rotate-180" : ""
+                  }`}
+                />
               </div>
             </button>
 
@@ -164,8 +181,10 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
                       <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-blue-800 rounded-full"></div>
                     </div>
                     <div className="ml-3">
-                      <p className="text-sm font-medium text-blue-100">Admin User</p>
-                      <p className="text-xs text-blue-300">admin@tasksetu.com</p>
+                      <p className="text-sm font-medium text-blue-100">
+                        Admin User
+                      </p>
+                      <p className="text-xs text-blue-300">{user?.email}</p>
                       <p className="text-xs text-green-400">● Online</p>
                     </div>
                   </div>
@@ -178,7 +197,7 @@ export function Header({ onMenuClick, onSidebarToggle, sidebarOpen }) {
                       Profile Setup
                     </p>
                   </div>
-                  
+
                   {profileMenuItems.map((item, index) => {
                     const Icon = item.icon;
                     return (
