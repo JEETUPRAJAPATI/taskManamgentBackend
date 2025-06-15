@@ -282,7 +282,7 @@ export function CompactSidebar() {
   const location = useLocation(); // Corrected from useLocation() to useLocation
 
   return (
-    <div className="h-full w-16 bg-black border-r border-gray-800 flex flex-col items-center py-4">
+    <div className="h-full w-16 bg-[#1e293b] border-r border-gray-800 flex flex-col items-center py-4">
       {/* Logo */}
       <div className="mb-8">
         <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">

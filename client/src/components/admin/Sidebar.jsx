@@ -33,12 +33,12 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-30 bg-black border-r border-gray-800 transition-all duration-300 shadow-xl ${
+      <div className={`fixed inset-y-0 left-0 z-30 bg-[#1e293b] border-r border-gray-800 transition-all duration-300 shadow-xl ${
         isOpen ? 'w-64' : 'w-16'
       } hidden lg:block`}>
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center h-12 px-3 border-b border-gray-800 bg-black">
+          <div className="flex items-center h-12 px-3 border-b border-gray-800 bg-[#1e293b]">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <CheckSquare className="h-6 w-6 text-blue-400" />
@@ -218,19 +218,19 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
 
       {/* Mobile Sidebar */}
       <div className={`fixed inset-0 z-40 lg:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
-        <div className="fixed inset-y-0 left-0 w-64 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700">
+        <div className="fixed inset-y-0 left-0 w-64 bg-[#1e293b] border-r border-gray-800">
           <div className="flex flex-col h-full">
             {/* Mobile Header */}
-            <div className="flex items-center justify-between h-16 px-4 border-b border-slate-200 dark:border-slate-700">
+            <div className="flex items-center justify-between h-16 px-4 border-b border-gray-800">
               <div className="flex items-center">
-                <CheckSquare className="h-8 w-8 text-blue-600" />
-                <h1 className="ml-3 text-xl font-bold text-slate-900 dark:text-white">
+                <CheckSquare className="h-8 w-8 text-blue-400" />
+                <h1 className="ml-3 text-xl font-bold text-white">
                   TaskSetu
                 </h1>
               </div>
               <button
                 onClick={onMobileToggle}
-                className="p-2 rounded-md text-slate-400  dark:hover:bg-slate-800"
+                className="p-2 rounded-md text-gray-400 hover:bg-gray-700"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -245,8 +245,8 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
                     onClick={onMobileToggle}
                     className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
                       isActive(item.href)
-                        ? 'bg-blue-100 text-blue-900 dark:bg-blue-900/20 dark:text-blue-300'
-                        : 'text-slate-600  dark:text-slate-300 dark:'
+                        ? 'bg-blue-500/20 text-blue-300'
+                        : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                     }`}
                   >
                     <Icon className={`flex-shrink-0 h-5 w-5 ${

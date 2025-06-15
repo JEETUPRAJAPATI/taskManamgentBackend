@@ -5,6 +5,7 @@
 @tailwind utilities;
 
 @layer base {
+
   /* Reset and base styles */
   * {
     @apply border-navy-200;
@@ -20,16 +21,38 @@
   }
 
   /* Typography improvements */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-semibold text-navy-900 tracking-tight;
   }
 
-  h1 { @apply text-3xl leading-tight; }
-  h2 { @apply text-2xl leading-tight; }
-  h3 { @apply text-xl leading-snug; }
-  h4 { @apply text-lg leading-snug; }
-  h5 { @apply text-base leading-normal; }
-  h6 { @apply text-sm leading-normal; }
+  h1 {
+    @apply text-3xl leading-tight;
+  }
+
+  h2 {
+    @apply text-2xl leading-tight;
+  }
+
+  h3 {
+    @apply text-xl leading-snug;
+  }
+
+  h4 {
+    @apply text-lg leading-snug;
+  }
+
+  h5 {
+    @apply text-base leading-normal;
+  }
+
+  h6 {
+    @apply text-sm leading-normal;
+  }
 
   /* Custom scrollbar */
   ::-webkit-scrollbar {
@@ -55,6 +78,7 @@
 }
 
 @layer components {
+
   /* Button Components */
   .btn {
     @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
@@ -232,7 +256,7 @@
 
   /* Sidebar */
   .sidebar {
-    @apply bg-navy-800 text-navy-100 min-h-screen;
+    @apply bg-[#1e293b] text-navy-100 min-h-screen;
   }
 
   .sidebar-nav {
@@ -244,7 +268,7 @@
   }
 
   .sidebar-nav-item-active {
-    @apply sidebar-nav-item bg-primary-600 text-white;
+    @apply sidebar-nav-item bg-[#334155] text-white;
   }
 
   /* Table Components */
@@ -397,16 +421,17 @@
 }
 
 @layer utilities {
+
   /* Custom spacing utilities */
-  .space-compact > * + * {
+  .space-compact>*+* {
     @apply mt-2;
   }
 
-  .space-standard > * + * {
+  .space-standard>*+* {
     @apply mt-4;
   }
 
-  .space-spacious > * + * {
+  .space-spacious>*+* {
     @apply mt-6;
   }
 
