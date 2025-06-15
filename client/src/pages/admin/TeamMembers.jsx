@@ -46,19 +46,18 @@ export default function TeamMembers() {
 
   // Fetch team members data
   const { data: teamMembers = [], isLoading, error, refetch } = useQuery({
-    queryKey: ['/api/team-members'],
+    queryKey: ['/api/organization/users'],
     retry: false,
     refetchOnMount: true,
-    refetchOnWindowFocus: false,
-    onError: (err) => {
-      console.error('Team members query error:', err);
-      console.error('Error message:', err.message);
-      console.error('Current token:', localStorage.getItem('token') ? 'Present' : 'Missing');
-    },
-    onSuccess: (data) => {
-      console.log('Team members query success:', data);
-    }
+    refetchOnWindowFocus: false
   });
+
+  // Debug logging
+  console.log('TeamMembers Component Debug:');
+  console.log('- isLoading:', isLoading);
+  console.log('- error:', error);
+  console.log('- teamMembers:', teamMembers);
+  console.log('- teamMembers length:', teamMembers?.length);
 
   // Fetch license info
   const { data: licenseInfo } = useQuery({

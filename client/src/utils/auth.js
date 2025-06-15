@@ -26,14 +26,14 @@ export const isAuthenticated = () => {
 
 // Set up authentication for testing
 export const setupTestAuth = () => {
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGNmMTc3NzExYzc5ZTFiOWMwZGQwMCIsImVtYWlsIjoiYWRtaW5AZGVtby5jb20iLCJyb2xlIjoiYWRtaW4iLCJvcmdhbml6YXRpb25JZCI6IjY4NGNmMTc2NzExYzc5ZTFiOWMwZGNmZCIsImlhdCI6MTc0OTk4Mjc5NywiZXhwIjoxNzUwNTg3NTk3fQ.vAssY1iv0tBSgvKZwXGpEBfZv-g4i5G9e68oialVWaM';
+  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGM4ZjcxOTg4MmVmODRkNzAwOGZjNSIsImVtYWlsIjoib3JnQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsIm9yZ2FuaXphdGlvbklkIjoiNjg0YzhmNzE5ODgyZWY4NGQ3MDA4ZmMzIiwiaWF0IjoxNzQ5OTgzNTkwLCJleHAiOjE3NTA1ODgzOTB9.cWNRNFh93rRyfXGa_sugEchGmyrXZmaxQS4-07Rbepo';
   const user = {
-    id: '684cf177711c79e1b9c0dd00',
-    email: 'admin@demo.com',
+    id: '684c8f719882ef84d7008fc5',
+    email: 'org@gmail.com',
     role: 'admin',
-    firstName: 'Admin',
-    lastName: 'User',
-    organizationId: '684cf176711c79e1b9c0dcfd'
+    firstName: 'Org',
+    lastName: 'Admin',
+    organizationId: '684c8f719882ef84d7008fc3'
   };
   setAuthToken(token, user);
   console.log('Test authentication set up successfully');

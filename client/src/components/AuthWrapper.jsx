@@ -7,6 +7,12 @@ export default function AuthWrapper({ children }) {
     if (!isAuthenticated()) {
       console.log('Setting up authentication automatically...');
       setupTestAuth();
+      // Force a small delay to ensure token is set before queries run
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+    } else {
+      console.log('Authentication already present');
     }
   }, []);
 
