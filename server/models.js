@@ -55,6 +55,15 @@ const userSchema = new mongoose.Schema({
     }
   },
   profileImageUrl: String,
+  phone: {
+    type: String,
+    trim: true
+  },
+  bio: {
+    type: String,
+    trim: true,
+    maxlength: 500
+  },
   passwordHash: {
     type: String,
     required: function() {
