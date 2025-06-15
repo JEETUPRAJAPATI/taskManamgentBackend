@@ -32,6 +32,9 @@ export default function EditProfile() {
     retry: 1,
     onError: (error) => {
       console.error("Profile API error:", error);
+    },
+    onSuccess: (data) => {
+      console.log("Profile API success:", data);
     }
   });
 
@@ -40,13 +43,23 @@ export default function EditProfile() {
 
   // Update form data when user data is loaded
   useEffect(() => {
+    console.log("EditProfile - Current user data:", currentUser);
+    console.log("EditProfile - Auth user data:", authUser);
+    console.log("EditProfile - Profile user data:", user);
+    console.log("EditProfile - Loading state:", isLoading);
+    console.log("EditProfile - Error state:", error);
+    
     if (currentUser) {
+      console.log("Setting form data:", {
+        firstName: currentUser.firstName || "",
+        lastName: currentUser.lastName || ""
+      });
       setFormData({
         firstName: currentUser.firstName || "",
         lastName: currentUser.lastName || ""
       });
     }
-  }, [currentUser]);
+  }, [currentUser, authUser, user, isLoading, error]);
 
   // Update profile mutation
   const updateProfile = useMutation({
