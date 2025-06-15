@@ -26,7 +26,7 @@ export const isAuthenticated = () => {
 
 // Set up authentication for testing
 export const setupTestAuth = () => {
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGM4ZjcxOTg4MmVmODRkNzAwOGZjNSIsImVtYWlsIjoib3JnQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsIm9yZ2FuaXphdGlvbklkIjoiNjg0YzhmNzE5ODgyZWY4NGQ3MDA4ZmMzIiwiaWF0IjoxNzQ5OTgzNTkwLCJleHAiOjE3NTA1ODgzOTB9.cWNRNFh93rRyfXGa_sugEchGmyrXZmaxQS4-07Rbepo';
+  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGM4ZjcxOTg4MmVmODRkNzAwOGZjNSIsImVtYWlsIjoib3JnQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsIm9yZ2FuaXphdGlvbklkIjoiNjg0YzhmNzE5ODgyZWY4NGQ3MDA4ZmMzIiwiaWF0IjoxNzQ5OTgzOTA1LCJleHAiOjE3NTA1ODg3MDV9.8d5DFCXpBGTUO4ffeHD9Qmjs1sz5xNgWCp-5WCpVcYM';
   const user = {
     id: '684c8f719882ef84d7008fc5',
     email: 'org@gmail.com',
