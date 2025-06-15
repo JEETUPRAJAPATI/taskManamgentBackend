@@ -37,18 +37,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useTheme } from "@/components/admin/ThemeProvider";
 import { useToast } from "@/hooks/use-toast";
+import ProfileWidget from "@/components/profile/ProfileWidget";
 
 export default function Settings() {
   const { theme, toggleTheme } = useTheme();
   const { toast } = useToast();
   
-  const [profileData, setProfileData] = useState({
-    fullName: "John Smith",
-    email: "john.smith@taskflow.com",
-    username: "john.smith",
-    bio: "Administrator and project manager with 5+ years of experience in team leadership.",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150",
-  });
+
 
   const [systemSettings, setSystemSettings] = useState({
     siteName: "TaskFlow",
