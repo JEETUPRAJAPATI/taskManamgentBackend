@@ -56,6 +56,18 @@ export async function registerRoutes(app) {
         return res.status(400).json({ message: "Token and password are required" });
       }
 
+      // Debug: Check if any user has this token
+      const { User } = await import('./models.js');
+      const userWithToken = await User.findOne({ emailVerificationToken: token });
+      console.log("User with token found:", userWithToken ? {
+        id: userWithToken._id,
+        email: userWithToken.email,
+        status: userWithToken.status,
+        hasExpiration: !!userWithToken.emailVerificationExpires,
+        expiration: userWithToken.emailVerificationExpires,
+        isExpired: userWithToken.emailVerificationExpires ? new Date() > userWithToken.emailVerificationExpires : 'No expiration set'
+      } : 'No user found with this token');
+
       // Find user by verification token
       const user = await storage.getUserByVerificationToken(token);
       if (!user) {
