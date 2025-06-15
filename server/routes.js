@@ -44,6 +44,121 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Individual registration
+  app.post("/api/auth/register-individual", async (req, res) => {
+    try {
+      const { firstName, lastName, email } = req.body;
+      
+      console.log("Individual registration attempt:", { firstName, lastName, email });
+
+      // Validate required fields
+      if (!firstName || !lastName || !email) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) {
+        return res.status(400).json({ message: "User with this email already exists" });
+      }
+
+      // Create pending user
+      const userData = {
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        email: email.toLowerCase().trim(),
+        role: 'member',
+        status: 'pending',
+        accountType: 'individual'
+      };
+
+      const user = await storage.createUser(userData);
+      
+      console.log("Individual user created:", user._id);
+
+      res.status(201).json({
+        message: "Registration successful. Please check your email for verification.",
+        user: {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName
+        }
+      });
+
+    } catch (error) {
+      console.error("Individual registration error:", error);
+      res.status(500).json({ message: "Registration failed. Please try again." });
+    }
+  });
+
+  // Organization registration
+  app.post("/api/auth/register-organization", async (req, res) => {
+    try {
+      const { firstName, lastName, email, organizationName, organizationSlug } = req.body;
+      
+      console.log("Organization registration attempt:", { firstName, lastName, email, organizationName, organizationSlug });
+
+      // Validate required fields
+      if (!firstName || !lastName || !email || !organizationName || !organizationSlug) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) {
+        return res.status(400).json({ message: "User with this email already exists" });
+      }
+
+      // Check if organization slug is available
+      const existingOrg = await storage.getOrganizationBySlug(organizationSlug);
+      if (existingOrg) {
+        return res.status(400).json({ message: "Organization name is already taken" });
+      }
+
+      // Create organization first
+      const orgData = {
+        name: organizationName.trim(),
+        slug: organizationSlug.toLowerCase().trim(),
+        licenseCount: 10,
+        isActive: true
+      };
+
+      const organization = await storage.createOrganization(orgData);
+      
+      // Create admin user for the organization
+      const userData = {
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        email: email.toLowerCase().trim(),
+        role: 'admin',
+        status: 'pending',
+        organizationId: organization._id,
+        accountType: 'organization'
+      };
+
+      const user = await storage.createUser(userData);
+      
+      console.log("Organization and admin user created:", { orgId: organization._id, userId: user._id });
+
+      res.status(201).json({
+        message: "Organization registration successful. Please check your email for verification.",
+        user: {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          organizationId: organization._id,
+          organizationName: organization.name
+        }
+      });
+
+    } catch (error) {
+      console.error("Organization registration error:", error);
+      res.status(500).json({ message: "Registration failed. Please try again." });
+    }
+  });
+
   // User routes
   app.get("/api/users", authenticateToken, async (req, res) => {
     try {
