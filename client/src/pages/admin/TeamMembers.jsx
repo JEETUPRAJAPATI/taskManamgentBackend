@@ -46,6 +46,14 @@ export default function TeamMembers() {
   const { data: teamMembers = [], isLoading, error, refetch } = useQuery({
     queryKey: ['/api/team-members'],
     retry: false,
+    onError: (err) => {
+      console.error('Team members query error:', err);
+      console.error('Error message:', err.message);
+      console.error('Error details:', err);
+    },
+    onSuccess: (data) => {
+      console.log('Team members query success:', data);
+    }
   });
 
   // Fetch license info
