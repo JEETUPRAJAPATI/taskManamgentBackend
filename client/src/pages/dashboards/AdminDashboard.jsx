@@ -19,7 +19,45 @@ export default function AdminDashboard() {
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState('employee');
+  const [emailError, setEmailError] = useState('');
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   const { toast } = useToast();
+
+  // Check if email has already been invited
+  const checkExistingInvitation = async (email) => {
+    if (!email.trim()) {
+      setEmailError('');
+      return;
+    }
+
+    setIsCheckingEmail(true);
+    setEmailError('');
+
+    try {
+      const response = await fetch("/api/organization/check-invitation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to check invitation status");
+      }
+
+      const data = await response.json();
+      
+      if (data.exists) {
+        setEmailError(data.message);
+      }
+    } catch (error) {
+      console.error("Error checking invitation:", error);
+    } finally {
+      setIsCheckingEmail(false);
+    }
+  };
 
   const { data: orgStats } = useQuery({
     queryKey: ['/api/admin/organization-stats'],

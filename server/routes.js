@@ -228,6 +228,42 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Check if email has already been invited
+  app.post("/api/organization/check-invitation", authenticateToken, async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser && existingUser.organization?.toString() === req.user.organizationId) {
+        return res.json({ 
+          exists: true, 
+          type: "existing_user",
+          message: "This email is already a member of your organization"
+        });
+      }
+
+      // Check if invitation already sent
+      const existingInvite = await storage.getPendingUserByEmail(email);
+      if (existingInvite && existingInvite.organization?.toString() === req.user.organizationId) {
+        return res.json({ 
+          exists: true, 
+          type: "pending_invitation",
+          message: "This email has already received an invitation. Try another email."
+        });
+      }
+
+      res.json({ exists: false });
+    } catch (error) {
+      console.error("Check invitation error:", error);
+      res.status(500).json({ message: "Failed to check invitation status" });
+    }
+  });
+
   // Health check endpoint
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });

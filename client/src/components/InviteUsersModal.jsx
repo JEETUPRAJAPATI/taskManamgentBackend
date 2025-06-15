@@ -297,13 +297,73 @@ export function InviteUsersModal({ isOpen, onClose }) {
   };
 
   // Validate email on blur
-  const handleEmailBlur = (index, email) => {
+  const handleEmailBlur = async (index, email) => {
     // Clear any pending debounced validation
     if (validationTimers.current[index]) {
       clearTimeout(validationTimers.current[index]);
     }
-    // Immediately validate on blur
-    validateEmailAsync(index, email);
+    
+    // Don't validate empty emails
+    if (!email.trim()) {
+      return;
+    }
+
+    // Check for existing invitations
+    await checkExistingInvitation(index, email.trim());
+  };
+
+  // Check if email has already been invited
+  const checkExistingInvitation = async (index, email) => {
+    try {
+      setInviteList((prev) =>
+        prev.map((invite, i) =>
+          i === index
+            ? { ...invite, isChecking: true, existsError: "" }
+            : invite,
+        ),
+      );
+
+      const response = await fetch("/api/organization/check-invitation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to check invitation status");
+      }
+
+      const data = await response.json();
+
+      setInviteList((prev) =>
+        prev.map((invite, i) =>
+          i === index
+            ? {
+                ...invite,
+                isChecking: false,
+                existsError: data.exists ? data.message : "",
+                isValid: !data.exists && invite.email && !invite.emailError,
+              }
+            : invite,
+        ),
+      );
+    } catch (error) {
+      console.error("Error checking invitation:", error);
+      setInviteList((prev) =>
+        prev.map((invite, i) =>
+          i === index
+            ? {
+                ...invite,
+                isChecking: false,
+                existsError: "",
+              }
+            : invite,
+        ),
+      );
+    }
   };
 
   // Toggle role selection with license validation
@@ -684,9 +744,9 @@ export function InviteUsersModal({ isOpen, onClose }) {
                         </div>
                       )}
                       {invite.existsError && (
-                        <div className="bg-slate-50 border border-slate-200 rounded-md p-2 mt-1">
-                          <p className="text-sm text-slate-700 flex items-center">
-                            <AlertCircle className="h-3 w-3 mr-1 text-slate-500" />
+                        <div className="bg-red-50 border border-red-200 rounded-md p-2 mt-1">
+                          <p className="text-sm text-red-700 flex items-center">
+                            <AlertCircle className="h-3 w-3 mr-1 text-red-500" />
                             {invite.existsError}
                           </p>
                         </div>
