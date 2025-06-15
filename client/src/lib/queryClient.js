@@ -29,22 +29,23 @@ export const getQueryFn = ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
     const token = localStorage.getItem('token');
     
-    console.log('QueryFn called for:', queryKey[0]);
-    console.log('Token available:', !!token);
-    if (token) {
-      console.log('Token preview:', token.substring(0, 20) + '...');
-    }
+    console.log('API Request:', queryKey[0]);
+    console.log('Token exists:', !!token);
+    console.log('Token length:', token?.length);
     
     const headers = {
       ...(token ? { "Authorization": `Bearer ${token}` } : {})
     };
+
+    console.log('Request headers:', headers);
 
     const res = await fetch(queryKey[0], {
       headers,
       credentials: "include",
     });
 
-    console.log('Response status for', queryKey[0], ':', res.status);
+    console.log('Response status:', res.status);
+    console.log('Response headers:', Object.fromEntries(res.headers.entries()));
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
       console.log('401 unauthorized, returning null');
@@ -53,10 +54,12 @@ export const getQueryFn = ({ on401: unauthorizedBehavior }) =>
 
     if (!res.ok) {
       const errorText = await res.text();
+      console.log('Error response body:', errorText);
       throw new Error(`${res.status}: ${errorText}`);
     }
 
     const data = await res.json();
+    console.log('Success response:', Array.isArray(data) ? `Array[${data.length}]` : typeof data);
     return data;
   };
 

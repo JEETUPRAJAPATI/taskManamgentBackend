@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { setupTestAuth } from '@/utils/auth';
+import AuthWrapper from '@/components/AuthWrapper';
 import { 
   Users, 
   UserPlus, 
@@ -47,10 +48,12 @@ export default function TeamMembers() {
   const { data: teamMembers = [], isLoading, error, refetch } = useQuery({
     queryKey: ['/api/team-members'],
     retry: false,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
     onError: (err) => {
       console.error('Team members query error:', err);
       console.error('Error message:', err.message);
-      console.error('Error details:', err);
+      console.error('Current token:', localStorage.getItem('token') ? 'Present' : 'Missing');
     },
     onSuccess: (data) => {
       console.log('Team members query success:', data);
@@ -333,7 +336,8 @@ export default function TeamMembers() {
   }
 
   return (
-    <div className="space-y-6">
+    <AuthWrapper>
+      <div className="space-y-6">
       {/* License Information Card */}
       <Card>
         <CardHeader>
@@ -861,6 +865,7 @@ export default function TeamMembers() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
+    </AuthWrapper>
   );
 }
