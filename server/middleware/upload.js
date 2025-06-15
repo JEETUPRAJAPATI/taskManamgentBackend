@@ -1,98 +1,96 @@
 import multer from 'multer';
-import sharp from 'sharp';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import fs from 'fs/promises';
+import fs from 'fs';
+import sharp from 'sharp';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(process.cwd(), 'uploads', 'profile-pics');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
-// Configure multer for memory storage
-const storage = multer.memoryStorage();
+// Configure multer for file upload
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    // Generate unique filename
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, `profile-${uniqueSuffix}${ext}`);
+  }
+});
 
-// File filter for images only
+// File filter for image types
 const fileFilter = (req, file, cb) => {
-  const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
   
-  if (allowedMimes.includes(file.mimetype)) {
+  if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Invalid file type. Only JPEG, PNG, and WebP files are allowed.'), false);
+    cb(new Error('Only .jpg, .jpeg, .png, and .webp files are allowed'), false);
   }
 };
 
 // Configure multer
 const upload = multer({
-  storage,
+  storage: storage,
   limits: {
     fileSize: 2 * 1024 * 1024, // 2MB limit
   },
-  fileFilter,
+  fileFilter: fileFilter
 });
 
-// Profile image processing middleware
+export const uploadProfileImage = upload.single('profileImage');
+
+// Process uploaded image (resize and optimize)
 export const processProfileImage = async (req, res, next) => {
   if (!req.file) {
     return next();
   }
 
   try {
-    const uploadsDir = path.join(process.cwd(), 'uploads', 'profile-pics');
-    
-    // Ensure uploads directory exists
-    try {
-      await fs.access(uploadsDir);
-    } catch {
-      await fs.mkdir(uploadsDir, { recursive: true });
-    }
-
-    // Generate unique filename
-    const timestamp = Date.now();
-    const randomSuffix = Math.round(Math.random() * 1E9);
-    const filename = `profile-${timestamp}-${randomSuffix}.webp`;
-    const filepath = path.join(uploadsDir, filename);
+    const inputPath = req.file.path;
+    const outputPath = path.join(uploadsDir, `processed-${req.file.filename}`);
 
     // Process image with sharp
-    await sharp(req.file.buffer)
+    await sharp(inputPath)
       .resize(300, 300, {
         fit: 'cover',
         position: 'center'
       })
-      .webp({ quality: 85 })
-      .toFile(filepath);
+      .jpeg({ quality: 80 })
+      .toFile(outputPath);
 
-    // Add processed file info to request
-    req.processedFile = {
-      filename,
-      path: filepath,
-      url: `/uploads/profile-pics/${filename}`
-    };
+    // Delete original file
+    fs.unlinkSync(inputPath);
+
+    // Update req.file with processed file info
+    req.file.path = outputPath;
+    req.file.filename = `processed-${req.file.filename}`;
 
     next();
   } catch (error) {
     console.error('Image processing error:', error);
-    res.status(400).json({ 
-      message: 'Failed to process image', 
-      error: error.message 
-    });
+    // Delete uploaded file on error
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    res.status(500).json({ message: 'Error processing image' });
   }
 };
 
 // Delete old profile image
-export const deleteOldProfileImage = async (oldImageUrl) => {
-  if (!oldImageUrl || !oldImageUrl.startsWith('/uploads/profile-pics/')) {
-    return;
-  }
-
-  try {
-    const filename = path.basename(oldImageUrl);
-    const filepath = path.join(process.cwd(), 'uploads', 'profile-pics', filename);
-    
-    await fs.unlink(filepath);
-    console.log(`Deleted old profile image: ${filename}`);
-  } catch (error) {
-    console.error('Error deleting old profile image:', error);
+export const deleteOldProfileImage = (imagePath) => {
+  if (imagePath && imagePath.includes('/uploads/profile-pics/')) {
+    const fullPath = path.join(process.cwd(), imagePath);
+    if (fs.existsSync(fullPath)) {
+      try {
+        fs.unlinkSync(fullPath);
+      } catch (error) {
+        console.error('Error deleting old profile image:', error);
+      }
+    }
   }
 };
-
-export const uploadProfileImage = upload.single('profileImage');

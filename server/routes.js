@@ -2,6 +2,7 @@ import { createServer } from "http";
 import cors from "cors";
 import express from "express";
 import path from "path";
+import fs from "fs";
 import { storage } from "./mongodb-storage.js";
 import { authenticateToken, requireRole } from "./middleware/roleAuth.js";
 import { authService } from "./services/authService.js";
@@ -71,57 +72,41 @@ export async function registerRoutes(app) {
     }
   });
 
-  // Update user profile with optional image upload
+  // Update user profile
   app.put("/api/profile", authenticateToken, uploadProfileImage, processProfileImage, async (req, res) => {
     try {
       const userId = req.user.id;
-      const { firstName, lastName, email, phone, bio } = req.body;
+      const { firstName, lastName, phone, bio, address } = req.body;
       
-      // Get current user to check for existing image
-      const currentUser = await storage.getUser(userId);
-      if (!currentUser) {
+      // Build update object with only allowed fields
+      const updateData = {};
+      if (firstName !== undefined) updateData.firstName = firstName;
+      if (lastName !== undefined) updateData.lastName = lastName;
+      if (phone !== undefined) updateData.phone = phone;
+      if (bio !== undefined) updateData.bio = bio;
+      if (address !== undefined) updateData.address = address;
+
+      // Handle profile image upload
+      if (req.file) {
+        const currentUser = await storage.getUser(userId);
+        
+        // Delete old profile image if exists
+        if (currentUser.profileImageUrl) {
+          deleteOldProfileImage(currentUser.profileImageUrl);
+        }
+        
+        // Set new profile image path
+        updateData.profileImageUrl = `/uploads/profile-pics/${req.file.filename}`;
+      }
+
+      const updatedUser = await storage.updateUser(userId, updateData);
+      
+      if (!updatedUser) {
         return res.status(404).json({ message: "User not found" });
       }
 
-      // Prepare update data
-      const updateData = {
-        firstName: firstName?.trim(),
-        lastName: lastName?.trim(),
-        email: email?.trim().toLowerCase(),
-        phone: phone?.trim(),
-        bio: bio?.trim()
-      };
-
-      // Remove empty/undefined fields
-      Object.keys(updateData).forEach(key => {
-        if (updateData[key] === undefined || updateData[key] === '') {
-          delete updateData[key];
-        }
-      });
-
-      // Handle profile image update
-      if (req.processedFile) {
-        // Delete old image if it exists
-        if (currentUser.profileImageUrl) {
-          await deleteOldProfileImage(currentUser.profileImageUrl);
-        }
-        updateData.profileImageUrl = req.processedFile.url;
-      }
-
-      // Check for email uniqueness if email is being changed
-      if (updateData.email && updateData.email !== currentUser.email) {
-        const existingUser = await storage.getUserByEmail(updateData.email);
-        if (existingUser && existingUser._id.toString() !== userId) {
-          return res.status(400).json({ message: "Email already exists" });
-        }
-      }
-
-      // Update user profile
-      const updatedUser = await storage.updateUser(userId, updateData);
-      
-      // Remove sensitive data from response
+      // Remove sensitive data
       const { passwordHash, passwordResetToken, emailVerificationToken, ...userProfile } = updatedUser.toObject();
-      
       res.json({
         message: "Profile updated successfully",
         user: userProfile
@@ -129,17 +114,13 @@ export async function registerRoutes(app) {
     } catch (error) {
       console.error("Update profile error:", error);
       
-      // Delete uploaded file if update failed
-      if (req.processedFile) {
+      // Delete uploaded file on error
+      if (req.file && req.file.path) {
         try {
-          await deleteOldProfileImage(req.processedFile.url);
-        } catch (deleteError) {
-          console.error("Error deleting uploaded file after failed update:", deleteError);
+          fs.unlinkSync(req.file.path);
+        } catch (unlinkError) {
+          console.error("Error deleting uploaded file:", unlinkError);
         }
-      }
-      
-      if (error.code === 11000) {
-        return res.status(400).json({ message: "Email already exists" });
       }
       
       res.status(500).json({ message: "Failed to update profile" });
