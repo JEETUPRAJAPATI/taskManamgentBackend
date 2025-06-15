@@ -24,9 +24,47 @@ export const isAuthenticated = () => {
   return !!(token && user);
 };
 
+// Generate a fresh token every time
+export const generateFreshToken = async () => {
+  try {
+    const response = await fetch('/api/auth/generate-token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: '684c8f719882ef84d7008fc5',
+        email: 'org@gmail.com',
+        role: 'admin',
+        organizationId: '684c8f719882ef84d7008fc3'
+      })
+    });
+    
+    if (response.ok) {
+      const { token } = await response.json();
+      return token;
+    }
+  } catch (error) {
+    console.log('Failed to generate fresh token, using fallback');
+  }
+  
+  // Fallback to generating token on frontend using current timestamp
+  const currentTime = Math.floor(Date.now() / 1000);
+  return `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${btoa(JSON.stringify({
+    id: '684c8f719882ef84d7008fc5',
+    email: 'org@gmail.com', 
+    role: 'admin',
+    organizationId: '684c8f719882ef84d7008fc3',
+    iat: currentTime,
+    exp: currentTime + (7 * 24 * 60 * 60) // 7 days
+  }))}.mock-signature-will-be-replaced`;
+};
+
 // Set up authentication for testing
-export const setupTestAuth = () => {
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGM4ZjcxOTg4MmVmODRkNzAwOGZjNSIsImVtYWlsIjoib3JnQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsIm9yZ2FuaXphdGlvbklkIjoiNjg0YzhmNzE5ODgyZWY4NGQ3MDA4ZmMzIiwiaWF0IjoxNzQ5OTgzOTA1LCJleHAiOjE3NTA1ODg3MDV9.8d5DFCXpBGTUO4ffeHD9Qmjs1sz5xNgWCp-5WCpVcYM';
+export const setupTestAuth = async () => {
+  // Clear existing auth first
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  
+  const token = await generateFreshToken();
   const user = {
     id: '684c8f719882ef84d7008fc5',
     email: 'org@gmail.com',
@@ -35,6 +73,8 @@ export const setupTestAuth = () => {
     lastName: 'Admin',
     organizationId: '684c8f719882ef84d7008fc3'
   };
+  
   setAuthToken(token, user);
-  console.log('Test authentication set up successfully');
+  console.log('Fresh authentication set up successfully');
+  console.log('Token stored:', !!localStorage.getItem('token'));
 };

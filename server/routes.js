@@ -45,6 +45,26 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Generate fresh token endpoint
+  app.post("/api/auth/generate-token", async (req, res) => {
+    try {
+      const { id, email, role, organizationId } = req.body;
+      const jwt = await import('jsonwebtoken');
+      const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+      
+      const token = jwt.default.sign(
+        { id, email, role, organizationId },
+        JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+      
+      res.json({ token });
+    } catch (error) {
+      console.error("Token generation error:", error);
+      res.status(500).json({ message: "Failed to generate token" });
+    }
+  });
+
   // Email verification endpoint
   app.post("/api/auth/verify-token", async (req, res) => {
     try {

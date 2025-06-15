@@ -7,19 +7,28 @@ export default function AuthWrapper({ children }) {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    // Always setup fresh authentication
-    console.log('Setting up fresh authentication...');
-    setupTestAuth();
+    const initAuth = async () => {
+      console.log('Setting up fresh authentication...');
+      
+      // Clear any existing query cache to force refetch
+      queryClient.clear();
+      
+      try {
+        await setupTestAuth();
+        console.log('Authentication setup complete');
+      } catch (error) {
+        console.error('Auth setup failed:', error);
+      }
+      
+      // Set auth ready after ensuring token is set
+      setTimeout(() => {
+        setAuthReady(true);
+        // Invalidate queries to force refetch with new token
+        queryClient.invalidateQueries();
+      }, 200);
+    };
     
-    // Clear any existing query cache to force refetch
-    queryClient.clear();
-    
-    // Set auth ready after ensuring token is set
-    setTimeout(() => {
-      setAuthReady(true);
-      // Invalidate queries to force refetch with new token
-      queryClient.invalidateQueries();
-    }, 100);
+    initAuth();
   }, [queryClient]);
 
   // Don't render children until auth is ready

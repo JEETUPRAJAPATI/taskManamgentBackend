@@ -29,23 +29,31 @@ export const getQueryFn = ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
     const token = localStorage.getItem('token');
     
-    console.log('API Request:', queryKey[0]);
+    console.log('=== API REQUEST DEBUG ===');
+    console.log('URL:', queryKey[0]);
     console.log('Token exists:', !!token);
-    console.log('Token length:', token?.length);
+    console.log('Token value:', token?.substring(0, 50) + '...');
+    
+    if (!token) {
+      console.log('ERROR: No token found in localStorage');
+      throw new Error('No authentication token found');
+    }
     
     const headers = {
-      ...(token ? { "Authorization": `Bearer ${token}` } : {})
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
     };
 
-    console.log('Request headers:', headers);
+    console.log('Headers being sent:', headers);
 
     const res = await fetch(queryKey[0], {
+      method: 'GET',
       headers,
       credentials: "include",
     });
 
     console.log('Response status:', res.status);
-    console.log('Response headers:', Object.fromEntries(res.headers.entries()));
+    console.log('Response ok:', res.ok);
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
       console.log('401 unauthorized, returning null');
