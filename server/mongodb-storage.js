@@ -1467,6 +1467,15 @@ export class MongoStorage {
     });
   }
 
+  // Get user by email verification token
+  async getUserByVerificationToken(token) {
+    return await User.findOne({ 
+      emailVerificationToken: token,
+      status: 'pending', // Must be pending verification
+      emailVerificationExpires: { $gt: new Date() } // Token not expired
+    });
+  }
+
   // Get organization users with detailed info
   async getOrganizationUsersDetailed(organizationId) {
     return await User.find({ organization: organizationId })

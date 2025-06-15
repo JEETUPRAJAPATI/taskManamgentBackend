@@ -55,6 +55,7 @@ import { AcceptInvite } from "./pages/AcceptInvite";
 import { SimpleAcceptInvite } from "./pages/SimpleAcceptInvite";
 import { TestInvite } from "./pages/TestInvite";
 import VerifyAndSetPassword from "./pages/auth/VerifyAndSetPassword";
+import VerifyEmail from "./pages/auth/VerifyEmail";
 import RegistrationSuccess from "./pages/auth/RegistrationSuccess";
 import TestAuth from "./pages/TestAuth";
 
@@ -249,7 +250,7 @@ function App() {
         />
         <Route path="/login" component={Login} />
 
-        <Route path="/verify" component={VerifyAndSetPassword} />
+        <Route path="/verify" component={VerifyEmail} />
         <Route path="/registration-success" component={RegistrationSuccess} />
         <Route path="/create-password" component={CreatePassword} />
         <Route path="/reset-password" component={ResetPassword} />

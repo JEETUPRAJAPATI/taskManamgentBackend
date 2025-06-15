@@ -45,6 +45,63 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Email verification endpoint
+  app.post("/api/auth/verify-token", async (req, res) => {
+    try {
+      const { token, password } = req.body;
+      
+      console.log("Email verification attempt with token:", token);
+
+      if (!token || !password) {
+        return res.status(400).json({ message: "Token and password are required" });
+      }
+
+      // Find user by verification token
+      const user = await storage.getUserByVerificationToken(token);
+      if (!user) {
+        return res.status(400).json({ message: "Invalid or expired verification token" });
+      }
+
+      // Check if token is expired
+      if (user.emailVerificationExpires && new Date() > user.emailVerificationExpires) {
+        return res.status(400).json({ message: "Verification token has expired" });
+      }
+
+      // Hash the password and update user
+      const hashedPassword = await storage.hashPassword(password);
+      
+      await storage.updateUser(user._id, {
+        password: hashedPassword,
+        status: 'active',
+        emailVerified: true,
+        emailVerificationToken: null,
+        emailVerificationExpires: null
+      });
+
+      console.log("User verification successful:", user.email);
+
+      // Generate auth token for login
+      const authToken = storage.generateToken(user);
+
+      res.json({
+        message: "Email verified and password set successfully",
+        token: authToken,
+        user: {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          organizationId: user.organizationId
+        }
+      });
+
+    } catch (error) {
+      console.error("Email verification error:", error);
+      res.status(500).json({ message: "Verification failed. Please try again." });
+    }
+  });
+
   // Individual registration
   app.post("/api/auth/register-individual", async (req, res) => {
     try {
