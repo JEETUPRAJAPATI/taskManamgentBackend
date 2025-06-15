@@ -58,11 +58,14 @@ export async function registerRoutes(app) {
   // Get current user profile
   app.get("/api/profile", authenticateToken, async (req, res) => {
     try {
+      console.log("Profile API called - User ID:", req.user.id);
       const user = await storage.getUser(req.user.id);
       if (!user) {
+        console.log("Profile API - User not found for ID:", req.user.id);
         return res.status(404).json({ message: "User not found" });
       }
       
+      console.log("Profile API - Raw user data:", user);
       console.log("Profile API - User data:", {
         id: user._id,
         email: user.email,
@@ -71,8 +74,22 @@ export async function registerRoutes(app) {
         profileImageUrl: user.profileImageUrl
       });
       
-      // Remove sensitive data
-      const { passwordHash, passwordResetToken, emailVerificationToken, ...userProfile } = user.toObject();
+      // Remove sensitive data and return clean profile
+      const userProfile = {
+        _id: user._id,
+        id: user._id,
+        email: user.email,
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        profileImageUrl: user.profileImageUrl || null,
+        role: user.role,
+        organizationId: user.organizationId,
+        status: user.status,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      };
+      
+      console.log("Profile API - Sending response:", userProfile);
       res.json(userProfile);
     } catch (error) {
       console.error("Get profile error:", error);
