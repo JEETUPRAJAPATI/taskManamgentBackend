@@ -47,7 +47,7 @@ class InviteEmailService {
             .greeting { font-size: 18px; margin-bottom: 24px; }
             .invitation-text { font-size: 16px; margin-bottom: 30px; }
             .btn-container { text-align: center; margin: 30px 0; }
-            .btn { display: inline-block; background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; transition: transform 0.2s; }
+            .btn { display: inline-block; background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%); color: #ffffff; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; transition: transform 0.2s; }
             .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3); }
             .features { background-color: #F8FAFC; padding: 24px; border-radius: 8px; margin: 24px 0; }
             .features h3 { margin: 0 0 16px 0; color: #1F2937; font-size: 18px; }

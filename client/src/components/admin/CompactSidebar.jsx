@@ -61,8 +61,8 @@ export function Sidebar({ isOpen, isMobileMenuOpen, onToggle, onMobileToggle }) 
       <div 
         className="fixed inset-y-0 left-0 z-[1000] bg-black w-56 border-r border-gray-800 shadow-xl"
         style={{ 
-          display: 'block !important', 
-          visibility: 'visible !important',
+          display: 'block', 
+          visibility: 'visible',
           position: 'fixed',
           top: 0,
           left: 0,
