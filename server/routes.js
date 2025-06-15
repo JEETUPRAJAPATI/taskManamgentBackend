@@ -92,19 +92,22 @@ export async function registerRoutes(app) {
 
       console.log("User verification successful:", user.email);
 
+      // Get updated user object with new password
+      const updatedUser = await storage.getUser(user._id);
+      
       // Generate auth token for login
-      const authToken = storage.generateToken(user);
+      const authToken = storage.generateToken(updatedUser);
 
       res.json({
         message: "Email verified and password set successfully",
         token: authToken,
         user: {
-          id: user._id,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          role: user.role,
-          organizationId: user.organizationId
+          id: updatedUser._id,
+          email: updatedUser.email,
+          firstName: updatedUser.firstName,
+          lastName: updatedUser.lastName,
+          role: updatedUser.role,
+          organizationId: updatedUser.organizationId
         }
       });
 
@@ -271,6 +274,46 @@ export async function registerRoutes(app) {
     } catch (error) {
       console.error("Organization registration error:", error);
       res.status(500).json({ message: "Registration failed. Please try again." });
+    }
+  });
+
+  // Get team members for current user's organization
+  app.get("/api/team-members", authenticateToken, async (req, res) => {
+    try {
+      const user = req.user;
+      
+      if (!user.organizationId) {
+        return res.status(400).json({ message: "User not associated with any organization" });
+      }
+
+      // Get all users in the same organization
+      const teamMembers = await storage.getOrganizationUsersDetailed(user.organizationId);
+      
+      // Format the response to include only necessary fields
+      const formattedMembers = teamMembers.map(member => ({
+        id: member._id,
+        firstName: member.firstName,
+        lastName: member.lastName,
+        fullName: `${member.firstName || ''} ${member.lastName || ''}`.trim(),
+        email: member.email,
+        role: member.role,
+        status: member.status,
+        profileImageUrl: member.profileImageUrl,
+        isActive: member.isActive,
+        emailVerified: member.emailVerified,
+        lastLoginAt: member.lastLoginAt,
+        createdAt: member.createdAt,
+        invitedBy: member.invitedBy ? {
+          id: member.invitedBy._id,
+          name: `${member.invitedBy.firstName || ''} ${member.invitedBy.lastName || ''}`.trim()
+        } : null,
+        invitedAt: member.invitedAt
+      }));
+
+      res.json(formattedMembers);
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+      res.status(500).json({ message: "Failed to fetch team members" });
     }
   });
 

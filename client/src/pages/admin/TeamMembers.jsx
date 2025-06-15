@@ -42,10 +42,11 @@ export default function TeamMembers() {
     { email: '', roles: ['employee'], firstName: '', lastName: '' }
   ]);
 
-  // State for managing team members data directly
-  const [users, setUsers] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // Fetch team members data
+  const { data: teamMembers = [], isLoading, error, refetch } = useQuery({
+    queryKey: ['/api/team-members'],
+    retry: false,
+  });
 
   // Fetch license info
   const { data: licenseInfo } = useQuery({
@@ -53,73 +54,9 @@ export default function TeamMembers() {
     enabled: true
   });
 
-  // Direct data fetching function
-  const fetchTeamMembers = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
-      
-      const response = await fetch('/api/organization/users-detailed', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      console.log('Fetched team members:', data.length, 'users');
-      setUsers(data);
-      setIsLoading(false);
-    } catch (err) {
-      console.error('Fetch error:', err);
-      setError(err.message);
-      setIsLoading(false);
-    }
-  };
-
-  // Enhanced data refresh function
-  const refreshData = async () => {
-    console.log('Refreshing team members data...');
-    await fetchTeamMembers();
-  };
-
-  // Initialize authentication and fetch data on mount
-  React.useEffect(() => {
-    const initializeData = async () => {
-      // Set working authentication token
-      const workingToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGNmMTc3NzExYzc5ZTFiOWMwZGQwMCIsImVtYWlsIjoiYWRtaW5AZGVtby5jb20iLCJyb2xlIjoiYWRtaW4iLCJvcmdhbml6YXRpb25JZCI6IjY4NGNmMTc2NzExYzc5ZTFiOWMwZGNmZCIsImlhdCI6MTc0OTg3ODk0MiwiZXhwIjoxNzQ5OTY1MzQyfQ.6EEYrb-746zK0tyCIcrD-qtn7daucV3P1fSPWJnvOsM';
-      localStorage.setItem('token', workingToken);
-      
-      // Fetch team members data
-      await fetchTeamMembers();
-    };
-
-    initializeData();
-  }, []);
-
-  // Test login function
-  const testLogin = async () => {
-    try {
-      const validToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGNmMTc3NzExYzc5ZTFiOWMwZGQwMCIsImVtYWlsIjoiYWRtaW5AZGVtby5jb20iLCJyb2xlIjoiYWRtaW4iLCJvcmdhbml6YXRpb25JZCI6IjY4NGNmMTc2NzExYzc5ZTFiOWMwZGNmZCIsImlhdCI6MTc0OTg3NTQzOCwiZXhwIjoxNzUwNDgwMjM4fQ.DXjnKJhksEcJrpFvjWM_lNMSz02qeLPH_YyV8nDL5lM';
-      localStorage.setItem('token', validToken);
-      window.location.reload();
-    } catch (error) {
-      console.log('Test login failed:', error);
-      toast({
-        title: "Login Failed",
-        description: "Could not log in as demo admin",
-        variant: "destructive"
-      });
-    }
+  // Refresh team members data
+  const refreshData = () => {
+    refetch();
   };
 
   // Mutations
@@ -206,7 +143,7 @@ export default function TeamMembers() {
 
   // Enhanced filter and pagination logic
   const filteredAndPaginatedData = useMemo(() => {
-    let filtered = users.filter(user => {
+    let filtered = teamMembers.filter(user => {
       // Enhanced search functionality
       const searchQuery = searchTerm.toLowerCase();
       const userName = `${user.firstName || ''} ${user.lastName || ''}`.toLowerCase();
@@ -250,7 +187,7 @@ export default function TeamMembers() {
       currentStart: startIndex + 1,
       currentEnd: Math.min(endIndex, totalItems)
     };
-  }, [users, searchTerm, statusFilter, roleFilter, currentPage]);
+  }, [teamMembers, searchTerm, statusFilter, roleFilter, currentPage]);
 
   // Helper functions
   const getDisplayName = (user) => {
