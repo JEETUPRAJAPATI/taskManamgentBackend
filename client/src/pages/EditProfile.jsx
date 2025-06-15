@@ -18,8 +18,7 @@ export default function EditProfile() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
-    lastName: "",
-    address: ""
+    lastName: ""
   });
 
   // Fetch current user profile
@@ -32,8 +31,7 @@ export default function EditProfile() {
     if (user) {
       setFormData({
         firstName: user.firstName || "",
-        lastName: user.lastName || "",
-        address: user.address || ""
+        lastName: user.lastName || ""
       });
     }
   }, [user]);
@@ -286,16 +284,7 @@ export default function EditProfile() {
                 <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
               </div>
 
-              <div>
-                <Label htmlFor="address">Address</Label>
-                <Input
-                  id="address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  placeholder="Enter your address"
-                />
-              </div>
+
 
               {/* Submit Button */}
               <div className="flex justify-end space-x-4 pt-4">
