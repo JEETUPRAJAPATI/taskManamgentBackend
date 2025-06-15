@@ -1,31 +1,46 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Eye, EyeOff, UserPlus, CheckCircle, AlertCircle, Shield, Users, User } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  UserPlus,
+  CheckCircle,
+  AlertCircle,
+  Shield,
+  Users,
+  User,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
 export function AcceptInvite() {
-  console.log('AcceptInvite function called');
+  console.log("AcceptInvite function called");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  
+
   // Get token from URL params
   const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get('token');
-  
+  const token = urlParams.get("token");
+
   // Debug logging
-  console.log('AcceptInvite component loaded');
-  console.log('URL:', window.location.href);
-  console.log('Token from URL:', token);
-  
+  console.log("AcceptInvite component loaded");
+  console.log("URL:", window.location.href);
+  console.log("Token from URL:", token);
+
   // Early return if no token
   if (!token) {
-    console.log('No token found, showing error');
+    console.log("No token found, showing error");
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <Card className="w-full max-w-md">
@@ -39,8 +54,8 @@ export function AcceptInvite() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button 
-              onClick={() => setLocation('/login')} 
+            <Button
+              onClick={() => setLocation("/login")}
               className="w-full"
               variant="outline"
             >
@@ -51,31 +66,35 @@ export function AcceptInvite() {
       </div>
     );
   }
-  
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
   // Validate invitation token and get invitation details
-  const { data: inviteData, isLoading, error } = useQuery({
+  const {
+    data: inviteData,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["/api/auth/validate-invite", token],
     queryFn: async () => {
-      console.log('Fetching invitation data for token:', token);
+      console.log("Fetching invitation data for token:", token);
       const response = await fetch(`/api/auth/validate-invite?token=${token}`);
-      console.log('Response status:', response.status);
+      console.log("Response status:", response.status);
       if (!response.ok) {
         const error = await response.json();
-        console.log('Error response:', error);
+        console.log("Error response:", error);
         throw new Error(error.message || "Invalid or expired invitation");
       }
       const data = await response.json();
-      console.log('Invitation data received:', data);
+      console.log("Invitation data received:", data);
       return data;
     },
     enabled: !!token,
@@ -92,44 +111,47 @@ export function AcceptInvite() {
         },
         body: JSON.stringify({
           token,
-          ...userData
-        })
+          ...userData,
+        }),
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || "Failed to complete invitation");
       }
-      
+
       return response.json();
     },
     onSuccess: (data) => {
       toast({
         title: "Welcome to TaskSetu!",
-        description: "Your account has been created successfully. You can now log in.",
+        description:
+          "Your account has been created successfully. You can now log in.",
       });
-      
+
       // Store token if provided and redirect to dashboard
       if (data.token) {
-        localStorage.setItem('token', data.token);
-        setLocation('/dashboard');
+        localStorage.setItem("token", data.token);
+        setLocation("/dashboard");
       } else {
-        setLocation('/login');
+        setLocation("/login");
       }
     },
     onError: (error) => {
-      const isAlreadyRegistered = error.message?.includes("already been accepted") || 
-                                 error.message?.includes("already registered");
-      
+      const isAlreadyRegistered =
+        error.message?.includes("already been accepted") ||
+        error.message?.includes("already registered");
+
       if (isAlreadyRegistered) {
         toast({
           title: "Already Registered",
-          description: "This invitation has already been used. Please log in instead.",
+          description:
+            "This invitation has already been used. Please log in instead.",
           variant: "destructive",
         });
-        
+
         // Redirect to login after showing the error
-        setTimeout(() => setLocation('/login'), 2000);
+        setTimeout(() => setLocation("/login"), 2000);
       } else {
         toast({
           title: "Registration failed",
@@ -143,25 +165,25 @@ export function AcceptInvite() {
   // Form validation
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.firstName.trim()) {
       newErrors.firstName = "First name is required";
     }
-    
+
     if (!formData.lastName.trim()) {
       newErrors.lastName = "Last name is required";
     }
-    
+
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
-    
+
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -169,25 +191,25 @@ export function AcceptInvite() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     completeInviteMutation.mutate({
       firstName: formData.firstName.trim(),
       lastName: formData.lastName.trim(),
-      password: formData.password
+      password: formData.password,
     });
   };
 
   // Handle input changes
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: "" }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
@@ -207,21 +229,21 @@ export function AcceptInvite() {
   };
 
   // Debug logging for states
-  console.log('Component state:', { isLoading, error, inviteData, token });
+  console.log("Component state:", { isLoading, error, inviteData, token });
 
   // Add a simple test render to debug the blank page
   if (!token && !isLoading) {
-    console.log('Rendering no token message');
+    console.log("Rendering no token message");
   }
-  
+
   // Debug: Check if we're reaching the main render
   if (!isLoading && !error && inviteData) {
-    console.log('About to render registration form with data:', inviteData);
+    console.log("About to render registration form with data:", inviteData);
   }
 
   // Loading state
   if (isLoading) {
-    console.log('Showing loading state');
+    console.log("Showing loading state");
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -234,38 +256,46 @@ export function AcceptInvite() {
 
   // Error state
   if (error || !inviteData) {
-    const isAlreadyRegistered = error?.message?.includes("already been accepted") || 
-                               error?.message?.includes("already registered");
-    
+    const isAlreadyRegistered =
+      error?.message?.includes("already been accepted") ||
+      error?.message?.includes("already registered");
+
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <div className={`w-12 h-12 ${isAlreadyRegistered ? 'bg-blue-100' : 'bg-red-100'} rounded-full flex items-center justify-center mx-auto mb-4`}>
+            <div
+              className={`w-12 h-12 ${isAlreadyRegistered ? "bg-blue-100" : "bg-red-100"} rounded-full flex items-center justify-center mx-auto mb-4`}
+            >
               {isAlreadyRegistered ? (
                 <CheckCircle className="h-6 w-6 text-blue-600" />
               ) : (
                 <AlertCircle className="h-6 w-6 text-red-600" />
               )}
             </div>
-            <CardTitle className={isAlreadyRegistered ? "text-blue-600" : "text-red-600"}>
-              {isAlreadyRegistered ? "Already Registered" : "Invalid Invitation"}
+            <CardTitle
+              className={isAlreadyRegistered ? "text-blue-600" : "text-red-600"}
+            >
+              {isAlreadyRegistered
+                ? "Already Registered"
+                : "Invalid Invitation"}
             </CardTitle>
             <CardDescription>
-              {error?.message || "This invitation link is invalid or has expired."}
+              {error?.message ||
+                "This invitation link is invalid or has expired."}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button 
-              onClick={() => setLocation('/login')} 
+            <Button
+              onClick={() => setLocation("/login")}
               className="w-full"
               variant={isAlreadyRegistered ? "default" : "outline"}
             >
               {isAlreadyRegistered ? "Log In" : "Go to Login"}
             </Button>
             {isAlreadyRegistered && (
-              <Button 
-                onClick={() => setLocation('/')} 
+              <Button
+                onClick={() => setLocation("/")}
                 className="w-full"
                 variant="outline"
               >
@@ -278,8 +308,8 @@ export function AcceptInvite() {
     );
   }
 
-  console.log('Rendering main registration form');
-  
+  console.log("Rendering main registration form");
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -288,9 +318,14 @@ export function AcceptInvite() {
           <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <UserPlus className="h-8 w-8 text-blue-600" />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">Complete Your Registration</h2>
+          <h2 className="text-3xl font-bold text-gray-900">
+            Complete Your Registration
+          </h2>
           <p className="mt-2 text-gray-600">
-            You've been invited to join <span className="font-semibold text-blue-600">{inviteData?.organizationName}</span>
+            You've been invited to join{" "}
+            <span className="font-semibold text-blue-600">
+              {inviteData?.organizationName}
+            </span>
           </p>
         </div>
 
@@ -307,7 +342,7 @@ export function AcceptInvite() {
               <Label className="text-sm text-gray-600">Organization</Label>
               <p className="font-medium">{inviteData.organizationName}</p>
             </div>
-            
+
             <div>
               <Label className="text-sm text-gray-600">Your Role(s)</Label>
               <div className="flex flex-wrap gap-2 mt-1">
@@ -319,12 +354,12 @@ export function AcceptInvite() {
                 ))}
               </div>
             </div>
-            
+
             <div>
               <Label className="text-sm text-gray-600">Email</Label>
               <p className="font-medium">{inviteData.email}</p>
             </div>
-            
+
             {inviteData.invitedByName && (
               <div>
                 <Label className="text-sm text-gray-600">Invited by</Label>
@@ -351,12 +386,16 @@ export function AcceptInvite() {
                   id="firstName"
                   type="text"
                   value={formData.firstName}
-                  onChange={(e) => handleInputChange('firstName', e.target.value)}
-                  className={errors.firstName ? 'border-red-500' : ''}
+                  onChange={(e) =>
+                    handleInputChange("firstName", e.target.value)
+                  }
+                  className={errors.firstName ? "border-red-500" : ""}
                   placeholder="Enter your first name"
                 />
                 {errors.firstName && (
-                  <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.firstName}
+                  </p>
                 )}
               </div>
 
@@ -367,8 +406,10 @@ export function AcceptInvite() {
                   id="lastName"
                   type="text"
                   value={formData.lastName}
-                  onChange={(e) => handleInputChange('lastName', e.target.value)}
-                  className={errors.lastName ? 'border-red-500' : ''}
+                  onChange={(e) =>
+                    handleInputChange("lastName", e.target.value)
+                  }
+                  className={errors.lastName ? "border-red-500" : ""}
                   placeholder="Enter your last name"
                 />
                 {errors.lastName && (
@@ -384,8 +425,12 @@ export function AcceptInvite() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     value={formData.password}
-                    onChange={(e) => handleInputChange('password', e.target.value)}
-                    className={errors.password ? 'border-red-500 pr-10' : 'pr-10'}
+                    onChange={(e) =>
+                      handleInputChange("password", e.target.value)
+                    }
+                    className={
+                      errors.password ? "border-red-500 pr-10" : "pr-10"
+                    }
                     placeholder="Create a secure password"
                   />
                   <button
@@ -413,8 +458,12 @@ export function AcceptInvite() {
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     value={formData.confirmPassword}
-                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                    className={errors.confirmPassword ? 'border-red-500 pr-10' : 'pr-10'}
+                    onChange={(e) =>
+                      handleInputChange("confirmPassword", e.target.value)
+                    }
+                    className={
+                      errors.confirmPassword ? "border-red-500 pr-10" : "pr-10"
+                    }
                     placeholder="Confirm your password"
                   />
                   <button
@@ -430,7 +479,9 @@ export function AcceptInvite() {
                   </button>
                 </div>
                 {errors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.confirmPassword}
+                  </p>
                 )}
               </div>
 
@@ -458,9 +509,10 @@ export function AcceptInvite() {
 
         {/* Footer */}
         <div className="text-center text-sm text-gray-600">
-          <p>Already have an account?{' '}
+          <p>
+            Already have an account?{" "}
             <button
-              onClick={() => navigate('/login')}
+              onClick={() => navigate("/login")}
               className="text-blue-600 hover:text-blue-500 font-medium"
             >
               Sign in here

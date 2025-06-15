@@ -152,20 +152,20 @@ export function SimpleSidebar() {
       <div
         className={`flex items-center px-3 py-2.5 text-sm rounded-lg transition-all duration-200 group  ${
           isActive(item.href)
-            ? "bg-blue-600 text-white shadow-lg"
-            : "text-blue-200 hover:text-white"
+            ? "bg-sidebarActive text-white shadow-lg"
+            : "text-gray-300 hover:bg-sidebarHover hover:text-white"
         }`}
       >
         <item.icon
           className={`h-4 w-4 mr-3 ${
             isActive(item.href)
-              ? "text-blue-100"
-              : "text-blue-300 group-hover:text-blue-100"
+              ? "text-white"
+              : "text-gray-400 group-hover:text-white"
           }`}
         />
         <div className="flex-1">
           <div className="font-medium">{item.name}</div>
-          <div className="text-xs text-blue-400 group-hover:text-blue-300">
+          <div className="text-xs text-gray-400 group-hover:text-gray-300">
             {item.description}
           </div>
         </div>
@@ -198,33 +198,30 @@ export function SimpleSidebar() {
 
   return (
     <div
-      className="fixed inset-y-0 left-0 z-50 w-56 bg-blue-900 border-r border-blue-800 shadow-xl blue-sidebar"
-      style={{ backgroundColor: "#1e3a8a" }}
+      className="fixed inset-y-0 left-0 z-50 w-56 bg-sidebarDark border-r border-gray-600/30 shadow-xl"
     >
       <div className="flex flex-col h-full">
         {/* Logo */}
         <div
-          className="flex items-center h-16 px-4 border-b border-blue-800 bg-blue-900"
-          style={{ backgroundColor: "#1e3a8a" }}
+          className="flex items-center h-16 px-4 border-b border-gray-600/30 bg-sidebarDark"
         >
-          <CheckSquare className="h-5 w-5 text-blue-300" />
+          <CheckSquare className="h-5 w-5 text-white" />
           <div className="ml-3">
-            <h1 className="text-sm font-semibold text-blue-100">TaskSetu</h1>
-            <p className="text-xs text-blue-400">
+            <h1 className="text-sm font-semibold text-white">TaskSetu</h1>
+            <p className="text-xs text-gray-300">
               {isIndividualUser ? "Personal" : "Admin Panel"}
             </p>
-            <p className="text-xs text-blue-400">{user?.email}</p>
+            <p className="text-xs text-gray-300">{user?.email}</p>
           </div>
         </div>
 
         {/* Navigation */}
         <div
-          className="flex-1 px-3 py-4 overflow-y-auto"
-          style={{ backgroundColor: "#1e3a8a" }}
+          className="flex-1 px-3 py-4 overflow-y-auto bg-sidebarDark"
         >
           {/* Main Features */}
           <div className="mb-6">
-            <div className="px-3 py-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
+            <div className="px-3 py-2 text-xs font-semibold text-gray-300 uppercase tracking-wider">
               Main
             </div>
             <div className="mt-2 space-y-1">
@@ -234,7 +231,7 @@ export function SimpleSidebar() {
 
           {/* Workflow Features */}
           <div className="mb-6">
-            <div className="px-3 py-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
+            <div className="px-3 py-2 text-xs font-semibold text-gray-300 uppercase tracking-wider">
               Workflow
             </div>
             <div className="mt-2 space-y-1">
@@ -247,7 +244,7 @@ export function SimpleSidebar() {
             <div className="mb-6">
               <button
                 onClick={() => toggleSection("admin")}
-                className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-300 transition-colors"
+                className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold text-gray-300 uppercase tracking-wider hover:text-white transition-colors"
               >
                 Administration
                 <ChevronRight
@@ -266,8 +263,8 @@ export function SimpleSidebar() {
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-800">
-          <div className="flex items-center text-xs text-gray-500">
+        <div className="p-4 border-t border-gray-600/30">
+          <div className="flex items-center text-xs text-gray-300">
             <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
             {user?.email || "Loading..."}
           </div>

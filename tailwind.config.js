@@ -95,6 +95,10 @@ export default {
           800: '#991b1b',
           900: '#7f1d1d',
         },
+        // Custom sidebar color
+        sidebarDark: '#253140',
+        sidebarHover: '#2d3a4d', // Lighter shade for hover
+        sidebarActive: '#1f2937', // Darker shade for active
       },
       fontFamily: {
         sans: ['Inter', 'Poppins', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],

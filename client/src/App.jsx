@@ -1,72 +1,72 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Route, Switch, useLocation } from 'wouter';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
-import { getQueryFn } from '@/lib/queryClient';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Route, Switch, useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { getQueryFn } from "@/lib/queryClient";
 
 // Role-based Dashboards
-import SuperAdminDashboard from './pages/dashboards/SuperAdminDashboard';
-import AdminDashboard from './pages/dashboards/AdminDashboard';
-import EmployeeDashboard from './pages/dashboards/EmployeeDashboard';
+import SuperAdminDashboard from "./pages/dashboards/SuperAdminDashboard";
+import AdminDashboard from "./pages/dashboards/AdminDashboard";
+import EmployeeDashboard from "./pages/dashboards/EmployeeDashboard";
 
 // Legacy Admin Components (for reference)
-import Dashboard from './pages/admin/CompactDashboard';
-import Tasks from './pages/admin/Tasks';
-import Users from './pages/admin/Users';
-import UserManagement from './pages/admin/UserManagement';
-import TeamMembers from './pages/admin/TeamMembers';
-import SettingsUserManagement from './pages/settings/UserManagement';
-import Projects from './pages/admin/Projects';
-import FormBuilder from './pages/admin/FormBuilder';
-import Integrations from './pages/admin/Integrations';
-import Roles from './pages/admin/Roles';
-import Reports from './pages/admin/Reports';
-import { InviteUsers } from './pages/InviteUsers';
-import { RoleManagement } from './pages/RoleManagement';
-import { PlansLicenses } from './pages/admin/PlansLicenses';
-import { AdminLayout } from './components/admin/AdminLayout';
-import SettingsLayout from './components/settings/SettingsLayout';
-import GeneralSettings from './pages/settings/GeneralSettings';
-import SettingsRoles from './pages/settings/Roles';
-import Subscription from './pages/settings/Subscription';
-import SettingsPlaceholder from './pages/settings/SettingsPlaceholder';
+import Dashboard from "./pages/admin/CompactDashboard";
+import Tasks from "./pages/admin/Tasks";
+import Users from "./pages/admin/Users";
+import UserManagement from "./pages/admin/UserManagement";
+import TeamMembers from "./pages/admin/TeamMembers";
+import SettingsUserManagement from "./pages/settings/UserManagement";
+import Projects from "./pages/admin/Projects";
+import FormBuilder from "./pages/admin/FormBuilder";
+import Integrations from "./pages/admin/Integrations";
+import Roles from "./pages/admin/Roles";
+import Reports from "./pages/admin/Reports";
+import { InviteUsers } from "./pages/InviteUsers";
+import { RoleManagement } from "./pages/RoleManagement";
+import { PlansLicenses } from "./pages/admin/PlansLicenses";
+import { AdminLayout } from "./components/admin/AdminLayout";
+import SettingsLayout from "./components/settings/SettingsLayout";
+import GeneralSettings from "./pages/settings/GeneralSettings";
+import SettingsRoles from "./pages/settings/Roles";
+import Subscription from "./pages/settings/Subscription";
+import SettingsPlaceholder from "./pages/settings/SettingsPlaceholder";
 
 // Super Admin Components
-import SuperAdminLayout from './components/super-admin/SuperAdminLayout';
-import LegacySuperAdminDashboard from './pages/super-admin/SuperAdminDashboard';
-import CompaniesManagement from './pages/super-admin/CompaniesManagement';
-import UsersManagement from './pages/super-admin/UsersManagement';
-import SystemLogs from './pages/super-admin/SystemLogs';
-import AdminManagement from './pages/super-admin/AdminManagement';
+import SuperAdminLayout from "./components/super-admin/SuperAdminLayout";
+import LegacySuperAdminDashboard from "./pages/super-admin/SuperAdminDashboard";
+import CompaniesManagement from "./pages/super-admin/CompaniesManagement";
+import UsersManagement from "./pages/super-admin/UsersManagement";
+import SystemLogs from "./pages/super-admin/SystemLogs";
+import AdminManagement from "./pages/super-admin/AdminManagement";
 
-import { Toaster } from './components/ui/toaster';
+import { Toaster } from "./components/ui/toaster";
 
 // Authentication Components
-import Register from './pages/auth/Register';
-import RegistrationChoice from './pages/auth/RegistrationChoice';
-import IndividualRegistration from './pages/auth/IndividualRegistration';
-import OrganizationRegistration from './pages/auth/OrganizationRegistration';
-import Login from './pages/auth/Login';
+import Register from "./pages/auth/Register";
+import RegistrationChoice from "./pages/auth/RegistrationChoice";
+import IndividualRegistration from "./pages/auth/IndividualRegistration";
+import OrganizationRegistration from "./pages/auth/OrganizationRegistration";
+import Login from "./pages/auth/Login";
 
-import CreatePassword from './pages/auth/CreatePassword';
-import ResetPassword from './pages/auth/ResetPassword';
-import { AcceptInvite } from './pages/AcceptInvite';
-import { SimpleAcceptInvite } from './pages/SimpleAcceptInvite';
-import { TestInvite } from './pages/TestInvite';
-import VerifyAndSetPassword from './pages/auth/VerifyAndSetPassword';
-import RegistrationSuccess from './pages/auth/RegistrationSuccess';
-import TestAuth from './pages/TestAuth';
+import CreatePassword from "./pages/auth/CreatePassword";
+import ResetPassword from "./pages/auth/ResetPassword";
+import { AcceptInvite } from "./pages/AcceptInvite";
+import { SimpleAcceptInvite } from "./pages/SimpleAcceptInvite";
+import { TestInvite } from "./pages/TestInvite";
+import VerifyAndSetPassword from "./pages/auth/VerifyAndSetPassword";
+import RegistrationSuccess from "./pages/auth/RegistrationSuccess";
+import TestAuth from "./pages/TestAuth";
 
 // Role Protection Components
-import { 
-  RoleProtectedRoute, 
-  RequireSuperAdmin, 
-  RequireAdmin, 
-  RequireEmployee 
-} from './components/auth/RoleProtectedRoute';
-import RoleBasedRedirect from './components/RoleBasedRedirect';
-import SecureRoute from './components/ProtectedRoute';
-import ForbiddenPage from './pages/ForbiddenPage';
+import {
+  RoleProtectedRoute,
+  RequireSuperAdmin,
+  RequireAdmin,
+  RequireEmployee,
+} from "./components/auth/RoleProtectedRoute";
+import RoleBasedRedirect from "./components/RoleBasedRedirect";
+import SecureRoute from "./components/ProtectedRoute";
+import ForbiddenPage from "./pages/ForbiddenPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -79,18 +79,18 @@ const queryClient = new QueryClient({
 
 // User Role Check Component
 function useUserRole() {
-  const token = localStorage.getItem('token');
-  
+  const token = localStorage.getItem("token");
+
   return useQuery({
     queryKey: ["/api/auth/verify"],
     enabled: !!token, // Only run query if token exists
     queryFn: async ({ queryKey }) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) return null;
-      
+
       const headers = {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       };
 
       const res = await fetch(queryKey[0], {
@@ -100,7 +100,7 @@ function useUserRole() {
 
       if (res.status === 401 || res.status === 403) {
         // Clear invalid token
-        localStorage.removeItem('token');
+        localStorage.removeItem("token");
         return null;
       }
 
@@ -116,22 +116,27 @@ function useUserRole() {
 }
 
 // Route protection wrapper
-function ProtectedRoute({ component: Component, requiredRole, allowedRoles = [], ...props }) {
+function ProtectedRoute({
+  component: Component,
+  requiredRole,
+  allowedRoles = [],
+  ...props
+}) {
   const { data: user, isLoading, error } = useUserRole();
   const [, setLocation] = useLocation();
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     // Only redirect if we have no token at all
     if (!token) {
-      setLocation('/login');
+      setLocation("/login");
       return;
     }
-    
+
     // If we have a token but query failed and we're not loading, redirect
     if (!isLoading && !user && token) {
-      localStorage.removeItem('token');
-      setLocation('/login');
+      localStorage.removeItem("token");
+      setLocation("/login");
     }
   }, [user, isLoading, token, setLocation]);
 
@@ -161,25 +166,36 @@ function ProtectedRoute({ component: Component, requiredRole, allowedRoles = [],
   };
 
   if (!hasAccess()) {
-    const isIndividualUser = user.role === 'individual';
+    const isIndividualUser = user.role === "individual";
     return (
       <div className="flex items-center justify-center h-screen bg-slate-50">
         <div className="text-center max-w-md mx-auto p-8 bg-white rounded-lg shadow-lg">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z" />
+            <svg
+              className="w-8 h-8 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z"
+              />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-3">Access Restricted</h2>
+          <h2 className="text-2xl font-bold text-slate-900 mb-3">
+            Access Restricted
+          </h2>
           <p className="text-slate-600 mb-6">
-            {isIndividualUser 
+            {isIndividualUser
               ? "This feature is only available for organizational users. Individual accounts don't have access to team management features."
-              : "You don't have permission to access this area."
-            }
+              : "You don't have permission to access this area."}
           </p>
           <div className="space-y-3">
-            <button 
-              onClick={() => setLocation('/dashboard')}
+            <button
+              onClick={() => setLocation("/dashboard")}
               className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               Return to Dashboard
@@ -198,14 +214,23 @@ function ProtectedRoute({ component: Component, requiredRole, allowedRoles = [],
   if (Component) {
     return <Component {...props} />;
   }
-  
+
   return props.children || null;
 }
 
 function App() {
   const [location] = useLocation();
-  const isSuperAdminRoute = location.startsWith('/super-admin');
-  const isAuthRoute = ['/register', '/login', '/verify', '/registration-success', '/reset-password', '/accept-invitation', '/create-password'].includes(location) || location.startsWith('/register/');
+  const isSuperAdminRoute = location.startsWith("/super-admin");
+  const isAuthRoute =
+    [
+      "/register",
+      "/login",
+      "/verify",
+      "/registration-success",
+      "/reset-password",
+      "/accept-invitation",
+      "/create-password",
+    ].includes(location) || location.startsWith("/register/");
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -217,7 +242,10 @@ function App() {
         <Route path="/register" component={Register} />
         <Route path="/register/choice" component={RegistrationChoice} />
         <Route path="/register/individual" component={IndividualRegistration} />
-        <Route path="/register/organization" component={OrganizationRegistration} />
+        <Route
+          path="/register/organization"
+          component={OrganizationRegistration}
+        />
         <Route path="/login" component={Login} />
 
         <Route path="/verify" component={VerifyAndSetPassword} />
@@ -231,7 +259,6 @@ function App() {
         <Route path="/forbidden" component={ForbiddenPage} />
         <Route path="/test-auth" component={TestAuth} />
 
-
         {/* Role-based Dashboard Routes */}
         <Route path="/superadmin">
           <RequireSuperAdmin>
@@ -242,17 +269,26 @@ function App() {
         {/* Legacy Super Admin Routes */}
         <Route path="/super-admin">
           <SuperAdminLayout>
-            <ProtectedRoute component={LegacySuperAdminDashboard} requiredRole="super_admin" />
+            <ProtectedRoute
+              component={LegacySuperAdminDashboard}
+              requiredRole="super_admin"
+            />
           </SuperAdminLayout>
         </Route>
         <Route path="/super-admin/companies">
           <SuperAdminLayout>
-            <ProtectedRoute component={CompaniesManagement} requiredRole="super_admin" />
+            <ProtectedRoute
+              component={CompaniesManagement}
+              requiredRole="super_admin"
+            />
           </SuperAdminLayout>
         </Route>
         <Route path="/super-admin/users">
           <SuperAdminLayout>
-            <ProtectedRoute component={UsersManagement} requiredRole="super_admin" />
+            <ProtectedRoute
+              component={UsersManagement}
+              requiredRole="super_admin"
+            />
           </SuperAdminLayout>
         </Route>
         <Route path="/super-admin/logs">
@@ -262,20 +298,30 @@ function App() {
         </Route>
         <Route path="/super-admin/admins">
           <SuperAdminLayout>
-            <ProtectedRoute component={AdminManagement} requiredRole="super_admin" />
+            <ProtectedRoute
+              component={AdminManagement}
+              requiredRole="super_admin"
+            />
           </SuperAdminLayout>
         </Route>
         <Route path="/super-admin/analytics">
           <SuperAdminLayout>
-            <ProtectedRoute component={SuperAdminDashboard} requiredRole="super_admin" />
+            <ProtectedRoute
+              component={SuperAdminDashboard}
+              requiredRole="super_admin"
+            />
           </SuperAdminLayout>
         </Route>
         <Route path="/super-admin/settings">
           <SuperAdminLayout>
             <ProtectedRoute requiredRole="super_admin">
               <div className="p-6">
-                <h1 className="text-2xl font-bold text-gray-900">System Settings</h1>
-                <p className="text-gray-600 mt-2">System configuration options coming soon.</p>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  System Settings
+                </h1>
+                <p className="text-gray-600 mt-2">
+                  System configuration options coming soon.
+                </p>
               </div>
             </ProtectedRoute>
           </SuperAdminLayout>
@@ -284,7 +330,10 @@ function App() {
         {/* Main Dashboard Route - Admin Panel with Sidebar */}
         <Route path="/dashboard">
           <AdminLayout>
-            <ProtectedRoute component={Dashboard} allowedRoles={["admin", "employee", "member"]} />
+            <ProtectedRoute
+              component={Dashboard}
+              allowedRoles={["admin", "employee", "member"]}
+            />
           </AdminLayout>
         </Route>
         <Route path="/tasks">
@@ -299,42 +348,66 @@ function App() {
         </Route>
         <Route path="/user-management">
           <AdminLayout>
-            <ProtectedRoute component={UserManagement} allowedRoles={["admin"]} />
+            <ProtectedRoute
+              component={UserManagement}
+              allowedRoles={["admin"]}
+            />
           </AdminLayout>
         </Route>
         <Route path="/team-members">
           <AdminLayout>
-            <ProtectedRoute component={TeamMembers} allowedRoles={["org_admin", "admin", "member"]} />
+            <ProtectedRoute
+              component={TeamMembers}
+              allowedRoles={["org_admin", "admin", "member"]}
+            />
           </AdminLayout>
         </Route>
         <Route path="/admin/team-members">
           <AdminLayout>
-            <ProtectedRoute component={TeamMembers} allowedRoles={["org_admin", "admin", "member"]} />
+            <ProtectedRoute
+              component={TeamMembers}
+              allowedRoles={["org_admin", "admin", "member"]}
+            />
           </AdminLayout>
         </Route>
         <Route path="/invite-users">
           <AdminLayout>
-            <ProtectedRoute component={InviteUsers} allowedRoles={["superadmin", "org_admin", "admin"]} />
+            <ProtectedRoute
+              component={InviteUsers}
+              allowedRoles={["superadmin", "org_admin", "admin"]}
+            />
           </AdminLayout>
         </Route>
         <Route path="/admin/invite-users">
           <AdminLayout>
-            <ProtectedRoute component={InviteUsers} allowedRoles={["superadmin", "org_admin", "admin"]} />
+            <ProtectedRoute
+              component={InviteUsers}
+              allowedRoles={["superadmin", "org_admin", "admin"]}
+            />
           </AdminLayout>
         </Route>
         <Route path="/admin/plans">
           <AdminLayout>
-            <ProtectedRoute component={PlansLicenses} allowedRoles={["superadmin", "org_admin", "admin"]} />
+            <ProtectedRoute
+              component={PlansLicenses}
+              allowedRoles={["superadmin", "org_admin", "admin"]}
+            />
           </AdminLayout>
         </Route>
         <Route path="/roles">
           <AdminLayout>
-            <ProtectedRoute component={RoleManagement} allowedRoles={["superadmin", "org_admin", "admin"]} />
+            <ProtectedRoute
+              component={RoleManagement}
+              allowedRoles={["superadmin", "org_admin", "admin"]}
+            />
           </AdminLayout>
         </Route>
         <Route path="/admin/role-management">
           <AdminLayout>
-            <ProtectedRoute component={RoleManagement} allowedRoles={["superadmin", "org_admin", "admin"]} />
+            <ProtectedRoute
+              component={RoleManagement}
+              allowedRoles={["superadmin", "org_admin", "admin"]}
+            />
           </AdminLayout>
         </Route>
         <Route path="/projects">
@@ -366,10 +439,17 @@ function App() {
           <AdminLayout>
             <ProtectedRoute allowedRoles={["admin"]}>
               <div className="p-6">
-                <h1 className="text-2xl font-bold text-gray-900 mb-4">Admin Settings</h1>
+                <h1 className="text-2xl font-bold text-gray-900 mb-4">
+                  Admin Settings
+                </h1>
                 <div className="bg-white rounded-lg shadow p-6">
-                  <h2 className="text-lg font-semibold text-gray-800 mb-3">System Configuration</h2>
-                  <p className="text-gray-600">Admin configuration options and system settings will be available here.</p>
+                  <h2 className="text-lg font-semibold text-gray-800 mb-3">
+                    System Configuration
+                  </h2>
+                  <p className="text-gray-600">
+                    Admin configuration options and system settings will be
+                    available here.
+                  </p>
                 </div>
               </div>
             </ProtectedRoute>
@@ -380,7 +460,9 @@ function App() {
           <SettingsLayout>
             <ProtectedRoute requiredRole="admin">
               <div className="p-6">
-                <script>window.location.href = '/settings/user-management';</script>
+                <script>
+                  window.location.href = '/settings/user-management';
+                </script>
                 <p>Redirecting to User Management...</p>
               </div>
             </ProtectedRoute>
@@ -393,7 +475,10 @@ function App() {
         </Route>
         <Route path="/settings/user-management">
           <SettingsLayout>
-            <ProtectedRoute component={SettingsUserManagement} allowedRoles={["org_admin", "admin"]} />
+            <ProtectedRoute
+              component={SettingsUserManagement}
+              allowedRoles={["org_admin", "admin"]}
+            />
           </SettingsLayout>
         </Route>
         <Route path="/settings/subscription">
@@ -407,13 +492,16 @@ function App() {
           </SettingsLayout>
         </Route>
 
-
         {/* 404 Not Found */}
         <Route>
           <div className="flex items-center justify-center h-screen">
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Page Not Found</h2>
-              <p className="text-gray-600">The page you're looking for doesn't exist.</p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Page Not Found
+              </h2>
+              <p className="text-gray-600">
+                The page you're looking for doesn't exist.
+              </p>
             </div>
           </div>
         </Route>
