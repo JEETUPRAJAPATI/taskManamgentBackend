@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { SimpleSidebar } from "./SimpleSidebar";
-import { Header } from "./Header";
+import Header from "./Header";
 
 export function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
