@@ -34,26 +34,37 @@ export default function AdminDashboard() {
     setEmailError('');
 
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Authentication token not found");
+      }
+
       const response = await fetch("/api/organization/check-invitation", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ email: email.trim() }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to check invitation status");
+      let data;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        throw new Error("Invalid response from server");
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || `Server error: ${response.status}`);
+      }
       
       if (data.exists) {
         setEmailError(data.message);
       }
     } catch (error) {
       console.error("Error checking invitation:", error);
+      setEmailError(`Unable to verify email: ${error.message}`);
     } finally {
       setIsCheckingEmail(false);
     }

@@ -237,9 +237,14 @@ export async function registerRoutes(app) {
         return res.status(400).json({ message: "Email is required" });
       }
 
+      console.log("Checking invitation for email:", email, "Organization:", req.user.organizationId);
+
       // Check if user already exists
       const existingUser = await storage.getUserByEmail(email);
-      if (existingUser && existingUser.organization?.toString() === req.user.organizationId) {
+      console.log("Existing user found:", existingUser ? "Yes" : "No");
+      
+      if (existingUser && existingUser.organization && existingUser.organization.toString() === req.user.organizationId) {
+        console.log("User is already a member of this organization");
         return res.json({ 
           exists: true, 
           type: "existing_user",
@@ -249,7 +254,10 @@ export async function registerRoutes(app) {
 
       // Check if invitation already sent
       const existingInvite = await storage.getPendingUserByEmail(email);
-      if (existingInvite && existingInvite.organization?.toString() === req.user.organizationId) {
+      console.log("Existing invite found:", existingInvite ? "Yes" : "No");
+      
+      if (existingInvite && existingInvite.organization && existingInvite.organization.toString() === req.user.organizationId) {
+        console.log("Invitation already sent to this email");
         return res.json({ 
           exists: true, 
           type: "pending_invitation",
@@ -257,10 +265,11 @@ export async function registerRoutes(app) {
         });
       }
 
+      console.log("Email is available for invitation");
       res.json({ exists: false });
     } catch (error) {
       console.error("Check invitation error:", error);
-      res.status(500).json({ message: "Failed to check invitation status" });
+      res.status(500).json({ message: "Failed to check invitation status", error: error.message });
     }
   });
 

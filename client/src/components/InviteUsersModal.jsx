@@ -323,20 +323,30 @@ export function InviteUsersModal({ isOpen, onClose }) {
         ),
       );
 
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Authentication token not found");
+      }
+
       const response = await fetch("/api/organization/check-invitation", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ email }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to check invitation status");
+      let data;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        throw new Error("Invalid response from server");
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || `Server error: ${response.status}`);
+      }
 
       setInviteList((prev) =>
         prev.map((invite, i) =>
@@ -358,7 +368,8 @@ export function InviteUsersModal({ isOpen, onClose }) {
             ? {
                 ...invite,
                 isChecking: false,
-                existsError: "",
+                existsError: `Unable to verify email: ${error.message}`,
+                isValid: false,
               }
             : invite,
         ),
@@ -529,7 +540,23 @@ export function InviteUsersModal({ isOpen, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Separate valid and invalid invites
+    // First, validate all emails against database
+    const emailsToValidate = inviteList.filter(invite => invite.email.trim() !== "");
+    
+    // Check each email for existing invitations
+    for (let i = 0; i < emailsToValidate.length; i++) {
+      const invite = emailsToValidate[i];
+      const index = inviteList.findIndex(inv => inv.email === invite.email);
+      
+      if (index !== -1) {
+        await checkExistingInvitation(index, invite.email.trim());
+      }
+    }
+
+    // Wait a moment for all validations to complete
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Separate valid and invalid invites after validation
     const validInvites = inviteList.filter(
       (invite) =>
         invite.isValid &&
