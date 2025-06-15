@@ -41,7 +41,6 @@ export default function EditProfile() {
   // Update form data when user data is loaded
   useEffect(() => {
     if (currentUser) {
-      console.log("User data loaded:", currentUser); // Debug log
       setFormData({
         firstName: currentUser.firstName || "",
         lastName: currentUser.lastName || ""
