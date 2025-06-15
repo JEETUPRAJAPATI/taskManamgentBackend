@@ -55,6 +55,36 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Get individual user by ID (no auth required for internal use)
+  app.get("/api/users/:id", async (req, res) => {
+    try {
+      const user = await storage.getUser(req.params.id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Return clean user data without sensitive fields
+      const userProfile = {
+        _id: user._id,
+        id: user._id,
+        email: user.email,
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        profileImageUrl: user.profileImageUrl || null,
+        role: user.role,
+        organizationId: user.organizationId,
+        status: user.status,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      };
+      
+      res.json(userProfile);
+    } catch (error) {
+      console.error("Get user by ID error:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
   // Get current user profile
   app.get("/api/profile", authenticateToken, async (req, res) => {
     try {

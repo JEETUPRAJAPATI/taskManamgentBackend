@@ -1,25 +1,42 @@
-
-import mongoose from 'mongoose';
 import { storage } from './server/mongodb-storage.js';
+import { generateToken } from './server/auth.js';
 
 async function getLatestToken() {
   try {
-    await mongoose.connect('mongodb+srv://jeeturadicalloop:Mjvesqnj8gY3t0zP@cluster0.by2xy6x.mongodb.net/TaskSetu');
-    const pendingUsers = await storage.getAllPendingUsers();
-    const freshUser = pendingUsers.find(u => u.email === 'freshfabric70@gmail.com');
-    if (freshUser) {
-      console.log('Fresh token:', freshUser.verificationCode);
-      console.log('Full verification URL: /verify?token=' + freshUser.verificationCode);
-    } else {
-      console.log('No pending user found for freshfabric70@gmail.com');
-      console.log('All pending users:', pendingUsers.map(u => u.email));
+    const users = await storage.getUsers();
+    const user = users.find(u => u.email === 'org@gmail.com');
+    
+    if (!user) {
+      console.log('User not found');
+      return;
     }
-    process.exit(0);
+
+    const tokenPayload = {
+      id: user._id.toString(),
+      email: user.email,
+      role: user.role,
+      organizationId: user.organizationId?.toString(),
+      permissions: user.permissions || []
+    };
+
+    const token = generateToken(tokenPayload);
+    console.log('Fresh token generated:');
+    console.log(token);
+    
+    // Also show user data for verification
+    console.log('\nUser data:');
+    console.log({
+      id: user._id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role
+    });
+    
   } catch (error) {
     console.error('Error:', error);
-    process.exit(1);
   }
+  process.exit(0);
 }
 
 getLatestToken();
-

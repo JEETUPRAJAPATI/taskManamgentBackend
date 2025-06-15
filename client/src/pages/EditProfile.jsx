@@ -35,33 +35,16 @@ export default function EditProfile() {
   const { data: user, isLoading, error } = useQuery({
     queryKey: ["/api/profile"],
     queryFn: async () => {
-      const token = localStorage.getItem('token');
-      console.log("Direct profile fetch - Token available:", !!token);
-      
-      if (!token) {
-        console.log("No token available for profile fetch");
-        return null;
+      // Try to get updated user data from the database using the auth user ID
+      if (authUser?.id) {
+        const response = await fetch(`/api/users/${authUser.id}`);
+        if (response.ok) {
+          const userData = await response.json();
+          console.log("Fetched user data directly:", userData);
+          return userData;
+        }
       }
-      
-      const response = await fetch('/api/profile', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      });
-      
-      console.log("Profile API response status:", response.status);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Profile API error:", response.status, errorText);
-        throw new Error(`${response.status}: ${errorText}`);
-      }
-      
-      const data = await response.json();
-      console.log("Profile API data received:", data);
-      return data;
+      return null;
     },
     retry: 1,
     enabled: !!authUser?.id,
