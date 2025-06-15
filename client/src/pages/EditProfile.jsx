@@ -77,6 +77,11 @@ export default function EditProfile() {
   // Update profile mutation
   const updateProfile = useMutation({
     mutationFn: async (data) => {
+      // Use direct user update API instead of authenticated profile endpoint
+      if (!authUser?.id) {
+        throw new Error('User not authenticated');
+      }
+
       const formDataToSend = new FormData();
       
       // Add text fields
@@ -91,20 +96,25 @@ export default function EditProfile() {
         formDataToSend.append('profileImage', selectedFile);
       }
       
-      const response = await fetch('/api/profile', {
+      console.log('Updating profile for user ID:', authUser.id);
+      console.log('Update data:', data);
+      
+      const response = await fetch(`/api/users/${authUser.id}/profile`, {
         method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
         body: formDataToSend
       });
       
+      console.log('Update response status:', response.status);
+      
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to update profile');
+        const errorText = await response.text();
+        console.error('Update failed:', errorText);
+        throw new Error(errorText || 'Failed to update profile');
       }
       
-      return response.json();
+      const result = await response.json();
+      console.log('Update successful:', result);
+      return result;
     },
     onSuccess: (data) => {
       toast({

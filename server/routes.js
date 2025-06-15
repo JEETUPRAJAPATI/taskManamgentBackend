@@ -85,6 +85,89 @@ export async function registerRoutes(app) {
     }
   });
 
+  // Update user profile by ID
+  app.put("/api/users/:id/profile", uploadProfileImage, processProfileImage, async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const { firstName, lastName } = req.body;
+      
+      console.log("Profile Update - User ID:", userId);
+      console.log("Profile Update - Request data:", {
+        firstName,
+        lastName,
+        hasFile: !!req.file
+      });
+
+      // Validate required fields
+      if (!firstName || !firstName.trim()) {
+        return res.status(400).json({ message: "First name is required" });
+      }
+      if (!lastName || !lastName.trim()) {
+        return res.status(400).json({ message: "Last name is required" });
+      }
+      
+      // Build update object
+      const updateData = {
+        firstName: firstName.trim(),
+        lastName: lastName.trim()
+      };
+
+      // Handle profile image upload
+      if (req.file) {
+        const currentUser = await storage.getUser(userId);
+        
+        // Delete old profile image if exists
+        if (currentUser?.profileImageUrl) {
+          deleteOldProfileImage(currentUser.profileImageUrl);
+        }
+        
+        // Set new profile image path
+        updateData.profileImageUrl = `/uploads/profile-pics/${req.file.filename}`;
+      }
+
+      console.log("Profile Update - Update data:", updateData);
+
+      const updatedUser = await storage.updateUser(userId, updateData);
+      
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Return clean user profile data
+      const userProfile = {
+        _id: updatedUser._id,
+        id: updatedUser._id,
+        email: updatedUser.email,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        profileImageUrl: updatedUser.profileImageUrl,
+        role: updatedUser.role,
+        organizationId: updatedUser.organizationId,
+        status: updatedUser.status,
+        updatedAt: updatedUser.updatedAt
+      };
+
+      console.log("Profile Update - Success:", userProfile);
+      res.json({
+        message: "Profile updated successfully",
+        user: userProfile
+      });
+    } catch (error) {
+      console.error("Update user profile error:", error);
+      
+      // Delete uploaded file on error
+      if (req.file && req.file.path) {
+        try {
+          fs.unlinkSync(req.file.path);
+        } catch (unlinkError) {
+          console.error("Error deleting uploaded file:", unlinkError);
+        }
+      }
+      
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
   // Get current user profile
   app.get("/api/profile", authenticateToken, async (req, res) => {
     try {
