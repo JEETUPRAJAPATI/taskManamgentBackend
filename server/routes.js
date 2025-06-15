@@ -83,7 +83,7 @@ export async function registerRoutes(app) {
       const hashedPassword = await storage.hashPassword(password);
       
       await storage.updateUser(user._id, {
-        password: hashedPassword,
+        passwordHash: hashedPassword,
         status: 'active',
         emailVerified: true,
         emailVerificationToken: null,
