@@ -29,6 +29,12 @@ export const getQueryFn = ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
     const token = localStorage.getItem('token');
     
+    console.log('QueryFn called for:', queryKey[0]);
+    console.log('Token available:', !!token);
+    if (token) {
+      console.log('Token preview:', token.substring(0, 20) + '...');
+    }
+    
     const headers = {
       ...(token ? { "Authorization": `Bearer ${token}` } : {})
     };
@@ -38,12 +44,22 @@ export const getQueryFn = ({ on401: unauthorizedBehavior }) =>
       credentials: "include",
     });
 
+    console.log('Response status for', queryKey[0], ':', res.status);
+
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
+      console.log('401 unauthorized, returning null');
       return null;
     }
 
-    await throwIfResNotOk(res);
-    return await res.json();
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.log('Request failed:', res.status, errorText);
+      throw new Error(`${res.status}: ${errorText}`);
+    }
+
+    const data = await res.json();
+    console.log('Response data for', queryKey[0], ':', data);
+    return data;
   };
 
 export const queryClient = new QueryClient({

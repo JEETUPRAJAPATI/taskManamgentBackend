@@ -22,7 +22,7 @@ export async function authenticateToken(req, res, next) {
     const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
-      console.log('No token provided');
+      console.log('No token provided for:', req.path);
       return res.status(401).json({ message: 'Access token required' });
     }
 
@@ -31,16 +31,16 @@ export async function authenticateToken(req, res, next) {
     
     const decoded = verifyToken(token);
     if (!decoded) {
-      console.log('Token verification failed - invalid or expired');
+      console.log('Token verification failed - invalid or expired for:', req.path);
       return res.status(403).json({ error: 'Invalid token' });
     }
 
-    console.log('Token decoded successfully:', { id: decoded.id, email: decoded.email });
+    console.log('Token decoded successfully for', req.path, ':', { id: decoded.id, email: decoded.email });
 
     // Verify user still exists and is active
     const user = await storage.getUser(decoded.id);
     if (!user) {
-      console.log('User not found for ID:', decoded.id);
+      console.log('User not found for ID:', decoded.id, 'on path:', req.path);
       return res.status(403).json({ message: 'User not found' });
     }
 
