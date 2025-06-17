@@ -26,7 +26,7 @@ class EmailService {
     // Base URL - configurable via environment variable
     this.baseUrl =
       process.env.BASE_URL ||
-      "https://25b3cec7-b6b2-48b7-a8f4-7ee8a9c12574-00-36vzyej2u9kbm.kirk.replit.dev";
+      "https://taskmanagement.techizebuilder.com";
   }
 
   async sendVerificationEmail(
@@ -72,23 +72,23 @@ class EmailService {
                 <h2>Hi ${firstName},</h2>
                 <p>Thanks for signing up with Tasksetu!</p>
                 <p>To activate your account and set your password, please click the link below:</p>
-                
+
                 <div style="text-align: center; margin: 30px 0;">
-                  <a href="${this.baseUrl}/verify?token=${verificationCode}" 
+                  <a href="${this.baseUrl}/verify?token=${verificationCode}"
                      style="background: #3B82F6; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600;">
                     👉 Verify Email & Set My Password
                   </a>
                 </div>
-                
+
                 <div style="background: #f7fafc; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3B82F6;">
                   <p style="margin: 0; color: #4a5568; font-size: 14px;"><strong>Can't click the button?</strong> Copy and paste this URL into your browser:</p>
                   <p style="margin: 5px 0 0 0; color: #4a5568; font-size: 14px; word-break: break-all;">${this.baseUrl}/verify?token=${verificationCode}</p>
                 </div>
-                
+
                 <p>This link is <strong style="color: #e53e3e;">valid for 24 hours</strong>.</p>
                 <p>Once verified, you'll be able to start managing your tasks and deadlines with ease.</p>
                 <p>See you enrolled in!</p>
-                
+
                 <p><strong>— The Tasksetu Team</strong><br>
                 <a href="https://www.tasksetu.com" style="color: #3B82F6;">www.Tasksetu.com</a></p>
               </div>
@@ -166,17 +166,17 @@ www.Tasksetu.com`,
               <div class="content">
                 <h2>Hi ${firstName}!</h2>
                 <p>We received a request to reset your password for your TaskSetu account.</p>
-                
+
                 <p>Click the button below to reset your password:</p>
                 <a href="${resetUrl}" class="button">Reset Password</a>
-                
+
                 <p>Or copy and paste this link into your browser:</p>
                 <p style="word-break: break-all; color: #666;">${resetUrl}</p>
-                
+
                 <p>This link will expire in 1 hour for security reasons.</p>
-                
+
                 <p>If you didn't request a password reset, please ignore this email or contact support if you have concerns.</p>
-                
+
                 <p>Best regards,<br>The TaskSetu Team</p>
               </div>
               <div class="footer">
@@ -250,19 +250,19 @@ www.Tasksetu.com`,
               <div class="content">
                 <h2>You're invited to join ${organizationName}!</h2>
                 <p><strong>${invitedByName}</strong> has invited you to join their team on TaskSetu.</p>
-                
+
                 <p>You'll be joining as: <strong>${Array.isArray(roles) ? roles.join(", ") : roles}</strong></p>
-                
+
                 <p>Click the button below to accept the invitation and create your account:</p>
                 <a href="${inviteUrl}" class="button">Accept Invitation</a>
-                
+
                 <p>Or copy and paste this link into your browser:</p>
                 <p style="word-break: break-all; color: #666;">${inviteUrl}</p>
-                
+
                 <p>This invitation will expire in 7 days.</p>
-                
+
                 <p>If you don't want to join this team, you can safely ignore this email.</p>
-                
+
                 <p>Welcome to TaskSetu!<br>The TaskSetu Team</p>
               </div>
               <div class="footer">
