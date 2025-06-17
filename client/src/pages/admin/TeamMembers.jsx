@@ -40,8 +40,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { setupTestAuth } from "@/utils/auth";
-import AuthWrapper from "@/components/AuthWrapper";
+import { getAuthUser } from "@/utils/auth";
+
 import {
   Users,
   UserPlus,
@@ -417,13 +417,10 @@ export default function TeamMembers() {
           <Button
             variant="outline"
             onClick={() => {
-              setupTestAuth();
-              setTimeout(() => {
-                window.location.reload();
-              }, 500);
+              window.location.href = '/login';
             }}
           >
-            Setup Test Auth
+            Re-login
           </Button>
         </div>
       </div>
@@ -431,8 +428,7 @@ export default function TeamMembers() {
   }
 
   return (
-    <AuthWrapper>
-      <div className="space-y-6">
+    <div className="space-y-6">
         {/* License Information Card */}
         <Card>
           <CardHeader>
@@ -1068,6 +1064,5 @@ export default function TeamMembers() {
           </DialogContent>
         </Dialog>
       </div>
-    </AuthWrapper>
   );
 }
