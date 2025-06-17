@@ -13,19 +13,18 @@ export default function TeamMembersWidget({
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const token = localStorage.getItem("token");
+  console.log("token in team mebers : ", token);
   // Fetch team members data
   const fetchTeamMembers = async () => {
     try {
       setIsLoading(true);
-      const token = localStorage.getItem("token");
 
       if (!token) {
         throw new Error("No authentication token found");
       }
 
       const response = await fetch("/api/organization/users", {
-        method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -37,6 +36,7 @@ export default function TeamMembersWidget({
       }
 
       const data = await response.json();
+      console.log("Fetching team members...", data);
       console.log("Fetched team members for widget:", data.length, "users");
       setUsers(data || []);
       setError(null);
@@ -52,15 +52,11 @@ export default function TeamMembersWidget({
       setIsLoading(false);
     }
   };
-
   useEffect(() => {
-    // Set working authentication token
-    const workingToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGNmMTc3NzExYzc5ZTFiOWMwZGQwMCIsImVtYWlsIjoiYWRtaW5AZGVtby5jb20iLCJyb2xlIjoiYWRtaW4iLCJvcmdhbml6YXRpb25JZCI6IjY4NGNmMTc2NzExYzc5ZTFiOWMwZGNmZCIsImlhdCI6MTc0OTg3ODk0MiwiZXhwIjoxNzQ5OTY1MzQyfQ.6EEYrb-746zK0tyCIcrD-qtn7daucV3P1fSPWJnvOsM";
-    localStorage.setItem("token", workingToken);
-
     fetchTeamMembers();
   }, []);
+
+  console.log("users in memebers widget : ", users);
 
   const getStatusBadge = (user) => {
     if (user.status === "active") {

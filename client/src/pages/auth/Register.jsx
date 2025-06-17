@@ -12,7 +12,7 @@ export default function Register() {
     lastName: "",
     email: "",
     organizationName: "",
-    organizationSlug: ""
+    organizationSlug: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -26,27 +26,28 @@ export default function Register() {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
     // Auto-generate slug for organization name
     if (field === "organizationName" && registrationType === "organization") {
-      const slug = value.toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
+      const slug = value
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
         .trim();
-      setFormData(prev => ({ ...prev, organizationSlug: slug }));
+      setFormData((prev) => ({ ...prev, organizationSlug: slug }));
     }
-    
+
     // Clear errors when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: "" }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    
+
     const newErrors = {};
 
     // Validate common fields
@@ -66,7 +67,8 @@ export default function Register() {
       if (!formData.organizationSlug) {
         newErrors.organizationSlug = "Organization slug is required";
       } else if (!validateSlug(formData.organizationSlug)) {
-        newErrors.organizationSlug = "Slug must be lowercase letters, numbers, and hyphens only";
+        newErrors.organizationSlug =
+          "Slug must be lowercase letters, numbers, and hyphens only";
       }
     }
 
@@ -79,33 +81,36 @@ export default function Register() {
     setErrors({});
 
     try {
-      const endpoint = registrationType === "individual" 
-        ? "/api/auth/register-individual"
-        : "/api/auth/register-organization";
+      const endpoint =
+        registrationType === "individual"
+          ? "/api/auth/register-individual"
+          : "/api/auth/register-organization";
 
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       const result = await response.json();
 
       if (response.ok) {
         // Store email for verification
-        localStorage.setItem('verificationEmail', formData.email);
-        
+        localStorage.setItem("verificationEmail", formData.email);
+
         // Store registration info and redirect to success page
-        localStorage.setItem('registrationEmail', formData.email);
-        localStorage.setItem('registrationType', registrationType);
-        
-        setLocation(`/registration-success?email=${encodeURIComponent(formData.email)}&type=${registrationType}`);
+        localStorage.setItem("registrationEmail", formData.email);
+        localStorage.setItem("registrationType", registrationType);
+
+        setLocation(
+          `/registration-success?email=${encodeURIComponent(formData.email)}&type=${registrationType}`,
+        );
       } else {
         setErrors({ submit: result.message || "Registration failed" });
         toast({
           title: "Registration failed",
           description: result.message || "Please try again",
-          variant: "destructive"
+          variant: "destructive",
         });
       }
     } catch (error) {
@@ -113,7 +118,7 @@ export default function Register() {
       toast({
         title: "Connection error",
         description: "Please check your internet connection",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -167,38 +172,57 @@ export default function Register() {
             {/* Name Fields */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                <label
+                  htmlFor="firstName"
+                  className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                >
                   First Name
                 </label>
                 <input
                   id="firstName"
                   type="text"
                   value={formData.firstName}
-                  onChange={(e) => handleInputChange("firstName", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("firstName", e.target.value)
+                  }
                   className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="John"
+                  placeholder="Enter first name"
                 />
-                {errors.firstName && <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>}
+                {errors.firstName && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.firstName}
+                  </p>
+                )}
               </div>
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                <label
+                  htmlFor="lastName"
+                  className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                >
                   Last Name
                 </label>
                 <input
                   id="lastName"
                   type="text"
                   value={formData.lastName}
-                  onChange={(e) => handleInputChange("lastName", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("lastName", e.target.value)
+                  }
                   className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter last name"
                 />
-                {errors.lastName && <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>}
+                {errors.lastName && (
+                  <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
+                )}
               </div>
             </div>
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+              >
                 Email Address
               </label>
               <input
@@ -209,29 +233,43 @@ export default function Register() {
                 className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Enter email address"
               />
-              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+              )}
             </div>
 
             {/* Organization Fields */}
             {registrationType === "organization" && (
               <>
                 <div>
-                  <label htmlFor="organizationName" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  <label
+                    htmlFor="organizationName"
+                    className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                  >
                     Organization Name
                   </label>
                   <input
                     id="organizationName"
                     type="text"
                     value={formData.organizationName}
-                    onChange={(e) => handleInputChange("organizationName", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("organizationName", e.target.value)
+                    }
                     className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Acme Corporation"
+                    placeholder="Enter first name"
                   />
-                  {errors.organizationName && <p className="mt-1 text-sm text-red-600">{errors.organizationName}</p>}
+                  {errors.organizationName && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.organizationName}
+                    </p>
+                  )}
                 </div>
 
                 <div>
-                  <label htmlFor="organizationSlug" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  <label
+                    htmlFor="organizationSlug"
+                    className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                  >
                     Organization URL
                   </label>
                   <div className="flex">
@@ -242,12 +280,18 @@ export default function Register() {
                       id="organizationSlug"
                       type="text"
                       value={formData.organizationSlug}
-                      onChange={(e) => handleInputChange("organizationSlug", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("organizationSlug", e.target.value)
+                      }
                       className="flex-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-r-md shadow-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="acme-corp"
                     />
                   </div>
-                  {errors.organizationSlug && <p className="mt-1 text-sm text-red-600">{errors.organizationSlug}</p>}
+                  {errors.organizationSlug && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.organizationSlug}
+                    </p>
+                  )}
                   <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                     Only lowercase letters, numbers, and hyphens allowed
                   </p>
@@ -258,7 +302,9 @@ export default function Register() {
             {/* Submit Error */}
             {errors.submit && (
               <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
-                <p className="text-sm text-red-600 dark:text-red-400">{errors.submit}</p>
+                <p className="text-sm text-red-600 dark:text-red-400">
+                  {errors.submit}
+                </p>
               </div>
             )}
 
@@ -282,7 +328,10 @@ export default function Register() {
           <div className="mt-6 text-center">
             <p className="text-sm text-slate-600 dark:text-slate-400">
               Already have an account?{" "}
-              <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400">
+              <Link
+                href="/login"
+                className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+              >
                 Sign in
               </Link>
             </p>

@@ -1,38 +1,52 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 class EmailService {
   constructor() {
-    if (process.env.MAILTRAP_HOST && process.env.MAILTRAP_PORT && process.env.MAILTRAP_USERNAME && process.env.MAILTRAP_PASSWORD) {
+    if (
+      process.env.MAILTRAP_HOST &&
+      process.env.MAILTRAP_PORT &&
+      process.env.MAILTRAP_USERNAME &&
+      process.env.MAILTRAP_PASSWORD
+    ) {
       this.transporter = nodemailer.createTransport({
         host: process.env.MAILTRAP_HOST,
         port: parseInt(process.env.MAILTRAP_PORT),
         auth: {
           user: process.env.MAILTRAP_USERNAME,
-          pass: process.env.MAILTRAP_PASSWORD
-        }
+          pass: process.env.MAILTRAP_PASSWORD,
+        },
       });
       this.isConfigured = true;
-      console.log('Mailtrap email service configured successfully');
+      console.log("Mailtrap email service configured successfully");
     } else {
-      console.warn('Mailtrap credentials not found - email service disabled');
+      console.warn("Mailtrap credentials not found - email service disabled");
       this.isConfigured = false;
     }
-    
+
     // Base URL - configurable via environment variable
-    this.baseUrl = process.env.BASE_URL || 'https://25b3cec7-b6b2-48b7-a8f4-7ee8a9c12574-00-36vzyej2u9kbm.kirk.replit.dev';
+    this.baseUrl =
+      process.env.BASE_URL ||
+      "https://25b3cec7-b6b2-48b7-a8f4-7ee8a9c12574-00-36vzyej2u9kbm.kirk.replit.dev";
   }
 
-  async sendVerificationEmail(email, verificationCode, firstName, organizationName = null) {
+  async sendVerificationEmail(
+    email,
+    verificationCode,
+    firstName,
+    organizationName = null,
+  ) {
     if (!this.isConfigured) {
-      console.error('Email service not configured - Mailtrap credentials missing');
+      console.error(
+        "Email service not configured - Mailtrap credentials missing",
+      );
       return false;
     }
 
     try {
       const mailOptions = {
         to: email,
-        from: 'noreply@tasksetu.com',
-        subject: '✅ Complete Your Tasksetu Registration',
+        from: "noreply@tasksetu.com",
+        subject: "✅ Complete Your Tasksetu Registration",
         html: `
           <!DOCTYPE html>
           <html>
@@ -62,7 +76,7 @@ class EmailService {
                 <div style="text-align: center; margin: 30px 0;">
                   <a href="${this.baseUrl}/verify?token=${verificationCode}" 
                      style="background: #3B82F6; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600;">
-                    👉 Set My Password & Verify Email
+                    👉 Verify Email & Set My Password
                   </a>
                 </div>
                 
@@ -90,7 +104,7 @@ class EmailService {
 Thanks for signing up with Tasksetu!
 
 To activate your account and set your password, please click the link below:
-👉 Set My Password & Verify Email: ${this.baseUrl}/verify?token=${verificationCode}
+👉 Verify Email & Set My Password: ${this.baseUrl}/verify?token=${verificationCode}
 
 (or copy and paste this URL into your browser: ${this.baseUrl}/verify?token=${verificationCode})
 
@@ -101,31 +115,33 @@ Once verified, you'll be able to start managing your tasks and deadlines with ea
 See you enrolled in!
 
 — The Tasksetu Team
-www.Tasksetu.com`
+www.Tasksetu.com`,
       };
 
       await this.transporter.sendMail(mailOptions);
-      console.log('Verification email sent successfully to:', email);
+      console.log("Verification email sent successfully to:", email);
       return true;
     } catch (error) {
-      console.error('Email sending error:', error);
+      console.error("Email sending error:", error);
       return false;
     }
   }
 
   async sendPasswordResetEmail(email, resetToken, firstName) {
     if (!this.isConfigured) {
-      console.error('Email service not configured - Mailtrap credentials missing');
+      console.error(
+        "Email service not configured - Mailtrap credentials missing",
+      );
       return false;
     }
 
     try {
       const resetUrl = `${this.baseUrl}/reset-password?token=${resetToken}`;
-      
+
       const mailOptions = {
         to: email,
-        from: 'noreply@tasksetu.com',
-        subject: 'Reset Your Password - TaskSetu',
+        from: "noreply@tasksetu.com",
+        subject: "Reset Your Password - TaskSetu",
         html: `
           <!DOCTYPE html>
           <html>
@@ -170,37 +186,45 @@ www.Tasksetu.com`
           </body>
           </html>
         `,
-        text: `Hi ${firstName}!\n\nWe received a request to reset your password for your TaskSetu account.\n\nClick this link to reset your password: ${resetUrl}\n\nThis link will expire in 1 hour for security reasons.\n\nIf you didn't request a password reset, please ignore this email.\n\nBest regards,\nThe TaskSetu Team`
+        text: `Hi ${firstName}!\n\nWe received a request to reset your password for your TaskSetu account.\n\nClick this link to reset your password: ${resetUrl}\n\nThis link will expire in 1 hour for security reasons.\n\nIf you didn't request a password reset, please ignore this email.\n\nBest regards,\nThe TaskSetu Team`,
       };
 
       const result = await this.transporter.sendMail(mailOptions);
-      console.log('Password reset email sent successfully to:', email);
-      console.log('Email result:', result);
+      console.log("Password reset email sent successfully to:", email);
+      console.log("Email result:", result);
       return true;
     } catch (error) {
-      console.error('Email sending error:', error.message);
+      console.error("Email sending error:", error.message);
       if (error.response) {
-        console.error('Email service response:', error.response);
+        console.error("Email service response:", error.response);
       }
       if (error.code) {
-        console.error('Error code:', error.code);
+        console.error("Error code:", error.code);
       }
       return false;
     }
   }
 
-  async sendInvitationEmail(email, inviteToken, organizationName, roles, invitedByName) {
+  async sendInvitationEmail(
+    email,
+    inviteToken,
+    organizationName,
+    roles,
+    invitedByName,
+  ) {
     if (!this.isConfigured) {
-      console.error('Email service not configured - Mailtrap credentials missing');
+      console.error(
+        "Email service not configured - Mailtrap credentials missing",
+      );
       return false;
     }
 
     try {
       const inviteUrl = `${this.baseUrl}/accept-invite?token=${inviteToken}`;
-      
+
       const mailOptions = {
         to: email,
-        from: 'noreply@tasksetu.com',
+        from: "noreply@tasksetu.com",
         subject: `You're invited to join ${organizationName} - TaskSetu`,
         html: `
           <!DOCTYPE html>
@@ -227,7 +251,7 @@ www.Tasksetu.com`
                 <h2>You're invited to join ${organizationName}!</h2>
                 <p><strong>${invitedByName}</strong> has invited you to join their team on TaskSetu.</p>
                 
-                <p>You'll be joining as: <strong>${Array.isArray(roles) ? roles.join(', ') : roles}</strong></p>
+                <p>You'll be joining as: <strong>${Array.isArray(roles) ? roles.join(", ") : roles}</strong></p>
                 
                 <p>Click the button below to accept the invitation and create your account:</p>
                 <a href="${inviteUrl}" class="button">Accept Invitation</a>
@@ -248,14 +272,14 @@ www.Tasksetu.com`
           </body>
           </html>
         `,
-        text: `You're invited to join ${organizationName}!\n\n${invitedByName} has invited you to join their team on TaskSetu.\n\nYou'll be joining as: ${Array.isArray(roles) ? roles.join(', ') : roles}\n\nClick this link to accept the invitation: ${inviteUrl}\n\nThis invitation will expire in 7 days.\n\nWelcome to TaskSetu!\nThe TaskSetu Team`
+        text: `You're invited to join ${organizationName}!\n\n${invitedByName} has invited you to join their team on TaskSetu.\n\nYou'll be joining as: ${Array.isArray(roles) ? roles.join(", ") : roles}\n\nClick this link to accept the invitation: ${inviteUrl}\n\nThis invitation will expire in 7 days.\n\nWelcome to TaskSetu!\nThe TaskSetu Team`,
       };
 
       await this.transporter.sendMail(mailOptions);
-      console.log('Invitation email sent successfully to:', email);
+      console.log("Invitation email sent successfully to:", email);
       return true;
     } catch (error) {
-      console.error('Email sending error:', error);
+      console.error("Email sending error:", error);
       return false;
     }
   }

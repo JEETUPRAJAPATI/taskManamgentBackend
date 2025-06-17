@@ -33,16 +33,16 @@ export default function Header({ user }) {
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/logout', { method: 'POST' });
-      localStorage.removeItem('token');
+      await fetch("/api/logout", { method: "POST" });
+      localStorage.removeItem("token");
       queryClient.clear();
-      setLocation('/login');
+      setLocation("/login");
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
       // Force logout even if API call fails
-      localStorage.removeItem('token');
+      localStorage.removeItem("token");
       queryClient.clear();
-      setLocation('/login');
+      setLocation("/login");
     }
   };
 
@@ -50,7 +50,7 @@ export default function Header({ user }) {
     if (currentUser?.firstName && currentUser?.lastName) {
       return `${currentUser.firstName} ${currentUser.lastName}`;
     }
-    return currentUser?.email?.split('@')[0] || 'User';
+    return currentUser?.email?.split("@")[0] || "User";
   };
 
   const getInitials = () => {
@@ -81,11 +81,14 @@ export default function Header({ user }) {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+              <Button
+                variant="ghost"
+                className="relative h-8 w-8 rounded-full "
+              >
                 <Avatar className="h-8 w-8">
-                  <AvatarImage 
-                    src={currentUser?.profileImageUrl} 
-                    alt={getDisplayName()} 
+                  <AvatarImage
+                    src={currentUser?.profileImageUrl}
+                    alt={getDisplayName()}
                   />
                   <AvatarFallback className="bg-sidebarDark text-white">
                     {getInitials()}
@@ -93,9 +96,15 @@ export default function Header({ user }) {
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
+            <DropdownMenuContent
+              className="w-56 bg-gray-800 text-white"
+              align="end"
+              forceMount
+            >
               <div className="flex flex-col space-y-1 p-2">
-                <p className="text-sm font-medium leading-none">{getDisplayName()}</p>
+                <p className="text-sm font-medium leading-none">
+                  {getDisplayName()}
+                </p>
                 <p className="text-xs leading-none text-muted-foreground">
                   {currentUser?.email}
                 </p>
@@ -105,10 +114,10 @@ export default function Header({ user }) {
                 <Edit3 className="mr-2 h-4 w-4" />
                 <span>Edit Profile</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setShowProfileModal(true)}>
+              {/* <DropdownMenuItem onClick={() => setShowProfileModal(true)}>
                 <User className="mr-2 h-4 w-4" />
                 <span>Profile</span>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuItem>
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
@@ -123,9 +132,9 @@ export default function Header({ user }) {
         </div>
       </div>
 
-      <ProfileUpdateModal 
-        isOpen={showProfileModal} 
-        onClose={() => setShowProfileModal(false)} 
+      <ProfileUpdateModal
+        isOpen={showProfileModal}
+        onClose={() => setShowProfileModal(false)}
       />
     </header>
   );

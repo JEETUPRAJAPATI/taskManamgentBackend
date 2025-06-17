@@ -51,7 +51,7 @@ import EditProfile from "./pages/EditProfile";
 
 import CreatePassword from "./pages/auth/CreatePassword";
 import ResetPassword from "./pages/auth/ResetPassword";
-import { AcceptInvite } from "./pages/AcceptInvite";
+
 import { SimpleAcceptInvite } from "./pages/SimpleAcceptInvite";
 import { TestInvite } from "./pages/TestInvite";
 import VerifyAndSetPassword from "./pages/auth/VerifyAndSetPassword";
