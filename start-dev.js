@@ -11,7 +11,7 @@ const __dirname = dirname(__filename);
 console.log('Starting TaskSetu development server...');
 
 // Start the server
-const serverProcess = spawn('node', [join(__dirname, 'server/main-index.js')], {
+const serverProcess = spawn('node', [join(__dirname, '/main-index.js')], {
   env: {
     ...process.env,
     NODE_ENV: 'development'

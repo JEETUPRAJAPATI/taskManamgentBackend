@@ -5,7 +5,7 @@ import { spawn } from 'child_process';
 
 console.log('Starting TaskSetu development server...');
 
-const serverProcess = spawn('node', ['server/index.js'], {
+const serverProcess = spawn('node', ['/index.js'], {
   env: {
     ...process.env,
     NODE_ENV: 'development'

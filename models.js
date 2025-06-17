@@ -43,14 +43,14 @@ const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
     trim: true,
-    required: function() {
+    required: function () {
       return this.status === 'active';
     }
   },
   lastName: {
     type: String,
     trim: true,
-    required: function() {
+    required: function () {
       return this.status === 'active';
     }
   },
@@ -71,7 +71,7 @@ const userSchema = new mongoose.Schema({
   },
   passwordHash: {
     type: String,
-    required: function() {
+    required: function () {
       return this.status === 'active';
     }
   },
