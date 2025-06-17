@@ -24,58 +24,50 @@ export const isAuthenticated = () => {
   return !!(token && user);
 };
 
-// Generate a fresh token every time
-export const generateFreshToken = async () => {
+// Login function to authenticate with real user credentials
+export const login = async (email, password) => {
   try {
-    const response = await fetch('/api/auth/generate-token', {
+    const response = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: '684c8f719882ef84d7008fc5',
-        email: 'org@gmail.com',
-        role: 'admin',
-        organizationId: '684c8f719882ef84d7008fc3'
-      })
+      body: JSON.stringify({ email, password })
     });
     
     if (response.ok) {
-      const { token } = await response.json();
+      const { token, user } = await response.json();
+      setAuthToken(token, user);
+      return { success: true, user };
+    } else {
+      const error = await response.json();
+      return { success: false, error: error.message };
+    }
+  } catch (error) {
+    return { success: false, error: 'Login failed' };
+  }
+};
+
+// Refresh token to maintain authentication
+export const refreshToken = async () => {
+  const currentToken = getAuthToken();
+  if (!currentToken) return null;
+  
+  try {
+    const response = await fetch('/api/auth/refresh', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${currentToken}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (response.ok) {
+      const { token, user } = await response.json();
+      setAuthToken(token, user);
       return token;
     }
   } catch (error) {
-    console.log('Failed to generate fresh token, using fallback');
+    console.error('Token refresh failed:', error);
+    clearAuth();
   }
-  
-  // Fallback to generating token on frontend using current timestamp
-  const currentTime = Math.floor(Date.now() / 1000);
-  return `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${btoa(JSON.stringify({
-    id: '684c8f719882ef84d7008fc5',
-    email: 'org@gmail.com', 
-    role: 'admin',
-    organizationId: '684c8f719882ef84d7008fc3',
-    iat: currentTime,
-    exp: currentTime + (7 * 24 * 60 * 60) // 7 days
-  }))}.mock-signature-will-be-replaced`;
-};
-
-// Set up authentication for testing
-export const setupTestAuth = async () => {
-  // Clear existing auth first
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  
-  // Use the verified working token from server
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGM4ZjcxOTg4MmVmODRkNzAwOGZjNSIsImVtYWlsIjoib3JnQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsIm9yZ2FuaXphdGlvbklkIjoiNjg0YzhmNzE5ODgyZWY4NGQ3MDA4ZmMzIiwiaWF0IjoxNzQ5OTg1NDgxLCJleHAiOjE3NTA1OTAyODF9.1Z4c8b1IeraAff_Py7grCsKQPoVqtEQWGma6BbEutMk';
-  const user = {
-    id: '684c8f719882ef84d7008fc5',
-    email: 'org@gmail.com',
-    role: 'admin',
-    firstName: 'Org',
-    lastName: 'Admin',
-    organizationId: '684c8f719882ef84d7008fc3'
-  };
-  
-  setAuthToken(token, user);
-  console.log('Server-verified token set up successfully');
-  console.log('Token stored:', !!localStorage.getItem('token'));
+  return null;
 };
