@@ -53,11 +53,9 @@ import CreatePassword from "./pages/auth/CreatePassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 
 import { SimpleAcceptInvite } from "./pages/SimpleAcceptInvite";
-import { TestInvite } from "./pages/TestInvite";
 import VerifyAndSetPassword from "./pages/auth/VerifyAndSetPassword";
 import VerifyEmail from "./pages/auth/VerifyEmail";
 import RegistrationSuccess from "./pages/auth/RegistrationSuccess";
-import TestAuth from "./pages/TestAuth";
 
 // Role Protection Components
 import {
@@ -257,9 +255,7 @@ function App() {
         <Route path="/accept-invitation" component={SimpleAcceptInvite} />
         <Route path="/accept-invite" component={SimpleAcceptInvite} />
         <Route path="/register/invite/:token" component={SimpleAcceptInvite} />
-        <Route path="/test-invite" component={TestInvite} />
         <Route path="/forbidden" component={ForbiddenPage} />
-        <Route path="/test-auth" component={TestAuth} />
 
         {/* Role-based Dashboard Routes */}
         <Route path="/superadmin">
