@@ -2,16 +2,16 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { emailService } from './services/emailService.js';
-import { 
-  Organization, 
-  User, 
-  Project, 
-  TaskStatus, 
-  Task, 
-  TaskComment, 
-  TaskAssignment, 
-  TaskAuditLog, 
-  Notification, 
+import {
+  Organization,
+  User,
+  Project,
+  TaskStatus,
+  Task,
+  TaskComment,
+  TaskAssignment,
+  TaskAuditLog,
+  Notification,
   UsageTracking,
   Form,
   ProcessFlow,
@@ -21,7 +21,7 @@ import {
 } from './models.js';
 
 export class MongoStorage {
-  
+
   // Token generation methods
   generateToken(user) {
     const JWT_SECRET = process.env.JWT_SECRET || "your-jwt-secret-key";
@@ -97,13 +97,13 @@ export class MongoStorage {
       userData.inviteTokenExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
       userData.invitedAt = new Date();
     }
-    
+
     // Hash password if provided for non-invited users
     if (userData.password && !userData.passwordHash && userData.status !== 'invited') {
       userData.passwordHash = await this.hashPassword(userData.password);
       delete userData.password;
     }
-    
+
     const user = new User(userData);
     return await user.save();
   }
@@ -141,19 +141,19 @@ export class MongoStorage {
   // Task operations
   async getTasks(filters = {}) {
     let query = {};
-    
+
     if (filters.status && filters.status !== 'all') {
       query.status = filters.status;
     }
-    
+
     if (filters.priority && filters.priority !== 'all') {
       query.priority = filters.priority;
     }
-    
+
     if (filters.assignee && filters.assignee !== 'all') {
       query.assigneeName = filters.assignee;
     }
-    
+
     if (filters.project && filters.project !== 'all') {
       query.projectName = filters.project;
     }
@@ -168,7 +168,7 @@ export class MongoStorage {
   async createTask(taskData) {
     const task = new Task(taskData);
     const savedTask = await task.save();
-    
+
     // Create activity log
     await this.createActivity({
       type: 'task_created',
@@ -176,13 +176,13 @@ export class MongoStorage {
       relatedId: savedTask._id,
       relatedType: 'task'
     });
-    
+
     return savedTask;
   }
 
   async updateTask(id, taskData) {
     const task = await Task.findByIdAndUpdate(id, taskData, { new: true });
-    
+
     // Create activity log
     await this.createActivity({
       type: 'task_updated',
@@ -190,7 +190,7 @@ export class MongoStorage {
       relatedId: task._id,
       relatedType: 'task'
     });
-    
+
     return task;
   }
 
@@ -308,7 +308,7 @@ export class MongoStorage {
 
       // Create sample users for each organization
       const sampleUsers = [];
-      
+
       // TechCorp Solutions users
       const techCorpPasswordHash = await this.hashPassword('password123');
       sampleUsers.push(
@@ -380,7 +380,7 @@ export class MongoStorage {
       // Add invited users to show different statuses in subscription table
       const inviteToken1 = this.generateEmailVerificationToken();
       const inviteToken2 = this.generateEmailVerificationToken();
-      
+
       // TechCorp invited users
       await User.create({
         email: 'lisa.martinez@techcorp.com',
@@ -549,7 +549,7 @@ export class MongoStorage {
       console.log('Comprehensive sample data initialized successfully');
       console.log(`Created ${organizations.length} organizations, ${sampleUsers.length + 3} users (including 2 invited), ${projects.length} projects, and 8 tasks`);
       console.log('Super admin login: superadmin@tasksetu.com / superadmin123');
-      
+
     } catch (error) {
       console.error('Sample data initialization error:', error);
       throw error;
@@ -577,7 +577,7 @@ export class MongoStorage {
   async createForm(formData) {
     // Generate unique access link
     const accessLink = `form-${crypto.randomBytes(8).toString('hex')}`;
-    
+
     const form = new Form({
       ...formData,
       accessLink
@@ -595,16 +595,16 @@ export class MongoStorage {
 
   async publishForm(id) {
     return await Form.findByIdAndUpdate(
-      id, 
-      { isPublished: true }, 
+      id,
+      { isPublished: true },
       { new: true }
     );
   }
 
   async unpublishForm(id) {
     return await Form.findByIdAndUpdate(
-      id, 
-      { isPublished: false }, 
+      id,
+      { isPublished: false },
       { new: true }
     );
   }
@@ -640,15 +640,15 @@ export class MongoStorage {
   // Form Response operations
   async getFormResponses(filters = {}) {
     let query = {};
-    
+
     if (filters.formId) {
       query.form = filters.formId;
     }
-    
+
     if (filters.status) {
       query.status = filters.status;
     }
-    
+
     if (filters.organizationId) {
       const forms = await Form.find({ organization: filters.organizationId }).select('_id');
       const formIds = forms.map(f => f._id);
@@ -674,7 +674,7 @@ export class MongoStorage {
   async createFormResponse(responseData) {
     const response = new FormResponse(responseData);
     const savedResponse = await response.save();
-    
+
     // If there's a process flow, create process instance
     if (responseData.processFlow) {
       await this.createProcessInstance({
@@ -683,7 +683,7 @@ export class MongoStorage {
         currentSteps: ['start']
       });
     }
-    
+
     return savedResponse;
   }
 
@@ -706,7 +706,7 @@ export class MongoStorage {
     });
 
     response.currentStep = stepData.nextStep || null;
-    
+
     if (stepData.status === 'completed' && !stepData.nextStep) {
       response.status = 'completed';
     } else if (stepData.status === 'rejected') {
@@ -736,8 +736,8 @@ export class MongoStorage {
 
   // Analytics for forms and processes
   async getFormAnalytics(formId, organizationId) {
-    const matchStage = formId ? 
-      { form: formId } : 
+    const matchStage = formId ?
+      { form: formId } :
       { form: { $in: await this.getFormIdsByOrganization(organizationId) } };
 
     const analytics = await FormResponse.aggregate([
@@ -935,10 +935,10 @@ export class MongoStorage {
 
   async getUsersByRole(roleId) {
     try {
-      const users = await User.find({ 
-        role: roleId 
+      const users = await User.find({
+        role: roleId
       }).select('_id firstName lastName email role createdAt');
-      
+
       return users;
     } catch (error) {
       console.error('Get users by role error:', error);
@@ -953,14 +953,14 @@ export class MongoStorage {
 
       // Build task query
       let taskQuery = { organization: organizationId };
-      
+
       if (dateRange.startDate && dateRange.endDate) {
         taskQuery.createdAt = {
           $gte: dateRange.startDate,
           $lte: dateRange.endDate
         };
       }
-      
+
       if (userId) taskQuery.assignedTo = userId;
       if (projectId) taskQuery.project = projectId;
       if (status) taskQuery.status = status;
@@ -973,7 +973,7 @@ export class MongoStorage {
         .sort({ createdAt: -1 });
 
       // Filter by department if specified
-      const filteredTasks = department 
+      const filteredTasks = department
         ? tasks.filter(task => task.assignedTo?.department === department)
         : tasks;
 
@@ -982,7 +982,7 @@ export class MongoStorage {
         totalUsers: await User.countDocuments({ organization: organizationId }),
         totalTasks: filteredTasks.length,
         avgCompletion: this.calculateAverageCompletion(filteredTasks),
-        overdueTasks: filteredTasks.filter(task => 
+        overdueTasks: filteredTasks.filter(task =>
           task.dueDate && new Date(task.dueDate) < new Date() && task.status !== 'completed'
         ).length
       };
@@ -1028,12 +1028,12 @@ export class MongoStorage {
 
   calculateAverageCompletion(tasks) {
     if (tasks.length === 0) return 0;
-    
+
     const totalProgress = tasks.reduce((sum, task) => {
       if (task.status === 'completed') return sum + 100;
       return sum + (task.progress || 0);
     }, 0);
-    
+
     return Math.round(totalProgress / tasks.length);
   }
 
@@ -1044,17 +1044,17 @@ export class MongoStorage {
         .select('_id firstName lastName email department');
 
       const userStats = users.map(user => {
-        const userTasks = tasks.filter(task => 
+        const userTasks = tasks.filter(task =>
           task.assignedTo && task.assignedTo._id.toString() === user._id.toString()
         );
 
         const completedTasks = userTasks.filter(task => task.status === 'completed').length;
         const inProgressTasks = userTasks.filter(task => task.status === 'in-progress').length;
-        const overdueTasks = userTasks.filter(task => 
+        const overdueTasks = userTasks.filter(task =>
           task.dueDate && new Date(task.dueDate) < new Date() && task.status !== 'completed'
         ).length;
 
-        const progressPercentage = userTasks.length > 0 
+        const progressPercentage = userTasks.length > 0
           ? Math.round((completedTasks / userTasks.length) * 100)
           : 0;
 
@@ -1087,7 +1087,7 @@ export class MongoStorage {
         if (task.assignedTo) {
           const userId = task.assignedTo._id.toString();
           const userName = `${task.assignedTo.firstName} ${task.assignedTo.lastName}`;
-          
+
           if (!userTaskMap.has(userId)) {
             userTaskMap.set(userId, {
               userName,
@@ -1098,7 +1098,7 @@ export class MongoStorage {
 
           const userData = userTaskMap.get(userId);
           userData.totalTasks++;
-          
+
           if (task.status === 'completed') {
             userData.completedTasks++;
           }
@@ -1133,9 +1133,9 @@ export class MongoStorage {
       // Simplified trend data to avoid complex queries
       const mockTrendData = [
         { date: dateRange.startDate.toISOString().split('T')[0], completed: 5, created: 8, overdue: 2 },
-        { date: new Date(dateRange.startDate.getTime() + 24*60*60*1000).toISOString().split('T')[0], completed: 3, created: 6, overdue: 1 },
-        { date: new Date(dateRange.startDate.getTime() + 48*60*60*1000).toISOString().split('T')[0], completed: 7, created: 9, overdue: 3 },
-        { date: new Date(dateRange.startDate.getTime() + 72*60*60*1000).toISOString().split('T')[0], completed: 4, created: 5, overdue: 2 },
+        { date: new Date(dateRange.startDate.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0], completed: 3, created: 6, overdue: 1 },
+        { date: new Date(dateRange.startDate.getTime() + 48 * 60 * 60 * 1000).toISOString().split('T')[0], completed: 7, created: 9, overdue: 3 },
+        { date: new Date(dateRange.startDate.getTime() + 72 * 60 * 60 * 1000).toISOString().split('T')[0], completed: 4, created: 5, overdue: 2 },
         { date: dateRange.endDate.toISOString().split('T')[0], completed: 6, created: 7, overdue: 1 }
       ];
 
@@ -1192,7 +1192,7 @@ export class MongoStorage {
 
   async getCompanyDetails(companyId) {
     const company = await Organization.findById(companyId);
-    
+
     if (!company) return null;
 
     // Get company statistics
@@ -1269,7 +1269,7 @@ export class MongoStorage {
 
   async updateCompanyStatus(companyId, status) {
     return await Organization.findByIdAndUpdate(
-      companyId, 
+      companyId,
       { isActive: status },
       { new: true }
     );
@@ -1278,7 +1278,7 @@ export class MongoStorage {
   async assignCompanyAdmin(companyId, userId) {
     return await User.findByIdAndUpdate(
       userId,
-      { 
+      {
         role: 'admin',
         organizationId: companyId
       },
@@ -1346,13 +1346,13 @@ export class MongoStorage {
   // User Invitation and Management Methods
   async inviteUserToOrganization(inviteData) {
     const { email, organizationId, roles, invitedBy, invitedByName, organizationName } = inviteData;
-    
+
     // Check if user already exists in this organization (active or invited)
-    const existingUser = await User.findOne({ 
+    const existingUser = await User.findOne({
       email: email.toLowerCase(),
-      organization: organizationId 
+      organization: organizationId
     });
-    
+
     if (existingUser) {
       // Return error for duplicate validation
       throw new Error(`${email} is already invited to your organization.`);
@@ -1395,30 +1395,46 @@ export class MongoStorage {
   }
 
   async completeUserInvitation(token, userData) {
-    const { firstName, lastName, password } = userData;
-    
-    const user = await this.getInvitedUser(token);
-    if (!user) {
-      throw new Error('Invalid or expired invitation');
+    try {
+      const { firstName, lastName, password } = userData;
+
+      const user = await this.getUserByInviteToken(token);
+      if (!user) {
+        return { success: false, message: 'Invalid or expired invitation token' };
+      }
+
+      // Hash password
+      const passwordHash = await this.hashPassword(password);
+
+      // Update user to active status and invalidate token
+      const updatedUser = await User.findByIdAndUpdate(user._id, {
+        firstName,
+        lastName,
+        passwordHash,
+        status: 'active',
+        isActive: true,
+        emailVerified: true,
+        inviteToken: null,
+        inviteTokenExpiry: null,
+        completedAt: new Date()
+      }, { new: true });
+
+      if (!updatedUser) {
+        return { success: false, message: 'Failed to complete user registration' };
+      }
+
+      return {
+        success: true,
+        user: updatedUser,
+        message: 'Account created successfully'
+      };
+    } catch (error) {
+      console.error('Complete user invitation error:', error);
+      return {
+        success: false,
+        message: error.message || 'Failed to complete invitation'
+      };
     }
-
-    // Hash password
-    const passwordHash = await this.hashPassword(password);
-
-    // Update user to active status and invalidate token
-    const updatedUser = await User.findByIdAndUpdate(user._id, {
-      firstName,
-      lastName,
-      passwordHash,
-      status: 'active',
-      isActive: true,
-      emailVerified: true,
-      inviteToken: null,
-      inviteTokenExpiry: null,
-      completedAt: new Date()
-    }, { new: true });
-
-    return updatedUser;
   }
 
   // Organization License Management
@@ -1428,9 +1444,9 @@ export class MongoStorage {
       throw new Error('Organization not found');
     }
 
-    const activeUsers = await User.countDocuments({ 
-      organization: organizationId, 
-      isActive: true 
+    const activeUsers = await User.countDocuments({
+      organization: organizationId,
+      isActive: true
     });
 
     const totalLicenses = organization.maxUsers || 10; // Default 10 users
@@ -1459,7 +1475,7 @@ export class MongoStorage {
 
   // Get user by invite token - only return if still pending invitation
   async getUserByInviteToken(token) {
-    return await User.findOne({ 
+    return await User.findOne({
       inviteToken: token,
       status: 'invited', // Must be invited status
       inviteTokenExpiry: { $gt: new Date() }, // Token not expired
@@ -1469,7 +1485,7 @@ export class MongoStorage {
 
   // Get user by email verification token
   async getUserByVerificationToken(token) {
-    return await User.findOne({ 
+    return await User.findOne({
       emailVerificationToken: token,
       status: 'pending', // Must be pending verification
       emailVerificationExpires: { $gt: new Date() } // Token not expired

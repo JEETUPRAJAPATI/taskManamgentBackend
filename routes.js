@@ -20,7 +20,7 @@ export async function registerRoutes(app) {
 
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-  
+
   // Serve static files for uploaded images
   app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
@@ -51,13 +51,13 @@ export async function registerRoutes(app) {
       const { id, email, role, organizationId } = req.body;
       const jwt = await import('jsonwebtoken');
       const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
-      
+
       const token = jwt.default.sign(
         { id, email, role, organizationId },
         JWT_SECRET,
         { expiresIn: '7d' }
       );
-      
+
       res.json({ token });
     } catch (error) {
       console.error("Token generation error:", error);
@@ -69,7 +69,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/forgot-password", async (req, res) => {
     try {
       const { email } = req.body;
-      
+
       if (!email) {
         return res.status(400).json({ message: "Email is required" });
       }
@@ -104,7 +104,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/validate-reset-token", async (req, res) => {
     try {
       const { token } = req.body;
-      
+
       if (!token) {
         return res.status(400).json({ message: "Reset token is required" });
       }
@@ -125,7 +125,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/reset-password", async (req, res) => {
     try {
       const { token, password } = req.body;
-      
+
       if (!token || !password) {
         return res.status(400).json({ message: "Token and password are required" });
       }
@@ -156,7 +156,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/verify-token", async (req, res) => {
     try {
       const { token, password } = req.body;
-      
+
       console.log("Email verification attempt with token:", token);
 
       if (!token || !password) {
@@ -188,7 +188,7 @@ export async function registerRoutes(app) {
 
       // Hash the password and update user
       const hashedPassword = await storage.hashPassword(password);
-      
+
       await storage.updateUser(user._id, {
         passwordHash: hashedPassword,
         status: 'active',
@@ -201,7 +201,7 @@ export async function registerRoutes(app) {
 
       // Get updated user object with new password
       const updatedUser = await storage.getUser(user._id);
-      
+
       // Generate auth token for login
       const authToken = storage.generateToken(updatedUser);
 
@@ -228,7 +228,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/register-individual", async (req, res) => {
     try {
       const { firstName, lastName, email } = req.body;
-      
+
       console.log("Individual registration attempt:", { firstName, lastName, email });
 
       // Validate required fields
@@ -253,22 +253,22 @@ export async function registerRoutes(app) {
       };
 
       const user = await storage.createUser(userData);
-      
+
       console.log("Individual user created:", user._id);
 
       // Generate verification token and send email
       const verificationToken = storage.generateEmailVerificationToken();
-      
+
       // Update user with verification token
-      await storage.updateUser(user._id, { 
+      await storage.updateUser(user._id, {
         emailVerificationToken: verificationToken,
         emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
       });
 
       // Send verification email
       const emailSent = await emailService.sendVerificationEmail(
-        email, 
-        verificationToken, 
+        email,
+        verificationToken,
         firstName
       );
 
@@ -298,7 +298,7 @@ export async function registerRoutes(app) {
   app.post("/api/auth/register-organization", async (req, res) => {
     try {
       const { firstName, lastName, email, organizationName, organizationSlug } = req.body;
-      
+
       console.log("Organization registration attempt:", { firstName, lastName, email, organizationName, organizationSlug });
 
       // Validate required fields
@@ -327,7 +327,7 @@ export async function registerRoutes(app) {
       };
 
       const organization = await storage.createOrganization(orgData);
-      
+
       // Create admin user for the organization
       const userData = {
         firstName: firstName.trim(),
@@ -340,22 +340,22 @@ export async function registerRoutes(app) {
       };
 
       const user = await storage.createUser(userData);
-      
+
       console.log("Organization and admin user created:", { orgId: organization._id, userId: user._id });
 
       // Generate verification token and send email
       const verificationToken = storage.generateEmailVerificationToken();
-      
+
       // Update user with verification token
-      await storage.updateUser(user._id, { 
+      await storage.updateUser(user._id, {
         emailVerificationToken: verificationToken,
         emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
       });
 
       // Send verification email with organization name
       const emailSent = await emailService.sendVerificationEmail(
-        email, 
-        verificationToken, 
+        email,
+        verificationToken,
         firstName,
         organizationName
       );
@@ -394,7 +394,7 @@ export async function registerRoutes(app) {
         role: user.role,
         organizationId: user.organizationId
       });
-      
+
       if (!user.organizationId) {
         console.log('No organizationId for user');
         return res.status(400).json({ message: "User not associated with any organization" });
@@ -404,7 +404,7 @@ export async function registerRoutes(app) {
       console.log('Fetching team members for org:', user.organizationId);
       const teamMembers = await storage.getOrganizationUsersDetailed(user.organizationId);
       console.log('Team members found:', teamMembers.length);
-      
+
       // Format the response to include only necessary fields
       const formattedMembers = teamMembers.map(member => ({
         id: member._id,
@@ -451,7 +451,7 @@ export async function registerRoutes(app) {
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      
+
       // Return clean user data without sensitive fields
       const userProfile = {
         _id: user._id,
@@ -466,7 +466,7 @@ export async function registerRoutes(app) {
         createdAt: user.createdAt,
         updatedAt: user.updatedAt
       };
-      
+
       res.json(userProfile);
     } catch (error) {
       console.error("Get user by ID error:", error);
@@ -479,7 +479,7 @@ export async function registerRoutes(app) {
     try {
       const userId = req.params.id;
       const { firstName, lastName } = req.body;
-      
+
       console.log("Profile Update - User ID:", userId);
       console.log("Profile Update - Request data:", {
         firstName,
@@ -494,7 +494,7 @@ export async function registerRoutes(app) {
       if (!lastName || !lastName.trim()) {
         return res.status(400).json({ message: "Last name is required" });
       }
-      
+
       // Build update object
       const updateData = {
         firstName: firstName.trim(),
@@ -504,12 +504,12 @@ export async function registerRoutes(app) {
       // Handle profile image upload
       if (req.file) {
         const currentUser = await storage.getUser(userId);
-        
+
         // Delete old profile image if exists
         if (currentUser?.profileImageUrl) {
           deleteOldProfileImage(currentUser.profileImageUrl);
         }
-        
+
         // Set new profile image path
         updateData.profileImageUrl = `/uploads/profile-pics/${req.file.filename}`;
       }
@@ -517,7 +517,7 @@ export async function registerRoutes(app) {
       console.log("Profile Update - Update data:", updateData);
 
       const updatedUser = await storage.updateUser(userId, updateData);
-      
+
       if (!updatedUser) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -543,7 +543,7 @@ export async function registerRoutes(app) {
       });
     } catch (error) {
       console.error("Update user profile error:", error);
-      
+
       // Delete uploaded file on error
       if (req.file && req.file.path) {
         try {
@@ -552,7 +552,7 @@ export async function registerRoutes(app) {
           console.error("Error deleting uploaded file:", unlinkError);
         }
       }
-      
+
       res.status(500).json({ message: "Failed to update profile" });
     }
   });
@@ -566,9 +566,9 @@ export async function registerRoutes(app) {
         console.log("Profile API - User not found for ID:", req.user.id);
         return res.status(404).json({ message: "User not found" });
       }
-      
+
       console.log("Profile API - Raw user data:", user);
-      
+
       // Remove sensitive data and return clean profile
       const userProfile = {
         _id: user._id,
@@ -583,7 +583,7 @@ export async function registerRoutes(app) {
         createdAt: user.createdAt,
         updatedAt: user.updatedAt
       };
-      
+
       console.log("Profile API - Sending response:", userProfile);
       res.json(userProfile);
     } catch (error) {
@@ -597,7 +597,7 @@ export async function registerRoutes(app) {
     try {
       const userId = req.user.id;
       const { firstName, lastName } = req.body;
-      
+
       console.log("Profile Update - Request data:", {
         userId,
         firstName,
@@ -612,7 +612,7 @@ export async function registerRoutes(app) {
       if (!lastName || !lastName.trim()) {
         return res.status(400).json({ message: "Last name is required" });
       }
-      
+
       // Build update object with only allowed fields
       const updateData = {
         firstName: firstName.trim(),
@@ -622,18 +622,18 @@ export async function registerRoutes(app) {
       // Handle profile image upload
       if (req.file) {
         const currentUser = await storage.getUser(userId);
-        
+
         // Delete old profile image if exists
         if (currentUser.profileImageUrl) {
           deleteOldProfileImage(currentUser.profileImageUrl);
         }
-        
+
         // Set new profile image path
         updateData.profileImageUrl = `/uploads/profile-pics/${req.file.filename}`;
       }
 
       const updatedUser = await storage.updateUser(userId, updateData);
-      
+
       if (!updatedUser) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -659,7 +659,7 @@ export async function registerRoutes(app) {
       });
     } catch (error) {
       console.error("Update profile error:", error);
-      
+
       // Delete uploaded file on error
       if (req.file && req.file.path) {
         try {
@@ -668,7 +668,7 @@ export async function registerRoutes(app) {
           console.error("Error deleting uploaded file:", unlinkError);
         }
       }
-      
+
       res.status(500).json({ message: "Failed to update profile" });
     }
   });
@@ -721,7 +721,7 @@ export async function registerRoutes(app) {
       // Get the first organization for testing (temporary fix)
       const organizations = await storage.getAllCompanies();
       const defaultOrgId = organizations.length > 0 ? organizations[0]._id : null;
-      
+
       if (!defaultOrgId) {
         return res.status(400).json({ message: "No organization found for invitations" });
       }
@@ -751,8 +751,8 @@ export async function registerRoutes(app) {
       const message = results.successCount === invites.length
         ? "All invitations sent successfully"
         : results.successCount > 0
-        ? "Some invitations sent successfully"
-        : "Failed to send invitations";
+          ? "Some invitations sent successfully"
+          : "Failed to send invitations";
 
       res.status(statusCode).json({
         message,
@@ -768,7 +768,7 @@ export async function registerRoutes(app) {
   app.post("/api/organization/check-invitation", async (req, res) => {
     try {
       const { email } = req.body;
-      
+
       if (!email) {
         return res.status(400).json({ message: "Email is required" });
       }
@@ -778,11 +778,11 @@ export async function registerRoutes(app) {
       // Check if user already exists
       const existingUser = await storage.getUserByEmail(email);
       console.log("Existing user found:", existingUser ? "Yes" : "No");
-      
+
       if (existingUser) {
         console.log("User is already a member of an organization");
-        return res.json({ 
-          exists: true, 
+        return res.json({
+          exists: true,
           type: "existing_user",
           message: "This email is already a member of an organization"
         });
@@ -791,11 +791,11 @@ export async function registerRoutes(app) {
       // Check if invitation already sent
       const existingInvite = await storage.getPendingUserByEmail(email);
       console.log("Existing invite found:", existingInvite ? "Yes" : "No");
-      
+
       if (existingInvite) {
         console.log("Invitation already sent to this email");
-        return res.json({ 
-          exists: true, 
+        return res.json({
+          exists: true,
           type: "pending_invitation",
           message: "This email has already received an invitation. Try another email."
         });
@@ -813,14 +813,14 @@ export async function registerRoutes(app) {
   app.get("/api/auth/validate-invite", async (req, res) => {
     try {
       const { token } = req.query;
-      
+
       if (!token) {
         return res.status(400).json({ message: "Invitation token is required" });
       }
 
       // Get invitation details by token
       const pendingUser = await storage.getUserByInviteToken(token);
-      
+
       if (!pendingUser) {
         return res.status(404).json({ message: "Invalid or expired invitation token" });
       }
@@ -832,7 +832,7 @@ export async function registerRoutes(app) {
 
       // Get organization details
       const organization = await storage.getOrganization(pendingUser.organizationId);
-      
+
       res.json({
         email: pendingUser.email,
         roles: pendingUser.roles,
@@ -852,10 +852,10 @@ export async function registerRoutes(app) {
   app.post("/api/auth/accept-invite", async (req, res) => {
     try {
       const { token, firstName, lastName, password } = req.body;
-      
+
       if (!token || !firstName || !lastName || !password) {
-        return res.status(400).json({ 
-          message: "Token, first name, last name, and password are required" 
+        return res.status(400).json({
+          message: "Token, first name, last name, and password are required"
         });
       }
 
@@ -872,7 +872,7 @@ export async function registerRoutes(app) {
 
       // Generate auth token for the new user
       const authToken = storage.generateToken(result.user);
-      
+
       res.json({
         message: "Account created successfully",
         token: authToken,
@@ -895,13 +895,13 @@ export async function registerRoutes(app) {
   app.post("/api/auth/validate-invite-token", async (req, res) => {
     try {
       const { token } = req.body;
-      
+
       if (!token) {
         return res.status(400).json({ message: "Invitation token is required" });
       }
 
       const pendingUser = await storage.getUserByInviteToken(token);
-      
+
       if (!pendingUser) {
         return res.status(404).json({ message: "Invalid or expired invitation token" });
       }
@@ -911,7 +911,7 @@ export async function registerRoutes(app) {
       }
 
       const organization = await storage.getOrganization(pendingUser.organizationId);
-      
+
       res.json({
         email: pendingUser.email,
         roles: pendingUser.roles,
@@ -931,10 +931,10 @@ export async function registerRoutes(app) {
   app.post("/api/auth/complete-invitation", async (req, res) => {
     try {
       const { token, firstName, lastName, password } = req.body;
-      
+
       if (!token || !firstName || !lastName || !password) {
-        return res.status(400).json({ 
-          message: "Token, first name, last name, and password are required" 
+        return res.status(400).json({
+          message: "Token, first name, last name, and password are required"
         });
       }
 
@@ -949,7 +949,7 @@ export async function registerRoutes(app) {
       }
 
       const authToken = storage.generateToken(result.user);
-      
+
       res.json({
         message: "Account created successfully",
         token: authToken,
